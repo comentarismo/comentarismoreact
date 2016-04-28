@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to Comentarismo</title>
+    <% styleSrc.forEach(function(src){ %>
+      <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
+    <% }) %>
+
+  </head>
+  <body>
+    <div id="root"><%- html %></div>
+    <script type="text/javascript" charset="utf-8">
+      window.__REDUX_STATE__ = '<%= reduxState %>';
+    </script>
+
+    <% scriptSrcs.forEach(function(src){ %>
+      <script src="<%= src %>"></script>
+    <% }) %>
+    <script src="/vendor/comentarismo-client.js"></script>
+    <script>
+      $(function () {
+        var comentarismo = new Comentarismo({host: "api.comentarismo.com",cached: "elk.comentarismo.com",forum: "comentarismo-social",key: "-U7sw_7qY7vw-qCXi3M8KJPYSzMEOxEbZCnLUDBO7EGum8uKg2f5rreFIv8aSWS16jmNngoIRZHs"
+          ,page:encodeURIComponent("{{.Params.nickraw}}"),operator:"{{$operator}}"});
+      });
+    </script>
+  </body>
+</html>
+

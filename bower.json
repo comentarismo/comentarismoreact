@@ -1,0 +1,15 @@
+{
+  "name": "comentarismoreact",
+  "version": "0.0.0",
+  "authors": [
+    "Thomas Modeneis <thomas.modeneis@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
