@@ -2,6 +2,39 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { loadQuestionDetail } from 'actions/questions'
 
+class XScript extends React.Component {
+    static initScripts(el, url) {
+        var script = document.createElement('script')
+        script.setAttribute('type', 'text/javascript');
+        script.setAttribute('src', url);
+        el.appendChild(script);
+    }
+
+    componentDidMount() {
+        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/vendor/comentarismo-client.js");
+    }
+
+    render() {
+        return <div ref="it"
+                    dangerouslySetInnerHTML={{__html:
+                    '<script type="text/javascript" src="/vendor/comentarismo-client.js"></script>' +
+                    '<script>$(function () {' +
+                      'var operator = $("#comentarismo-operator").attr("data-id"); ' +
+                      'var page = $("#comentarismo-page").attr("data-id"); '+
+                        'var comentarismo = new Comentarismo({' +
+                            'host: "api.comentarismo.com",' +
+                            //cached: "elk.comentarismo.com",
+                            'forum: "comentarismo-social",' +
+                            'key: "-U7sw_7qY7vw-qCXi3M8KJPYSzMEOxEbZCnLUDBO7EGum8uKg2f5rreFIv8aSWS16jmNngoIRZHs",' +
+                            'page: encodeURIComponent(page),' +
+                            'operator: operator' +
+                        '});' +
+                      '});' +
+                    '</script>'}}
+        ></div>
+    }
+}
+
 class Question extends Component {
     static fetchData({ store, params }) {
         let { id } = params
@@ -17,14 +50,16 @@ class Question extends Component {
         let { question } = this.props
         return (
             <div className="container-fluid single-post-wrapper">
-                <div className="col-xs-12" style={{height: '50px;'}}></div>
+                <a id="comentarismo-page" data-id={ question.nick }/>
+                <a id="comentarismo-operator" data-id={ question.operator }/>
+                <div className="tm-embed-container" id="scriptContainer">
+                </div>
+                <XScript/>
+                <div style={{height: '50px'}}></div>
                 <div className="row single-post-row">
                     <div className="col-sm-10 col-sm-offset-1 col-xs-12 article-body ">
-                        <div className="col-sm-3 hidden-xs">
-                        </div>
-                        <div className="col-md-10">
                             <div className="container">
-                                <div className="row" className="col-md-12">
+                                <div className="row">
                                     <div className="profile-div">
                                         <a className='profile-bg profile-block'/>
                                         <div>
@@ -34,7 +69,7 @@ class Question extends Component {
                                                 </button>
                                             </div>
                                             <a title="" id="profile-avatar" href="#" className="profile-goup">
-                                                <img src="/static/images/comentarismo-extra-mini-logo.png"/>
+                                                <img src="/static/img/comentarismo-extra-mini-logo.png"/>
                                             </a>
                                             <div className="profile-nick">
                                                 <div className="profile-nickName">
@@ -82,13 +117,13 @@ class Question extends Component {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div className="col-xs-12" style={{height: '25px;'}}></div>
+                                        <div className="col-xs-12" style={{height: '25px'}}></div>
 
 
                                     </div>
 
                                 </div>
-                                <div id="comentarismo-container" className="col-md-12">
+                                <div className="col-md-12">
                                     <div className="profile-divStats">
                                         <ul className="profile-commentsfollowfollowers">
                                             <li className="profile-commentsfollowfollowersLi">
@@ -113,7 +148,8 @@ class Question extends Component {
                                 {
                                     question.comments.map((q)=> {
                                         return (
-                                            <div className="comentarismo-comment" key={q.id} className="col-md-12">
+                                            <div id="comentarismo-container" className="comentarismo-comment" key={q.id}
+                                                 className="col-md-12">
                                                 <div className="col-sm-1 hidden-xs">
                                                     <a className="avatar-{{.nick}} img-responsive user-photo"/>
                                                 </div>
@@ -131,11 +167,13 @@ class Question extends Component {
                                                 </div>
                                                 <div className="comentarismo-comment-footer">
                                                     <a className="upvote" id="like" data-id="-like">
-                                                        <img src="/static/images/thumbs-up.png" style={{width: '10px',height: '10px'}}/>
+                                                        <img src="/static/img/thumbs-up.png"
+                                                             style={{width: '10px',height: '10px'}}/>
                                                     </a>
                                                     <span className="spacer">|</span>
                                                     <a class="downvote" id="dislike" data-id="-dislike">
-                                                        <img src="/static/images/thumbs-down.png" style={{width: '10px',height: '10px'}}/>
+                                                        <img src="/static/img/thumbs-down.png"
+                                                             style={{width: '10px',height: '10px'}}/>
                                                     </a>
                                                     <a className="button destroy" id="delete" data-id="-delete"
                                                        className="button destroy"/>
@@ -147,8 +185,6 @@ class Question extends Component {
                                         )
                                     })
                                 }
-
-                            </div>
                         </div>
                     </div>
                 </div>

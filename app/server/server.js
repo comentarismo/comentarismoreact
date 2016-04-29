@@ -18,7 +18,7 @@ import r from 'rethinkdb';
 
 
 let server = new Express();
-let port = process.env.PORT || 3000;
+let port = process.env.PORT || 3002;
 let scriptSrcs;
 
 let conn;
