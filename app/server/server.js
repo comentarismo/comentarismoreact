@@ -51,7 +51,8 @@ if (process.env.NODE_ENV === 'production') {
     styleSrc = [
         '/main.css',
         '/static/css/all.css',
-        '/static/bootstrap/dist/css/bootstrap.css'
+        '/static/bootstrap/dist/css/bootstrap.css',
+        `/static/bootstrap/dist/css/bootstrap-theme.css`
     ];
 }
 

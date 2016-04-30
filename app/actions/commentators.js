@@ -6,7 +6,7 @@ export function loadCommentators({index,value}) {
   return {
     [CALL_API]: {
       method: 'get',
-      path: `/api/commentators/${index}/${value}/0/50/`,
+      path: `/api/commentators/${index}/${value}/0/100/`,
       successType: LOADED_COMMENTATORS
     }
   }

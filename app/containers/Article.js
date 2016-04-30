@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { loadArticleDetail } from 'actions/articles'
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
+var MainNavbar = require('components/MainNavbar');
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -73,99 +74,102 @@ class Article extends Component {
         }
 
         return (
-            <div className="container-fluid single-post-wrapper">
-                <a id="comentarismo-page" data-id={ article.titleurlize }/>
-                <a id="comentarismo-operator" data-id={ article.operator }/>
-                <div className="tm-embed-container" id="scriptContainer">
-                </div>
-                <XScript/>
-                <div style={{height: '50px'}}></div>
-                <div className="row single-post-row">
-                    <div className="col-sm-10 col-sm-offset-1 col-xs-12 article-body ">
-                        <div className="container">
-                            <div className="row">
-                                <div className="profile-div">
-                                    {this.getImageElement()}
-                                    <div>
-                                        <div className="profile-button">
-                                            <button className="btn btn-primary"><i
-                                                className="glyphicon glyphicon-pencil"/>
-                                            </button>
-                                        </div>
-                                        <div className="profile-nick">
-                                            <div className="profile-nickName">
-                                                { article.title }
+            <div>
+                <MainNavbar/>
+                <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
+                    <a id="comentarismo-page" data-id={ article.titleurlize }/>
+                    <a id="comentarismo-operator" data-id={ article.operator }/>
+                    <div className="tm-embed-container" id="scriptContainer">
+                    </div>
+                    <XScript/>
+                    <div style={{height: '50px'}}></div>
+                    <div className="row single-post-row">
+                        <div className="article-body">
+                            <div className="container">
+                                <div className="row">
+                                    <div className="profile-div">
+                                        {this.getImageElement()}
+                                        <div>
+                                            <div className="profile-button">
+                                                <button className="btn btn-primary"><i
+                                                    className="glyphicon glyphicon-pencil"/>
+                                                </button>
                                             </div>
-                                        </div>
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                            <div className="profile-nick">
+                                                <div className="profile-nickName">
+                                                    { article.title }
+                                                </div>
+                                            </div>
+                                            <div className="profile-divStats">
+                                                <ul className="profile-commentsfollowfollowers">
+                                                    <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Resume</span>
-                                                    <span className="profile-StatValue">{ getContentBody() }</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span className="profile-StatValue">{ getContentBody() }</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div className="profile-divStats">
+                                                <ul className="profile-commentsfollowfollowers">
+                                                    <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Publish Date</span>
-                                                    <span className="profile-StatValue">{ article.date }</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span className="profile-StatValue">{ article.date }</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div className="profile-divStats">
+                                                <ul className="profile-commentsfollowfollowers">
+                                                    <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Countries</span>
                                                         <span
                                                             className="profile-StatValue">{ article.countries }</span>
-                                                </li>
-                                                <li className="profile-commentsfollowfollowersLi">
+                                                    </li>
+                                                    <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Languages</span>
                                                         <span
                                                             className="profile-StatValue">{ article.languages }</span>
-                                                </li>
-                                                <li className="profile-commentsfollowfollowersLi">
+                                                    </li>
+                                                    <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Followers</span>
-                                                    <span className="profile-StatValue"/>
-                                                </li>
-                                            </ul>
+                                                        <span className="profile-StatValue"/>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
+                                        <div className="col-xs-12" style={{height: '25px'}}></div>
                                     </div>
-                                    <div className="col-xs-12" style={{height: '25px'}}></div>
+
                                 </div>
 
-                            </div>
-
-                            {
-                                article.comments.map((q)=> {
-                                    return (
-                                        <div id="comentarismo-container" className="comentarismo-comment" key={q.id}
-                                             className="col-md-12">
-                                            <div className="col-sm-1 hidden-xs">
-                                                <a className="avatar- img-responsive user-photo"/>
-                                            </div>
-                                            <div className="text-wrapper">
-                                                <b>{q.date }</b>
-                                                <div role="meta" className="comentarismo-comment-header">
+                                {
+                                    article.comments.map((q)=> {
+                                        return (
+                                            <div id="comentarismo-container" className="comentarismo-comment" key={q.id}
+                                                 className="col-md-12">
+                                                <div className="col-sm-1 hidden-xs">
+                                                    <a className="avatar- img-responsive user-photo"/>
+                                                </div>
+                                                <div className="text-wrapper">
+                                                    <b>{q.date }</b>
+                                                    <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b>{ q.title }</b>
                                                         </span>
-                                                </div>
-                                                <div className="text">
-                                                    <p>{ q.comment }</p>
+                                                    </div>
+                                                    <div className="text">
+                                                        <p>{ q.comment }</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )
-                                })
-                            }
+                                        )
+                                    })
+                                }
 
+                            </div>
                         </div>
                     </div>
                 </div>

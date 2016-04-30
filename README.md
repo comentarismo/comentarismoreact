@@ -17,3 +17,9 @@
 *RethinkDB required*
 `/etc/hosts
 10.0.1.121        g7-box`
+
+*Create index for table news*
+`languages`
+
+*Create index for table commentator*
+`languages`

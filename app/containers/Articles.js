@@ -4,6 +4,7 @@ import { loadArticles } from 'actions/articles'
 import { Link } from 'react-router'
 import _ from 'lodash'
 import Articles from 'components/Articles'
+var MainNavbar = require('components/MainNavbar');
 
 class ArticleContainer extends Component {
     static fetchData({ store, params }) {
@@ -19,6 +20,7 @@ class ArticleContainer extends Component {
     render() {
         return (
             <div>
+                <MainNavbar/>
                 <Articles articles={this.props.articles}/>
                 <Link to="/">Back to Home</Link>
             </div>
