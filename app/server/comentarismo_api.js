@@ -9,12 +9,12 @@ import r from 'rethinkdb';
 //get commentator profile by nickurlize
 
 
-function getByID(id, conn, cb) {
+export function getByID(table, id, conn, cb) {
     if (!id) {
         //console.log("getComments EOF ");
         return cb();
     }
-    r.table("commentator")
+    r.table(table)
         .get(id)
         .run(conn, function (err, result) {
             if (err || !result) {
@@ -25,16 +25,15 @@ function getByID(id, conn, cb) {
                 cb(null, result);
             }
         });
-
 }
-function getComments(nick, operator, conn, cb) {
-    if (!nick) {
+
+export function getOneBySecondaryIndex(table, index, value, conn, cb) {
+    if (!table || !index || !value) {
         //console.log("getComments EOF ");
         return cb();
     }
-    //console.log("r.table('commentaries').getAll('" + nick + "', {index: 'nick'}).filter({operator:"+operator+"})");
-    r.table("commentaries")
-        .getAll(nick, {index: 'nick'}).filter({operator: operator}).limit(50)
+    r.table(table)
+        .getAll(value, {index: index}).limit(1)
         .run(conn, function (err, cursor) {
             if (err || !cursor) {
                 console.log(err);
@@ -42,7 +41,31 @@ function getComments(nick, operator, conn, cb) {
             } else {
                 cursor.toArray(function (err, results) {
                     if (err) return cb(err);
-                    console.log(results.length);
+                    //console.log(results.length);
+                    cb(null, results[0]);
+                });
+            }
+        });
+}
+
+
+//"commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50,
+export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip,limit, conn, cb) {
+    if (!value) {
+        //console.log("getComments EOF ");
+        return cb();
+    }
+    //console.log("r.table('commentaries').getAll('" + nick + "', {index: 'nick'}).filter({operator:"+operator+"})");
+    r.table(table)
+        .getAll(value, {index: index}).filter(filter).skip(skip).limit(limit)
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                //console.log(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    //console.log(results.length);
                     cb(null, results);
                 });
             }
@@ -59,16 +82,14 @@ function question(id) {
 }
 
 export function getCommentator(id,conn,cb) {
-
     //get commentator by id
-    getByID(id, conn, function(err,commentator){
+    getByID("commentator", id, conn, function(err,commentator){
         if (err || !commentator) {
             console.log(err);
             cb(err);
         } else {
-
             //get all comments by index nick
-            getComments(commentator.nick,commentator.operator, conn, function(err,comments){
+            getAllByIndexFilterSkipLimit("commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50, conn, function(err,comments){
                 if (err || !commentator) {
                     console.log(err);
                     cb(err);
@@ -77,20 +98,10 @@ export function getCommentator(id,conn,cb) {
                     console.log(commentator);
                     cb(null,commentator);
                 }
-
-
             });
-
-
         }
     });
-
-
 }
-//
-//export function questions(conn){
-//    return _.range(1, 10000).map((i)=> question(i))
-//}
 
 export function allcommentators(conn, cb) {
     var operators = [

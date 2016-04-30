@@ -60,7 +60,7 @@ server.use(Express.static(path.join(__dirname, '../..', 'dist')));
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 
-// mock apis
+// apis
 server.get('/api/questions', (req, res)=> {
     let { allcommentators } = require('./comentarismo_api');
     allcommentators(conn,function(data){
@@ -76,6 +76,100 @@ server.get('/api/questions/:id', (req, res)=> {
         }
         res.send(data);
     });
+});
+
+// mock apis
+server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
+    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
+    console.log(req.params)
+    var index= req.params.index;
+    var value= req.params.value;
+    var skip = parseInt(req.params.skip);
+    var limit= parseInt(req.params.limit);
+
+    getAllByIndexFilterSkipLimit("commentator",index,value,{},skip,limit,conn,function(err,data){
+        if(err){
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
+
+server.get('/api/commentators/:id', (req, res)=> {
+    let { getCommentator } = require('./comentarismo_api');
+    getCommentator(req.params.id,conn,function(err, data){
+        if(err){
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
+
+server.get('/api/articles', (req, res)=> {
+    let { allcommentators } = require('./comentarismo_api');
+    allcommentators(conn,function(data){
+        res.send(data);
+    });
+});
+
+server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req, res)=> {
+    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
+
+    var table = req.params.table;
+    var index= req.params.index;
+    var value= req.params.value;
+    var filter = req.params.filter;
+    var filtervalue = req.params.filtervalue;
+    var skip = parseInt(req.params.skip);
+    var limit= parseInt(req.params.limit);
+
+    var filt = {};
+    if(filter && filtervalue){
+        filt = {filter:filtervalue}
+    }
+
+    getAllByIndexFilterSkipLimit(table,index,value,filt,skip,limit,conn,function(err,data){
+        if(err){
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
+
+server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
+    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
+
+    var table = req.params.table;
+    var index= req.params.index;
+    var value= req.params.value;
+    var skip = parseInt(req.params.skip);
+    var limit= parseInt(req.params.limit);
+
+    getAllByIndexFilterSkipLimit(table,index,value,{},skip,limit,conn,function(err,data){
+        if(err){
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
+
+
+server.get('/api/news/:id', (req, res)=> {
+    let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex } = require('./comentarismo_api');
+    getOneBySecondaryIndex("news","titleurlize",req.params.id,conn,function(err, news){
+        if(err){
+            console.log(err);
+        }
+        getAllByIndexFilterSkipLimit("commentaries","titleurlize",req.params.id,{},0,50,conn,function(err,comments){
+            if(err){
+                console.log(err);
+            }
+            //console.log(comments.length)
+            news.comments = comments;
+            res.send(news);
+        });
+    });
+
 });
 
 server.get('/api/users/:id', (req, res)=> {
@@ -145,9 +239,12 @@ server.get('*', (req, res, next)=> {
 });
 
 server.use((err, req, res, next)=> {
-    console.log(err.stack);
+    if(err) {
+        console.log(err.stack);
+    }
     // TODO report error here or do some further handlings
-    res.status(500).send("something went wrong...")
+
+    res.status(500).send("something went wrong... --> "+err.stack)
 })
 
 

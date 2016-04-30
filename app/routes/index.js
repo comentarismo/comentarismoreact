@@ -5,17 +5,24 @@ import configureStore from 'store/configureStore';
 
 import App from 'containers/App';
 import Intro from 'containers/Intro';
-import Questions from 'containers/Questions';
-import Question from 'containers/Question';
 
-export default function(history) {
-  return (
-    <Router history={history}>
-      <Route path="/" component={App}>
-        <Route path="questions" component={Questions} />
-        <Route path="questions/:id" component={Question} />
-        <IndexRoute component={Intro} />
-      </Route>
-    </Router>
-  );
+import Commentators from 'containers/Commentators';
+import Commentator from 'containers/Commentator';
+
+import Articles from 'containers/Articles';
+import Article from 'containers/Article';
+
+//TODO: create routes for categories,languages,genres
+export default function (history) {
+    return (
+        <Router history={history}>
+            <Route path="/" component={App}>
+                <Route path="commentators/:id" component={Commentator}/>
+                <Route path="commentators/:index/:value" component={Commentators}/>
+                <Route path="news/:id" component={Article}/>
+                <Route path="news/:index/:value" component={Articles}/>
+                <IndexRoute component={Intro}/>
+            </Route>
+        </Router>
+    );
 };

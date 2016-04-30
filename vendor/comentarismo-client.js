@@ -111,8 +111,8 @@ Comentarismo = function (options) {
     elk = "http://" + options.cached;
     key = options.key;
 
-    var limit = 50;
-    var skip = 0;
+    var limit = options.limit || 50;
+    var skip = options.skip || 0;
     var sel = this.$el;
     var end = false;
     var running = false;
@@ -157,7 +157,7 @@ Comentarismo = function (options) {
         titleurlize = page = options.page;
         operator = options.operator;
         console.log("comentarismo-social --> "+titleurlize);
-        defaultIndex = "nick";
+        defaultIndex = options.index || "nick";
     }
 
     if (document.location.hostname.indexOf("localhost") !== -1) {

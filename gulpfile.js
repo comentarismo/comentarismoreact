@@ -9,7 +9,7 @@ var buildProperties = {
         './bower_components/jquery/dist/**/*',
         './vendor/**/*'
     ],
-    imageFiles : ['./images/**/*']
+    imageFiles : ['./img/**/*']
 };
 
 gulp.task('css', function () {
@@ -66,4 +66,4 @@ gulp.task('images', function () {
 });
 
 
-gulp.task('default', ['css','vendor','images','css:watch']);
+gulp.task('default', ['css','vendor','images','css-copy','css:watch']);

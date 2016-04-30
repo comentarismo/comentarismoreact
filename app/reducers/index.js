@@ -1,10 +1,16 @@
 import { combineReducers } from 'redux';
-import questions from 'reducers/questions';
-import questionDetail from 'reducers/questionDetail';
+
+import commentators from 'reducers/commentators';
+import commentatorDetail from 'reducers/commentatorDetail';
+import articles from 'reducers/articles';
+import articleDetail from 'reducers/articleDetail';
+
 
 const rootReducer = combineReducers({
-  questions,
-  questionDetail
+    commentators,
+    commentatorDetail,
+    articles,
+    articleDetail
 });
 
 export default rootReducer;

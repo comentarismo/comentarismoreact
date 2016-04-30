@@ -4,12 +4,12 @@ import apiMiddleware from '../middleware/api';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
 
-
+//predicate true means log every http request
 const logger = createLogger({
-  level: 'error',
+  level: 'info',
   collapsed: false,
   logger: console,
-  predicate: (getState, action) => true
+  predicate: (getState, action) => false
 });
 
 const createStoreWithMiddleware = applyMiddleware(

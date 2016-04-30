@@ -1,4 +1,4 @@
-import * as ActionType from 'actions/questions';
+import * as ActionType from 'actions/commentators';
 import _ from 'lodash'
 
 let defaultState = {
@@ -8,13 +8,9 @@ let defaultState = {
 export default function(state = defaultState, action) {
   let cloned
   switch(action.type) {
-    case ActionType.LOADED_QUESTION_DETAIL:
+    case ActionType.LOADED_COMMENTATOR_DETAIL:
       cloned = _.clone(state)
       return _.merge(cloned, action.response)
-
-    case ActionType.LOADED_QUESTION_USER:
-      cloned = _.clone(state)
-      return _.merge(cloned, { user: action.response })
 
     default:
       return state

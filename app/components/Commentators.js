@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 
-class Questions extends Component {
+class Commentators extends Component {
     render() {
         return (
             <div>
-                Questions component
+                Commentators component
                 {
-                    this.props.questions.map((q)=> {
+                    this.props.commentators.map((q)=> {
                         return (
                             <div key={q.id}>
                                 <p>Last seen: {q.maxDate}</p>
-                                <Link to={`/questions/${q.id}`}> { q.nick }</Link>
+                                <Link to={`/commentators/${q.id}`}> { q.nick }</Link>
                             </div>
                         )
                     })
@@ -21,8 +21,8 @@ class Questions extends Component {
     }
 }
 
-Questions.propTypes = {
-    questions: PropTypes.array.isRequired
+Commentators.propTypes = {
+    commentators: PropTypes.array.isRequired
 }
 
-export default Questions
+export default Commentators
