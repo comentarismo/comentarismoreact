@@ -19,7 +19,8 @@ module.exports = React.createClass({
             <Navbar inverse>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a className="navbar-brand" href="/"><img src="/static/img/comentarismo-extra-mini-logo.png" className="logo" alt="logo"/></a>
+                        <a className="navbar-brand" href="/"><img src="/static/img/comentarismo-extra-mini-logo.png"
+                                                                  className="logo" alt="logo"/></a>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
@@ -27,79 +28,183 @@ module.exports = React.createClass({
                     <Nav>
                         <NavDropdown eventKey={3} title="World News & Headlines" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
-                                <MenuItem eventKey={3.1} href="/news/operator/bbcuk">UK - BBC</MenuItem>
-                                <MenuItem eventKey={3.2} href="/news/operator/telegraph">UK - Telegraph</MenuItem>
-                                <MenuItem eventKey={3.3} href="/news/operator/theguardian">UK - Theguardian</MenuItem>
-                                <MenuItem eventKey={3.4} href="/news/operator/independentuk">UK - Independent</MenuItem>
-                                <MenuItem eventKey={3.5} href="/news/operator/washingtonpost">US - Washingtonpost</MenuItem>
-                                <MenuItem eventKey={3.6} href="/news/operator/cnn">US - CNN</MenuItem>
-                                <MenuItem eventKey={3.7} href="/news/operator/nytimes">US - NYTimes</MenuItem>
-                                <MenuItem eventKey={3.8} href="/news/operator/rt">US - RT</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/business">Business</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/football">Football</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/lifestyle">Lifestyle</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/motoring">Motoring</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/politics">Politics</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/ru_politics">Russian Politics</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/sports">Sports</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/technology">Technology</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/world">World</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="UK" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/operator/bbcuk">BBC</MenuItem>
+                                    <MenuItem eventKey={3.2} href="/news/operator/telegraph">Telegraph</MenuItem>
+                                    <MenuItem eventKey={3.3} href="/news/operator/theguardian">Theguardian</MenuItem>
+                                    <MenuItem eventKey={3.4} href="/news/operator/independentuk">Independent</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="US" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.5}
+                                              href="/news/operator/washingtonpost">Washingtonpost</MenuItem>
+                                    <MenuItem eventKey={3.6} href="/news/operator/cnn">CNN</MenuItem>
+                                    <MenuItem eventKey={3.7} href="/news/operator/nytimes">NYTimes</MenuItem>
+                                    <MenuItem eventKey={3.8} href="/news/operator/rt">RT</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/english">English All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={4} title="French" id="basic-nav-dropdown">
-                                <MenuItem eventKey={4.1} href="/news/operator/lemonde">France - Lemonde</MenuItem>
-                                <MenuItem eventKey={4.2} href="/news/operator/lefigaro">France - Lefigaro</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/economie">Economie</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/fr_football">Football</MenuItem>
+                                    <MenuItem eventKey={3.1}
+                                              href="/news/genre/fr_international">International</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/fr_technology">Technology</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/politique">Politique</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/societe">Societe</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="France" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={4.1} href="/news/operator/lemonde">Lemonde</MenuItem>
+                                    <MenuItem eventKey={4.2} href="/news/operator/lefigaro">Lefigaro</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/french">French All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={5} title="Spanish" id="basic-nav-dropdown">
-                                <MenuItem eventKey={5.1} href="/news/operator/elpais">Spain - Elpais</MenuItem>
-                                <MenuItem eventKey={5.2} href="/news/operator/marca">Spain - Marca</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/es_ciencia">Ciencia</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/es_economia">Economia</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/es_futbol">Futbol</MenuItem>
+                                    <MenuItem eventKey={3.1}
+                                              href="/news/genre/es_internacional">Internacional</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/es_politica">Politica</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/es_tecnologia">Tecnologia</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="Spain" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={5.1} href="/news/operator/elpais">Elpais</MenuItem>
+                                    <MenuItem eventKey={5.2} href="/news/operator/marca">Marca</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/spanish">Spanish All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={6} title="Italian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={6.1} href="/news/operator/repubblica">Italy - La Repubblica</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/it_economia">Economia</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/it_politica">Politica</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="Italy" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={6.1} href="/news/operator/repubblica">La Repubblica</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/italian">Italian All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Portuguese" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="/news/operator/g1">Brazil - G1</MenuItem>
-                                <MenuItem eventKey={7.1} href="/news/operator/uol">Brazil - UOL</MenuItem>
-                                <MenuItem eventKey={7.1} href="/news/operator/ultimosegundo">Brazil - IG</MenuItem>
-                                <MenuItem eventKey={7.1} href="/news/operator/folhapolitica">Brazil - FolhaPolitica</MenuItem>
-                                <MenuItem eventKey={7.1} href="/news/operator/cartacapital">Brazil - CartaCapital</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/economia">Economia</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/futebol">Futebol</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/mundo">Mundo</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/olimpiadas">Olimpiadas</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/politica">Politica</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/tecnologia">Tecnologia</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/brasil">Brasil</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="Brazil" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1} href="/news/operator/g1">G1</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/news/operator/uol">UOL</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/news/operator/ultimosegundo">IG</MenuItem>
+                                    <MenuItem eventKey={7.1}
+                                              href="/news/operator/folhapolitica">FolhaPolitica</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/news/operator/cartacapital">CartaCapital</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/portuguese">Portuguese All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Croatian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="/news/operator/indexhr">Index.HR</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/hr_auto">Auto</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/hr_black">Black</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/hr_sport">Sport</MenuItem>
+                                    <MenuItem eventKey={3.1} href="/news/genre/hr_hot">Hot</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="Croatia" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1} href="/news/operator/indexhr">Index.HR</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/croatian">Croatian All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Russian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="/news/operator/novayagazeta_ru">Novayagazeta</MenuItem>
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/news/genre/news">News</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="Russia" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1}
+                                              href="/news/operator/novayagazeta_ru">Novayagazeta</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/news/languages/russian">Russian All</MenuItem>
                             </NavDropdown>
                         </NavDropdown>
                         <NavDropdown eventKey={3} title="World Commentator List" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
-                                <MenuItem eventKey={3.1} href="/commentators/operator/bbcuk">UK - BBC</MenuItem>
-                                <MenuItem eventKey={3.2} href="/commentators/operator/telegraph">UK - Telegraph</MenuItem>
-                                <MenuItem eventKey={3.3} href="/commentators/operator/theguardian">UK - Theguardian</MenuItem>
-                                <MenuItem eventKey={3.4} href="/commentators/operator/independentuk">UK - Independent</MenuItem>
-                                <MenuItem eventKey={3.5} href="/commentators/operator/washingtonpost">US - Washingtonpost</MenuItem>
-                                <MenuItem eventKey={3.6} href="/commentators/operator/cnn">US - CNN</MenuItem>
-                                <MenuItem eventKey={3.7} href="/commentators/operator/nytimes">US - NYTimes</MenuItem>
-                                <MenuItem eventKey={3.8} href="/commentators/operator/rt">US - RT</MenuItem>
+                                <NavDropdown eventKey={3} title="UK" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/commentators/operator/bbcuk">BBC</MenuItem>
+                                    <MenuItem eventKey={3.2} href="/commentators/operator/telegraph">Telegraph</MenuItem>
+                                    <MenuItem eventKey={3.3} href="/commentators/operator/theguardian">Theguardian</MenuItem>
+                                    <MenuItem eventKey={3.4} href="/commentators/operator/independentuk">Independent</MenuItem>
+                                </NavDropdown>
+                                <NavDropdown eventKey={3} title="US" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.5}
+                                              href="/commentators/operator/washingtonpost">Washingtonpost</MenuItem>
+                                    <MenuItem eventKey={3.6} href="/commentators/operator/cnn">CNN</MenuItem>
+                                    <MenuItem eventKey={3.7} href="/commentators/operator/nytimes">NYTimes</MenuItem>
+                                    <MenuItem eventKey={3.8} href="/commentators/operator/rt">RT</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/english">English All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={4} title="French" id="basic-nav-dropdown">
-                                <MenuItem eventKey={4.1} href="/commentators/operator/lemonde">France - Lemonde</MenuItem>
-                                <MenuItem eventKey={4.2} href="/commentators/operator/lefigaro">France - Lefigaro</MenuItem>
+                                <NavDropdown eventKey={3} title="France" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={4.1} href="/commentators/operator/lemonde">Lemonde</MenuItem>
+                                    <MenuItem eventKey={4.2} href="/commentators/operator/lefigaro">Lefigaro</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/french">French All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={5} title="Spanish" id="basic-nav-dropdown">
-                                <MenuItem eventKey={5.1} href="/commentators/operator/elpais">Spain - Elpais</MenuItem>
-                                <MenuItem eventKey={5.2} href="/commentators/operator/marca">Spain - Marca</MenuItem>
+                                <NavDropdown eventKey={3} title="Spain" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={5.1} href="/commentators/operator/elpais">Elpais</MenuItem>
+                                    <MenuItem eventKey={5.2} href="/commentators/operator/marca">Marca</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/spanish">Spanish All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={6} title="Italian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={6.1} href="/commentators/operator/repubblica">Italy - La Repubblica</MenuItem>
+                                <NavDropdown eventKey={3} title="Italy" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={6.1} href="/commentators/operator/repubblica">La Repubblica</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/italian">Italian All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Portuguese" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="/commentators/operator/g1">Brazil - G1</MenuItem>
-                                <MenuItem eventKey={7.1} href="/commentators/operator/uol">Brazil - UOL</MenuItem>
-                                <MenuItem eventKey={7.1} href="/commentators/operator/ultimosegundo">Brazil - IG</MenuItem>
-                                <MenuItem eventKey={7.1} href="/commentators/operator/folhapolitica">Brazil - FolhaPolitica</MenuItem>
-                                <MenuItem eventKey={7.1} href="/commentators/operator/cartacapital">Brazil - CartaCapital</MenuItem>
+                                <NavDropdown eventKey={3} title="Brazil" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1} href="/commentators/operator/g1">G1</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/commentators/operator/uol">UOL</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/commentators/operator/ultimosegundo">IG</MenuItem>
+                                    <MenuItem eventKey={7.1}
+                                              href="/commentators/operator/folhapolitica">FolhaPolitica</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/news/operator/cartacapital">CartaCapital</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/portuguese">Portuguese All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Croatian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="/commentators/operator/indexhr">Index.HR</MenuItem>
+                                <NavDropdown eventKey={3} title="Croatia" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1} href="/commentators/operator/indexhr">Index.HR</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/croatian">Croatian All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Russian" id="basic-nav-dropdown">
-                                <MenuItem eventKey={7.1} href="commentators/operator/novayagazeta_ru">Novayagazeta</MenuItem>
+                                <NavDropdown eventKey={3} title="Russia" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={7.1}
+                                              href="/commentators/operator/novayagazeta_ru">Novayagazeta</MenuItem>
+                                </NavDropdown>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/russian">Russian All</MenuItem>
                             </NavDropdown>
                         </NavDropdown>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={9} href="https://comentarismo.on.spiceworks.com/portal" target="_blank"><span className="mobile-show">Support</span></NavItem>
+                        <NavItem eventKey={9} href="https://comentarismo.on.spiceworks.com/portal" target="_blank"><span
+                            className="mobile-show">Support</span></NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

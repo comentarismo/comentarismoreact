@@ -9,6 +9,23 @@ import r from 'rethinkdb';
 //get commentator profile by nickurlize
 
 
+export function getAllPluckDistinct(conn, table,pluck, cb){
+    r.table(table)
+        .pluck(pluck)
+        .distinct()
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                console.log(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    cb(null, results);
+                });
+            }
+        });
+}
+
 export function getByID(table, id, conn, cb) {
     if (!id) {
         //console.log("getComments EOF ");

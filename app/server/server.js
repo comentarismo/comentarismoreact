@@ -16,6 +16,8 @@ import { Provider } from 'react-redux';
 
 import r from 'rethinkdb';
 
+import {generateSitemap} from './sitemap';
+
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -34,10 +36,16 @@ if (process.env.NODE_ENV === 'production') {
     let refManifest = require('../../dist/rev-manifest.json');
     scriptSrcs = [
         `/${assets.vendor.js}`,
-        `/${assets.app.js}`
+        `/${assets.app.js}`,
+        '/static/jquery/dist/jquery.js',
+        '/static/bootstrap/dist/js/bootstrap.js',
+        '/vendor/comentarismo-client.js'
     ];
-    styleSrc =[
-        `/${refManifest['main.css']}`
+    styleSrc = [
+        `/${refManifest['main.css']}`,
+        '/static/css/all.css',
+        '/static/bootstrap/dist/css/bootstrap.css',
+        `/static/bootstrap/dist/css/bootstrap-theme.css`
     ];
 } else {
     scriptSrcs = [
@@ -64,15 +72,15 @@ server.set('view engine', 'ejs');
 // apis
 server.get('/api/questions', (req, res)=> {
     let { allcommentators } = require('./comentarismo_api');
-    allcommentators(conn,function(data){
+    allcommentators(conn, function (data) {
         res.send(data);
     });
 });
 
 server.get('/api/questions/:id', (req, res)=> {
     let { getCommentator } = require('./comentarismo_api');
-    getCommentator(req.params.id,conn,function(err, data){
-        if(err){
+    getCommentator(req.params.id, conn, function (err, data) {
+        if (err) {
             console.log(err);
         }
         res.send(data);
@@ -83,13 +91,13 @@ server.get('/api/questions/:id', (req, res)=> {
 server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
     let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
     console.log(req.params)
-    var index= req.params.index;
-    var value= req.params.value;
+    var index = req.params.index;
+    var value = req.params.value;
     var skip = parseInt(req.params.skip);
-    var limit= parseInt(req.params.limit);
+    var limit = parseInt(req.params.limit);
 
-    getAllByIndexFilterSkipLimit("commentator",index,value,{},skip,limit,conn,function(err,data){
-        if(err){
+    getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, conn, function (err, data) {
+        if (err) {
             console.log(err);
         }
         res.send(data);
@@ -98,8 +106,8 @@ server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
 
 server.get('/api/commentators/:id', (req, res)=> {
     let { getCommentator } = require('./comentarismo_api');
-    getCommentator(req.params.id,conn,function(err, data){
-        if(err){
+    getCommentator(req.params.id, conn, function (err, data) {
+        if (err) {
             console.log(err);
         }
         res.send(data);
@@ -108,7 +116,7 @@ server.get('/api/commentators/:id', (req, res)=> {
 
 server.get('/api/articles', (req, res)=> {
     let { allcommentators } = require('./comentarismo_api');
-    allcommentators(conn,function(data){
+    allcommentators(conn, function (data) {
         res.send(data);
     });
 });
@@ -117,20 +125,20 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
     let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
 
     var table = req.params.table;
-    var index= req.params.index;
-    var value= req.params.value;
+    var index = req.params.index;
+    var value = req.params.value;
     var filter = req.params.filter;
     var filtervalue = req.params.filtervalue;
     var skip = parseInt(req.params.skip);
-    var limit= parseInt(req.params.limit);
+    var limit = parseInt(req.params.limit);
 
     var filt = {};
-    if(filter && filtervalue){
-        filt = {filter:filtervalue}
+    if (filter && filtervalue) {
+        filt = {filter: filtervalue}
     }
 
-    getAllByIndexFilterSkipLimit(table,index,value,filt,skip,limit,conn,function(err,data){
-        if(err){
+    getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, conn, function (err, data) {
+        if (err) {
             console.log(err);
         }
         res.send(data);
@@ -141,13 +149,13 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
 
     var table = req.params.table;
-    var index= req.params.index;
-    var value= req.params.value;
+    var index = req.params.index;
+    var value = req.params.value;
     var skip = parseInt(req.params.skip);
-    var limit= parseInt(req.params.limit);
+    var limit = parseInt(req.params.limit);
 
-    getAllByIndexFilterSkipLimit(table,index,value,{},skip,limit,conn,function(err,data){
-        if(err){
+    getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, conn, function (err, data) {
+        if (err) {
             console.log(err);
         }
         res.send(data);
@@ -157,12 +165,12 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
 server.get('/api/news/:id', (req, res)=> {
     let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex } = require('./comentarismo_api');
-    getOneBySecondaryIndex("news","titleurlize",req.params.id,conn,function(err, news){
-        if(err){
+    getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
+        if (err) {
             console.log(err);
         }
-        getAllByIndexFilterSkipLimit("commentaries","titleurlize",req.params.id,{},0,50,conn,function(err,comments){
-            if(err){
+        getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, conn, function (err, comments) {
+            if (err) {
                 console.log(err);
             }
             //console.log(comments.length)
@@ -178,74 +186,112 @@ server.get('/api/users/:id', (req, res)=> {
     res.send(getUser(req.params.id));
 });
 
+server.get('sitemap.xml', (req, res, next)=> {
+    console.log("sitemap");
+    res.send([]);
+});
+
+
+var sitemap;
+
 server.get('*', (req, res, next)=> {
     let history = useQueries(createMemoryHistory)();
+    let location = history.createLocation(req.url);
+    let reqUrl = location.pathname + location.search;
+
     let store = configureStore();
     let routes = createRoutes(history);
-    let location = history.createLocation(req.url);
 
-    match({routes, location}, (error, redirectLocation, renderProps) => {
-        if (redirectLocation) {
-            res.redirect(301, redirectLocation.pathname + redirectLocation.search);
-        } else if (error) {
-            res.status(500).send(error.message);
-        } else if (renderProps == null) {
-            res.status(404).send('Not found')
-        } else {
-            let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
-            let reqUrl = location.pathname + location.search;
+    //sitemap
+    if (reqUrl.indexOf("sitemap.xml") !== -1) {
+        console.log(location.pathname);
+        console.log("sitemap");
 
-            getReduxPromise().then(()=> {
-                    let reduxState = escape(JSON.stringify(store.getState()));
-                    let html = ReactDOMServer.renderToString(
-                        <Provider store={store}>
-                            { <RoutingContext {...renderProps}/> }
-                        </Provider>
-                    );
-
-                    if (getCurrentUrl() === reqUrl) {
-                        res.render('index', {html, scriptSrcs, reduxState, styleSrc});
-                    } else {
-                        res.redirect(302, getCurrentUrl());
-                    }
-                    unsubscribe();
-                })
-                .catch((err)=> {
-                    unsubscribe();
-                    next(err);
-                });
-            function getReduxPromise() {
-                let { query, params } = renderProps;
-                let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
-                let promise = comp.fetchData ?
-                    comp.fetchData({query, params, store, history}) :
-                    Promise.resolve();
-
-                return promise;
-            }
+        if(!sitemap) {
+            generateSitemap(conn, function (err, xml) {
+                if (!xml) {
+                    console.log("Error generateSitemap --> ");
+                    console.log(err);
+                    res.status(500).send("Server unavailable");
+                    return;
+                }
+                sitemap = xml;
+                res.header('Content-Type', 'application/xml');
+                res.send(xml);
+            });
+        }else {
+            console.log("send from cache")
+            res.header('Content-Type', 'application/xml');
+            res.send(sitemap);
         }
-    });
-    function subscribeUrl() {
-        let currentUrl = location.pathname + location.search;
-        let unsubscribe = history.listen((newLoc)=> {
-            if (newLoc.action === 'PUSH') {
-                currentUrl = newLoc.pathname + newLoc.search;
+    } else if (reqUrl.indexOf("index.xml") !== -1) {
+        console.log(location.pathname);
+        console.log("index.xml");
+        res.status(200).send('index.xml');
+    } else {
+
+        match({routes, location}, (error, redirectLocation, renderProps) => {
+            if (redirectLocation) {
+                res.redirect(301, redirectLocation.pathname + redirectLocation.search);
+            } else if (error) {
+                res.status(500).send(error.message);
+            } else if (renderProps == null) {
+                res.status(404).send('Not found')
+            } else {
+                let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
+
+                getReduxPromise().then(()=> {
+                        let reduxState = escape(JSON.stringify(store.getState()));
+                        let html = ReactDOMServer.renderToString(
+                            <Provider store={store}>
+                                { <RoutingContext {...renderProps}/> }
+                            </Provider>
+                        );
+
+                        if (getCurrentUrl() === reqUrl) {
+                            res.render('index', {html, scriptSrcs, reduxState, styleSrc});
+                        } else {
+                            res.redirect(302, getCurrentUrl());
+                        }
+                        unsubscribe();
+                    })
+                    .catch((err)=> {
+                        unsubscribe();
+                        next(err);
+                    });
+                function getReduxPromise() {
+                    let { query, params } = renderProps;
+                    let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
+                    let promise = comp.fetchData ?
+                        comp.fetchData({query, params, store, history}) :
+                        Promise.resolve();
+
+                    return promise;
+                }
             }
         });
-        return [
-            ()=> currentUrl,
-            unsubscribe
-        ];
+        function subscribeUrl() {
+            let currentUrl = location.pathname + location.search;
+            let unsubscribe = history.listen((newLoc)=> {
+                if (newLoc.action === 'PUSH') {
+                    currentUrl = newLoc.pathname + newLoc.search;
+                }
+            });
+            return [
+                ()=> currentUrl,
+                unsubscribe
+            ];
+        }
     }
 });
 
 server.use((err, req, res, next)=> {
-    if(err) {
+    if (err) {
         console.log(err.stack);
     }
     // TODO report error here or do some further handlings
 
-    res.status(500).send("something went wrong... --> "+err.stack)
+    res.status(500).send("something went wrong... --> " + err.stack)
 })
 
 

@@ -20,6 +20,10 @@
 
 *Create index for table news*
 `languages`
+`genre`
 
 *Create index for table commentator*
 `languages`
+`genre`
+`countries`
+
