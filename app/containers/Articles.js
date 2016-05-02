@@ -3,33 +3,105 @@ import { connect } from 'react-redux'
 import { loadArticles } from 'actions/articles'
 import { Link } from 'react-router'
 import _ from 'lodash'
-import Articles from 'components/Articles'
 var MainNavbar = require('components/MainNavbar');
+
+import {getAllByIndexFilterSkipLimit} from '../middleware/sa'
+
+var Article = require('components/Article');
+
+var InfiniteScroll = require('./InfiniteScroll')(React);
 
 class ArticleContainer extends Component {
     static fetchData({ store, params }) {
-        let { index,value } = params
+        let { index,value } = params;
         return store.dispatch(loadArticles({index, value}))
     }
 
-    //componentDidMount() {
-    //    let { index,value } = this.props.params
-    //    this.props.loadArticles({index, value})
-    //}
+    constructor(props) {
+        super();
+        this.state = {
+            skip: 0,
+            limit: 5,
+            articles: [],
+            hasMore: true
+        };
+    }
+
+    handlePageChange(skip, limit) {
+        var index = this.props.params.index;
+        var value = this.props.params.value;
+        //console.log(index,value);
+        getAllByIndexFilterSkipLimit("news", index, value, skip, limit, function (err, res) {
+            // Do something
+            if (err || !res || res.body.length == 0) {
+                //this.props.params.hasMore = false;
+                this.setState({hasMore: false});
+            } else {
+                var articles = res.body;
+                var hasMore = articles.length == limit;
+                var newArticles = _.union(this.state.articles, articles);
+
+                this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
+                console.log(`skip ${skip} limit ${limit}`);
+            }
+        }.bind(this));
+    }
+
+    getLoaderElement() {
+        return (
+            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i></div>
+            </div>
+        );
+    }
 
     render() {
         return (
             <div>
                 <MainNavbar/>
-                <Articles articles={this.props.articles}/>
                 <Link to="/">Back to Home</Link>
+                <div className="row single-post-row">
+                    <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
+                        <div className="col-xs-12">
+                            <div className="content">
+                                <div className="posts">
+                                    <InfiniteScroll
+                                        ref='masonryContainer'
+                                        skip={0}
+                                        limit={50}
+                                        loader={this.getLoaderElement()}
+                                        loadMore={this.handlePageChange.bind(this)}
+                                        hasMore={this.state.hasMore}>
+                                        {
+                                            this.state.articles.map(function (article) {
+                                                return (
+                                                    <Article
+                                                        key={article.id}
+                                                        article={article}
+                                                    />
+                                                );
+                                            })
+                                        }
+                                    </InfiniteScroll>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
 }
 
 function mapStateToProps(state) {
-    return {articles: state.articles}
+    return {
+        articles: state.articles,
+        page: 50,
+        hasMore: true,
+        perPage: 50,
+        index_: state.index_,
+        value_: state.value_
+    }
 }
 
 export { ArticleContainer }

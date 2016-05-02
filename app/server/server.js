@@ -16,8 +16,35 @@ import { Provider } from 'react-redux';
 
 import r from 'rethinkdb';
 
-import {generateSitemap} from './sitemap';
+import {generateSitemap,generateIndexXml} from './sitemap';
 
+var REDIS_URL = process.env.REDISURL || "g7-box";
+var REDIS_PORT = process.env.REDISPORT || 6379;
+
+var redis = require("redis"),
+    client = redis.createClient({
+        host: REDIS_URL, port: REDIS_PORT,
+        retry_strategy: function (options) {
+            if (options.error.code === 'ECONNREFUSED') {
+                // End reconnecting on a specific error and flush all commands with a individual error
+                return new Error('The server refused the connection');
+            }
+            if (options.total_retry_time > 1000 * 60 * 60) {
+                // End reconnecting after a specific timeout and flush all commands with a individual error
+                return new Error('Retry time exhausted');
+            }
+            if (options.times_connected > 10) {
+                // End reconnecting with built in error
+                return undefined;
+            }
+            // reconnect after
+            return Math.max(options.attempt * 100, 3000);
+        }
+    });
+client.on("connect", function () {
+    client.set("foo_rand000000000000", "testing redis connection", redis.print);
+    client.get("foo_rand000000000000", redis.print);
+});
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -207,10 +234,10 @@ server.get('*', (req, res, next)=> {
         console.log(location.pathname);
         console.log("sitemap");
 
-        if(!sitemap) {
+        if (!sitemap) {
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
-                    console.log("Error generateSitemap --> ");
+                    console.log("Error generateSitemap sitemap.xml --> ");
                     console.log(err);
                     res.status(500).send("Server unavailable");
                     return;
@@ -219,15 +246,45 @@ server.get('*', (req, res, next)=> {
                 res.header('Content-Type', 'application/xml');
                 res.send(xml);
             });
-        }else {
-            console.log("send from cache")
+        } else {
+            console.log("send from cache");
             res.header('Content-Type', 'application/xml');
             res.send(sitemap);
         }
+    //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
-        console.log(location.pathname);
-        console.log("index.xml");
-        res.status(200).send('index.xml');
+        var vars = location.pathname.split("/");
+        if(!vars || vars.length < 3){
+            console.log("Error generateSitemap index.xml --> ");
+            res.status(500).send("Server unavailable");
+            return;
+        }
+        var table = vars[1];
+        var index = vars[2];
+        var value = vars[3];
+
+        //console.log("table: "+table+" index: "+index+" value: "+value);
+
+        if(table == "news" || table == "commentators"){
+
+            generateIndexXml(table,index,value,conn,function(err,xml){
+                if (!xml) {
+                    console.log("Error generateSitemap sitemap.xml --> ");
+                    console.log(err);
+                    res.status(500).send("Server unavailable");
+                    return;
+                }
+                res.header('Content-Type', 'application/xml');
+                return res.send(xml);
+            });
+
+        }else {
+            //not alllowed
+            console.log("Error generateSitemap index.xml --> ");
+            res.status(500).send("Server unavailable");
+            return;
+        }
+
     } else {
 
         match({routes, location}, (error, redirectLocation, renderProps) => {

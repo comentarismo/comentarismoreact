@@ -26,6 +26,25 @@ export function getAllPluckDistinct(conn, table,pluck, cb){
         });
 }
 
+export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb){
+    console.log("getAllByIndexPluckDistinct --> table: "+table+" index: "+index+" value: "+value+" pluck: "+pluck);
+    r.table(table)
+        .getAll(value, {index: index})
+        .pluck(pluck)
+        .distinct()
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                console.log(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    cb(null, results);
+                });
+            }
+        });
+}
+
 export function getByID(table, id, conn, cb) {
     if (!id) {
         //console.log("getComments EOF ");

@@ -4,6 +4,10 @@ import { loadArticleDetail } from 'actions/articles'
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
 var MainNavbar = require('components/MainNavbar');
+var base64Encode = require("../util/imgresizer").base64Encode;
+var width = "388";
+var height = "195";
+var quality = "50";
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -61,6 +65,40 @@ class Article extends Component {
             src = "/static/img/comentarismo-extra-mini-logo.png";
         }
         return src ? <ImageComponent forceUpdate={true} src={src} classes={'profile-bg-news'}/> : null;
+
+        //var id = this.props.article.id;
+        //
+        //var host = "http://img.comentarismo.com/r";
+        //console.log("IMGRESIZER ",src)
+        //$("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+
+        //do img resize
+        //var request = $.ajax({
+        //    url: host + '/img/',
+        //    type: 'post',
+        //    data: {
+        //        url: src,
+        //        width: width,
+        //        height: height,
+        //        quality: quality
+        //    },
+        //    mimeType: "text/plain; charset=x-user-defined"
+        //});
+        //request.done(function (binaryData) {
+        //    if (binaryData && binaryData !== "") {
+        //        //console.log("imgresizer DONE OK");
+        //        var base64Data = base64Encode(binaryData);
+        //        src = "data:image/jpeg;base64," + base64Data;
+        //        $("#"+id).attr("src", "data:image/jpeg;base64," + base64Data);
+        //    } else {
+        //        $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+        //    }
+        //});
+        //
+        //request.fail(function (e) {
+        //    //console.log(e);
+        //    $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+        //});
     }
 
 
@@ -88,6 +126,7 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
+                                        <img id={this.props.article.id} />
                                         {this.getImageElement()}
                                         <div>
                                             <div className="profile-button">

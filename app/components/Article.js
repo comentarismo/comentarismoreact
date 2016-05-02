@@ -4,6 +4,14 @@ var React = require('react');
 
 var ImageComponent = require('./Image');
 
+var base64Encode = require("../util/imgresizer").base64Encode;
+
+var width = "388";
+var height = "395";
+var quality = "50";
+var $ = require('jquery');
+
+
 module.exports = React.createClass({
     displayName: 'Article',
 
@@ -20,10 +28,41 @@ module.exports = React.createClass({
             src = this.props.article.image;
         }
 
-        return src ? <ImageComponent src={src} classes={'img img-responsive full-width'} /> : null;
+        var id = this.props.article.id;
+
+        var host = "http://img.comentarismo.com/r";
+        console.log("IMGRESIZER ",src)
+        //do img resize
+        var request = $.ajax({
+            url: host + '/img/',
+            type: 'post',
+            data: {
+                url: src,
+                width: width,
+                height: height,
+                quality: quality
+            },
+            mimeType: "text/plain; charset=x-user-defined"
+        });
+        request.done(function (binaryData) {
+            if (binaryData && binaryData !== "") {
+                //console.log("imgresizer DONE OK");
+                var base64Data = base64Encode(binaryData);
+                src = "data:image/jpeg;base64," + base64Data;
+                $("#"+id).attr("src", "data:image/jpeg;base64," + base64Data);
+            } else {
+                $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+            }
+        });
+
+        request.fail(function (e) {
+            //console.log(e);
+            $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+        });
+
     },
 
-    getTitle: function ()  {
+    getTitle: function () {
         return (
             <h3 className='article-header'>{this.props.article.title}</h3>
         );
@@ -35,7 +74,7 @@ module.exports = React.createClass({
     },
 
     getSource: function () {
-        var source =  this.props.article.operator;
+        var source = this.props.article.operator;
         return source ? <p className='source'>{source}</p> : null;
     },
 
@@ -48,6 +87,7 @@ module.exports = React.createClass({
             <div className="col-lg-4 col-md-3 col-sm-5 col-xs-10">
                 <a href={this.getArticleLink()} className='thumbnail article'>
                     <div className="image">
+                        <img id={this.props.article.id} />
                         {this.getImageElement()}
                     </div>
                     <div className='caption'>
