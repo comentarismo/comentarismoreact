@@ -2,15 +2,14 @@
 
 var React = require('react');
 
-var ImageComponent = require('./Image');
-
 var base64Encode = require("../util/imgresizer").base64Encode;
 
 var width = "388";
 var height = "395";
 var quality = "50";
-var $ = require('jquery');
 
+var $ = require('jquery');
+import Date from "components/Date"
 
 module.exports = React.createClass({
     displayName: 'Article',
@@ -75,7 +74,7 @@ module.exports = React.createClass({
 
     getSource: function () {
         var source = this.props.article.operator;
-        return source ? <p className='source'>{source}</p> : null;
+        return source ? <p className='source'><b><Date date={this.props.article.date}/> </b> {source} </p> : null;
     },
 
     getArticleLink: function () {

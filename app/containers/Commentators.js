@@ -8,15 +8,9 @@ var MainNavbar = require('components/MainNavbar');
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import {getAllByIndexFilterSkipLimit} from '../middleware/sa';
 
-var jdenticon = require("jdenticon");
-var md5 = require('md5');
-
-var Icon = React.createClass({
-    render: function () {
-        return (<div
-            dangerouslySetInnerHTML={{__html:jdenticon.toSvg(md5(this.props.nick ? this.props.nick : ""), 250)}}></div>);
-    }
-});
+import Icon from "components/Icon"
+import Date from "components/Date"
+import Helmet from "react-helmet";
 
 class CommentatorContainer extends Component {
     static fetchData({ store, params }) {
@@ -68,8 +62,20 @@ class CommentatorContainer extends Component {
     }
 
     render() {
+
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title={`Latest Comments - Category - ${this.props.params.value.toUpperCase()} `}
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                    {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
+                    {"property": "og:type", "content": "comments"},
+                    {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
+                ]}
+                    onChangeClientState={(newState) => console.log(newState)}
+                />
                 <MainNavbar/>
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
@@ -93,17 +99,15 @@ class CommentatorContainer extends Component {
                                                             </div>
                                                             <div className='caption'>
                                                                 <h3 className='article-header'>{q.nick}</h3>
-                                                                <p>Last seen: {q.maxDate}</p>
+                                                                <p>Last seen: <Date date={q.maxDate}/></p>
                                                                 Interest:
                                                                 {q.genre && Object.keys(q.genre).map(function (char, idx) {
                                                                     return <span> {q.genre[idx]} </span>
                                                                 }.bind(this))}
                                                                 <p className='source'>Total
                                                                     Comments {q.totalComments}</p>
-                                                                <Link to={`/commentators/${q.id}`}> Read Comments Now »</Link>
                                                             </div>
                                                         </a>
-
                                                     </div>
                                                 )
                                             })

@@ -5,6 +5,8 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { RoutingContext, match } from 'react-router';
 
+var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
+
 import { createMemoryHistory, useQueries } from 'history';
 import compression from 'compression';
 import Promise from 'bluebird';
@@ -17,6 +19,7 @@ import { Provider } from 'react-redux';
 import r from 'rethinkdb';
 
 import {generateSitemap,generateIndexXml} from './sitemap';
+import Helmet from "react-helmet";
 
 var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
@@ -299,17 +302,67 @@ server.get('*', (req, res, next)=> {
 
                 getReduxPromise().then(()=> {
                         let reduxState = escape(JSON.stringify(store.getState()));
-                        let html = ReactDOMServer.renderToString(
-                            <Provider store={store}>
-                                { <RoutingContext {...renderProps}/> }
-                            </Provider>
-                        );
+                        //let html = ReactDOMServer.renderToString(
+                        //    <Provider store={store}>
+                        //        { <RoutingContext {...renderProps}/> }
+                        //    </Provider>
+                        //);
+
+                        //if (getCurrentUrl() === reqUrl) {
+                        //    res.render('index', {html, scriptSrcs, reduxState, styleSrc});
+                        //} else {
+                        //    res.redirect(302, getCurrentUrl());
+                        //}
+
+
+                        let html = ReactDOMServer.renderToStaticMarkup(body(null,
+
+                            // The actual server-side rendering of our component occurs here, and we
+                            // pass our data in as `props`. This div is the same one that the client
+                            // will "render" into on the browser
+
+
+
+                            div({id: 'content', dangerouslySetInnerHTML: {__html:
+                                //ReactDOMServer.renderToString(App(props))
+                                ReactDOMServer.renderToString(
+                                    <Provider store={store}>
+                                        { <RoutingContext {...renderProps}/> }
+                                    </Provider>)
+                            }})
+
+                            // The props should match on the client and server, so we stringify them
+                            // on the page to be available for access by the code run in browser.js
+                            // You could use any var name here as long as it's unique
+                            //script({dangerouslySetInnerHTML: {__html:
+                            //'var APP_PROPS = ' + safeStringify(props) + ';'
+                            //}}),
+                            //
+                            //// We'll load React from a CDN - you don't have to do this,
+                            //// you can bundle it up or serve it locally if you like
+                            //script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.min.js'}),
+                            //script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.min.js'}),
+                            //
+                            //// Then the browser will fetch and run the browserified bundle consisting
+                            //// of browser.js and all its dependencies.
+                            //// We serve this from the endpoint a few lines down.
+                            //script({src: '/bundle.js'})
+                        ));
+
+                        let head = Helmet.rewind();
+                        console.log("karaidiasa -> "+head.title);
+
+                        // Return the page to the browser
+                        //res.end(html);
+
 
                         if (getCurrentUrl() === reqUrl) {
-                            res.render('index', {html, scriptSrcs, reduxState, styleSrc});
+                            res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
                         } else {
                             res.redirect(302, getCurrentUrl());
                         }
+
+
                         unsubscribe();
                     })
                     .catch((err)=> {

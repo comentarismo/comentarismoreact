@@ -3,12 +3,23 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 var MainNavbar = require('components/MainNavbar');
+import Helmet from "react-helmet";
 
 
 class Intro extends Component {
     render() {
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                    {"name": "description", "content": "Welcome to Comentarismo"},
+                    {"property": "og:type", "content": "article"}
+                ]}
+                    onChangeClientState={(newState) => console.log(newState)}
+                />
                 <MainNavbar/>
                 <section className="section home" id="home">
                     <div className="container">
@@ -34,7 +45,7 @@ class Intro extends Component {
                                 <div className="facts-box text-center">
                                     <div className="row">
                                         <div className="col-sm-3 col-xs-6">
-                                            <h2>9 Million</h2>
+                                            <h2>10 Million</h2>
                                             <p className="text-muted">Indexed Comments</p>
                                         </div>
                                         <div className="col-sm-3 col-xs-6">
@@ -42,11 +53,11 @@ class Intro extends Component {
                                             <p className="text-muted">World Rank</p>
                                         </div>
                                         <div className="col-sm-3 col-xs-6">
-                                            <h2>130.000</h2>
+                                            <h2>90.000</h2>
                                             <p className="text-muted">US Rank</p>
                                         </div>
                                         <div className="col-sm-3 col-xs-6">
-                                            <h2>4.000</h2>
+                                            <h2>5.000</h2>
                                             <p className="text-muted">Daily Visitors</p>
                                         </div>
                                     </div>
@@ -125,7 +136,7 @@ class Intro extends Component {
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img" className="img-circle img-thumbnail"/>
-                                            <p>"People want to learn because they want to get better. They want to be part of 'next' to learn their way into bigger opportunities." <span class="text-colored">Jacques Panis</span></p>
+                                            <p>"People want to learn because they want to get better. They want to be part of 'next' to learn their way into bigger opportunities." <span className="text-colored">Jacques Panis</span></p>
                                         </div>
                                     </div>
                                 </div>

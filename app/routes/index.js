@@ -12,7 +12,6 @@ import Commentator from 'containers/Commentator';
 import Articles from 'containers/Articles';
 import Article from 'containers/Article';
 
-//TODO: create routes for categories,languages,genres
 export default function (history) {
     return (
         <Router history={history}>

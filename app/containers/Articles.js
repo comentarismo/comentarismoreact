@@ -10,6 +10,7 @@ import {getAllByIndexFilterSkipLimit} from '../middleware/sa'
 var Article = require('components/Article');
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
+import Helmet from "react-helmet";
 
 class ArticleContainer extends Component {
     static fetchData({ store, params }) {
@@ -58,6 +59,17 @@ class ArticleContainer extends Component {
     render() {
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title={`Latest news - Category - ${this.props.params.value.toUpperCase()} `}
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                    {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
+                    {"property": "og:type", "content": "article"},
+                    {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
+                ]}
+                    onChangeClientState={(newState) => console.log(newState)}
+                />
                 <MainNavbar/>
                 <Link to="/">Back to Home</Link>
                 <div className="row single-post-row">

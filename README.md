@@ -1,29 +1,54 @@
-# Comentarismo REACT
+# Comentarismo REACT JS
 
 # Install
 `npm install`
 
+# Install Bower dependencies
+`bower install`
+
+# Prepare CSS/JS
+## In a new terminal window, execute Gulp and leave it there, so it can re-run after any changes.
+`gulp`
+
 # Run
 `npm init`
 
-*NodeJS 5.6.0 required*
+# System Requirements
+## NodeJS 5.6.0
+## Gulp
+## Mocha to run the tests
+## Bower to download css/js dependencies like bootstrap
 
-# Install NPM NodeJS installer
+# Steps to Upgrade NodeJS
+
+## Install NPM NodeJS installer
 `sudo npm install -g n`
 
-# Upgrade NodeJS
-`sudo n 6.0.0`
+## Upgrade NodeJS
+`sudo n 5.6.0`
 
-*RethinkDB required*
+# RethinkDB is required
+## Please make sure etc/hosts is something like this:
 `/etc/hosts
 10.0.1.121        g7-box`
 
-*Create index for table news*
-`languages`
-`genre`
-
-*Create index for table commentator*
+## Make sure RethinkDB has indexes for table news*
 `languages`
 `genre`
 `countries`
+`created`
+`genre`
+`languages`
+`operator`
+`titleurlize`
 
+
+# Make sure RethinkDB has indexes for table commentator:
+`languages`
+`genre`
+`countries`
+`nick`
+`operator`
+
+# RethinkDB queries reference
+## [Link](rethinkdb.md)

@@ -5,6 +5,9 @@ import { loadCommentatorDetail } from 'actions/commentators'
 import {XScript} from 'components/XScript'
 var MainNavbar = require('components/MainNavbar');
 
+import Date from "components/Date"
+import Helmet from "react-helmet";
+
 class Commentator extends Component {
     static fetchData({ store, params }) {
         let { id } = params
@@ -20,6 +23,17 @@ class Commentator extends Component {
         let { commentator } = this.props
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title={`Latest Comments - Commentator Profile -> @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} `}
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                    {"name": "description", "content": `Find all comments for @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
+                    {"property": "og:type", "content": "comments"},
+                    {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}
+                ]}
+                    onChangeClientState={(newState) => console.log(newState)}
+                />
                 <MainNavbar/>
                 <div className="container-fluid single-post-wrapper">
                     <a id="comentarismo-page" data-id={ commentator.nick }/>
@@ -55,7 +69,7 @@ class Commentator extends Component {
                                                         <span
                                                             className="profile-StatLabel profile-block">First Seen</span>
                                                         <span
-                                                            className="profile-StatValue">{ commentator.minDate }</span>
+                                                            className="profile-StatValue"><Date date={commentator.minDate}/></span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -65,7 +79,7 @@ class Commentator extends Component {
                                                         <span
                                                             className="profile-StatLabel profile-block">Last Seen</span>
                                                         <span
-                                                            className="profile-StatValue">{ commentator.maxDate }</span>
+                                                            className="profile-StatValue"><Date date={commentator.maxDate}/></span>
                                                     </li>
                                                 </ul>
                                             </div>

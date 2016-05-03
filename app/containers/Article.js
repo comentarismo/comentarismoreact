@@ -4,10 +4,9 @@ import { loadArticleDetail } from 'actions/articles'
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
 var MainNavbar = require('components/MainNavbar');
-var base64Encode = require("../util/imgresizer").base64Encode;
-var width = "388";
-var height = "195";
-var quality = "50";
+
+import Icon from "components/Icon"
+import Date from "components/Date"
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -65,42 +64,7 @@ class Article extends Component {
             src = "/static/img/comentarismo-extra-mini-logo.png";
         }
         return src ? <ImageComponent forceUpdate={true} src={src} classes={'profile-bg-news'}/> : null;
-
-        //var id = this.props.article.id;
-        //
-        //var host = "http://img.comentarismo.com/r";
-        //console.log("IMGRESIZER ",src)
-        //$("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
-
-        //do img resize
-        //var request = $.ajax({
-        //    url: host + '/img/',
-        //    type: 'post',
-        //    data: {
-        //        url: src,
-        //        width: width,
-        //        height: height,
-        //        quality: quality
-        //    },
-        //    mimeType: "text/plain; charset=x-user-defined"
-        //});
-        //request.done(function (binaryData) {
-        //    if (binaryData && binaryData !== "") {
-        //        //console.log("imgresizer DONE OK");
-        //        var base64Data = base64Encode(binaryData);
-        //        src = "data:image/jpeg;base64," + base64Data;
-        //        $("#"+id).attr("src", "data:image/jpeg;base64," + base64Data);
-        //    } else {
-        //        $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
-        //    }
-        //});
-        //
-        //request.fail(function (e) {
-        //    //console.log(e);
-        //    $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
-        //});
     }
-
 
     render() {
         let { article } = this.props;
@@ -126,7 +90,7 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <img id={this.props.article.id} />
+                                        <img id={this.props.article.id}/>
                                         {this.getImageElement()}
                                         <div>
                                             <div className="profile-button">
@@ -153,7 +117,7 @@ class Article extends Component {
                                                     <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Publish Date</span>
-                                                        <span className="profile-StatValue">{ article.date }</span>
+                                                        <span className="profile-StatValue"><Date date={this.props.article.date}/></span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -184,29 +148,32 @@ class Article extends Component {
 
                                 </div>
 
-                                {
-                                    article.comments.map((q)=> {
-                                        return (
-                                            <div id="comentarismo-container" className="comentarismo-comment" key={q.id}
-                                                 className="col-md-12">
-                                                <div className="col-sm-1 hidden-xs">
-                                                    <a className="avatar- img-responsive user-photo"/>
-                                                </div>
-                                                <div className="text-wrapper">
-                                                    <b>{q.date }</b>
-                                                    <div role="meta" className="comentarismo-comment-header">
+                                <div id="comentarismo-container" className="comentarismo-comment"
+                                     className="col-md-12">
+                                    {
+                                        article.comments.map((q)=> {
+                                            return (
+                                                <div key={q.id}>
+                                                    <div className="col-sm-1 hidden-xs">
+                                                        <a className="avatar- img-responsive user-photo"/>
+                                                        <Icon nick={q.nick}/>
+                                                    </div>
+                                                    <div className="text-wrapper">
+                                                        <b>{q.date }</b>
+                                                        <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b>{ q.title }</b>
                                                         </span>
-                                                    </div>
-                                                    <div className="text">
-                                                        <p>{ q.comment }</p>
+                                                        </div>
+                                                        <div className="text">
+                                                            <p>{ q.comment }</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )
-                                    })
-                                }
+                                            )
+                                        })
+                                    }
+                                </div>
 
                             </div>
                         </div>
