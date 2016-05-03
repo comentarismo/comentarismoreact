@@ -13,10 +13,10 @@ import Date from "components/Date"
 import Helmet from "react-helmet";
 
 class CommentatorContainer extends Component {
-    static fetchData({ store, params }) {
-        let { index,value } = params
-        return store.dispatch(loadCommentators({index, value}))
-    }
+    //static fetchData({ store, params }) {
+    //    let { index,value } = params
+    //    return store.dispatch(loadCommentators({index, value}))
+    //}
 
     //componentDidMount() {
     //    let { index,value } = this.props.params
@@ -48,7 +48,7 @@ class CommentatorContainer extends Component {
                 var newArticles = _.union(this.state.articles, articles);
 
                 this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
-                console.log(`skip ${skip} limit ${limit}`);
+                //console.log(`skip ${skip} limit ${limit}`);
             }
         }.bind(this));
     }

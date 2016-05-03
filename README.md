@@ -52,3 +52,13 @@
 
 # RethinkDB queries reference
 ## [Link](rethinkdb.md)
+
+
+# Deployment to production
+
+* First make sure you installed all dependencies with `npm install` 
+* Run `npm run build` (If you run `npm install` this step is not required as npm postinstall task)
+* Make sure `etc/hosts` have `g7-box` and is properly configured
+* Make sure Redis server is started 
+* Default Start `NODE_ENV=production NODE_PATH=./app node app/server`
+* Configure Redis and RethinkDB: `NODE_ENV=production REDISURL=g7-box REDISPORT=6379 RETHINKURL=g7-box RETHINKPORT=28015 NODE_PATH=./app node app/server`

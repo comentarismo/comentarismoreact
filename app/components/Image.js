@@ -7,7 +7,8 @@ module.exports = React.createClass({
 
     onError: function () {
         console.log('image error - removing');
-        this.getDOMNode().remove();
+        this.getDOMNode().src = this.props.srcfallback;
+        this.forceUpdate();
     },
 
     componentDidMount: function () {

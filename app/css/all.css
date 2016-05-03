@@ -8,7 +8,7 @@
 }
 
 .profile-bg {
-    background-image: url("../img/comentarismo-bg-1500-500.png");
+    background-image: url("/static/img/comentarismo-bg-450-150.png");
     background-position: 0 50%;
     background-size: 100% auto;
     border-bottom: 1px solid #e1e8ed;
@@ -141,13 +141,13 @@ a#inifiniteLoader {
 .success {
     color: #4F8A10;
     background-color: #DFF2BF;
-    background-image: url('../img/success.png');
+    background-image: url('/static/img/success.png');
 }
 
 .error {
     color: #D8000C;
     background-color: #FFBABA;
-    background-image: url('../img/error.png');
+    background-image: url('/static/img/error.png');
 }
 
 .comentarismo-comment {
@@ -1093,19 +1093,16 @@ a{
 
 .bg-solid {
     background-color: #28282e !important;
-    background-image: url("../images/bg-pattern.png");
     background-repeat: repeat;
 }
 
 .bg-solid-1 {
     background-color: #6A76FC !important;
-    background-image: url("../images/bg-pattern.png");
     background-repeat: repeat;
 }
 
 .bg-solid-2 {
     background-color: #43CEA2 !important;
-    background-image: url("../images/bg-pattern.png");
     background-repeat: repeat;
 }
 
@@ -1908,7 +1905,6 @@ textarea.form-control {
 
 /* Home Showcase */
 #macbook {
-    background: url("../images/mac.png");
     width: 967px;
     height: 484px;
     margin: 0px auto;

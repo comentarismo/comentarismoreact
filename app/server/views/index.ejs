@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html <%=head.htmlAttributes%> >
+<html <%- head.htmlAttributes.toString() %> >
 <head>
-    <title><%= head.title %></title>
+
+    <%- head.title.toString() %>
+    <%- head.meta.toString() %>
+
     <% styleSrc.forEach(function(src){ %>
     <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
     <% }) %>

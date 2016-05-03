@@ -10,13 +10,13 @@ export class XScript extends React.Component {
     }
 
     componentDidMount() {
-        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/vendor/comentarismo-client.js");
+        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client.js");
     }
 
     render() {
         return <div ref="it"
                     dangerouslySetInnerHTML={{__html:
-                    '<script type="text/javascript" src="/vendor/comentarismo-client.js"></script>' +
+                    '<script type="text/javascript" src="/static/comentarismo-client.js"></script>' +
                     '<script>$(function () {' +
                       'var operator = $("#comentarismo-operator").attr("data-id"); ' +
                       'var page = $("#comentarismo-page").attr("data-id"); '+

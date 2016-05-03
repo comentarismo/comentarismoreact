@@ -6,6 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import { RoutingContext, match } from 'react-router';
 
 var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
+var redis = require("redis");
 
 import { createMemoryHistory, useQueries } from 'history';
 import compression from 'compression';
@@ -26,32 +27,6 @@ var REDIS_PORT = process.env.REDISPORT || 6379;
 
 let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator } = require('./comentarismo_api');
 
-
-var redis = require("redis"),
-    client = redis.createClient({
-        host: REDIS_URL, port: REDIS_PORT,
-        retry_strategy: function (options) {
-            if (options.error.code === 'ECONNREFUSED') {
-                // End reconnecting on a specific error and flush all commands with a individual error
-                return new Error('The server refused the connection');
-            }
-            if (options.total_retry_time > 1000 * 60 * 60) {
-                // End reconnecting after a specific timeout and flush all commands with a individual error
-                return new Error('Retry time exhausted');
-            }
-            if (options.times_connected > 10) {
-                // End reconnecting with built in error
-                return undefined;
-            }
-            // reconnect after
-            return Math.max(options.attempt * 100, 3000);
-        }
-    });
-client.on("connect", function () {
-    client.set("foo_rand000000000000", "testing redis connection", redis.print);
-    client.get("foo_rand000000000000", redis.print);
-});
-
 let server = new Express();
 let port = process.env.PORT || 3002;
 let scriptSrcs;
@@ -59,70 +34,68 @@ let scriptSrcs;
 let conn;
 
 var conn_url = process.env.RETHINKURL || 'g7-box';
-var dbport = process.env.PORT || 28015;
-var authKey = process.env.AUTHKEY || '';
+var dbport = process.env.RETHINKPORT || 28015;
+var authKey = process.env.RETHINKAUTHKEY || '';
 var rethinkdb_table = 'test';
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
-    let assets = require('../../dist/webpack-assets.json');
-    let refManifest = require('../../dist/rev-manifest.json');
+    //let assets = require('../../dist/webpack-assets.json');
     scriptSrcs = [
-        `/${assets.vendor.js}`,
-        `/${assets.app.js}`,
-        '/static/jquery/dist/jquery.js',
-        '/static/bootstrap/dist/js/bootstrap.js',
-        '/vendor/comentarismo-client.js'
+        `/vendor.js`,
+        `/app.js`,
+        '/static/all.min.js'
     ];
     styleSrc = [
-        `/${refManifest['main.css']}`,
-        '/static/css/all.css',
-        '/static/bootstrap/dist/css/bootstrap.css',
-        `/static/bootstrap/dist/css/bootstrap-theme.css`
+        '/static/all.min.css',
     ];
 } else {
     scriptSrcs = [
         'http://localhost:3001/static/vendor.js',
         'http://localhost:3001/static/dev.js',
         'http://localhost:3001/static/app.js',
-        '/static/jquery/dist/jquery.js',
-        '/static/bootstrap/dist/js/bootstrap.js',
-        '/vendor/comentarismo-client.js'
+        '/static/all.js',
     ];
     styleSrc = [
-        '/main.css',
-        '/static/css/all.css',
-        '/static/bootstrap/dist/css/bootstrap.css',
-        `/static/bootstrap/dist/css/bootstrap-theme.css`
+        '/static/all.css'
     ];
 }
+
+
+var client = redis.createClient({
+    host: REDIS_URL, port: REDIS_PORT,
+    retry_strategy: function (options) {
+        if (options.error.code === 'ECONNREFUSED') {
+            // End reconnecting on a specific error and flush all commands with a individual error
+            return new Error('The server refused the connection');
+        }
+        if (options.total_retry_time > 1000 * 60 * 60) {
+            // End reconnecting after a specific timeout and flush all commands with a individual error
+            return new Error('Retry time exhausted');
+        }
+        if (options.times_connected > 10) {
+            // End reconnecting with built in error
+            return undefined;
+        }
+        // reconnect after
+        return Math.max(options.attempt * 100, 3000);
+    }
+});
+
+client.on("connect", function () {
+    client.set("foo_rand000000000000", "testing redis connection", redis.print);
+    client.get("foo_rand000000000000", redis.print);
+});
+
 
 server.use(compression());
 server.use(Express.static(path.join(__dirname, '../..', 'dist')));
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 
-// apis
-//server.get('/api/questions', (req, res)=> {
-//    let { allcommentators } = require('./comentarismo_api');
-//    allcommentators(conn, function (data) {
-//        res.send(data);
-//    });
-//});
-
-server.get('/api/questions/:id', (req, res)=> {
-    let { getCommentator } = require('./comentarismo_api');
-    getCommentator(req.params.id, conn, function (err, data) {
-        if (err) {
-            console.log(err);
-        }
-        res.send(data);
-    });
-});
-
-// mock apis
-server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
-    console.log(req.params)
+//bind to action/commentators.js -> loadCommentators
+server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
+    console.log(req.params);
     var index = req.params.index;
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
@@ -130,29 +103,86 @@ server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
 
     var sort = req.query.sort;
 
-    getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, sort, conn, function (err, data) {
-        if (err) {
-            console.log(err);
+    var urlTag = `/fapi/commentators/${index}/${value}/${skip}/${limit}?sort=${sort}`;
+    console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+        } else {
+            console.log(urlTag+" will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
         }
-        res.send(data);
+        //-------REDIS CACHE END ------//
+
+        getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, sort, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            //-------REDIS CACHE SAVE START ------//
+            console.log(urlTag+" will save cached");
+            client.set(urlTag, JSON.stringify(data), redis.print);
+            client.expire(urlTag, 1800);
+            //-------REDIS CACHE SAVE END ------//
+
+
+            res.send(data);
+        });
+
     });
+
+
 });
 
+//bind to action/commentators.js -> loadCommentatorDetail
 server.get('/api/commentators/:id', (req, res)=> {
-    getCommentator(req.params.id, conn, function (err, data) {
-        if (err) {
-            console.log(err);
-        }
-        res.send(data);
-    });
-});
+    var id = req.params.id;
 
-//server.get('/api/articles', (req, res)=> {
-//    let { allcommentators } = require('./comentarismo_api');
-//    allcommentators(conn, function (data) {
-//        res.send(data);
-//    });
-//});
+    var urlTag = `/api/commentators/${id}`;
+    //console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log(urlTag+" will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+
+        getCommentator(req.params.id, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            //-------REDIS CACHE SAVE START ------//
+            console.log(urlTag+" will save cached");
+            client.set(urlTag, JSON.stringify(data), redis.print);
+            client.expire(urlTag, 1800);
+            //-------REDIS CACHE SAVE END ------//
+
+            res.send(data);
+        });
+
+    });
+
+
+});
 
 /**
  * Get all from a table with a index and its value and optional pos filtering like /genre/politics with skip and limit
@@ -172,16 +202,47 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
     }
     var sort = req.query.sort;
 
-    getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, sort, conn, function (err, data) {
-        if (err) {
-            console.log(err);
+    var urlTag = `/fapi/${table}/${index}/${value}/${filter}/${filtervalue}/${skip}/${limit}?sort=${sort}`;
+    console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log(urlTag+" will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
         }
-        res.send(data);
+        //-------REDIS CACHE END ------//
+
+
+        getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, sort, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            //-------REDIS CACHE SAVE START ------//
+            console.log(urlTag+" will save cached");
+            client.set(urlTag, JSON.stringify(data), redis.print);
+            client.expire(urlTag, 1800);
+            //-------REDIS CACHE SAVE END ------//
+
+            res.send(data);
+        });
     });
 });
 
 /**
  * Get all from a table with a index and its value with skip and limit
+ * bind to action/articles.js -> loadArticles
+ * bind to app/sa.js -> used for listing all news and commentators infinitescroll
+ *
  */
 server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     var table = req.params.table;
@@ -192,45 +253,100 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
     var sort = req.query.sort;
 
-    getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, sort, conn, function (err, data) {
-        if (err) {
-            console.log(err);
+    var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}`;
+    //console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log(urlTag+" will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
         }
-        res.send(data);
+        //-------REDIS CACHE END ------//
+
+
+        getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, sort, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            //-------REDIS CACHE SAVE START ------//
+            console.log(urlTag+" will save cached");
+            client.set(urlTag, JSON.stringify(data), redis.print);
+            client.expire(urlTag, 1800);
+            //-------REDIS CACHE SAVE END ------//
+
+            res.send(data);
+        });
+
     });
 });
 
-
+//bind to action/articles.js -> loadArticleDetail
 server.get('/api/news/:id', (req, res)=> {
     var sort = req.query.sort;
 
-    getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
-        if (err) {
-            console.log(err);
-        }
-        getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
+    var urlTag = `/api/news/${req.params.id}`;
+    //console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
             if (err) {
-                console.log(err);
+                console.error(err.stack);
             }
-            //console.log(comments.length)
-            news.comments = comments;
-            res.send(news);
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log(urlTag+" will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+
+        getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+            getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
+                if (err) {
+                    console.error(err.stack);
+                    return res.status(500).send('Something broke!');
+                }
+                //console.log(comments.length)
+                news.comments = comments;
+
+                //-------REDIS CACHE SAVE START ------//
+                console.log(urlTag+" will save cached");
+                client.set(urlTag, JSON.stringify(news), redis.print);
+                client.expire(urlTag, 1800);
+                //-------REDIS CACHE SAVE END ------//
+
+                res.send(news);
+            });
         });
+
     });
 
 });
 
-server.get('/api/users/:id', (req, res)=> {
-    let { getUser } = require('./mock_api');
-    res.send(getUser(req.params.id));
-});
-
-server.get('sitemap.xml', (req, res, next)=> {
-    console.log("sitemap");
-    res.send([]);
-});
+//server.get('/api/users/:id', (req, res)=> {
+//    let { getUser } = require('./mock_api');
+//    res.send(getUser(req.params.id));
+//});
 
 
+//TODO: cache sitemap with redis
 var sitemap;
 
 server.get('*', (req, res, next)=> {
@@ -250,7 +366,7 @@ server.get('*', (req, res, next)=> {
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
                     console.log("Error generateSitemap sitemap.xml --> ");
-                    console.log(err);
+                    console.error(err.stack);
                     res.status(500).send("Server unavailable");
                     return;
                 }
@@ -263,13 +379,12 @@ server.get('*', (req, res, next)=> {
             res.header('Content-Type', 'application/xml');
             res.send(sitemap);
         }
-    //section sitemap
+        //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
         var vars = location.pathname.split("/");
-        if(!vars || vars.length < 3){
+        if (!vars || vars.length < 3) {
             console.log("Error generateSitemap index.xml --> ");
-            res.status(500).send("Server unavailable");
-            return;
+            return res.status(500).send("Server unavailable");
         }
         var table = vars[1];
         var index = vars[2];
@@ -277,24 +392,22 @@ server.get('*', (req, res, next)=> {
 
         //console.log("table: "+table+" index: "+index+" value: "+value);
 
-        if(table == "news" || table == "commentators"){
+        if (table == "news" || table == "commentators") {
 
-            generateIndexXml(table,index,value,conn,function(err,xml){
+            generateIndexXml(table, index, value, conn, function (err, xml) {
                 if (!xml) {
                     console.log("Error generateSitemap sitemap.xml --> ");
-                    console.log(err);
-                    res.status(500).send("Server unavailable");
-                    return;
+                    console.error(err.stack);
+                    return res.status(500).send("Server unavailable");
                 }
                 res.header('Content-Type', 'application/xml');
                 return res.send(xml);
             });
 
-        }else {
+        } else {
             //not alllowed
             console.log("Error generateSitemap index.xml --> ");
-            res.status(500).send("Server unavailable");
-            return;
+            return res.status(500).send("Server unavailable");
         }
 
     } else {
@@ -303,6 +416,7 @@ server.get('*', (req, res, next)=> {
             if (redirectLocation) {
                 res.redirect(301, redirectLocation.pathname + redirectLocation.search);
             } else if (error) {
+                console.error(err.stack);
                 res.status(500).send(error.message);
             } else if (renderProps == null) {
                 res.status(404).send('Not found')
@@ -311,66 +425,31 @@ server.get('*', (req, res, next)=> {
 
                 getReduxPromise().then(()=> {
                         let reduxState = escape(JSON.stringify(store.getState()));
-                        //let html = ReactDOMServer.renderToString(
-                        //    <Provider store={store}>
-                        //        { <RoutingContext {...renderProps}/> }
-                        //    </Provider>
-                        //);
+                        let html = ReactDOMServer.renderToString(
+                            <Provider store={store}>
+                                { <RoutingContext {...renderProps}/> }
+                            </Provider>
+                        );
 
-                        //if (getCurrentUrl() === reqUrl) {
-                        //    res.render('index', {html, scriptSrcs, reduxState, styleSrc});
-                        //} else {
-                        //    res.redirect(302, getCurrentUrl());
-                        //}
-
-
-                        let html = ReactDOMServer.renderToStaticMarkup(body(null,
-
-                            // The actual server-side rendering of our component occurs here, and we
-                            // pass our data in as `props`. This div is the same one that the client
-                            // will "render" into on the browser
-
-
-
-                            div({id: 'content', dangerouslySetInnerHTML: {__html:
-                                //ReactDOMServer.renderToString(App(props))
-                                ReactDOMServer.renderToString(
-                                    <Provider store={store}>
-                                        { <RoutingContext {...renderProps}/> }
-                                    </Provider>)
-                            }})
-
-                            // The props should match on the client and server, so we stringify them
-                            // on the page to be available for access by the code run in browser.js
-                            // You could use any var name here as long as it's unique
-                            //script({dangerouslySetInnerHTML: {__html:
-                            //'var APP_PROPS = ' + safeStringify(props) + ';'
-                            //}}),
-                            //
-                            //// We'll load React from a CDN - you don't have to do this,
-                            //// you can bundle it up or serve it locally if you like
-                            //script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.min.js'}),
-                            //script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.min.js'}),
-                            //
-                            //// Then the browser will fetch and run the browserified bundle consisting
-                            //// of browser.js and all its dependencies.
-                            //// We serve this from the endpoint a few lines down.
-                            //script({src: '/bundle.js'})
-                        ));
+                        //let html = ReactDOMServer.renderToStaticMarkup(body(null,
+                        //    div({id: 'content', dangerouslySetInnerHTML: {__html:
+                        //        //ReactDOMServer.renderToString(App(props))
+                        //        ReactDOMServer.renderToString(
+                        //            <Provider store={store}>
+                        //                { <RoutingContext {...renderProps}/> }
+                        //            </Provider>)
+                        //    }})
+                        //    //script({src: '/bundle.js'})
+                        //));
 
                         let head = Helmet.rewind();
-                        console.log("karaidiasa -> "+head.title);
-
-                        // Return the page to the browser
-                        //res.end(html);
-
+                        //console.log("Helmet.rewind -> "+head.title.toString());
 
                         if (getCurrentUrl() === reqUrl) {
                             res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
                         } else {
                             res.redirect(302, getCurrentUrl());
                         }
-
 
                         unsubscribe();
                     })
@@ -411,7 +490,7 @@ server.use((err, req, res, next)=> {
     // TODO report error here or do some further handlings
 
     res.status(500).send("something went wrong... --> " + err.stack)
-})
+});
 
 
 //auth rethinkdb

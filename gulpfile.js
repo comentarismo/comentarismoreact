@@ -1,19 +1,29 @@
 var gulp = require('gulp'),
     $ = require('gulp-load-plugins')();
+var concat = require('gulp-concat');
+var sourcemaps = require('gulp-sourcemaps');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+var cleanCSS = require('gulp-clean-css');
+
 
 var buildProperties = {
     publicDir: require('path').resolve('./dist'),
     GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || 'DEVELOP',
-    vendorFiles: [
-        './bower_components/bootstrap/dist/**/*',
-        './bower_components/jquery/dist/**/*',
-        './vendor/**/*'
+    cssFiles: [
+        'app/styles/main.scss',
+        'app/css/all.css',
+        './bower_components/bootstrap/dist/css/bootstrap.css',
+        './bower_components/bootstrap/dist/css/bootstrap-theme.css'
     ],
-    imageFiles : ['./img/**/*']
+    comentarismoApi: [
+        './vendor/comentarismo-client.js'
+    ],
+    imageFiles: ['./img/**/*']
 };
 
 gulp.task('css', function () {
-    return gulp.src('app/styles/main.scss')
+    return gulp.src(buildProperties.cssFiles)
         .pipe($.sourcemaps.init())
         .pipe($.sass().on('error', $.sass.logError))
         .pipe($.autoprefixer({
@@ -21,37 +31,28 @@ gulp.task('css', function () {
             cascade: false
         }))
         .pipe($.sourcemaps.write())
-        .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('css-copy', function () {
-    return gulp.src('app/css/*.css')
-        .pipe(gulp.dest('./dist/static/css'));
-});
-
-gulp.task('css:watch', function () {
-    gulp.watch('app/styles/*', ['css','css-copy']);
-    gulp.watch('app/css/*', ['css','css-copy']);
-});
-
-gulp.task('css:build', ['css'], function () {
-    return gulp.src('./dist/*.css')
-        .pipe($.rev())
-        .pipe(gulp.dest('./dist'))
-        .pipe($.rev.manifest())
-        .pipe(gulp.dest('./dist'));
-});
-
-
-gulp.task('vendor', function () {
-    gulp.src(buildProperties.vendorFiles, {base: './bower_components/'})
-        .pipe(gulp.dest(buildProperties.publicDir + '/static'))
+        .pipe(concat('all.css'))
+        .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {
             console.log(error);
         })
         .on('end', function () {
-            console.log('Done copying vendor dependencies.');
-        });
+            console.log('Done css concat dependencies.');
+        }).pipe(rename('all.min.css'))
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
+        .on('end', function () {
+            console.log('Done css minify dependencies.');
+        })
+});
+
+gulp.task('css:watch', function () {
+    gulp.watch('./app/styles/*', ['css']);
+    gulp.watch('./app/css/*', ['css']);
+});
+
+gulp.task('js:watch', function () {
+    gulp.watch('./vendor/*', ['minify-js']);
 });
 
 gulp.task('images', function () {
@@ -65,5 +66,51 @@ gulp.task('images', function () {
         });
 });
 
+gulp.task('minify-js', function () {
+    return gulp.src(
+        [
+            './bower_components/jquery/dist/jquery.js',
+            './bower_components/bootstrap/dist/js/bootstrap.js'])
+        .pipe(sourcemaps.init())
+        .pipe(concat('all.js'))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
+        .on('error', function (error) {
+            console.log(error);
+        })
+        .on('end', function () {
+            console.log('Done minify dependencies.');
+        }).pipe(rename('all.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
+});
 
-gulp.task('default', ['css','vendor','images','css-copy','css:watch']);
+gulp.task('vendor', function () {
+    gulp.src(buildProperties.comentarismoApi)
+        .pipe(gulp.dest(buildProperties.publicDir + '/static'))
+        .on('error', function (error) {
+            console.log(error);
+        })
+        .on('end', function () {
+            console.log('Done copying vendor dependencies.');
+        });
+});
+
+gulp.task('fonts', function () {
+    gulp.src("./bower_components/bootstrap/dist/fonts/**/*")
+        .pipe(gulp.dest(buildProperties.publicDir + '/fonts/'))
+        .on('error', function (error) {
+            console.log(error);
+        })
+        .on('end', function () {
+            console.log('Done copying fonts dependencies.');
+        });
+});
+
+
+
+//./vendor/comentarismo-client.js
+
+gulp.task('default', ['css', 'fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
+
+gulp.task('prod', ['css', 'fonts', 'images', 'minify-js', 'vendor']);

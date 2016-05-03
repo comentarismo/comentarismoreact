@@ -9,7 +9,7 @@ import r from 'rethinkdb';
 //get commentator profile by nickurlize
 
 
-export function getAllPluckDistinct(conn, table,pluck, cb){
+export function getAllPluckDistinct(conn, table, pluck, cb){
     r.table(table)
         .pluck(pluck)
         .distinct()
@@ -137,7 +137,7 @@ export function getCommentator(id,conn,cb) {
                     cb(err);
                 } else {
                     commentator.comments = comments;
-                    console.log(commentator);
+                    //console.log(commentator);
                     cb(null,commentator);
                 }
             });

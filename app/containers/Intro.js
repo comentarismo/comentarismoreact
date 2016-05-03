@@ -106,7 +106,7 @@ class Intro extends Component {
                     <div className="container">
                         <div className="row">
                             <div className="col-sm-10 col-sm-offset-1">
-                                <img src="/static/img/comentarismo-bg-1500-500.png" className="img-responsive"/>
+                                <img src="/static/img/comentarismo-bg-450-150.png" className="img-responsive"/>
                             </div>
                         </div>
                     </div>

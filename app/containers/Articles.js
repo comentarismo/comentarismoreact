@@ -13,10 +13,10 @@ var InfiniteScroll = require('./InfiniteScroll')(React);
 import Helmet from "react-helmet";
 
 class ArticleContainer extends Component {
-    static fetchData({ store, params }) {
-        let { index,value } = params;
-        return store.dispatch(loadArticles({index, value}))
-    }
+    //static fetchData({ store, params }) {
+    //    let { index,value } = params;
+    //    return store.dispatch(loadArticles({index, value}))
+    //}
 
     constructor(props) {
         super();
@@ -43,7 +43,7 @@ class ArticleContainer extends Component {
                 var newArticles = _.union(this.state.articles, articles);
 
                 this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
-                console.log(`skip ${skip} limit ${limit}`);
+                //console.log(`skip ${skip} limit ${limit}`);
             }
         }.bind(this));
     }
