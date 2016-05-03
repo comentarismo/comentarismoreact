@@ -37,11 +37,10 @@
 `genre`
 `countries`
 `created`
-`genre`
 `languages`
 `operator`
 `titleurlize`
-
+`date`
 
 # Make sure RethinkDB has indexes for table commentator:
 `languages`
@@ -49,6 +48,7 @@
 `countries`
 `nick`
 `operator`
+`totalComments`
 
 # RethinkDB queries reference
 ## [Link](rethinkdb.md)

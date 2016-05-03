@@ -32,7 +32,7 @@ class ArticleContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByIndexFilterSkipLimit("news", index, value, skip, limit, function (err, res) {
+        getAllByIndexFilterSkipLimit("news", index, value, skip, limit, "date", function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;

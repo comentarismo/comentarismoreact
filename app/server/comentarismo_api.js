@@ -86,14 +86,20 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
 
 
 //"commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50,
-export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip,limit, conn, cb) {
+export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip,limit, sort, conn, cb) {
     if (!value) {
         //console.log("getComments EOF ");
         return cb();
     }
-    //console.log("r.table('commentaries').getAll('" + nick + "', {index: 'nick'}).filter({operator:"+operator+"})");
+    var indexSort = "date";
+    if(sort){
+        indexSort = sort;
+    }
+
     r.table(table)
-        .getAll(value, {index: index}).filter(filter).skip(skip).limit(limit)
+        .getAll(value, {index: index})
+        .orderBy(r.desc(indexSort))
+        .skip(skip).limit(limit)
         .run(conn, function (err, cursor) {
             if (err || !cursor) {
                 //console.log(err);
@@ -125,7 +131,7 @@ export function getCommentator(id,conn,cb) {
             cb(err);
         } else {
             //get all comments by index nick
-            getAllByIndexFilterSkipLimit("commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50, conn, function(err,comments){
+            getAllByIndexFilterSkipLimit("commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50, "date", conn, function(err,comments){
                 if (err || !commentator) {
                     console.log(err);
                     cb(err);

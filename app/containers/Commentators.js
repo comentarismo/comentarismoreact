@@ -18,10 +18,10 @@ class CommentatorContainer extends Component {
         return store.dispatch(loadCommentators({index, value}))
     }
 
-    componentDidMount() {
-        let { index,value } = this.props.params
-        this.props.loadCommentators({index, value})
-    }
+    //componentDidMount() {
+    //    let { index,value } = this.props.params
+    //    this.props.loadCommentators({index, value})
+    //}
 
     constructor(props) {
         super();
@@ -37,7 +37,7 @@ class CommentatorContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByIndexFilterSkipLimit("commentator", index, value, skip, limit, function (err, res) {
+        getAllByIndexFilterSkipLimit("commentator", index, value, skip, limit, "totalComments", function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;

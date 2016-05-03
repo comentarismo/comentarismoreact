@@ -24,6 +24,9 @@ import Helmet from "react-helmet";
 var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
 
+let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator } = require('./comentarismo_api');
+
+
 var redis = require("redis"),
     client = redis.createClient({
         host: REDIS_URL, port: REDIS_PORT,
@@ -100,12 +103,12 @@ server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 
 // apis
-server.get('/api/questions', (req, res)=> {
-    let { allcommentators } = require('./comentarismo_api');
-    allcommentators(conn, function (data) {
-        res.send(data);
-    });
-});
+//server.get('/api/questions', (req, res)=> {
+//    let { allcommentators } = require('./comentarismo_api');
+//    allcommentators(conn, function (data) {
+//        res.send(data);
+//    });
+//});
 
 server.get('/api/questions/:id', (req, res)=> {
     let { getCommentator } = require('./comentarismo_api');
@@ -119,14 +122,15 @@ server.get('/api/questions/:id', (req, res)=> {
 
 // mock apis
 server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
-    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
     console.log(req.params)
     var index = req.params.index;
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
 
-    getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, conn, function (err, data) {
+    var sort = req.query.sort;
+
+    getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, sort, conn, function (err, data) {
         if (err) {
             console.log(err);
         }
@@ -135,7 +139,6 @@ server.get('/api/commentators/:index/:value/:skip/:limit', (req, res)=> {
 });
 
 server.get('/api/commentators/:id', (req, res)=> {
-    let { getCommentator } = require('./comentarismo_api');
     getCommentator(req.params.id, conn, function (err, data) {
         if (err) {
             console.log(err);
@@ -144,16 +147,17 @@ server.get('/api/commentators/:id', (req, res)=> {
     });
 });
 
-server.get('/api/articles', (req, res)=> {
-    let { allcommentators } = require('./comentarismo_api');
-    allcommentators(conn, function (data) {
-        res.send(data);
-    });
-});
+//server.get('/api/articles', (req, res)=> {
+//    let { allcommentators } = require('./comentarismo_api');
+//    allcommentators(conn, function (data) {
+//        res.send(data);
+//    });
+//});
 
+/**
+ * Get all from a table with a index and its value and optional pos filtering like /genre/politics with skip and limit
+ */
 server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req, res)=> {
-    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
-
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -166,8 +170,9 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
     if (filter && filtervalue) {
         filt = {filter: filtervalue}
     }
+    var sort = req.query.sort;
 
-    getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, conn, function (err, data) {
+    getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, sort, conn, function (err, data) {
         if (err) {
             console.log(err);
         }
@@ -175,16 +180,19 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
     });
 });
 
+/**
+ * Get all from a table with a index and its value with skip and limit
+ */
 server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
-    let { getAllByIndexFilterSkipLimit } = require('./comentarismo_api');
-
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
 
-    getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, conn, function (err, data) {
+    var sort = req.query.sort;
+
+    getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, sort, conn, function (err, data) {
         if (err) {
             console.log(err);
         }
@@ -194,12 +202,13 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
 
 server.get('/api/news/:id', (req, res)=> {
-    let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex } = require('./comentarismo_api');
+    var sort = req.query.sort;
+
     getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
         if (err) {
             console.log(err);
         }
-        getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, conn, function (err, comments) {
+        getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
             if (err) {
                 console.log(err);
             }
