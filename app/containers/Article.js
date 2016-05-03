@@ -7,6 +7,7 @@ var MainNavbar = require('components/MainNavbar');
 
 import Icon from "components/Icon"
 import Date from "components/Date"
+import Helmet from "react-helmet";
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -77,6 +78,17 @@ class Article extends Component {
 
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title={`Latest news - Source - ${article.operator.toUpperCase()} - Genre: ${article.genre.toUpperCase()}`}
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                    {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
+                    {"property": "og:type", "content": "article"},
+                    {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
+                ]}
+                    onChangeClientState={(newState) => console.log(newState)}
+                />
                 <MainNavbar/>
                 <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
                     <a id="comentarismo-page" data-id={ article.titleurlize }/>
@@ -90,7 +102,7 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <img id={this.props.article.id}/>
+                                        <img id={this.props.article.id} />
                                         {this.getImageElement()}
                                         <div>
                                             <div className="profile-button">
@@ -125,15 +137,21 @@ class Article extends Component {
                                                 <ul className="profile-commentsfollowfollowers">
                                                     <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Countries</span>
+                                                            className="profile-StatLabel profile-block">Country</span>
                                                         <span
-                                                            className="profile-StatValue">{ article.countries }</span>
+                                                            className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
                                                     </li>
                                                     <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Languages</span>
+                                                            className="profile-StatLabel profile-block">Language</span>
                                                         <span
-                                                            className="profile-StatValue">{ article.languages }</span>
+                                                            className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
+                                                    </li>
+                                                    <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Genre</span>
+                                                        <span
+                                                            className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
                                                     </li>
                                                     <li className="profile-commentsfollowfollowersLi">
                                                         <span
@@ -156,7 +174,7 @@ class Article extends Component {
                                                 <div key={q.id}>
                                                     <div className="col-sm-1 hidden-xs">
                                                         <a className="avatar- img-responsive user-photo"/>
-                                                        <Icon nick={q.nick}/>
+                                                        <Icon nick={q.nick} size={50}/>
                                                     </div>
                                                     <div className="text-wrapper">
                                                         <b>{q.date }</b>
