@@ -113,7 +113,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
                 console.error(err.stack);
             }
         } else {
-            console.log(urlTag+" will return cached result ");
+            console.log(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -127,7 +127,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
             }
 
             //-------REDIS CACHE SAVE START ------//
-            console.log(urlTag+" will save cached");
+            console.log(urlTag + " will save cached");
             client.set(urlTag, JSON.stringify(data), redis.print);
             client.expire(urlTag, 1800);
             //-------REDIS CACHE SAVE END ------//
@@ -156,7 +156,7 @@ server.get('/api/commentators/:id', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag+" will return cached result ");
+            console.log(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -171,7 +171,7 @@ server.get('/api/commentators/:id', (req, res)=> {
             }
 
             //-------REDIS CACHE SAVE START ------//
-            console.log(urlTag+" will save cached");
+            console.log(urlTag + " will save cached");
             client.set(urlTag, JSON.stringify(data), redis.print);
             client.expire(urlTag, 1800);
             //-------REDIS CACHE SAVE END ------//
@@ -213,7 +213,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag+" will return cached result ");
+            console.log(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -228,7 +228,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
             }
 
             //-------REDIS CACHE SAVE START ------//
-            console.log(urlTag+" will save cached");
+            console.log(urlTag + " will save cached");
             client.set(urlTag, JSON.stringify(data), redis.print);
             client.expire(urlTag, 1800);
             //-------REDIS CACHE SAVE END ------//
@@ -264,7 +264,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag+" will return cached result ");
+            console.log(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -279,7 +279,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             }
 
             //-------REDIS CACHE SAVE START ------//
-            console.log(urlTag+" will save cached");
+            console.log(urlTag + " will save cached");
             client.set(urlTag, JSON.stringify(data), redis.print);
             client.expire(urlTag, 1800);
             //-------REDIS CACHE SAVE END ------//
@@ -305,7 +305,7 @@ server.get('/api/news/:id', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag+" will return cached result ");
+            console.log(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -327,7 +327,7 @@ server.get('/api/news/:id', (req, res)=> {
                 news.comments = comments;
 
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag+" will save cached");
+                console.log(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(news), redis.print);
                 client.expire(urlTag, 1800);
                 //-------REDIS CACHE SAVE END ------//
@@ -347,7 +347,6 @@ server.get('/api/news/:id', (req, res)=> {
 
 
 //TODO: cache sitemap with redis
-var sitemap;
 
 server.get('*', (req, res, next)=> {
     let history = useQueries(createMemoryHistory)();
@@ -362,7 +361,22 @@ server.get('*', (req, res, next)=> {
         console.log(location.pathname);
         console.log("sitemap");
 
-        if (!sitemap) {
+        var urlTag = "sitemap.xml";
+        //-------REDIS CACHE START ------//
+        client.get(urlTag, function (err, js) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                console.log(urlTag + " will return cached result ");
+                //client.expire(urlTag,1);
+                res.header('Content-Type', 'application/xml');
+                return res.send(js);
+            }
+            //-------REDIS CACHE END ------//
+
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
                     console.log("Error generateSitemap sitemap.xml --> ");
@@ -370,15 +384,18 @@ server.get('*', (req, res, next)=> {
                     res.status(500).send("Server unavailable");
                     return;
                 }
-                sitemap = xml;
+
+                //-------REDIS CACHE SAVE START ------//
+                console.log(urlTag + " will save cached");
+                client.set(urlTag, xml, redis.print);
+                client.expire(urlTag, 1800);
+                //-------REDIS CACHE SAVE END ------//
+
                 res.header('Content-Type', 'application/xml');
                 res.send(xml);
             });
-        } else {
-            console.log("send from cache");
-            res.header('Content-Type', 'application/xml');
-            res.send(sitemap);
-        }
+
+        });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
         var vars = location.pathname.split("/");
@@ -394,14 +411,39 @@ server.get('*', (req, res, next)=> {
 
         if (table == "news" || table == "commentators") {
 
-            generateIndexXml(table, index, value, conn, function (err, xml) {
-                if (!xml) {
-                    console.log("Error generateSitemap sitemap.xml --> ");
-                    console.error(err.stack);
-                    return res.status(500).send("Server unavailable");
+            var urlTag = "index.xml_"+table+"_"+index+"_"+value;
+            //-------REDIS CACHE START ------//
+            client.get(urlTag, function (err, js) {
+                if (err || !js) {
+                    if (err) {
+                        console.error(err.stack);
+                    }
+                    //return res.status(500).send('Cache is broken!');
+                } else {
+                    console.log(urlTag + " will return cached result ");
+                    //client.expire(urlTag,1);
+                    res.header('Content-Type', 'application/xml');
+                    return res.send(js);
                 }
-                res.header('Content-Type', 'application/xml');
-                return res.send(xml);
+                //-------REDIS CACHE END ------//
+
+                generateIndexXml(table, index, value, conn, function (err, xml) {
+                    if (!xml) {
+                        console.log("Error generateSitemap sitemap.xml --> ");
+                        console.error(err.stack);
+                        return res.status(500).send("Server unavailable");
+                    }
+
+                    //-------REDIS CACHE SAVE START ------//
+                    console.log(urlTag + " will save cached");
+                    client.set(urlTag, xml, redis.print);
+                    client.expire(urlTag, 1800);
+                    //-------REDIS CACHE SAVE END ------//
+
+                    res.header('Content-Type', 'application/xml');
+                    return res.send(xml);
+                });
+
             });
 
         } else {
