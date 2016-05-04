@@ -6,8 +6,8 @@ import  {getAllPluckDistinct,getAllByIndexPluckDistinct} from './comentarismo_ap
 function generateSitemap(conn, cb) {
     //r.db('test').table('news').pluck("operator").distinct()
     var sitemap = sm.createSitemap({
-        //hostname: 'http://comentarismo.com',
-        hostname: 'http://localhost:3002',
+        hostname: 'http://comentarismo.com',
+        //hostname: 'http://localhost:3002',
         cacheTime: 600000
     });
     getAllPluckDistinct(conn, "news", "operator", function (err, operators) {
@@ -65,8 +65,8 @@ function generateSitemap(conn, cb) {
 
 function generateIndexXml(table, index, value, conn, cb) {
     var sitemap = sm.createSitemap({
-    //    //hostname: 'http://comentarismo.com',
-        hostname: 'http://localhost:3002',
+        hostname: 'http://comentarismo.com',
+        //hostname: 'http://localhost:3002',
         cacheTime: 600000
     });
     table = (table == "commentators" ? "commentator" : table);

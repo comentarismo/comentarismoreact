@@ -183,7 +183,7 @@ module.exports = React.createClass({
                                     <MenuItem eventKey={7.1} href="/commentators/operator/ultimosegundo">IG</MenuItem>
                                     <MenuItem eventKey={7.1}
                                               href="/commentators/operator/folhapolitica">FolhaPolitica</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/news/operator/cartacapital">CartaCapital</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/commentators/operator/cartacapital">CartaCapital</MenuItem>
                                 </NavDropdown>
                                 <MenuItem eventKey={3.1} href="/commentators/languages/portuguese">Portuguese All</MenuItem>
                             </NavDropdown>
