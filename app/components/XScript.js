@@ -22,7 +22,8 @@ export class XScript extends React.Component {
                       'var page = $("#comentarismo-page").attr("data-id"); '+
                         'var comentarismo = new Comentarismo({' +
                             'host: "api.comentarismo.com",' +
-                            //cached: "elk.comentarismo.com",
+                            'elk: "elk.comentarismo.com",'+
+                            'cached: "true",'+
                             'forum: "comentarismo-social",' +
                             'key: "-U7sw_7qY7vw-qCXi3M8KJPYSzMEOxEbZCnLUDBO7EGum8uKg2f5rreFIv8aSWS16jmNngoIRZHs",' +
                             'page: encodeURIComponent(page),' +
