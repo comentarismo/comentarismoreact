@@ -77,6 +77,11 @@ module.exports = React.createClass({
         return source ? <p className='source'><b><Date date={this.props.article.date}/> </b> {source} </p> : null;
     },
 
+    getTotalComments: function () {
+        var totalComments = this.props.article.totalComments;
+        return totalComments ? <p className='source'>Comments {totalComments} </p> : null;
+    },
+
     getArticleLink: function () {
         return '/news/' + this.props.article.titleurlize;
     },
@@ -91,10 +96,10 @@ module.exports = React.createClass({
                     </div>
                     <div className='caption'>
                         {this.getTitle()}
-                        {this.getDescription()}
                         {this.getSource()}
+                        {this.getDescription()}
+                        {this.getTotalComments()}
                     </div>
-
                 </a>
             </div>
         );

@@ -17,7 +17,8 @@ var buildProperties = {
         './bower_components/bootstrap/dist/css/bootstrap-theme.css'
     ],
     comentarismoApi: [
-        './vendor/comentarismo-client.js'
+        //'./vendor/comentarismo-client.js'
+        './vendor/comentarismo-client-min.js'
     ],
     imageFiles: ['./img/**/*']
 };

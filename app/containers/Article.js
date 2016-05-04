@@ -18,13 +18,13 @@ class XScript extends React.Component {
     }
 
     componentDidMount() {
-        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client.js");
+        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
     }
 
     render() {
         return <div ref="it"
                     dangerouslySetInnerHTML={{__html:
-                    '<script type="text/javascript" src="/static/comentarismo-client.js"></script>' +
+                    '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
                     '<script>$(function () {' +
                       'var operator = $("#comentarismo-operator").attr("data-id"); ' +
                       'var page = $("#comentarismo-page").attr("data-id"); '+
