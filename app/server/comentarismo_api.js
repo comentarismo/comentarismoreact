@@ -29,7 +29,7 @@ export function getAllPluckDistinct(conn, table, pluck, cb){
 export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb){
     console.log("getAllByIndexPluckDistinct --> table: "+table+" index: "+index+" value: "+value+" pluck: "+pluck);
     r.table(table)
-        .getAll(value, {index: index}).limit(100000)
+        .getAll(value, {index: index}).limit(50000)
         .pluck(pluck)
         .distinct()
         .run(conn, function (err, cursor) {
