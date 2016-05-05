@@ -14,7 +14,7 @@ var buildProperties = {
         'app/styles/main.scss',
         'app/css/all.css',
         './bower_components/bootstrap/dist/css/bootstrap.css',
-        './bower_components/bootstrap/dist/css/bootstrap-theme.css'
+        './bower_components/components-font-awesome/css/font-awesome.css'
     ],
     comentarismoApi: [
         //'./vendor/comentarismo-client.js'
@@ -98,7 +98,9 @@ gulp.task('vendor', function () {
 });
 
 gulp.task('fonts', function () {
-    gulp.src("./bower_components/bootstrap/dist/fonts/**/*")
+    gulp.src(
+        [
+        "./bower_components/components-font-awesome/fonts/**/*"])
         .pipe(gulp.dest(buildProperties.publicDir + '/fonts/'))
         .on('error', function (error) {
             console.log(error);
@@ -107,10 +109,6 @@ gulp.task('fonts', function () {
             console.log('Done copying fonts dependencies.');
         });
 });
-
-
-
-//./vendor/comentarismo-client.js
 
 gulp.task('default', ['css', 'fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
 

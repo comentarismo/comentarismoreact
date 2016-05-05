@@ -15,6 +15,7 @@ class Intro extends Component {
                     title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
+                    {"name": "viewport content", "content": `width=device-width, initial-scale=1`},
                     {"name": "description", "content": "Welcome to Comentarismo"},
                     {"property": "og:type", "content": "article"}
                 ]}
