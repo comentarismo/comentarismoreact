@@ -27,3 +27,21 @@ export function loadArticleDetail ({ id }) {
     ]
   }
 }
+
+
+export const LOADED_ARTICLE_LEGACY = Symbol('LOADED_ARTICLE_LEGACY')
+export function loadArticleLegacy ({ index,value }) {
+  return {
+    [CHAIN_API]: [
+      ()=> {
+        return {
+          [CALL_API]: {
+            method: 'get',
+            path: `/api/news/${value}`,
+            successType: LOADED_ARTICLE_DETAIL
+          }
+        }
+      }
+    ]
+  }
+}
