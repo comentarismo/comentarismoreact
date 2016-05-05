@@ -28,7 +28,6 @@ class Commentator extends Component {
                     title={`Latest Comments - Commentator Profile -> @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "viewport content", "content": `width=device-width, initial-scale=1`},
                     {"name": "description", "content": `Find all comments for @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "comments"},
                     {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}

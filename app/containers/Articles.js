@@ -64,7 +64,6 @@ class ArticleContainer extends Component {
                     title={`Latest news - Category - ${this.props.params.value.toUpperCase()} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "viewport content", "content": `width=device-width, initial-scale=1`},
                     {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "article"},
                     {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
