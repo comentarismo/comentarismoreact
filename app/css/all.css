@@ -1,12 +1,47 @@
 /** override bootstrap defaults **/
 * {
     font-family: "FontAwesome", Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .container > .navbar-header, .container-fluid > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-collapse {
     padding-right: 30px;
 }
+
+.add-comment {
+    cursor: pointer;
+    border: 2px solid #337ab7;
+    padding: 14px;
+}
+
+.add-comment:hover{
+        opacity: 0.8;
+}
+
+* .home-wrapper p {
+    font-size: 18px !important;
+}
+
+* .navbar .navbar-inverse {
+    font-size: 18px !important;
+}
+
+* .btn {
+    font-size: 18px !important;
+}
+
+* .text-muted {
+    font-size: 18px !important;
+}
+
+* .features-box h3 {
+    font-size: 22px !important;
+}
+
+.slogan {
+    font-size: 20px !important;
+}
+
 
 .profile-div {
     background: #fff none repeat scroll 0 0;
