@@ -703,7 +703,7 @@ module.exports = {
 var container = require("./container");
 
 
-var elkLoadArticle = function elkLoadArticle(that, operator, thekey, list, page, skip, limit,user, cb) {
+var elkLoadArticle = function elkLoadArticle(that,operator, thekey, list, page, skip, limit,user, cb) {
     //var url = host + "/listbykeyskiplimit/commentaries/" + key + "/" + page + "/" + skip + "/" + limit + "/";
     if (!page) {
         var error = "error, no page defined";
@@ -973,6 +973,7 @@ Comentarismo = function (options) {
         });
     }
 
+    var that = this;
     $(window).scroll(function () {
         console.log("scroll");
         if (end) {
@@ -985,7 +986,7 @@ Comentarismo = function (options) {
 
             if (cached) {
 
-                load_elk.elkLoadArticle(elk,operator,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
+                load_elk.elkLoadArticle(that,operator,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         limit = limit + 50;
                         skip = skip + 50;
@@ -995,7 +996,7 @@ Comentarismo = function (options) {
                 });
             } else {
 
-                load_api.loadArticle(host,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
+                load_api.loadArticle(that,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         limit = limit + 50;
                         skip = skip + 50;
