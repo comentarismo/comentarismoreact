@@ -63,6 +63,10 @@ class CommentatorContainer extends Component {
 
     render() {
 
+        if (!this.state.articles){
+            this.state.articles = [];
+        }
+
         return (
             <div>
                 <Helmet

@@ -323,6 +323,9 @@ server.get('/api/news/:id', (req, res)=> {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
+            }else if(!news){
+                console.log("News not found --> "+req.params.id);
+                return res.status(404).send("News not found --> "+req.params.id);
             }
             getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
                 if (err) {

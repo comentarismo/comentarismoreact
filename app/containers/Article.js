@@ -66,7 +66,7 @@ class Article extends Component {
         }
 
         var host = "http://img.comentarismo.com/r";
-        console.log("IMGRESIZER ",this.props.article.image)
+        console.log("IMGRESIZER ", this.props.article.image)
         //do img resize
         var request = $.ajax({
             url: host + '/img/',
@@ -99,6 +99,13 @@ class Article extends Component {
 
     render() {
         let { article } = this.props;
+
+        if (!article || !article.operator) {
+            return <div>404 not found</div>
+        }
+        if (!article.comments) {
+            article.comments = [];
+        }
 
         function getContentBody() {
             if (!article.resume) return;
@@ -233,6 +240,8 @@ class Article extends Component {
                 </div>
             </div>
         )
+
+
     }
 }
 

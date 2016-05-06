@@ -14,13 +14,25 @@ class Commentator extends Component {
         return store.dispatch(loadCommentatorDetail({id}))
     }
 
+    getInitialState() {
+        return {
+            data: {
+                comments: []
+            }
+        };
+    }
+
     componentDidMount() {
         let { id } = this.props.params
         this.props.loadCommentatorDetail({id})
     }
 
     render() {
-        let { commentator } = this.props
+        let { commentator } = this.props;
+
+        if (!commentator.comments){
+            commentator.comments = [];
+        }
         return (
             <div>
                 <Helmet
@@ -72,7 +84,8 @@ class Commentator extends Component {
                                                         <span
                                                             className="profile-StatLabel profile-block">First Seen</span>
                                                         <span
-                                                            className="profile-StatValue"><Date date={commentator.minDate}/></span>
+                                                            className="profile-StatValue"><Date
+                                                            date={commentator.minDate}/></span>
                                             </li>
                                         </ul>
                                     </div>
@@ -82,7 +95,8 @@ class Commentator extends Component {
                                                         <span
                                                             className="profile-StatLabel profile-block">Last Seen</span>
                                                         <span
-                                                            className="profile-StatValue"><Date date={commentator.maxDate}/></span>
+                                                            className="profile-StatValue"><Date
+                                                            date={commentator.maxDate}/></span>
                                             </li>
                                         </ul>
                                     </div>
