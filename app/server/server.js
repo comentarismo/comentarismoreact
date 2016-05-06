@@ -392,7 +392,7 @@ server.get('*', (req, res, next)=> {
                     return;
                 }
 
-                if(data) {
+                if(xml) {
                     //-------REDIS CACHE SAVE START ------//
                     console.log(urlTag + " will save cached");
                     client.set(urlTag, xml, redis.print);
@@ -403,7 +403,6 @@ server.get('*', (req, res, next)=> {
                 return res.send(xml);
             });
 
-        });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
         var vars = location.pathname.split("/");
@@ -442,7 +441,7 @@ server.get('*', (req, res, next)=> {
                         return res.status(500).send("Server unavailable");
                     }
 
-                    if(data) {
+                    if(xml) {
                         //-------REDIS CACHE SAVE START ------//
                         console.log(urlTag + " will save cached");
                         client.set(urlTag, xml, redis.print);
