@@ -57,59 +57,57 @@ class Commentator extends Component {
                                             <a title="" id="profile-avatar" href="#" className="profile-goup">
                                                 <img src="/static/img/comentarismo-extra-mini-logo.png"/>
                                             </a>
-                                            <div className="profile-nick">
-                                                <div className="profile-nickName">
-                                                    { commentator.nick }
-                                                </div>
-                                                <span>@{ commentator.slug }</span>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                        </div>
+
+                                    </div>
+                                    <div className="profile-nick">
+                                        <div className="profile-nickName">
+                                            { commentator.nick }
+                                        </div>
+                                        <span>@{ commentator.slug }</span>
+                                    </div>
+                                    <div className="profile-divStats">
+                                        <ul className="profile-commentsfollowfollowers">
+                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">First Seen</span>
                                                         <span
                                                             className="profile-StatValue"><Date date={commentator.minDate}/></span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className="profile-divStats">
+                                        <ul className="profile-commentsfollowfollowers">
+                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Last Seen</span>
                                                         <span
                                                             className="profile-StatValue"><Date date={commentator.maxDate}/></span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className="profile-divStats">
+                                        <ul className="profile-commentsfollowfollowers">
+                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Countries</span>
                                                         <span
                                                             className="profile-StatValue">{ commentator.countries }</span>
-                                                    </li>
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                            </li>
+                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Languages</span>
                                                         <span
                                                             className="profile-StatValue">{ commentator.languages }</span>
-                                                    </li>
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                            </li>
+                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Followers</span>
-                                                        <span className="profile-StatValue"/>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-xs-12" style={{height: '25px'}}></div>
-
-
+                                                <span className="profile-StatValue"/>
+                                            </li>
+                                        </ul>
                                     </div>
-
+                                    <div className="col-xs-12" style={{height: '25px'}}></div>
                                 </div>
 
                                 <div id="comentarismo-container" className="comentarismo-comment">
