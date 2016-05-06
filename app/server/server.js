@@ -403,6 +403,7 @@ server.get('*', (req, res, next)=> {
                 return res.send(xml);
             });
 
+        });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
         var vars = location.pathname.split("/");
