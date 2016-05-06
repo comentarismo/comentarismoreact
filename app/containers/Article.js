@@ -133,67 +133,70 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                            {this.getImageElement()}
                                         <div>
-                                            <div className="profile-button">
-                                                <button className="btn btn-primary"><i
-                                                    className="glyphicon glyphicon-pencil"/>
-                                                </button>
+                                            {this.getImageElement()}
+                                        </div>
+                                    </div>
+                                    <div className="col-xs-12" style={{height: '25px'}}></div>
+                                    <div>
+                                        <div className="profile-button">
+                                            <button className="btn btn-primary"><i
+                                                className="glyphicon glyphicon-link"/>
+                                            </button>
+                                        </div>
+                                        <div className="profile-nick">
+                                            <div className="profile-nickName">
+                                                { article.title }
                                             </div>
-                                            <div className="profile-nick">
-                                                <div className="profile-nickName">
-                                                    { article.title }
-                                                </div>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                        </div>
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Resume</span>
-                                                        <span className="profile-StatValue">{ getContentBody() }</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                                    <span className="profile-StatValue">{ getContentBody() }</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Publish Date</span>
                                                         <span className="profile-StatValue"><Date
                                                             date={this.props.article.date}/></span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="profile-divStats">
-                                                <ul className="profile-commentsfollowfollowers">
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Country</span>
                                                         <span
                                                             className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
-                                                    </li>
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                                </li>
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Language</span>
                                                         <span
                                                             className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
-                                                    </li>
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                                </li>
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Genre</span>
                                                         <span
                                                             className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
-                                                    </li>
-                                                    <li className="profile-commentsfollowfollowersLi">
+                                                </li>
+                                                <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Followers</span>
-                                                        <span className="profile-StatValue"/>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                                    <span className="profile-StatValue"/>
+                                                </li>
+                                            </ul>
                                         </div>
-                                        <div className="col-xs-12" style={{height: '25px'}}></div>
                                     </div>
+                                    <div className="col-xs-12" style={{height: '25px'}}></div>
 
                                 </div>
 

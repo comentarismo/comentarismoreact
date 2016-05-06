@@ -100,7 +100,8 @@ gulp.task('vendor', function () {
 gulp.task('fonts', function () {
     gulp.src(
         [
-        "./bower_components/components-font-awesome/fonts/**/*"])
+            "./bower_components/components-font-awesome/fonts/**/*",
+            "./bower_components/bootstrap/fonts/**/*"])
         .pipe(gulp.dest(buildProperties.publicDir + '/fonts/'))
         .on('error', function (error) {
             console.log(error);
