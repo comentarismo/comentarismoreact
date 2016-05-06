@@ -400,7 +400,7 @@ server.get('*', (req, res, next)=> {
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.header('Content-Type', 'application/xml');
-                res.send(xml);
+                return res.send(xml);
             });
 
         });
