@@ -50,6 +50,13 @@
 `operator`
 `totalComments`
 
+# Make sure RethinkDB has indexes for table commentaries:
+`countries`
+`languages`
+`nick`
+`operator`
+`titleurlize`
+
 # RethinkDB queries reference
 ## [Link](rethinkdb.md)
 
