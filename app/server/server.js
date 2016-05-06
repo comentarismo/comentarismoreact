@@ -536,6 +536,10 @@ server.get('*', (req, res, next)=> {
     }
 });
 
+server.on('error', (err) => {
+    console.error(err);
+});
+
 server.use((err, req, res, next)=> {
     if (err) {
         console.log(err.stack);
