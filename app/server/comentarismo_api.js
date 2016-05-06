@@ -97,7 +97,7 @@ export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip,l
     }
 
     r.table(table)
-        .getAll(value, {index: index})
+        .getAll(value, {index: index}).limit(50000)
         .orderBy(r.desc(indexSort))
         .skip(skip).limit(limit)
         .run(conn, function (err, cursor) {
