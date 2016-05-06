@@ -21,7 +21,7 @@ module.exports = React.createClass({
 
     render: function () {
         return (
-            <img onError={this.onError} className={this.props.classes} src={this.props.src} />
+            <img  onError={this.onError} className={this.props.classes} src={this.props.src} />
         );
     }
 });

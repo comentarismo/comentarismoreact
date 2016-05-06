@@ -9,6 +9,12 @@ import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
 
+var width = "388";
+var height = "395";
+var quality = "50";
+var $ = require('jquery');
+var base64Encode = require("../util/imgresizer").base64Encode;
+
 class XScript extends React.Component {
     static initScripts(el, url) {
         var script = document.createElement('script')
@@ -49,21 +55,46 @@ class Article extends Component {
         return store.dispatch(loadArticleDetail({id}))
     }
 
-    //componentDidMount() {
-    //    let { id } = this.props.params
-    //    this.props.loadArticleDetail({id})
-    //}
+    componentDidMount() {
+        //let { id } = this.props.params
+        //this.props.loadArticleDetail({id})
 
-    getImageElement() {
         var src;
         // use meta:og image if available
         if (this.props.article && this.props.article.image) {
             src = this.props.article.image;
         }
-        // use default image if meta:og is missing
-        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
 
-        return src ? <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
+        var host = "http://img.comentarismo.com/r";
+        console.log("IMGRESIZER ",this.props.article.image)
+        //do img resize
+        var request = $.ajax({
+            url: host + '/img/',
+            type: 'post',
+            data: {
+                url: this.props.article.image,
+                width: width,
+                height: height,
+                quality: quality
+            },
+            mimeType: "text/plain; charset=x-user-defined"
+        });
+        request.done(function (binaryData) {
+            if (binaryData && binaryData !== "") {
+                //console.log("imgresizer DONE OK");
+                var base64Data = base64Encode(binaryData);
+                var src = "data:image/jpeg;base64," + base64Data;
+                $(".profile-bg-news").attr("src", src);
+            }
+        });
+
+    }
+
+    getImageElement() {
+        var src = "/static/img/ajax-loader.gif";
+        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
+        return src ?
+            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
     }
 
     render() {
@@ -102,8 +133,7 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <img id={this.props.article.id} />
-                                        {this.getImageElement()}
+                                            {this.getImageElement()}
                                         <div>
                                             <div className="profile-button">
                                                 <button className="btn btn-primary"><i
@@ -129,7 +159,8 @@ class Article extends Component {
                                                     <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Publish Date</span>
-                                                        <span className="profile-StatValue"><Date date={this.props.article.date}/></span>
+                                                        <span className="profile-StatValue"><Date
+                                                            date={this.props.article.date}/></span>
                                                     </li>
                                                 </ul>
                                             </div>

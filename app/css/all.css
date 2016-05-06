@@ -18,6 +18,10 @@
         opacity: 0.8;
 }
 
+* .row {
+    padding: 15px;
+}
+
 * .home-wrapper p {
     font-size: 18px !important;
 }
@@ -48,6 +52,7 @@
     border: 1px solid #e1e8ed;
     border-radius: 6px;
     height: 200px;
+    overflow: hidden;
     /*max-width: 340px; // orginal twitter width: 290px;*/
 }
 
