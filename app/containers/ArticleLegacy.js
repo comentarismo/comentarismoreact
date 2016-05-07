@@ -9,6 +9,9 @@ import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
 
+import { Notfound } from 'containers/Notfound'
+import {GoogleSearchScript} from 'components/GoogleSearchScript';
+
 class XScript extends React.Component {
     static initScripts(el, url) {
         var script = document.createElement('script')
@@ -65,6 +68,42 @@ class ArticleLegacy extends Component {
 
     render() {
         let { article } = this.props;
+
+        if(!article.comments) {
+            return  (
+                <div>
+                    <MainNavbar/>
+                    <div>
+                        <div className="col-xs-6">
+                            <h3>The page you are looking for might have been removed, had its name
+                                changed, or is
+                                temporarily unavailable.</h3>
+                            <div className="image">
+                                <img className="img img-responsive"
+                                     src="/static/img/404notfound.jpeg"/>
+                            </div>
+                            <div className="text-404">
+
+                                <p>Please Use the Google Search box below and optimize your
+                                    search </p>
+                            </div>
+                        </div>
+                        <GoogleSearchScript search={this.props.params}/>
+                    </div>
+                    <div className="clearfix"></div>
+                    <footer className="footer bg-dark">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-sm-12 text-center">
+                                    <p className="copyright">© 2016 Comentarismo.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            )
+        }
+
 
         function getContentBody() {
             if (!article.resume) return;

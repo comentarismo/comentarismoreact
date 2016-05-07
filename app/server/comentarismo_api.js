@@ -79,10 +79,11 @@ export function getByID(table, id, conn, cb) {
 
 export function getOneBySecondaryIndex(table, index, value, conn, cb) {
     if(!table || !index || !value){
-        console.log(errMsg+"table --> "+table+" index -> "+index+" value --> "+value);
+        console.log(errMsg+"table --> "+table+", index -> "+index+", value --> "+value);
         console.log(errMsg+"getOneBySecondaryIndex --> search query is not correct.")
         return cb()
     }
+    console.log("table --> "+table+", index -> "+index+", value --> "+value);
     r.table(table)
         .getAll(value, {index: index}).limit(1)
         .run(conn, function (err, cursor) {
@@ -92,7 +93,7 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
             } else {
                 cursor.toArray(function (err, results) {
                     if (err) return cb(err);
-                    //console.log(results.length);
+                    console.log(results.length);
                     cb(null, results[0]);
                 });
             }

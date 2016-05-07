@@ -25,6 +25,7 @@ export default function (history) {
                 <Route path="news/:id" component={Article}/>
                 <Route path="news/:index/:value" component={Articles}/>
                 <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value/" component={ArticleLegacy}/>
+                <Route path="news/:continent/:country/:index/:year/:month/:day/:value/" component={ArticleLegacy}/>
                 <Route path="*" component={Notfound}/>
                 <IndexRoute component={Intro}/>
             </Route>
