@@ -8,8 +8,13 @@ import r from 'rethinkdb';
 //get all comments for a nick
 //get commentator profile by nickurlize
 
-
+var errMsg = "Error: ";
 export function getAllPluckDistinct(conn, table, pluck, cb){
+    if(!table || !pluck){
+        console.log(errMsg+"table --> "+table+" pluck --> "+pluck);
+        return cb(errMsg+"getAllPluckDistinct --> search query is not correct.")
+    }
+
     r.table(table)
         .pluck(pluck)
         .distinct()
@@ -27,6 +32,10 @@ export function getAllPluckDistinct(conn, table, pluck, cb){
 }
 
 export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb){
+    if(!table || !index || !value || !pluck){
+        console.log(errMsg+"table --> "+table+" index -> "+index+" value --> "+value+" pluck --> "+pluck);
+        return cb(errMsg+"getAllByIndexPluckDistinct --> search query is not correct.")
+    }
     console.log("getAllByIndexPluckDistinct --> table: "+table+" index: "+index+" value: "+value+" pluck: "+pluck);
     r.table(table)
         .getAll(value, {index: index}).limit(50000)
@@ -46,6 +55,11 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
 }
 
 export function getByID(table, id, conn, cb) {
+    if(!table || !id){
+        console.log(errMsg+"table --> "+table+" id -> "+id);
+        console.log(errMsg+"getByID --> search query is not correct.");
+        return cb();
+    }
     if (!id) {
         //console.log("getComments EOF ");
         return cb();
@@ -64,9 +78,10 @@ export function getByID(table, id, conn, cb) {
 }
 
 export function getOneBySecondaryIndex(table, index, value, conn, cb) {
-    if (!table || !index || !value) {
-        //console.log("getComments EOF ");
-        return cb();
+    if(!table || !index || !value){
+        console.log(errMsg+"table --> "+table+" index -> "+index+" value --> "+value);
+        console.log(errMsg+"getOneBySecondaryIndex --> search query is not correct.")
+        return cb()
     }
     r.table(table)
         .getAll(value, {index: index}).limit(1)
@@ -87,9 +102,10 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
 
 //"commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50,
 export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip,limit, sort, conn, cb) {
-    if (!value) {
-        //console.log("getComments EOF ");
-        return cb();
+    if(!table || !index || !value){
+        console.log(errMsg+"table --> "+table+" index -> "+index+" value --> "+value);
+        console.log(errMsg+"getAllByIndexFilterSkipLimit --> search query is not correct.");
+        return cb()
     }
     var indexSort = "date";
     if(sort){
@@ -124,6 +140,10 @@ function question(id) {
 }
 
 export function getCommentator(id,conn,cb) {
+    if(!id){
+        console.log(errMsg+"table --> commentator " + " id --> "+id);
+        return cb(errMsg+"getCommentator --> search query is not correct.")
+    }
     //get commentator by id
     getByID("commentator", id, conn, function(err,commentator){
         if (err || !commentator) {

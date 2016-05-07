@@ -15,6 +15,8 @@ var quality = "50";
 var $ = require('jquery');
 var base64Encode = require("../util/imgresizer").base64Encode;
 
+import {GoogleSearchScript} from 'components/GoogleSearchScript';
+
 class XScript extends React.Component {
     static initScripts(el, url) {
         var script = document.createElement('script')
@@ -101,7 +103,22 @@ class Article extends Component {
         let { article } = this.props;
 
         if (!article || !article.operator) {
-            return <div>404 not found</div>
+            return (
+                <div>
+                    <MainNavbar/>
+                    <div className="col-xs-6">
+                        <h3>The page you are looking for might have been removed, had its name changed, or is
+                            temporarily unavailable.</h3>
+                        <div className="image">
+                            <img className="img img-responsive" src="/static/img/404notfound.jpeg"/>
+                        </div>
+                        <div className="text-404">
+
+                            <p>Please Use the Google Search box below and optimize your search </p>
+                        </div>
+                    </div>
+                    <GoogleSearchScript search={this.props.params}/>
+                </div>)
         }
         if (!article.comments) {
             article.comments = [];
@@ -117,13 +134,12 @@ class Article extends Component {
             <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title={`Latest news - Source - ${article.operator.toUpperCase()} - Genre: ${article.genre.toUpperCase()}`}
+                    title={`Latest news - Source - ${article.operator ? article.operator.toUpperCase(): ""} - Genre: ${article.genre ? article.genre.toUpperCase(): ""}`}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
                     {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "article"},
-                    //{"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
-                    {"property": "og:image", "content": `${article.image}`}
+                    {"property": "og:image", "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`}
                 ]}
                     onChangeClientState={(newState) => console.log(newState)}
                 />

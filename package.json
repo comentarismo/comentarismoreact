@@ -44,6 +44,7 @@
     "md5": "^2.1.0",
     "moment": "^2.13.0",
     "normalizr": "^1.0.0",
+    "pos": "^0.3.0",
     "react": "^0.14.8",
     "react-bootstrap": "^0.29.3",
     "react-dom": "^0.14.8",

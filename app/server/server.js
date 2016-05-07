@@ -6,6 +6,9 @@ import ReactDOMServer from 'react-dom/server';
 import { RoutingContext, match } from 'react-router';
 
 var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
+import {GoogleSearchScript} from "components/GoogleSearchScript"
+import {MainNavbar} from "components/MainNavbar"
+
 var redis = require("redis");
 
 import { createMemoryHistory, useQueries } from 'history';
@@ -126,7 +129,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
                 return res.status(500).send('Something broke!');
             }
 
-            if(data) {
+            if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
@@ -134,7 +137,6 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             }
-
 
 
         });
@@ -160,7 +162,7 @@ server.get('/api/commentators/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             console.log(urlTag + " will return cached result ");
-            client.expire(urlTag,1);
+            client.expire(urlTag, 1);
             res.type('application/json');
             return res.send(js);
         }
@@ -173,7 +175,7 @@ server.get('/api/commentators/:id', (req, res)=> {
                 return res.status(500).send('Something broke!');
             }
 
-            if(data) {
+            if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
@@ -231,7 +233,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
                 return res.status(500).send('Something broke!');
             }
 
-            if(data) {
+            if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
@@ -283,7 +285,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
                 return res.status(500).send('Something broke!');
             }
 
-            if(data) {
+            if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
@@ -323,9 +325,9 @@ server.get('/api/news/:id', (req, res)=> {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
-            }else if(!news){
-                console.log("News not found --> "+req.params.id);
-                return res.status(404).send("News not found --> "+req.params.id);
+            } else if (!news) {
+                console.log("News not found --> " + req.params.id);
+                return res.status(404).send("News not found --> " + req.params.id);
             }
             getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
                 if (err) {
@@ -335,7 +337,7 @@ server.get('/api/news/:id', (req, res)=> {
                 //console.log(comments.length)
                 news.comments = comments;
 
-                if(news) {
+                if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     console.log(urlTag + " will save cached");
                     client.set(urlTag, JSON.stringify(news), redis.print);
@@ -368,8 +370,7 @@ server.get('*', (req, res, next)=> {
 
     //sitemap
     if (reqUrl.indexOf("sitemap.xml") !== -1) {
-        console.log(location.pathname);
-        console.log("sitemap");
+        console.log("Will generate sitemap.xml for request --> " + reqUrl);
 
         var urlTag = "sitemap.xml";
         //-------REDIS CACHE START ------//
@@ -395,7 +396,7 @@ server.get('*', (req, res, next)=> {
                     return;
                 }
 
-                if(xml) {
+                if (xml) {
                     //-------REDIS CACHE SAVE START ------//
                     console.log(urlTag + " will save cached");
                     client.set(urlTag, xml, redis.print);
@@ -409,6 +410,7 @@ server.get('*', (req, res, next)=> {
         });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
+        console.log("Will generate index.xml for request --> " + reqUrl);
         var vars = location.pathname.split("/");
         if (!vars || vars.length < 3) {
             console.log("Error generateSitemap index.xml --> ");
@@ -422,7 +424,7 @@ server.get('*', (req, res, next)=> {
 
         if (table == "news" || table == "commentators") {
 
-            var urlTag = "index.xml_"+table+"_"+index+"_"+value;
+            var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//
             client.get(urlTag, function (err, js) {
                 if (err || !js) {
@@ -439,13 +441,15 @@ server.get('*', (req, res, next)=> {
                 //-------REDIS CACHE END ------//
 
                 generateIndexXml(table, index, value, conn, function (err, xml) {
-                    if (!xml) {
+                    if (err || !xml) {
                         console.log("Error generateSitemap sitemap.xml --> ");
-                        console.error(err.stack);
+                        if (err) {
+                            console.error(err.stack);
+                        }
                         return res.status(500).send("Server unavailable");
                     }
 
-                    if(xml) {
+                    if (xml) {
                         //-------REDIS CACHE SAVE START ------//
                         console.log(urlTag + " will save cached");
                         client.set(urlTag, xml, redis.print);
@@ -466,62 +470,64 @@ server.get('*', (req, res, next)=> {
 
     } else {
 
+        console.log(location);
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (redirectLocation) {
-                res.redirect(301, redirectLocation.pathname + redirectLocation.search);
+                return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
             } else if (error) {
                 console.error(err.stack);
                 console.log("500 internal error")
-                res.status(500).send(error.message);
-            } else if (renderProps == null) {
-                console.log("404 not found")
-                res.status(404).send('Not found')
-            } else {
-                let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
+                return res.status(500).send(error.message);
+            }
 
-                getReduxPromise().then(()=> {
-                        let reduxState = escape(JSON.stringify(store.getState()));
-                        let html = ReactDOMServer.renderToString(
-                            <Provider store={store}>
-                                { <RoutingContext {...renderProps}/> }
-                            </Provider>
-                        );
+            let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
 
-                        //let html = ReactDOMServer.renderToStaticMarkup(body(null,
-                        //    div({id: 'content', dangerouslySetInnerHTML: {__html:
-                        //        //ReactDOMServer.renderToString(App(props))
-                        //        ReactDOMServer.renderToString(
-                        //            <Provider store={store}>
-                        //                { <RoutingContext {...renderProps}/> }
-                        //            </Provider>)
-                        //    }})
-                        //    //script({src: '/bundle.js'})
-                        //));
+            getReduxPromise().then(()=> {
+                    let reduxState = escape(JSON.stringify(store.getState()));
+                    let html = ReactDOMServer.renderToString(
+                        <Provider store={store}>
+                            { <RoutingContext {...renderProps}/> }
+                        </Provider>
+                    );
 
-                        let head = Helmet.rewind();
-                        //console.log("Helmet.rewind -> "+head.title.toString());
+                    //let html = ReactDOMServer.renderToStaticMarkup(body(null,
+                    //    div({id: 'content', dangerouslySetInnerHTML: {__html:
+                    //        //ReactDOMServer.renderToString(App(props))
+                    //        ReactDOMServer.renderToString(
+                    //            <Provider store={store}>
+                    //                { <RoutingContext {...renderProps}/> }
+                    //            </Provider>)
+                    //    }})
+                    //    //script({src: '/bundle.js'})
+                    //));
 
-                        if (getCurrentUrl() === reqUrl) {
-                            res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
-                        } else {
-                            res.redirect(302, getCurrentUrl());
-                        }
+                    let head = Helmet.rewind();
+                    console.log("Helmet.rewind -> "+head.title.toString());
+                    if(head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
+                        head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
+                    }
 
-                        unsubscribe();
-                    })
-                    .catch((err)=> {
-                        unsubscribe();
-                        next(err);
-                    });
-                function getReduxPromise() {
-                    let { query, params } = renderProps;
-                    let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
-                    let promise = comp.fetchData ?
-                        comp.fetchData({query, params, store, history}) :
-                        Promise.resolve();
 
-                    return promise;
-                }
+                    if (getCurrentUrl() === reqUrl) {
+                        res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
+                    } else {
+                        res.redirect(302, getCurrentUrl());
+                    }
+
+                    unsubscribe();
+                })
+                .catch((err)=> {
+                    unsubscribe();
+                    next(err);
+                });
+            function getReduxPromise() {
+                let { query, params } = renderProps;
+                let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
+                let promise = comp.fetchData ?
+                    comp.fetchData({query, params, store, history}) :
+                    Promise.resolve();
+
+                return promise;
             }
         });
         function subscribeUrl() {

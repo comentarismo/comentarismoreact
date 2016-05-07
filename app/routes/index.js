@@ -14,6 +14,8 @@ import Article from 'containers/Article';
 
 import ArticleLegacy from 'containers/ArticleLegacy';
 
+import Notfound from 'containers/Notfound';
+
 export default function (history) {
     return (
         <Router history={history}>
@@ -22,7 +24,8 @@ export default function (history) {
                 <Route path="commentators/:index/:value" component={Commentators}/>
                 <Route path="news/:id" component={Article}/>
                 <Route path="news/:index/:value" component={Articles}/>
-                <Route path="/news/:continent/:country/:index/:genre/:year/:month/:day/:value/" component={ArticleLegacy}/>
+                <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value/" component={ArticleLegacy}/>
+                <Route path="*" component={Notfound}/>
                 <IndexRoute component={Intro}/>
             </Route>
         </Router>

@@ -64,7 +64,7 @@ class ArticleContainer extends Component {
             <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title={`Latest news - Category - ${this.props.params.value.toUpperCase()} `}
+                    title={`Latest news - Category - ${this.props.params.value ? this.props.params.value.toUpperCase() : ""} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
                     {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},

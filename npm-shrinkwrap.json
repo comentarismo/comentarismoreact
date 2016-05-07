@@ -3965,6 +3965,11 @@
         }
       }
     },
+    "pos": {
+      "version": "0.3.0",
+      "from": "pos@latest",
+      "resolved": "https://registry.npmjs.org/pos/-/pos-0.3.0.tgz"
+    },
     "postcss": {
       "version": "5.0.19",
       "from": "postcss@>=5.0.4 <6.0.0",

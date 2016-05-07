@@ -38,9 +38,9 @@ function generateSitemap(conn, cb) {
                 }
                 for (var i = 0; i < genres.length; i++) {
                     sitemap.add({url: '/news/genre/' + genres[i].genre});
-                    sitemap.add({url: '/commentators/genre/' + genres[i].genre});
+                    //sitemap.add({url: '/commentators/genre/' + genres[i].genre});
                     sitemap.add({url: '/news/genre/' + genres[i].genre + '/index.xml'});
-                    sitemap.add({url: '/commentators/genre/' + genres[i].genre + '/index.xml'});
+                    //sitemap.add({url: '/commentators/genre/' + genres[i].genre + '/index.xml'});
                 }
 
                 getAllPluckDistinct(conn, "news", "countries", function (err, countries) {
@@ -71,6 +71,11 @@ function generateIndexXml(table, index, value, conn, cb) {
     });
     table = (table == "commentators" ? "commentator" : table);
     var pluck = (table == "news" ? "titleurlize" : "slug");
+
+    if(!table || !index || !value){
+        return ("search query is not correct.")
+    }
+
     getAllByIndexPluckDistinct(table, index, value, pluck, conn,  function (err, values) {
         if (err || !values) {
             console.log(values)
