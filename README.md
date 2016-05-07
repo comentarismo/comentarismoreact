@@ -19,6 +19,10 @@
 ## Mocha to run the tests
 ## Bower to download css/js dependencies like bootstrap
 
+# CentOS/Fedora:
+Avoid errors like: `make: g++: Command not found` by installing:
+`yum install gcc-c++`
+
 # Steps to Upgrade NodeJS
 
 ## Install NPM NodeJS installer

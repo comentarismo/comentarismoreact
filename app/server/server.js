@@ -377,6 +377,7 @@ server.get('*', (req, res, next)=> {
         client.get(urlTag, function (err, js) {
             if (err || !js) {
                 if (err) {
+                    console.log("Error: Redis client "+location);
                     console.error(err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
@@ -390,6 +391,7 @@ server.get('*', (req, res, next)=> {
 
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
+                    console.log("Error: generateSitemap "+location);
                     console.log("Error generateSitemap sitemap.xml --> ");
                     console.error(err.stack);
                     res.status(500).send("Server unavailable");
@@ -413,6 +415,7 @@ server.get('*', (req, res, next)=> {
         console.log("Will generate index.xml for request --> " + reqUrl);
         var vars = location.pathname.split("/");
         if (!vars || vars.length < 3) {
+            console.log("Error: index.xml "+location);
             console.log("Error generateSitemap index.xml --> ");
             return res.status(500).send("Server unavailable");
         }
@@ -470,11 +473,12 @@ server.get('*', (req, res, next)=> {
 
     } else {
 
-        console.log(location);
+        //console.log(location);
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (redirectLocation) {
                 return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
             } else if (error) {
+                console.log("Error: 500 "+location);
                 console.error(err.stack);
                 console.log("500 internal error")
                 return res.status(500).send(error.message);
@@ -502,7 +506,7 @@ server.get('*', (req, res, next)=> {
                     //));
 
                     let head = Helmet.rewind();
-                    console.log("Helmet.rewind -> "+head.title.toString());
+                    //console.log("Helmet.rewind -> "+head.title.toString());
                     if(head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
                         head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
                     }
@@ -511,6 +515,7 @@ server.get('*', (req, res, next)=> {
                     if (getCurrentUrl() === reqUrl) {
                         res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
                     } else {
+                        console.log("Redirect 302 "+location);
                         res.redirect(302, getCurrentUrl());
                     }
 
@@ -546,11 +551,12 @@ server.get('*', (req, res, next)=> {
 });
 
 server.on('error', (err) => {
-    console.error(err);
+    console.error("server.on('error' --> "+err);
 });
 
 server.use((err, req, res, next)=> {
     if (err) {
+        console.error("server.use((err, --> "+err);
         console.log(err.stack);
     }
     // TODO report error here or do some further handlings
