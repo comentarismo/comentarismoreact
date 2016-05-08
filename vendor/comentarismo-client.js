@@ -147,18 +147,16 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
 
         (defaultIndex == "nick" ?
         "<div role='meta' class='comentarismo-comment-header'>" +
-        "<span class='author'>" + item.title + "</span>" +
-        "<span class='spacer'>•</span>" +
-        "<a href='#comentarismo-" + item.id + "' class='permalink'>" + date_news + "</a>" +
+        "<span class='author'>" +
+        "<a target='_blank' href='/news/"+item.titleurlize+"'> " + item.title + "</a>" +
+        "</span>" +
         "</div>"
             :
         "<div role='meta' class='comentarismo-comment-header'>" +
-        "<span class='author'>" + item.nick + "</span>" +
-        "<span class='spacer'>•</span>" +
-        "<span class='permalink'>" + date_cmt + "</span>" +
+        "<span class='author'>" +
+        "<a target='_blank' href='/commentators/"+item.operator+"-"+(item.slug ? item.slug : item.nick)+"'>" + item.nick + "</a>" +
+        "</span>" +
         "</div>" )  +
-
-
 
 
         "<div class='text'><p>" + item.comment + "</p></div>" +

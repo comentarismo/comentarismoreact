@@ -28,7 +28,7 @@ import Helmet from "react-helmet";
 var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
 
-let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator } = require('./comentarismo_api');
+let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick } = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -150,14 +150,18 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
 server.get('/api/commentators/:id', (req, res)=> {
     var id = req.params.id;
 
+    if(!id){
+        return res.status(404).send('Not found');
+    }
+
     var urlTag = `/api/commentators/${id}`;
-    //console.log(urlTag);
+    console.log(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (err || !js) {
             if (err) {
-                console.error(err.stack);
+                //console.error(err.stack);
             }
             //return res.status(500).send('Cache is broken!');
         } else {
@@ -171,7 +175,8 @@ server.get('/api/commentators/:id', (req, res)=> {
 
         getCommentator(req.params.id, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.log("Error: "+err);
+                //console.error(err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -181,13 +186,43 @@ server.get('/api/commentators/:id', (req, res)=> {
                 client.set(urlTag, JSON.stringify(data), redis.print);
                 client.expire(urlTag, 1800);
                 //-------REDIS CACHE SAVE END ------//
+                res.send(data);
+            }else {
+
+                console.log("nothing found");
+
+                //retry
+                var idAux = "";
+                if(req.params.id.indexOf("-")!==-1){
+                    idAux = req.params.id.split("-")[1];
+                }
+
+                getCommentatorByNick((idAux ? idAux : req.params.id), conn, function (err, data) {
+                    if (err) {
+                        console.log("Error: " + err);
+                        //console.error(err.stack);
+                        return res.status(500).send('Something broke!');
+                    }
+
+                    if (data) {
+                        //-------REDIS CACHE SAVE START ------//
+                        console.log(urlTag + " will save cached");
+                        client.set(urlTag, JSON.stringify(data), redis.print);
+                        client.expire(urlTag, 1800);
+                        //-------REDIS CACHE SAVE END ------//
+                    }else {
+
+                        console.log("nothing found2 ")
+                    }
+
+                    res.send(data);
+                });
             }
-            res.send(data);
+
+
         });
 
     });
-
-
 });
 
 /**
