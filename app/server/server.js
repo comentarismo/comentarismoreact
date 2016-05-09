@@ -27,6 +27,7 @@ import Helmet from "react-helmet";
 
 var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
+var REDISPASS = process.env.REDISPASS || "";
 
 let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick } = require('./comentarismo_api');
 
@@ -66,7 +67,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 var client = redis.createClient({
-    host: REDIS_URL, port: REDIS_PORT,
+    host: REDIS_URL, port: REDIS_PORT,password:REDISPASS,
     retry_strategy: function (options) {
         if (options.error.code === 'ECONNREFUSED') {
             // End reconnecting on a specific error and flush all commands with a individual error
@@ -189,7 +190,7 @@ server.get('/api/commentators/:id', (req, res)=> {
                 res.send(data);
             }else {
 
-                console.log("nothing found");
+                console.log("commentator not found, will retry with nick");
 
                 //retry
                 var idAux = "";

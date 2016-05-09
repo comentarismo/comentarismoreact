@@ -61,6 +61,9 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `operator`
 `titleurlize`
 
+# Make sure Rethinkdb has indexes for table user:
+`name`
+
 # RethinkDB queries reference
 ## [Link](rethinkdb.md)
 
