@@ -8,19 +8,11 @@
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
     "build": "rimraf dist/ && npm run webpack && gulp prod",
-    "postinstall": "npm run build"
+    "postinstall": "bower install && npm run build"
   },
   "engines": {
-    "node": "^5.6.0",
-    "npm": "^3.6.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mz026/universal-redux-template"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mz026/universal-redux-template/issues"
+    "node": "5.6.0",
+    "npm": "3.6.0"
   },
   "dependencies": {
     "assets-webpack-plugin": "^3.2.0",
@@ -77,13 +69,11 @@
     "gulp-autoprefixer": "^3.1.0",
     "gulp-load-plugins": "^1.2.0",
     "gulp-rev": "^6.0.1",
-    "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
     "jsdom": "^7.0.1",
     "mocha": "^2.3.3",
     "nock": "^2.17.0",
-    "node-sass": "^3.4.2",
     "nodemon": "^1.6.0",
     "react-addons-test-utils": "^0.14.0",
     "react-transform-catch-errors": "^1.0.0",

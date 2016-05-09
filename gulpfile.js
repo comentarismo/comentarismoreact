@@ -11,7 +11,7 @@ var buildProperties = {
     publicDir: require('path').resolve('./dist'),
     GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || 'DEVELOP',
     cssFiles: [
-        'app/styles/main.scss',
+        //'app/styles/main.scss',
         'app/css/all.css',
         './bower_components/bootstrap/dist/css/bootstrap.css',
         './bower_components/components-font-awesome/css/font-awesome.css'
@@ -26,13 +26,13 @@ var buildProperties = {
 
 gulp.task('css', function () {
     return gulp.src(buildProperties.cssFiles)
-        .pipe($.sourcemaps.init())
-        .pipe($.sass().on('error', $.sass.logError))
-        .pipe($.autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-        .pipe($.sourcemaps.write())
+        //.pipe($.sourcemaps.init())
+        //.pipe($.sass().on('error', $.sass.logError))
+        //.pipe($.autoprefixer({
+        //    browsers: ['last 2 versions'],
+        //    cascade: false
+        //}))
+        //.pipe($.sourcemaps.write())
         .pipe(concat('all.css'))
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {
