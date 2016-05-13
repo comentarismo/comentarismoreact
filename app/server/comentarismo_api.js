@@ -131,6 +131,30 @@ export function getAllByIndexFilterSkipLimit(table, index, value, filter, skip, 
         });
 }
 
+export function getAllByIndexSkipLimit(table, index, value, skip, limit, conn, cb) {
+    if (!table || !index || !value) {
+        console.log(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
+        console.log(errMsg + "getAllByIndexSkipLimit --> search query is not correct.");
+        return cb()
+    }
+
+    r.table(table)
+        .getAll(value, {index: index})
+        .skip(skip).limit(limit)
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                //console.log(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    //console.log(results.length);
+                    cb(null, results);
+                });
+            }
+        });
+}
+
 function question(id) {
     let sampleContent = '--the question content--'
     return {

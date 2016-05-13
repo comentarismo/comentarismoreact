@@ -58,7 +58,7 @@ export function loadSuggestCommentDetail({ index,value,skip,limit }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `/gapi/commentaries/${index}/${value}/${skip}/${limit}/`,
+                        path: `/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`,
                         successType: LOADED_SUGGESTCOMMENT_DETAIL
                     }
                 }

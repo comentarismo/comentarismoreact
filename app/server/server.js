@@ -29,7 +29,7 @@ var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
 var REDISPASS = process.env.REDISPASS || "";
 
-let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID } = require('./comentarismo_api');
+let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -355,6 +355,59 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
 
         getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, sort, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            if (data) {
+                //-------REDIS CACHE SAVE START ------//
+                console.log(urlTag + " will save cached");
+                res.type('application/json');
+                client.set(urlTag, JSON.stringify(data), redis.print);
+                client.expire(urlTag, expireTime);
+                //-------REDIS CACHE SAVE END ------//
+            }
+            res.send(data);
+        });
+
+    });
+});
+
+
+
+/**
+ * Get all from a table with a index and its value with skip and limit
+ * bind to action/articles.js -> loadArticles
+ * bind to app/sa.js -> used for listing all news and commentators infinitescroll
+ *
+ */
+server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
+    var table = req.params.table;
+    var index = req.params.index;
+    var value = req.params.value;
+    var skip = parseInt(req.params.skip);
+    var limit = parseInt(req.params.limit);
+
+    var urlTag = `/commentsapi/${table}/${index}/${value}/${skip}/${limit}`;
+    //console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log(urlTag + " will return cached result ");
+            //client.expire(urlTag,1);
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+        getAllByIndexSkipLimit(table, index, value, skip, limit, conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');

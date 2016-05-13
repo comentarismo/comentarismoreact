@@ -12,12 +12,11 @@ import { loadSuggestCommentDetail } from 'actions/commentators'
 class Intro extends Component {
     static fetchData({ store, params }) {
         //let { index,value,skip,limit } = params;
-        var index = params.index || "operator";
-        var value = params.value || "bbcuk";
+        var index = params.index || "languages";
+        var value = params.value || "english";
         var skip = params.skip || "0";
         var limit = params.limit || "50";
 
-        console.log(value);
         return store.dispatch(loadSuggestCommentDetail({index, value, skip, limit}))
     }
 
