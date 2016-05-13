@@ -1,8 +1,7 @@
 import * as ActionType from 'actions/commentators';
-
-function commentatorsReducer(state = [], action) {
+function suggestCommentReducer(state = [], action) {
     switch (action.type) {
-        case ActionType.LOADED_COMMENTATORS:
+        case ActionType.LOADED_SUGGESTCOMMENT_DETAIL:
             return action.response;
             break;
         default:
@@ -10,4 +9,4 @@ function commentatorsReducer(state = [], action) {
     }
 }
 
-export default commentatorsReducer;
+export default suggestCommentReducer;

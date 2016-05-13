@@ -1,13 +1,34 @@
-import React, { Component,ReactClass } from 'react';
+import React, { Component,ReactClass,PropTypes } from 'react';
+
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 var MainNavbar = require('components/MainNavbar');
 import Helmet from "react-helmet";
 
+import {PlayComment} from './PlayComment';
+import { loadSuggestCommentDetail } from 'actions/commentators'
 
 class Intro extends Component {
-    render() {
+    static fetchData({ store, params }) {
+        //let { index,value,skip,limit } = params;
+        var index = params.index || "languages";
+        var value = params.value || "english";
+        var skip = params.skip || "0";
+        var limit = params.limit || "50";
+
+        console.log(value);
+        return store.dispatch(loadSuggestCommentDetail({index, value, skip, limit}))
+    }
+
+    render() {//languages/english/0/5/
+        let { comment } = this.props;
+
+        var index = this.props.params.index || "languages";
+        var value = this.props.params.value || "english";
+        var skip = this.props.params.skip || "0";
+        var limit = this.props.params.limit || "50";
+
         return (
             <div>
                 <Helmet
@@ -30,6 +51,17 @@ class Intro extends Component {
                                     <div className="text-tran-box">
                                         <h1 className="text-transparent">Start commenting and contribute to a better world</h1>
                                     </div>
+
+
+
+                                    <PlayComment playing={true} comment={comment} index={index} value={value} skip={skip} limit={limit}
+                                                 loadSuggestCommentDetail={loadSuggestCommentDetail}/>
+
+
+
+
+
+
                                     <a href="/news/languages/english" className="btn btn-dark">Read News</a>
                                     <br/><br/>
                                     <a href="/commentators/languages/english" className="btn btn-dark">Find Commentators</a>
@@ -159,8 +191,14 @@ class Intro extends Component {
     }
 }
 
-function mapStateToProps() {
-    return {};
+function mapStateToProps(state) {
+    return {comment: state.suggestCommentDetail}
 }
 
-export default connect(mapStateToProps)(Intro);
+Intro.propTypes = {
+    comment: PropTypes.array.isRequired,
+};
+
+
+export { Intro }
+export default connect(mapStateToProps, {loadSuggestCommentDetail})(Intro)
