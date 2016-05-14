@@ -4,6 +4,7 @@ var React = require('react');
 
 import config from 'config'
 var host = config.API_URL;
+var analytics = require('ga-browser')();
 
 module.exports = React.createClass({
     displayName: 'DisLike',
@@ -17,6 +18,7 @@ module.exports = React.createClass({
     },
 
     componentDidMount: function () {
+        analytics('create', 'UA-51773618-1', 'auto');
         if (this.props.forceUpdate) {
             // reload src to force onerror to be called if image link was not valid
             //this.getDOMNode().src = this.props.src;
@@ -26,7 +28,7 @@ module.exports = React.createClass({
 
     handleClick: function (event) {
         this.setState({disliked: !this.state.disliked});
-
+        ga('send', 'event', 'dislike', window.location.href, {}, 0);
         //http on comentarismo api and properly like this comment :D
         var request = $.ajax({
             url: host + '/auth/dislike/' + this.props.id,

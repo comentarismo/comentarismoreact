@@ -13,18 +13,22 @@ import { loadCommentDetail } from 'actions/commentators'
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
 import {CommentSlide} from 'components/CommentSlide';
+var analytics = require('ga-browser')();
 
 
 var Slide = React.createClass({
-    render: function() {
+    render: function () {
         let { comment } = this.props;
 
         return (
             <div className="container">
                 <div className="row">
                     <div className="col-sm-8">
-                        <img src="/static/img/comentarismo-extra-mini-logo.png"/>
-                        Comentarismo
+                        <a href="/" target="_blank">
+                            <img src="/static/img/comentarismo-extra-mini-logo.png"/>
+                            <span className="btn-default">
+                            Comentarismo </span>
+                        </a>
                     </div>
 
 
@@ -53,8 +57,9 @@ var Slide = React.createClass({
                                 <div className="col-sm-12">
                                     <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
                                          className="img-circle img-thumbnail"/>
-                                    <p>"By Reading Comments You Help people to be heard; Sharing ideas we'll make a better world." <span className="btn-default"> <a
-                                        className="text-colored">@Comentarismo</a></span>
+                                    <p>"By Reading Comments You Help people to be heard; Sharing ideas we'll make a
+                                        better world." <span className="btn-default"> <a
+                                            className="text-colored">@Comentarismo</a></span>
                                     </p>
                                 </div>
                             </div>
@@ -66,176 +71,29 @@ var Slide = React.createClass({
     }
 });
 
-var Empty = React.createClass({
-    render: function() {
-        return (
-            <div>There are no comments yet.</div>
-        )
-    }
-})
-
-var PageItem = React.createClass({
-    render: function() {
-        var status = this.props.index == this.props.counter ? 'active' : 'inactive'
-
-        return (
-            <li className={status + " pagination-item"} onClick={this.props.onClick}>{this.props.index}</li>
-        )
-    }
-});
-
-var PlayButton = React.createClass({
-    render: function() {
-        return (
-            <span className="entypo-play" data-text="play" onClick={this.props.onClick}/>
-        )
-    }
-});
-
-var PauseButton = React.createClass({
-    render: function() {
-        return (
-            <span className="entypo-pause" data-text="play" onClick={this.props.onClick}/>
-        )
-    }
-});
-
-var PreviousButton = React.createClass({
-    render: function() {
-        return (
-            <span className="entypo-left-open-mini" data-text="left-open-mini" onClick={this.props.onClick}/>
-        )
-    }
-});
-
-var NextButton = React.createClass({
-    render: function() {
-        return (
-            <span className="entypo-right-open-mini" data-text="right-open-mini" onClick={this.props.onClick}/>
-        )
-    }
-});
-
 var Slideshow = React.createClass({
 
-    getInitialState: function() {
-        return {
-            data: this.props.comment,
-            currentSlide: null,
-            counter: 0,
-            playing: false
-        }
-    },
-    goToPage: function(index) {
-        var data = this.state.data;
-        this.setState({counter: index, currentSlide: data[index]});
-        this.pauseRotation();
-    },
-    getData: function() {
+    getInitialState: function () {
         let { comment } = this.props
-        console.log(comment)
-        this.setState({
-            data: comment,
+        return {
             currentSlide: comment,
             counter: 0,
             playing: false
-        })
-        //var request = $.getJSON('./data.json');
-        //request.then(function(data) {
-
-
-        //that.setState({data: data, currentSlide: data[0]});
-        //});
-    },
-    componentDidMount: function() {
-        this.getData();
-        this.startRotation();
-
-    },
-    componentWillUnmount: function() {
-        clearInterval(this.interval);
-    },
-    startRotation: function() {
-        this.interval = setInterval(this.rotate, 3000);
-        this.setState({ playing: true });
-    },
-    pauseRotation: function() {
-        clearInterval(this.interval)
-        this.setState({ playing: false });
-    },
-    rotate: function() {
-        var data = this.state.data;
-        var counter = this.state.counter;
-        var slidesCount = this.state.data.length;
-
-        if (counter < slidesCount - 1) {
-            ++counter;
-        } else {
-            counter = 0;
         }
-
-        this.setState({counter: counter, currentSlide: data[counter]});
     },
-    goToPrevious: function() {
-        var data = this.state.data;
-        var slidesCount = this.state.data.length;
-        var counter = this.state.counter;
+    render: function () {
 
-        if (counter > 0) {
-            --counter;
-        } else {
-            counter = slidesCount - 1;
-        }
-        this.setState({counter: counter, currentSlide: data[counter]});
-        this.pauseRotation();
-    },
-    goToNext: function() {
-        this.rotate();
-        this.pauseRotation();
-    },
-
-    render: function() {
-        var that = this;
-        var pageItems = this.state.data.map(function (slide, i) {
-            var boundClick = that.goToPage.bind(that, i)
-            return (<PageItem key={slide.id} index={i} counter={that.state.counter} onClick={boundClick}/>)
-        });
-
-        var playButton = <PlayButton onClick={this.startRotation}/>
-        var pauseButton = <PauseButton onClick={this.pauseRotation}/>
-        var previousButton = <PreviousButton onClick={this.goToPrevious}/>
-        var nextButton = <NextButton onClick={this.goToNext}/>
-
-        if(!this.state.currentSlide){
-            this.state.currentSlide = this.props.comment
-        }
-
-        var slide = <Slide key={this.state.currentSlide.id} comment={this.state.currentSlide}/>
+        var slide = <Slide key={this.props.comment.id} comment={this.props.comment}/>;
 
         return (
             <div className="slideshow">
                 <div className="slides">
                     {slide}
                 </div>
-                <ol className="pagination">
-                    {pageItems}
-                </ol>
-                <div className="button">
-                    {this.state.playing ? pauseButton : playButton}
-                </div>
-                <div className="previous">
-                    {previousButton}
-                </div>
-
-                <div className="next">
-                    {nextButton}
-                </div>
             </div>
         );
     }
-
-})
-
+});
 
 
 class Comment extends Component {
@@ -243,6 +101,13 @@ class Comment extends Component {
         let { id } = params;
         console.log(id);
         return store.dispatch(loadCommentDetail({id}))
+    }
+
+    componentDidMount() {
+        analytics('create', 'UA-51773618-1', 'auto');
+        setInterval(function () {
+            ga('send', 'event', 'ping', window.location.href, {}, 0)
+        }, 20000);
     }
 
     render() {
@@ -261,7 +126,7 @@ class Comment extends Component {
                     onChangeClientState={(newState) => console.log(newState)}
                 />
 
-                <Slideshow comment={[comment]}/>
+                <Slideshow comment={comment}/>
 
                 <div className="clearfix"></div>
                 <footer className="footer bg-dark">

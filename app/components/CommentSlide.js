@@ -19,7 +19,9 @@ var CommentSlide = React.createClass({
                                     <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
                                          className="img-circle img-thumbnail"/>
                                     <div className="text-blue">
-                                        <XDiv text={comment.title}/>
+                                        <a href={`/news/${comment.titleurlize}`} target="_blank" >
+                                            <XDiv text={comment.title}/>
+                                        </a>
                                     </div>
                                     <XDiv text={"<b>"+comment.comment+"</b>"}/>
                                     <span className="btn-default">

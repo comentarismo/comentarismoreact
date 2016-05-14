@@ -24,6 +24,7 @@
     "compression": "^1.6.0",
     "ejs": "^2.3.4",
     "express": "^4.13.3",
+    "ga-browser": "^1.0.0",
     "gulp-clean-css": "^2.0.6",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",

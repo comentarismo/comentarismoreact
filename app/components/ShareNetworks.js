@@ -1,10 +1,19 @@
 import React from 'react';
 import config from 'config'
-var host = config.API_URL;
 var BASE_URL = config.BASE_URL;
+var analytics = require('ga-browser')();
 
 var ShareNetworks = React.createClass({
+
+    componentDidMount: function () {
+        analytics('create', 'UA-51773618-1', 'auto');
+        setInterval(function () {
+            ga('send', 'event', 'ping', window.location.href, {}, 0)
+        }, 20000);
+    },
+
     onclickTweet: function (event, url) {
+        ga('send', 'event', 'share-twitter', window.location.href, {}, 0);
         // Make a good use of short URL
         var shortUrl = window.location.href;
         var width = 575,
@@ -27,6 +36,7 @@ var ShareNetworks = React.createClass({
     },
 
     onclickFacebook: function (ev, url) {
+        ga('send', 'event', 'share-fb', window.location.href, {}, 0);
         //http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350
         var title = "test";
         var descr = "test";
@@ -41,15 +51,11 @@ var ShareNetworks = React.createClass({
         return false;
     },
     render: function () {
-        var target = "";
-        if (typeof window !== 'undefined') {
-            target = window.location.href;
-        }
         let { comment } = this.props;
         return (<div className="row">
             <div className="col-xs-2">
 
-                <a href={`${host}/c/${comment.id}`} target="_blank"><span className="fa fa-link"></span></a>
+                <a href={`/c/${comment.id}`} target="_blank"><span className="fa fa-link"></span></a>
             </div>
             <div className="col-xs-10">
                 <div className="social_area">

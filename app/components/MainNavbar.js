@@ -5,6 +5,7 @@ import { Navbar,Nav,NavItem,NavDropdown,MenuItem } from 'react-bootstrap';
 
 import config from 'config'
 var host = config.API_URL;
+var analytics = require('ga-browser')();
 
 module.exports = React.createClass({
     displayName: 'MainNavbar',
@@ -15,6 +16,10 @@ module.exports = React.createClass({
     },
 
     componentDidMount: function () {
+        analytics('create', 'UA-51773618-1', 'auto');
+        setInterval(function () {
+            ga('send', 'event', 'ping', window.location.href, {}, 0)
+        }, 20000);
     },
 
     render: function () {
