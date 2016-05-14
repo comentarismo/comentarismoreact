@@ -201,7 +201,7 @@ server.get('/api/commentators/:id', (req, res)=> {
     client.get(urlTag, function (err, js) {
         if (err || !js) {
             if (err) {
-                //console.error(err.stack);
+                console.error(err);
             }
             //return res.status(500).send('Cache is broken!');
         } else {
@@ -223,7 +223,9 @@ server.get('/api/commentators/:id', (req, res)=> {
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached");
-                client.set(urlTag, JSON.stringify(data), redis.print);
+                var js = JSON.stringify(data);
+                //console.log(js);
+                client.set(urlTag, js, redis.print);
                 client.expire(urlTag, expireTime);
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);

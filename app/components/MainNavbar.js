@@ -3,6 +3,9 @@
 var React = require('react');
 import { Navbar,Nav,NavItem,NavDropdown,MenuItem } from 'react-bootstrap';
 
+import config from 'config'
+var host = config.API_URL;
+
 module.exports = React.createClass({
     displayName: 'MainNavbar',
 
@@ -201,6 +204,10 @@ module.exports = React.createClass({
                                 <MenuItem eventKey={3.1} href="/commentators/languages/russian">Russian All</MenuItem>
                             </NavDropdown>
                         </NavDropdown>
+                    </Nav>
+                    <Nav pullRight>
+                        <NavItem eventKey={8} href={`${host}/login`}><span
+                            className="mobile-show">Login</span></NavItem>
                     </Nav>
                     <Nav pullRight>
                         <NavItem eventKey={9} href="https://comentarismo.on.spiceworks.com/portal" target="_blank"><span

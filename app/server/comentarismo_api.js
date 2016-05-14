@@ -172,14 +172,16 @@ export function getCommentator(id, conn, cb) {
     //get commentator by id
     getByID("commentator", id, conn, function (err, commentator) {
         if (err || !commentator) {
-            console.log(err);
-            cb(err);
+                console.log(err);
+            cb(`getByID commentator ${id} not found`);
         } else {
             //get all comments by index nick
             getAllByIndexFilterSkipLimit("commentaries", "nick", commentator.nick, {"operator": commentator.operator}, 0, 50, "date", conn, function (err, comments) {
                 if (err || !commentator) {
-                    console.log(err);
-                    cb(err);
+                    if(err) {
+                        console.log(err);
+                    }
+                    cb(`getAllByIndexFilterSkipLimit commentator nick ${commentator.nick} not found`);
                 } else {
                     commentator.comments = comments;
                     //console.log(commentator);

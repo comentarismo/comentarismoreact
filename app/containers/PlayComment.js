@@ -1,112 +1,7 @@
 import React, { Component,ReactClass,PropTypes } from 'react';
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
-
-
-var Slide = React.createClass({
-    render: function () {
-        let { comment } = this.props;
-
-        return (
-            <div>
-                <div className="row">
-                    <div className="col-md-10 col-md-offset-1">
-                        <div className="facts-box testimonial-cta">
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
-                                         className="img-circle img-thumbnail"/>
-                                    <div className="text-blue">
-                                        <Comment comment={comment.title}/>
-                                    </div>
-                                    <Comment comment={"<b>"+comment.comment+"</b>"}/>
-                                    <span className="btn-default">
-                                        <a className="text-colored"><h1><Comment comment={"@"+comment.nick}/></h1></a>
-                                    </span>
-                                    <ShareNetworks comment={comment}/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-});
-
-var ShareNetworks = React.createClass({
-    onclickTweet: function (event, url) {
-        // Make a good use of short URL
-        var shortUrl = window.location.href;
-        var width = 575,
-            height = 420,
-            left = ($(window).width() - width) / 2,
-            top = ($(window).height() - height) / 2,
-            opts = 'status=1' +
-                ',width=' + width +
-                ',height=' + height +
-                ',top=' + top +
-                ',left=' + left,
-            queryString = 'text=' + encodeURIComponent('Checkout this new game: ') +
-                '&via=comentarismo' +
-                '&via=comentarismo' +
-                '&url=' + encodeURIComponent(shortUrl);
-
-        window.open('https://twitter.com/share?' + queryString, 'twitter', opts);
-        return false;
-
-    },
-
-    onclickFacebook: function (ev, url) {
-        //http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350
-        var title = "test";
-        var descr = "test";
-        var image = "http://localhost:3002/static/img/comentarismo-extra-mini-logo.png";
-
-        var width = 575,
-            height = 420,
-            left = ($(window).width() - width) / 2,
-            top = ($(window).height() - height) / 2;
-
-        window.open('http://www.facebook.com/sharer.php?s=100&p[title]=' + title + '&p[summary]=' + descr + '&p[url]=' + url + '&p[images][0]=' + image, 'sharer', 'top=' + top + ',left=' + left + ',toolbar=0,status=0,width=' + width + ',height=' + height);
-        return false;
-    },
-    render: function () {
-        var target = "";
-        if (typeof window !== 'undefined') {
-            target = window.location.href;
-        }
-        return (<div className="row">
-            <div className="col-xs-2">
-
-                <a href={target} target="_blank"><span className="fa fa-link"></span></a>
-            </div>
-            <div className="col-xs-10">
-                <div className="social_area">
-                    <ul className="social_nav">
-                        <li className="twitter" onClick={() => this.onclickTweet(this,'test.com')}><a target="#"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>);
-        //<li className="facebook" onClick={() => this.onclickFacebook(this,'test.com')}><a href="#"></a></li>
-        //<li className="flickr"><a href="#"></a></li>
-        //<li className="pinterest"><a href="#"></a></li>
-        //<li className="googleplus"><a href="#"></a></li>
-        //<li className="vimeo"><a href="#"></a></li>
-        //<li className="youtube"><a href="#"></a></li>
-        //<li className="mail"><a href="#"></a></li>
-    }
-});
-
-var Comment = React.createClass({
-    render: function () {
-        return (
-            <div ref="it" dangerouslySetInnerHTML={{__html:this.props.comment}}></div>
-        )
-    }
-});
+import {CommentSlide} from 'components/CommentSlide';
 
 var Empty = React.createClass({
     render: function () {
@@ -183,7 +78,7 @@ var PlayComment = React.createClass({
     },
     startRotation: function () {
         console.log("play");
-        this.interval = setInterval(this.rotate, 5000);
+        this.interval = setInterval(this.rotate, (this.props.playingtimeout || 10000));
         this.setState({playing: true});
     },
     pauseRotation: function () {
@@ -207,7 +102,7 @@ var PlayComment = React.createClass({
             var skip = parseInt(this.state.skip) + counter + 1;
             var limit = parseInt(this.props.limit);
 
-            var url = `/gapi/commentaries/${index}/${value}/${skip}/${limit}/`;
+            var url = `/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`;
             console.log(url);
 
             $(".slideshow").hide();
@@ -233,7 +128,7 @@ var PlayComment = React.createClass({
                     currentSlideLike: false,
                     currentSlideDisLike: false
                 });
-                $("a#inifiniteLoaderPlay").hide("slow");
+                $("a#inifiniteLoaderPlay").hide();
                 $(".slideshow").show();
                 return;
             });
@@ -286,7 +181,7 @@ var PlayComment = React.createClass({
             this.state.currentSlide = this.state.comment["0"];
         }
 
-        var slide = <Slide key={this.state.currentSlide.id} comment={this.state.currentSlide}/>;
+        var slide = <CommentSlide key={this.state.currentSlide.id} comment={this.state.currentSlide}/>;
 
         return (
             <div className="container">

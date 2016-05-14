@@ -8,7 +8,7 @@ let defaultState = {
 export default function (state = defaultState, action) {
     let cloned
     switch (action.type) {
-        case ActionType.LOADED_S_DETAIL:
+        case ActionType.LOADED_COMMENTATOR_DETAIL:
             cloned = _.clone(state)
             return _.merge(cloned, action.response)
 

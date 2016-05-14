@@ -12,6 +12,7 @@ import { loadCommentDetail } from 'actions/commentators'
 
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
+import {CommentSlide} from 'components/CommentSlide';
 
 
 var Slide = React.createClass({
@@ -35,22 +36,7 @@ var Slide = React.createClass({
 
                 <div className="col-xs-12" style={{height: "45px"}}></div>
 
-
-                <div className="row">
-                    <div className="col-md-10 col-md-offset-1">
-                        <div className="facts-box testimonial-cta">
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
-                                         className="img-circle img-thumbnail"/>
-                                    <p>"{comment.comment}" <span className="btn-default"> <a
-                                        className="text-colored">@{comment.nick}</a></span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <CommentSlide key={comment.id} comment={comment}/>
 
                 <div className="row">
 

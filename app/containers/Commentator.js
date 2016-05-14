@@ -14,14 +14,6 @@ class Commentator extends Component {
         return store.dispatch(loadCommentatorDetail({id}))
     }
 
-    getInitialState() {
-        return {
-            data: {
-                comments: []
-            }
-        };
-    }
-
     componentDidMount() {
         let { id } = this.props.params
         this.props.loadCommentatorDetail({id})
@@ -29,7 +21,6 @@ class Commentator extends Component {
 
     render() {
         let { commentator } = this.props;
-
         if (!commentator.comments){
             commentator.comments = [];
         }

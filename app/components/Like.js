@@ -65,7 +65,7 @@ module.exports = React.createClass({
             }
 
             $(".success").hide();
-            $(".error").html(jqXHR.status + " " + jqXHR.statusText +  " ... Something bad happened, are you logged in ?? <a href='/login'>Login</a> ");
+            $(".error").html(jqXHR.status + " " + jqXHR.statusText +  ` ... Something bad happened, are you logged in ?? <a href='${host}/login'>Login</a> `);
             $(".error").show();
             $(".error").focus();
 
