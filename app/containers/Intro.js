@@ -7,7 +7,9 @@ var MainNavbar = require('components/MainNavbar');
 import Helmet from "react-helmet";
 
 import {PlayComment} from './PlayComment';
-import { loadSuggestCommentDetail } from 'actions/commentators'
+import { loadIntroDetail } from 'actions/intro'
+
+import WorldRank from 'components/WorldRank';
 
 class Intro extends Component {
     static fetchData({ store, params }) {
@@ -17,7 +19,7 @@ class Intro extends Component {
         var skip = params.skip || "0";
         var limit = params.limit || "50";
 
-        return store.dispatch(loadSuggestCommentDetail({index, value, skip, limit}))
+        return store.dispatch(loadIntroDetail({index, value, skip, limit}))
     }
 
     render() {//languages/english/0/5/
@@ -43,11 +45,9 @@ class Intro extends Component {
                 <MainNavbar/>
 
                 <div className="home-wrapper text-center">
-                    <p>Welcome to Comentarismo</p>
+                    <p>*NEW Comentarismo Play, use the controller below to read unlimited comments</p>
                 </div>
-                <PlayComment playing={true} comment={comment} index={index} value={value} skip={skip} limit={limit}
-                             loadSuggestCommentDetail={loadSuggestCommentDetail} playingtimeout={10000}/>
-
+                <PlayComment playing={true} comment={comment.comment} index={index} value={value} skip={skip} limit={limit} playingtimeout={10000}/>
 
                 <section className="section home" id="home">
                     <div className="container">
@@ -69,35 +69,8 @@ class Intro extends Component {
                     </div>
                 </section>
 
+                <WorldRank alexarank={comment.alexa}/>
 
-                <section>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-8 col-md-offset-2">
-                                <div className="facts-box text-center">
-                                    <div className="row">
-                                        <div className="col-sm-3 col-xs-6">
-                                            <h2>10 Million</h2>
-                                            <p className="text-muted">Indexed Comments</p>
-                                        </div>
-                                        <div className="col-sm-3 col-xs-6">
-                                            <h2>300.000</h2>
-                                            <p className="text-muted">World Rank</p>
-                                        </div>
-                                        <div className="col-sm-3 col-xs-6">
-                                            <h2>90.000</h2>
-                                            <p className="text-muted">US Rank</p>
-                                        </div>
-                                        <div className="col-sm-3 col-xs-6">
-                                            <h2>5.000</h2>
-                                            <p className="text-muted">Daily Visitors</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
                 <div className="clearfix"></div>
                 <section className="section" id="features">
                     <div className="container">
@@ -206,7 +179,7 @@ class Intro extends Component {
 }
 
 function mapStateToProps(state) {
-    return {comment: state.suggestCommentDetail}
+    return {comment: state.introDetail}
 }
 
 Intro.propTypes = {
@@ -215,4 +188,4 @@ Intro.propTypes = {
 
 
 export { Intro }
-export default connect(mapStateToProps, {loadSuggestCommentDetail})(Intro)
+export default connect(mapStateToProps, {loadIntroDetail})(Intro)

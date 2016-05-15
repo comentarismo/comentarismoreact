@@ -7,6 +7,8 @@ import articleDetail from 'reducers/articleDetail';
 import commentDetail from 'reducers/commentDetail';
 
 import suggestCommentDetail from 'reducers/suggestCommentDetail'
+import introDetail from 'reducers/introDetail'
+
 
 const rootReducer = combineReducers({
     commentators,
@@ -14,7 +16,8 @@ const rootReducer = combineReducers({
     commentDetail,
     suggestCommentDetail,
     articles,
-    articleDetail
+    articleDetail,
+    introDetail,
 });
 
 export default rootReducer;

@@ -2,8 +2,8 @@ import React from 'react';
 import {XDiv} from 'components/XDiv';
 import {ShareNetworks} from 'components/ShareNetworks';
 
-import config from 'config'
-var host = config.BASE_URL;
+//import config from 'config'
+//var host = config.BASE_URL;
 
 var CommentSlide = React.createClass({
     render: function () {
@@ -25,7 +25,7 @@ var CommentSlide = React.createClass({
                                     </div>
                                     <XDiv text={"<b>"+comment.comment+"</b>"}/>
                                     <span className="btn-default">
-                                        <a className="text-colored" href={`${host}/commentators/${comment.nick}`}  ><h1><XDiv text={"@"+comment.nick}/></h1></a>
+                                        <span className="text-colored"><h1><XDiv text={"@"+comment.nick}/></h1></span>
                                     </span>
                                     <ShareNetworks comment={comment}/>
                                 </div>
@@ -37,5 +37,7 @@ var CommentSlide = React.createClass({
         )
     }
 });
+
+//href={`${host}/commentators/${comment.nick}`}
 
 export { CommentSlide }

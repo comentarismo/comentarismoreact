@@ -44,12 +44,12 @@ var rethinkdb_table = 'test';
 
 var aday = 86400000;
 
-var expireTime = aday/24;
+var expireTime = aday / 24;
 var expireTimeStr = process.env.expiretime;
-if(expireTimeStr){
+if (expireTimeStr) {
     expireTime = parseInt(expireTimeStr);
 }
-console.log("Will set expire time for redis/cache as --> "+expireTime);
+console.log("Will set expire time for redis/cache as --> " + expireTime);
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
@@ -132,8 +132,6 @@ server.get('/api/suggestcomment/:id', (req, res) => {
         }
     });
 });
-
-
 
 
 //bind to action/commentators.js -> loadCommentators
@@ -377,7 +375,6 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 });
 
 
-
 /**
  * Get all from a table with a index and its value with skip and limit
  * bind to action/articles.js -> loadArticles
@@ -483,10 +480,49 @@ server.get('/api/news/:id', (req, res)=> {
 
 });
 
-//server.get('/api/users/:id', (req, res)=> {
-//    let { getUser } = require('./mock_api');
-//    res.send(getUser(req.params.id));
-//});
+var comentarismosite = "http://www.comentarismo.com";
+server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
+
+    var table = req.params.table;
+    var index = req.params.index;
+    var value = req.params.value;
+    var skip = parseInt(req.params.skip);
+    var limit = parseInt(req.params.limit);
+
+    var urlTag = `/${table}/${index}/${value}/${skip}/${limit}`;
+    //console.log(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get("intropage"+urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            console.log("intropage"+urlTag + " will return cached result ");
+            //client.expire("intropage"+urlTag, 1);
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+        let { getAlexaRank } = require('./alexa_api');
+
+        getAlexaRank(comentarismosite,"commentsapi"+urlTag, function(err,alexarank){
+            if(err){
+                return res.status(500).send({});
+            }else {
+                client.set("intropage"+urlTag, JSON.stringify(alexarank), redis.print);
+                client.expire("intropage"+urlTag, expireTime);
+                res.type('application/json');
+                //-------REDIS CACHE SAVE END ------//
+                //get comments
+                return res.send(alexarank);
+            }
+        });
+    });
+});
 
 
 //TODO: cache sitemap with redis
