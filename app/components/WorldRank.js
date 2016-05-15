@@ -7,7 +7,7 @@ module.exports = React.createClass({
 
     render: function () {
         let { alexarank } = this.props;
-        console.log(alexarank);
+        //console.log(alexarank);
 
         return (
             <section>

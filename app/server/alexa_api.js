@@ -45,7 +45,7 @@ export function getAlexaRank(url, urlTag, cb) {
                     };
 
                     var target = `${host}/${urlTag}`;
-                    console.log(target);
+                    //console.log(target);
 
                     superAgent.get(target).end(function (err, r) {
                         if(err){
