@@ -9,9 +9,13 @@ if (typeof window !== 'undefined') {
         ELK_URL = 'http://g7-box:9200';
     }
 }
+else if(process.env.NODE_ENV !== "production"){
+    BASE_URL = 'http://localhost:3002';
+    API_URL = 'http://localhost:3000';
+    ELK_URL = 'http://g7-box:9200';
+}
 
 let config = {
-    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3002',
     BASE_URL: BASE_URL,
     API_URL: API_URL,
     ELK_URL: ELK_URL,

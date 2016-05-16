@@ -6,6 +6,7 @@ import { Navbar,Nav,NavItem,NavDropdown,MenuItem } from 'react-bootstrap';
 import config from 'config'
 var host = config.API_URL;
 var analytics = require('ga-browser')();
+import LoginStore from 'store/LoginStore';
 
 module.exports = React.createClass({
     displayName: 'MainNavbar',
@@ -151,9 +152,12 @@ module.exports = React.createClass({
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="UK" id="basic-nav-dropdown">
                                     <MenuItem eventKey={3.1} href="/commentators/operator/bbcuk">BBC</MenuItem>
-                                    <MenuItem eventKey={3.2} href="/commentators/operator/telegraph">Telegraph</MenuItem>
-                                    <MenuItem eventKey={3.3} href="/commentators/operator/theguardian">Theguardian</MenuItem>
-                                    <MenuItem eventKey={3.4} href="/commentators/operator/independentuk">Independent</MenuItem>
+                                    <MenuItem eventKey={3.2}
+                                              href="/commentators/operator/telegraph">Telegraph</MenuItem>
+                                    <MenuItem eventKey={3.3}
+                                              href="/commentators/operator/theguardian">Theguardian</MenuItem>
+                                    <MenuItem eventKey={3.4}
+                                              href="/commentators/operator/independentuk">Independent</MenuItem>
                                 </NavDropdown>
                                 <NavDropdown eventKey={3} title="US" id="basic-nav-dropdown">
                                     <MenuItem eventKey={3.5}
@@ -180,7 +184,8 @@ module.exports = React.createClass({
                             </NavDropdown>
                             <NavDropdown eventKey={6} title="Italian" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="Italy" id="basic-nav-dropdown">
-                                    <MenuItem eventKey={6.1} href="/commentators/operator/repubblica">La Repubblica</MenuItem>
+                                    <MenuItem eventKey={6.1} href="/commentators/operator/repubblica">La
+                                        Repubblica</MenuItem>
                                 </NavDropdown>
                                 <MenuItem eventKey={3.1} href="/commentators/languages/italian">Italian All</MenuItem>
                             </NavDropdown>
@@ -191,9 +196,11 @@ module.exports = React.createClass({
                                     <MenuItem eventKey={7.1} href="/commentators/operator/ultimosegundo">IG</MenuItem>
                                     <MenuItem eventKey={7.1}
                                               href="/commentators/operator/folhapolitica">FolhaPolitica</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/commentators/operator/cartacapital">CartaCapital</MenuItem>
+                                    <MenuItem eventKey={7.1}
+                                              href="/commentators/operator/cartacapital">CartaCapital</MenuItem>
                                 </NavDropdown>
-                                <MenuItem eventKey={3.1} href="/commentators/languages/portuguese">Portuguese All</MenuItem>
+                                <MenuItem eventKey={3.1} href="/commentators/languages/portuguese">Portuguese
+                                    All</MenuItem>
                             </NavDropdown>
                             <NavDropdown eventKey={7} title="Croatian" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="Croatia" id="basic-nav-dropdown">
@@ -211,8 +218,11 @@ module.exports = React.createClass({
                         </NavDropdown>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={8} href={`${host}/login`}><span
-                            className="mobile-show">Login</span></NavItem>
+                        <NavItem eventKey={8} href={`${host}/login`}>
+                            <span
+                                className="mobile-show">{LoginStore.isLoggedIn() ? ''+LoginStore.user.username : 'Login'}
+                            </span>
+                        </NavItem>
                     </Nav>
                     <Nav pullRight>
                         <NavItem eventKey={9} href="https://comentarismo.on.spiceworks.com/portal" target="_blank"><span

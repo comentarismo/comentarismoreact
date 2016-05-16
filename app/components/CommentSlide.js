@@ -1,6 +1,8 @@
 import React from 'react';
 import {XDiv} from 'components/XDiv';
 import {ShareNetworks} from 'components/ShareNetworks';
+import Date from "components/Date";
+import Icon from "components/Icon";
 
 //import config from 'config'
 //var host = config.BASE_URL;
@@ -16,17 +18,23 @@ var CommentSlide = React.createClass({
                         <div className="facts-box testimonial-cta">
                             <div className="row">
                                 <div className="col-sm-12">
-                                    <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
-                                         className="img-circle img-thumbnail"/>
-                                    <div className="text-blue">
-                                        <a href={`/news/${comment.titleurlize}`} target="_blank" >
-                                            <XDiv text={comment.title}/>
-                                        </a>
+                                    <div className="col-xs-1">
+                                        <Icon nick={comment.nick} size={50}/>
                                     </div>
+                                    <div className="col-xs-10">
+                                        <div className="text-blue">
+                                            <a href={`/news/${comment.titleurlize}`} target="_blank">
+                                                <XDiv text={comment.title}/>
+                                                <Date date={comment.date}/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div className="col-xs-12">
                                     <XDiv text={"<b>"+comment.comment+"</b>"}/>
                                     <span className="btn-default">
                                         <span className="text-colored"><h1><XDiv text={"@"+comment.nick}/></h1></span>
                                     </span>
+                                    </div>
                                     <ShareNetworks comment={comment}/>
                                 </div>
                             </div>

@@ -1,5 +1,9 @@
 var sm = require('sitemap');
 
+/** LOGGER **/
+var log = require("./logger");
+var logger = log.getLogger();
+/** LOGGER **/
 
 import  {getAllPluckDistinct,getAllByIndexPluckDistinct} from './comentarismo_api'
 
@@ -12,7 +16,7 @@ function generateSitemap(conn, cb) {
     });
     getAllPluckDistinct(conn, "news", "operator", function (err, operators) {
         if (err || !operators) {
-            console.log(err);
+            logger.error(err);
         }
         for (var i = 0; i < operators.length; i++) {
             sitemap.add({url: '/news/operator/' + operators[i].operator});
@@ -23,7 +27,7 @@ function generateSitemap(conn, cb) {
 
         getAllPluckDistinct(conn, "news", "languages", function (err, langs) {
             if (err || !operators) {
-                console.log(err);
+                logger.error(err);
             }
             for (var i = 0; i < langs.length; i++) {
                 sitemap.add({url: '/news/languages/' + langs[i].languages});
@@ -34,7 +38,7 @@ function generateSitemap(conn, cb) {
 
             getAllPluckDistinct(conn, "news", "genre", function (err, genres) {
                 if (err || !operators) {
-                    console.log(err);
+                    logger.error(err);
                 }
                 for (var i = 0; i < genres.length; i++) {
                     sitemap.add({url: '/news/genre/' + genres[i].genre});
@@ -45,7 +49,7 @@ function generateSitemap(conn, cb) {
 
                 getAllPluckDistinct(conn, "news", "countries", function (err, countries) {
                     if (err || !operators) {
-                        console.log(err);
+                        logger.error(err);
                     }
                     for (var i = 0; i < countries.length; i++) {
                         sitemap.add({url: '/news/countries/' + countries[i].countries});
@@ -78,8 +82,8 @@ function generateIndexXml(table, index, value, conn, cb) {
 
     getAllByIndexPluckDistinct(table, index, value, pluck, conn,  function (err, values) {
         if (err || !values) {
-            console.log(values)
-            console.log(err);
+            logger.error(values)
+            logger.error(err);
             return cb(err || "503 - not valid query");
         }
         if (table == "news") {

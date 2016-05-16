@@ -10,10 +10,10 @@ import {PlayComment} from './PlayComment';
 import { loadIntroDetail } from 'actions/intro'
 
 import WorldRank from 'components/WorldRank';
+import LoginStore from 'store/LoginStore';
 
 class Intro extends Component {
     static fetchData({ store, params }) {
-        //let { index,value,skip,limit } = params;
         var index = params.index || "languages";
         var value = params.value || "english";
         var skip = params.skip || "0";
@@ -21,6 +21,44 @@ class Intro extends Component {
 
         return store.dispatch(loadIntroDetail({index, value, skip, limit}))
     }
+
+    componentDidMount() {
+
+        if (typeof window !== 'undefined') {
+            console.log("navigator.language: "+navigator.language);
+            console.log("navigator.userLanguage: "+navigator.userLanguage);
+            //console.log("navigator.browserLanguage: "+navigator.browserLanguage);
+            //console.log("navigator.userAgent: "+navigator.userAgent);
+
+            var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+            console.log('detected user language --> ' + userLang);
+            var targetLang = "";
+            if (userLang.indexOf("pt") !== -1) {
+                targetLang = "portuguese";
+            } else if (userLang.indexOf("es") !== -1) {
+                targetLang = "spanish";
+            } else if (userLang.indexOf("it") !== -1) {
+                targetLang = "italian";
+            } else if (userLang.indexOf("fr") !== -1) {
+                targetLang = "french";
+            } else if (userLang.indexOf("russian") !== -1) {
+                targetLang = "russian";
+            } else if (userLang.indexOf("croatian") !== -1) {
+                targetLang = "croatian";
+            }else {
+                console.log("default lang will be used");
+                return;
+            }
+
+            var index = "languages";
+            var value = targetLang;
+            var skip =  "0";
+            var limit = "50";
+            console.log("will re-load comments on the user lang. ");
+            this.props.loadIntroDetail({index, value, skip, limit});
+        }
+    }
+
 
     render() {//languages/english/0/5/
         let { comment } = this.props;
@@ -46,6 +84,7 @@ class Intro extends Component {
 
                 <div className="home-wrapper text-center">
                     <p>*NEW Comentarismo Play, use the controller below to read unlimited comments</p>
+                    <p>{LoginStore.isLoggedIn() ? 'Welcome back ' + JSON.stringify(LoginStore.user.username) : ''}</p>
                 </div>
                 <PlayComment playing={true} comment={comment.comment} index={index} value={value} skip={skip} limit={limit} playingtimeout={10000}/>
 
@@ -183,7 +222,7 @@ function mapStateToProps(state) {
 }
 
 Intro.propTypes = {
-    comment: PropTypes.array.isRequired,
+    comment: PropTypes.object.isRequired,
 };
 
 

@@ -77,4 +77,10 @@ Avoid errors like: `make: g++: Command not found` by installing:
 * Make sure Redis server is started 
 * Default Start `NODE_ENV=production NODE_PATH=./app node app/server`
 * Configure Redis and RethinkDB: `NODE_ENV=production REDISURL=g7-box REDISPORT=6379 RETHINKURL=g7-box RETHINKPORT=28015 NODE_PATH=./app node app/server`
-* Optional passwords `RETHINKAUTHKEY=12345 REDISPASS=12345`
+* Optional password `RETHINKAUTHKEY=12345 REDISPASS=12345`
+
+VI
+```
+shift + g
+fn + up/down
+```

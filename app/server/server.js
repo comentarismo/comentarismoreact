@@ -29,7 +29,7 @@ var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
 var REDISPASS = process.env.REDISPASS || "";
 
-let { getAllByIndexFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
+let { getAllByIndexOrderBySkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -49,7 +49,13 @@ var expireTimeStr = process.env.expiretime;
 if (expireTimeStr) {
     expireTime = parseInt(expireTimeStr);
 }
-console.log("Will set expire time for redis/cache as --> " + expireTime);
+
+/** LOGGER **/
+var log = require("./logger");
+var logger = log.getLogger();
+/** LOGGER **/
+
+logger.info("Will set expire time for redis/cache as --> " + expireTime);
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
@@ -96,8 +102,12 @@ var client = redis.createClient({
 });
 
 client.on("connect", function () {
-    client.set("foo_rand000000000000", "testing redis connection", redis.print);
-    client.get("foo_rand000000000000", redis.print);
+    //client.set("foo_rand000000000000", "testing redis connection", redis.print);
+    //client.get("foo_rand000000000000", redis.print);
+});
+
+client.on("error",function(err){
+   logger.error(err);
 });
 
 
@@ -109,7 +119,7 @@ server.set('view engine', 'ejs');
 
 server.get('/api/comment/:id', (req, res) => {
     var id = req.params.id;
-    console.log(`/comment/${id}`)
+    logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
         if (err || !data) {
             console.error(err);
@@ -122,7 +132,7 @@ server.get('/api/comment/:id', (req, res) => {
 
 server.get('/api/suggestcomment/:id', (req, res) => {
     var id = req.params.id;
-    console.log(`/comment/${id}`)
+    logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
         if (err || !data) {
             console.error(err);
@@ -136,7 +146,7 @@ server.get('/api/suggestcomment/:id', (req, res) => {
 
 //bind to action/commentators.js -> loadCommentators
 server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
-    console.log(req.params);
+    logger.info(req.params);
     var index = req.params.index;
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
@@ -145,7 +155,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/fapi/commentators/${index}/${value}/${skip}/${limit}?sort=${sort}`;
-    console.log(urlTag);
+    logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -154,14 +164,14 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
                 console.error(err.stack);
             }
         } else {
-            console.log(urlTag + " will return cached result ");
+            logger.info(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
-        getAllByIndexFilterSkipLimit("commentator", index, value, {}, skip, limit, sort, conn, function (err, data) {
+        getAllByIndexOrderBySkipLimit("commentator", index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
@@ -169,7 +179,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
 
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag + " will save cached");
+                logger.info(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
                 client.expire(urlTag, 1800);
                 //-------REDIS CACHE SAVE END ------//
@@ -193,7 +203,7 @@ server.get('/api/commentators/:id', (req, res)=> {
     }
 
     var urlTag = `/api/commentators/${id}`;
-    console.log(urlTag);
+    logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -203,8 +213,8 @@ server.get('/api/commentators/:id', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag + " will return cached result ");
-            client.expire(urlTag, 1);
+            logger.info(urlTag + " will return cached result ");
+            //client.expire(urlTag, 1);
             res.type('application/json');
             return res.send(js);
         }
@@ -213,23 +223,23 @@ server.get('/api/commentators/:id', (req, res)=> {
 
         getCommentator(req.params.id, conn, function (err, data) {
             if (err) {
-                console.log("Error: " + err);
+                logger.info("Error: " + err);
                 //console.error(err.stack);
                 return res.status(500).send('Something broke!');
             }
 
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag + " will save cached");
+                logger.info(urlTag + " will save cached");
                 var js = JSON.stringify(data);
-                //console.log(js);
+                //logger.info(js);
                 client.set(urlTag, js, redis.print);
                 client.expire(urlTag, expireTime);
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             } else {
 
-                console.log("commentator not found, will retry with nick");
+                logger.info("commentator not found, will retry with nick");
 
                 //retry
                 var idAux = "";
@@ -239,20 +249,20 @@ server.get('/api/commentators/:id', (req, res)=> {
 
                 getCommentatorByNick((idAux ? idAux : req.params.id), conn, function (err, data) {
                     if (err) {
-                        console.log("Error: " + err);
+                        logger.info("Error: " + err);
                         //console.error(err.stack);
                         return res.status(500).send('Something broke!');
                     }
 
                     if (data) {
                         //-------REDIS CACHE SAVE START ------//
-                        console.log(urlTag + " will save cached");
+                        logger.info(urlTag + " will save cached");
                         client.set(urlTag, JSON.stringify(data), redis.print);
                         client.expire(urlTag, expireTime);
                         //-------REDIS CACHE SAVE END ------//
                     } else {
 
-                        console.log("nothing found2 ")
+                        logger.info("nothing found2 ")
                     }
 
                     res.send(data);
@@ -284,7 +294,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
     var sort = req.query.sort;
 
     var urlTag = `/fapi/${table}/${index}/${value}/${filter}/${filtervalue}/${skip}/${limit}?sort=${sort}`;
-    console.log(urlTag);
+    logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -294,7 +304,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag + " will return cached result ");
+            logger.info(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -302,7 +312,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
         //-------REDIS CACHE END ------//
 
 
-        getAllByIndexFilterSkipLimit(table, index, value, filt, skip, limit, sort, conn, function (err, data) {
+        getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
@@ -310,7 +320,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
 
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag + " will save cached");
+                logger.info(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
                 client.expire(urlTag, expireTime);
                 //-------REDIS CACHE SAVE END ------//
@@ -336,7 +346,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}`;
-    //console.log(urlTag);
+    //logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -346,7 +356,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag + " will return cached result ");
+            logger.info(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -354,7 +364,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
         //-------REDIS CACHE END ------//
 
 
-        getAllByIndexFilterSkipLimit(table, index, value, {}, skip, limit, sort, conn, function (err, data) {
+        getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
@@ -362,7 +372,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag + " will save cached");
+                logger.info(urlTag + " will save cached");
                 res.type('application/json');
                 client.set(urlTag, JSON.stringify(data), redis.print);
                 client.expire(urlTag, expireTime);
@@ -389,7 +399,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     var limit = parseInt(req.params.limit);
 
     var urlTag = `/commentsapi/${table}/${index}/${value}/${skip}/${limit}`;
-    //console.log(urlTag);
+    //logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -399,14 +409,14 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag + " will return cached result ");
+            console.log(urlTag + " will return cached result");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
-        getAllByIndexSkipLimit(table, index, value, skip, limit, conn, function (err, data) {
+        getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, "date", conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
@@ -414,7 +424,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
-                console.log(urlTag + " will save cached");
+                console.log(urlTag + " will save cached fdp");
                 res.type('application/json');
                 client.set(urlTag, JSON.stringify(data), redis.print);
                 client.expire(urlTag, expireTime);
@@ -431,7 +441,7 @@ server.get('/api/news/:id', (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/api/news/${req.params.id}`;
-    //console.log(urlTag);
+    //logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -441,7 +451,7 @@ server.get('/api/news/:id', (req, res)=> {
             }
             //return res.status(500).send('Cache is broken!');
         } else {
-            console.log(urlTag + " will return cached result ");
+            logger.info(urlTag + " will return cached result ");
             //client.expire(urlTag,1);
             res.type('application/json');
             return res.send(js);
@@ -454,20 +464,20 @@ server.get('/api/news/:id', (req, res)=> {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');
             } else if (!news) {
-                console.log("News not found --> " + req.params.id);
+                logger.info("News not found --> " + req.params.id);
                 return res.status(404).send("News not found --> " + req.params.id);
             }
-            getAllByIndexFilterSkipLimit("commentaries", "titleurlize", req.params.id, {}, 0, 50, sort, conn, function (err, comments) {
+            getAllByIndexOrderBySkipLimit("commentaries", "titleurlize", req.params.id, 0, 50, sort, conn, function (err, comments) {
                 if (err) {
                     console.error(err.stack);
                     return res.status(500).send('Something broke!');
                 }
-                //console.log(comments.length)
+                //logger.info(comments.length)
                 news.comments = comments;
 
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
-                    console.log(urlTag + " will save cached");
+                    logger.info(urlTag + " will save cached");
                     client.set(urlTag, JSON.stringify(news), redis.print);
                     client.expire(urlTag, expireTime);
                     //-------REDIS CACHE SAVE END ------//
@@ -499,8 +509,9 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
                 console.error(err.stack);
             }
             //return res.status(500).send('Cache is broken!');
-        } else {
-            console.log("intropage"+urlTag + " will return cached result ");
+        }
+        else {
+            logger.info("intropage"+urlTag + " will return cached result");
             //client.expire("intropage"+urlTag, 1);
             res.type('application/json');
             return res.send(js);
@@ -537,19 +548,19 @@ server.get('*', (req, res, next)=> {
 
     //sitemap
     if (reqUrl.indexOf("sitemap.xml") !== -1) {
-        console.log("Will generate sitemap.xml for request --> " + reqUrl);
+        logger.info("Will generate sitemap.xml for request --> " + reqUrl);
 
         var urlTag = "sitemap.xml";
         //-------REDIS CACHE START ------//
         client.get(urlTag, function (err, js) {
             if (err || !js) {
                 if (err) {
-                    console.log("Error: Redis client " + location);
+                    logger.info("Error: Redis client " + location);
                     console.error(err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
-                console.log(urlTag + " will return cached result ");
+                logger.info(urlTag + " will return cached result ");
                 //client.expire(urlTag,1);
                 res.header('Content-Type', 'application/xml');
                 return res.send(js);
@@ -558,8 +569,8 @@ server.get('*', (req, res, next)=> {
 
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
-                    console.log("Error: generateSitemap " + location);
-                    console.log("Error generateSitemap sitemap.xml --> ");
+                    logger.info("Error: generateSitemap " + location);
+                    logger.info("Error generateSitemap sitemap.xml --> ");
                     console.error(err.stack);
                     res.status(500).send("Server unavailable");
                     return;
@@ -567,7 +578,7 @@ server.get('*', (req, res, next)=> {
 
                 if (xml) {
                     //-------REDIS CACHE SAVE START ------//
-                    console.log(urlTag + " will save cached");
+                    logger.info(urlTag + " will save cached");
                     client.set(urlTag, xml, redis.print);
                     client.expire(urlTag, expireTime);
                     //-------REDIS CACHE SAVE END ------//
@@ -579,18 +590,18 @@ server.get('*', (req, res, next)=> {
         });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
-        console.log("Will generate index.xml for request --> " + reqUrl);
+        logger.info("Will generate index.xml for request --> " + reqUrl);
         var vars = location.pathname.split("/");
         if (!vars || vars.length < 3) {
-            console.log("Error: index.xml " + location);
-            console.log("Error generateSitemap index.xml --> ");
+            logger.info("Error: index.xml " + location);
+            logger.info("Error generateSitemap index.xml --> ");
             return res.status(500).send("Server unavailable");
         }
         var table = vars[1];
         var index = vars[2];
         var value = vars[3];
 
-        //console.log("table: "+table+" index: "+index+" value: "+value);
+        //logger.info("table: "+table+" index: "+index+" value: "+value);
 
         if (table == "news" || table == "commentators") {
 
@@ -603,7 +614,7 @@ server.get('*', (req, res, next)=> {
                     }
                     //return res.status(500).send('Cache is broken!');
                 } else {
-                    console.log(urlTag + " will return cached result ");
+                    logger.info(urlTag + " will return cached result ");
                     //client.expire(urlTag,1);
                     res.header('Content-Type', 'application/xml');
                     return res.send(js);
@@ -612,7 +623,7 @@ server.get('*', (req, res, next)=> {
 
                 generateIndexXml(table, index, value, conn, function (err, xml) {
                     if (err || !xml) {
-                        console.log("Error generateSitemap sitemap.xml --> ");
+                        logger.info("Error generateSitemap sitemap.xml --> ");
                         if (err) {
                             console.error(err.stack);
                         }
@@ -621,7 +632,7 @@ server.get('*', (req, res, next)=> {
 
                     if (xml) {
                         //-------REDIS CACHE SAVE START ------//
-                        console.log(urlTag + " will save cached");
+                        logger.info(urlTag + " will save cached");
                         client.set(urlTag, xml, redis.print);
                         client.expire(urlTag, expireTime);
                         //-------REDIS CACHE SAVE END ------//
@@ -634,20 +645,20 @@ server.get('*', (req, res, next)=> {
 
         } else {
             //not alllowed
-            console.log("Error generateSitemap index.xml --> ");
+            logger.info("Error generateSitemap index.xml --> ");
             return res.status(500).send("Server unavailable");
         }
 
     } else {
 
-        //console.log(location);
+        //logger.info(location);
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (redirectLocation) {
                 return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
             } else if (error) {
-                console.log("Error: 500 " + location);
+                logger.info("Error: 500 " + location);
                 console.error(err.stack);
-                console.log("500 internal error")
+                logger.info("500 internal error")
                 return res.status(500).send(error.message);
             }
 
@@ -673,7 +684,7 @@ server.get('*', (req, res, next)=> {
                     //));
 
                     let head = Helmet.rewind();
-                    //console.log("Helmet.rewind -> "+head.title.toString());
+                    //logger.info("Helmet.rewind -> "+head.title.toString());
                     if (head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
                         head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
                     }
@@ -682,7 +693,7 @@ server.get('*', (req, res, next)=> {
                     if (getCurrentUrl() === reqUrl) {
                         res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
                     } else {
-                        console.log("Redirect 302 " + location);
+                        logger.info("Redirect 302 " + location);
                         res.redirect(302, getCurrentUrl());
                     }
 
@@ -724,7 +735,7 @@ server.on('error', (err) => {
 server.use((err, req, res, next)=> {
     if (err) {
         console.error("server.use((err, --> " + err);
-        console.log(err.stack);
+        logger.info(err.stack);
     }
     // TODO report error here or do some further handlings
 
@@ -741,11 +752,11 @@ r.connect({
 }, function (err, c) {
     conn = c;
     if (err) {
-        console.log(err);
+        logger.info(err);
     } else {
-        console.log("Rethinkdb is connected");
+        logger.info("Rethinkdb is connected");
 
-        console.log(`Server is listening to port: ${port}`);
+        logger.info(`Server is listening to port: ${port}`);
         server.listen(port);
     }
 });

@@ -5,12 +5,16 @@ var superAgent = require("superagent");
 import config from 'config'
 var host = config.BASE_URL;
 
+/** LOGGER **/
+var log = require("./logger");
+var logger = log.getLogger();
+/** LOGGER **/
+
 export function getAlexaRank(url, urlTag, cb) {
 
     superAgent.get('http://data.alexa.com/data?cli=10&url=' + url).end(function (err, r) {
         //console.log(r);
         if (err) {
-            console.log(err);
             cb(err);
         } else if (r.statusCode != 200) {
             cb("statusCode != 200 --> "+r.statusCode);
@@ -21,6 +25,7 @@ export function getAlexaRank(url, urlTag, cb) {
             }, function (err, result) {
 
                 if(err || !result){
+                    logger.error(err);
                     cb("Error when doing xml2js.parseString of --> "+r.text);
                 }else {
                 //console.log(JSON.stringify(result));
@@ -45,7 +50,6 @@ export function getAlexaRank(url, urlTag, cb) {
                     };
 
                     var target = `${host}/${urlTag}`;
-                    //console.log(target);
 
                     superAgent.get(target).end(function (err, r) {
                         if(err){

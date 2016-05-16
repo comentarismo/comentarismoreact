@@ -78,7 +78,7 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
 
 function extractParams (callApi) {
   let { method, path, successType, errorType, afterSuccess, afterError } = callApi
-  let url = `${config.API_BASE_URL}${path}`
+  let url = `${config.BASE_URL}${path}`
 
   return {
     method,
