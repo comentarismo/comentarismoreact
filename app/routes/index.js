@@ -20,6 +20,9 @@ import SuggestComment from 'containers/SuggestComment'
 
 import Notfound from 'containers/Notfound';
 
+import AdminList from 'admin/AdminList';
+import AdminEdit from 'admin/AdminEdit';
+
 export default function (history) {
     return (
         <Router history={history}>
@@ -32,6 +35,11 @@ export default function (history) {
                 <Route path="news/:continent/:country/:index/:year/:month/:day/:value/" component={ArticleLegacy}/>
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
+
+
+                <Route path="admin/r/:table/:index" component={AdminEdit}/>
+                <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
+
                 <Route path="*" component={Notfound}/>
                 <IndexRoute component={Intro}/>
             </Route>

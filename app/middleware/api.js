@@ -1,10 +1,10 @@
-import superAgent from 'superagent'
-import Promise, { using } from 'bluebird'
-import _ from 'lodash'
-import config from 'config'
+import superAgent from 'superagent';
+import Promise, { using } from 'bluebird';
+import _ from 'lodash';
+import config from 'config';
 
-export const CALL_API = Symbol('CALL_API')
-export const CHAIN_API = Symbol('CHAIN_API')
+export const CALL_API = Symbol('CALL_API');
+export const CHAIN_API = Symbol('CHAIN_API');
 
 export default ({ dispatch, getState }) => next => action => {
   if (action[CALL_API]) {
@@ -15,7 +15,7 @@ export default ({ dispatch, getState }) => next => action => {
     })
   }
 
-  let deferred = Promise.defer()
+  let deferred = Promise.defer();
 
   if (! action[CHAIN_API]) {
     return next(action)
@@ -23,28 +23,32 @@ export default ({ dispatch, getState }) => next => action => {
 
   let promiseCreators = action[CHAIN_API].map((apiActionCreator)=> {
     return createRequestPromise(apiActionCreator, next, getState, dispatch)
-  })
+  });
 
   let overall = promiseCreators.reduce((promise, creator)=> {
     return promise.then((body)=> {
       return creator(body)
     })
-  }, Promise.resolve())
+  }, Promise.resolve());
 
   overall.finally(()=> {
     deferred.resolve()
-  }).catch(()=> {})
+  }).catch((err)=> {
+    console.log(err);
+  });
 
   return deferred.promise
 }
 
 function createRequestPromise (apiActionCreator, next, getState, dispatch) {
   return (prevBody)=> {
-    let apiAction = apiActionCreator(prevBody)
-    let deferred = Promise.defer()
-    let params = extractParams(apiAction[CALL_API])
+    let apiAction = apiActionCreator(prevBody);
+    let deferred = Promise.defer();
 
+    let params = extractParams(apiAction[CALL_API]);
+    //console.log(params.url);
     superAgent[params.method](params.url)
+      .withCredentials()
       .end((err, res)=> {
         if (err) {
           if ( params.errorType ) {
@@ -62,23 +66,23 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
           dispatch({
             type: params.successType,
             response: res.body
-          })
+          });
 
           if (_.isFunction(params.afterSuccess)) {
             params.afterSuccess({ getState })
           }
           deferred.resolve(res.body)
         }
-      })
+      });
 
-    return deferred.promise
+    return deferred.promise;
   }
 
 }
 
 function extractParams (callApi) {
-  let { method, path, successType, errorType, afterSuccess, afterError } = callApi
-  let url = `${config.BASE_URL}${path}`
+  let { method, path, successType, errorType, afterSuccess, afterError } = callApi;
+  let url = `${path}`;
 
   return {
     method,

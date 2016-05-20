@@ -10,6 +10,11 @@ var quality = "50";
 
 var $ = require('jquery');
 import Date from "components/Date"
+import Icon from "components/Icon"
+
+var jdenticon = require("jdenticon");
+var md5 = require('md5');
+
 
 module.exports = React.createClass({
     displayName: 'Article',
@@ -50,13 +55,17 @@ module.exports = React.createClass({
                 src = "data:image/jpeg;base64," + base64Data;
                 $("#"+id).attr("src", "data:image/jpeg;base64," + base64Data);
             } else {
-                $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+                $("#fb-"+id).show();
+                $("#img-"+id).hide();
+
+            //
             }
         });
 
         request.fail(function (e) {
-            //console.log(e);
-            $("#"+id).attr("src","/static/img/comentarismo-extra-mini-logo.png");
+            //    console.log(e);
+            $("#fb-"+id).show();
+            $("#img-"+id).hide();
         });
 
     },
@@ -90,10 +99,14 @@ module.exports = React.createClass({
         return (
             <div className="col-lg-4 col-md-3 col-sm-5 col-xs-10">
                 <a href={this.getArticleLink()} className='thumbnail article'>
-                    <div className="image">
+                    <div id={"fb-"+this.props.article.id} style={{"display": "none"}}>
+                        <Icon nick={this.props.article.titleurlize} size={125}/>
+                    </div>
+                    <div id={"img-"+this.props.article.id} className="image">
                         <img id={this.props.article.id} />
                         {this.getImageElement()}
                     </div>
+
                     <div className='caption'>
                         {this.getTitle()}
                         {this.getSource()}

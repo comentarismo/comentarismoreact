@@ -28,6 +28,7 @@ import Helmet from "react-helmet";
 var REDIS_URL = process.env.REDISURL || "g7-box";
 var REDIS_PORT = process.env.REDISPORT || 6379;
 var REDISPASS = process.env.REDISPASS || "";
+var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
 
 let { getAllByIndexOrderBySkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
 
@@ -40,11 +41,13 @@ let conn;
 var conn_url = process.env.RETHINKURL || 'g7-box';
 var dbport = process.env.RETHINKPORT || 28015;
 var authKey = process.env.RETHINKAUTHKEY || '';
-var rethinkdb_table = 'test';
+
+var rethinkdb_table = process.env.RETHINKTABLE || 'test';
 
 var aday = 86400000;
+var dayHours = 24;
 
-var expireTime = aday / 24;
+var expireTime = aday / dayHours;
 var expireTimeStr = process.env.expiretime;
 if (expireTimeStr) {
     expireTime = parseInt(expireTimeStr);
@@ -143,6 +146,21 @@ server.get('/api/suggestcomment/:id', (req, res) => {
     });
 });
 
+server.get('/api/admin/r/:table/:id', (req, res) => {
+    var table = req.params.table;
+    var id = req.params.id;
+    var targetUrl = `/api/admin/r/${table}/${id}`;
+    logger.info(""+targetUrl);
+    getByID(`${table}`, id, conn, function (err, data) {
+        if (err || !data) {
+            console.error(err);
+            return res.status(500).send('Something broke!');
+        } else {
+            res.send(data);
+        }
+    });
+});
+
 
 //bind to action/commentators.js -> loadCommentators
 server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
@@ -165,7 +183,9 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
             }
         } else {
             logger.info(urlTag + " will return cached result ");
-            //client.expire(urlTag,1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -214,7 +234,9 @@ server.get('/api/commentators/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            //client.expire(urlTag, 1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -225,7 +247,7 @@ server.get('/api/commentators/:id', (req, res)=> {
             if (err) {
                 logger.info("Error: " + err);
                 //console.error(err.stack);
-                return res.status(500).send('Something broke!');
+                //return res.status(500).send('Something broke!');
             }
 
             if (data) {
@@ -247,11 +269,17 @@ server.get('/api/commentators/:id', (req, res)=> {
                     idAux = req.params.id.split("-")[1];
                 }
 
+                if(!idAux){
+                    logger.info("Error: " + err);
+                    console.error(err.stack);
+                    return res.status(404).send();
+                }
+
                 getCommentatorByNick((idAux ? idAux : req.params.id), conn, function (err, data) {
                     if (err) {
                         logger.info("Error: " + err);
                         //console.error(err.stack);
-                        return res.status(500).send('Something broke!');
+                        return res.status(404).send();
                     }
 
                     if (data) {
@@ -262,7 +290,7 @@ server.get('/api/commentators/:id', (req, res)=> {
                         //-------REDIS CACHE SAVE END ------//
                     } else {
 
-                        logger.info("nothing found2 ")
+                        logger.info("nothing found ? how did we got here ?  getCommentatorByNick --> "+urlTag)
                     }
 
                     res.send(data);
@@ -305,7 +333,9 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            //client.expire(urlTag,1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -357,7 +387,9 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            //client.expire(urlTag,1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -410,7 +442,9 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             console.log(urlTag + " will return cached result");
-            //client.expire(urlTag,1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -452,7 +486,9 @@ server.get('/api/news/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            //client.expire(urlTag,1);
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -512,7 +548,9 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
         }
         else {
             logger.info("intropage"+urlTag + " will return cached result");
-            //client.expire("intropage"+urlTag, 1);
+            if(EXPIRE_REDIS) {
+                client.expire("intropage"+urlTag, 1);
+            }
             res.type('application/json');
             return res.send(js);
         }
@@ -520,7 +558,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
 
         let { getAlexaRank } = require('./alexa_api');
 
-        getAlexaRank(comentarismosite,"commentsapi"+urlTag, function(err,alexarank){
+        getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", conn, function(err,alexarank){
             if(err){
                 return res.status(500).send({});
             }else {
@@ -561,7 +599,9 @@ server.get('*', (req, res, next)=> {
                 //return res.status(500).send('Cache is broken!');
             } else {
                 logger.info(urlTag + " will return cached result ");
-                //client.expire(urlTag,1);
+                if(EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
                 res.header('Content-Type', 'application/xml');
                 return res.send(js);
             }
@@ -615,7 +655,9 @@ server.get('*', (req, res, next)=> {
                     //return res.status(500).send('Cache is broken!');
                 } else {
                     logger.info(urlTag + " will return cached result ");
-                    //client.expire(urlTag,1);
+                    if(EXPIRE_REDIS) {
+                        client.expire(urlTag,1);
+                    }
                     res.header('Content-Type', 'application/xml');
                     return res.send(js);
                 }

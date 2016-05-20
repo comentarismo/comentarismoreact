@@ -25,7 +25,7 @@ var ShareNetworks = React.createClass({
                 ',height=' + height +
                 ',top=' + top +
                 ',left=' + left,
-            queryString = 'text=' + encodeURIComponent('Checkout this new game: ') +
+            queryString = 'text=' + encodeURIComponent('Checkout this comment: ') +
                 '&via=comentarismo' +
                 '&via=comentarismo' +
                 '&url=' + encodeURIComponent(shortUrl);

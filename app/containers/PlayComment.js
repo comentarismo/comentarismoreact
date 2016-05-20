@@ -63,7 +63,7 @@ var PlayComment = React.createClass({
             playing: this.props.playing || false,
             loading: false,
             skip: skip,
-            currentSlideId: comment[0].id,
+            currentSlideId: comment[0] ? comment[0].id : "",
             currentSlideLike: false,
             currentSlideDisLike: false
         }

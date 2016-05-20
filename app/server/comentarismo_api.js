@@ -117,10 +117,8 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     if (sort) {
         indexSort = sort;
     }
-
     r.table(table)
         .getAll(value, {index: index})
-        .filter(r.row(indexSort).lt(r.now()))
         .limit(50000)
         .orderBy(r.desc(indexSort))
         .skip(skip).limit(limit)
@@ -186,7 +184,7 @@ export function getCommentator(id, conn, cb) {
             //table, index, value, skip, limit, sort, conn, cb
             getAllByIndexOrderBySkipLimit("commentaries", "nick", commentator.nick, 0, 50, "date", conn, function (err, comments) {
                 if (err || !commentator) {
-                    if(err) {
+                    if (err) {
                         logger.warn(err);
                     }
                     cb(`getAllByIndexOrderBySkipLimit commentator nick ${commentator.nick} not found`);
@@ -214,7 +212,7 @@ export function getCommentatorByNick(id, conn, cb) {
             logger.warn(commentator)
             //get all comments by index nick
             getAllByIndexOrderBySkipLimit("commentaries", "nick", commentator.nick,
-                 0, 50, "date", conn, function (err, comments) {
+                0, 50, "date", conn, function (err, comments) {
                     if (err || !commentator) {
                         logger.info(err);
                         cb(err);

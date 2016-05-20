@@ -66,6 +66,7 @@ class Article extends Component {
         if (this.props.article && this.props.article.image) {
             src = this.props.article.image;
         }
+        var id = this.props.article.id;
 
         var host = "http://img.comentarismo.com/r";
         console.log("IMGRESIZER ", this.props.article.image)
@@ -83,13 +84,21 @@ class Article extends Component {
         });
         request.done(function (binaryData) {
             if (binaryData && binaryData !== "") {
-                //console.log("imgresizer DONE OK");
+                console.log("imgresizer DONE OK");
                 var base64Data = base64Encode(binaryData);
                 var src = "data:image/jpeg;base64," + base64Data;
                 $(".profile-bg-news").attr("src", src);
+            } else {
+                console.log("IMGRESIZER failed, will use default identicon for it");
+                $("#fb-" + id).show();
+                $("#img-" + id).hide();
             }
         });
-
+        request.error(function (err) {
+            console.log("IMGRESIZER failed, will use default identicon for it");
+            $("#fb-" + id).show();
+            $("#img-" + id).hide();
+        });
     }
 
     getImageElement() {
@@ -156,8 +165,25 @@ class Article extends Component {
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <div>
+                                        <div id={"img-"+this.props.article.id}>
                                             {this.getImageElement()}
+                                        </div>
+                                        <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
+                                            <div className="col-xs-12 col-md-2">
+                                                <Icon nick={article.titleurlize} size={205}/>
+                                            </div>
+                                            <div className="col-xs-12 col-md-2">
+                                                <Icon nick={article.titleurlize} size={205}/>
+                                            </div>
+                                            <div className="col-xs-12 col-md-2">
+                                                <Icon nick={article.titleurlize} size={205}/>
+                                            </div>
+                                            <div className="col-xs-12 col-md-2">
+                                                <Icon nick={article.titleurlize} size={205}/>
+                                            </div>
+                                            <div className="col-xs-12 col-md-2">
+                                                <Icon nick={article.titleurlize} size={205}/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="col-xs-12" style={{height: '25px'}}></div>

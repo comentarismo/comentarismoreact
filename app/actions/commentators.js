@@ -1,5 +1,6 @@
 import { CALL_API, CHAIN_API } from 'middleware/api'
 
+import config from 'config'
 
 //NOT IN USE
 export const LOADED_COMMENTATORS = Symbol('LOADED_COMMENTATORS');
@@ -8,7 +9,7 @@ export function loadCommentators({index,value}) {
     return {
         [CALL_API]: {
             method: 'get',
-            path: `/fapi/commentators/${index}/${value}/0/50/`,
+            path: `${config.BASE_URL}/fapi/commentators/${index}/${value}/0/50/`,
             successType: LOADED_COMMENTATORS
         }
     }
@@ -22,7 +23,7 @@ export function loadCommentatorDetail({ id }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `/api/commentators/${id}`,
+                        path: `${config.BASE_URL}/api/commentators/${id}`,
                         successType: LOADED_COMMENTATOR_DETAIL
                     }
                 }
@@ -40,7 +41,7 @@ export function loadCommentDetail({ id }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `/api/comment/${id}`,
+                        path: `${config.BASE_URL}/api/comment/${id}`,
                         successType: LOADED_COMMENT_DETAIL
                     }
                 }
@@ -58,7 +59,7 @@ export function loadSuggestCommentDetail({ index,value,skip,limit }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`,
+                        path: `${config.BASE_URL}/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`,
                         successType: LOADED_SUGGESTCOMMENT_DETAIL
                     }
                 }

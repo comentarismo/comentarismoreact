@@ -32,8 +32,8 @@ module.exports = function (React) {
                 this.detachScrollListener();
                 // call loadMore after detachScrollListener to allow
                 // for non-async loadMore functions
-                this.skip = this.skip + this.limit;
                 this.props.loadMore(this.skip,this.limit);
+                this.skip = this.skip + this.limit;
             }
         },
         attachScrollListener: function () {

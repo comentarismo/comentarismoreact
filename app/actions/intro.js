@@ -1,4 +1,5 @@
 import { CALL_API, CHAIN_API } from 'middleware/api'
+import config from 'config'
 
 export const LOADED_INTRO = Symbol('LOADED_INTRO')
 export function loadIntroDetail({ index,value,skip,limit }) {
@@ -9,7 +10,7 @@ export function loadIntroDetail({ index,value,skip,limit }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `/intropage/commentaries/${index}/${value}/${skip}/${limit}/`,
+                        path: `${config.BASE_URL}/intropage/commentaries/${index}/${value}/${skip}/${limit}/`,
                         successType: LOADED_INTRO
                     }
                 }

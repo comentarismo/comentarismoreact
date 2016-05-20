@@ -31,8 +31,8 @@ Avoid errors like: `make: g++: Command not found` by installing:
 ## Upgrade NodeJS
 `sudo n 5.6.0`
 
-# RethinkDB is required
-## Please make sure etc/hosts is something like this:
+# RethinkDB is required to be configured if you are running in `development` mode
+## Please make sure etc/hosts is something like this / pointing to the correct ip of your rethinkdb
 `/etc/hosts
 10.0.1.121        g7-box`
 
@@ -49,24 +49,50 @@ Avoid errors like: `make: g++: Command not found` by installing:
 # Make sure RethinkDB has indexes for table commentator:
 `languages`
 `genre`
-`countries`
 `nick`
 `operator`
 `totalComments`
+`maxDate`
+
 
 # Make sure RethinkDB has indexes for table commentaries:
-`countries`
 `languages`
 `nick`
 `operator`
 `titleurlize`
 `genre`
+# trash zone:
+---`countries`,`created` ---
 
 # Make sure Rethinkdb has indexes for table user:
 `name`
+`nickname`
+`provider`
+
+# Make sure Rethinkdb has indexes for table shorturl:
+`longurl`
+
 
 # RethinkDB queries reference
 ## [Link](rethinkdb.md)
+
+# ENV Configuration 
+`NODE_ENV`
+
+`REDISURL`
+`REDISPORT`
+`REDISPASS`
+`EXPIRE_REDIS`
+
+`RETHINKURL`
+`RETHINKPORT`
+`RETHINKAUTHKEY`
+`RETHINKTABLE`
+
+
+# For the admin panel to work for a user, make sure user has role admin:
+`r.db('test').table("user").get("USER_ID_").update({"role":"admin"})`
+
 
 
 # Deployment to production
@@ -76,11 +102,31 @@ Avoid errors like: `make: g++: Command not found` by installing:
 * Make sure `etc/hosts` have `g7-box` and is properly configured
 * Make sure Redis server is started 
 * Default Start `NODE_ENV=production NODE_PATH=./app node app/server`
-* Configure Redis and RethinkDB: `NODE_ENV=production REDISURL=g7-box REDISPORT=6379 RETHINKURL=g7-box RETHINKPORT=28015 NODE_PATH=./app node app/server`
+* Configure Redis and RethinkDB: `NODE_ENV=production REDISURL=37.139.13.224 REDISPASS=go3322321 RETHINKURL=g7-box NODE_PATH=./app nohup forever app/server &.`
 * Optional password `RETHINKAUTHKEY=12345 REDISPASS=12345`
 
-VI
+# VI
 ```
 shift + g
 fn + up/down
+```
+
+# Redis PROD cmds:
+```
+sudo service redis_6379 start
+sudo service redis_6379 stop
+sudo vi /etc/redis/redis.conf
+```
+
+# Redis PROD quick install:
+```
+wget http://download.redis.io/releases/redis-stable.tar.gz
+tar xzf redis-stable.tar.gz
+cd redis-stable
+make
+sudo make install
+cd utils
+sudo ./install_server.sh
+Please select the redis executable path [] /root/redis-stable/src/redis-server3
+sysctl vm.overcommit_memory=1 or vi /etc/sysctl.conf --> vm.overcommit_memory=1
 ```
