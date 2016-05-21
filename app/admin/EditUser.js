@@ -51,7 +51,7 @@ module.exports = React.createClass({
                 <div style={{height: '50px'}}></div>
                 <div className="col-xs-4">
                     <div className="image">
-                        <Icon nick={this.state.nick} size={125}/>
+                        <Icon nick={this.state.nickname} size={125}/>
                     </div>
                     <div style={{height: '50px'}}></div>
 

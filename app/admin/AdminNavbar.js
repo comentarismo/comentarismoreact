@@ -37,7 +37,7 @@ module.exports = React.createClass({
                     <Nav>
 
                         <NavDropdown eventKey={1} title="Users" id="basic-nav-dropdown">
-                            <MenuItem eventKey={1.1} href="/admin/l/user/provider/google/0/50/name">Google</MenuItem>
+                            <MenuItem eventKey={1.1} href="/admin/l/user/provider/gplus/0/50/name">GPlus</MenuItem>
                             <MenuItem eventKey={1.2} href="/admin/l/user/provider/facebook/0/50/name">Facebook</MenuItem>
                             <MenuItem eventKey={1.3} href="/admin/l/user/provider/twitter/0/50/name">Twitter</MenuItem>
                             <MenuItem eventKey={1.4} href="/admin/l/user/provider/github/0/50/name">GitHub</MenuItem>

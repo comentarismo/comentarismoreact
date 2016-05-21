@@ -53,6 +53,7 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `operator`
 `totalComments`
 `maxDate`
+`countries`
 
 
 # Make sure RethinkDB has indexes for table commentaries:
@@ -129,4 +130,23 @@ cd utils
 sudo ./install_server.sh
 Please select the redis executable path [] /root/redis-stable/src/redis-server3
 sysctl vm.overcommit_memory=1 or vi /etc/sysctl.conf --> vm.overcommit_memory=1
+```
+
+
+# Flynn cluster
+```
+http://dashboard.36zv.flynnhub.com 
+token a7c7e02383e16cce32944d9f52d9f88a 
+```
+
+Backup cluster:
+```
+$ flynn -a comentarismo export --file flynncfg.tar.gz
+$ flynn -a comentarismoreact export --file flynncfg.tar.gz
+$ flynn -a imgresizer export --file flynncfg.tar.gz
+```
+
+Restore cluster flynn20may --> 9d89f9e731ef54111ca1846cfd849b245786bb2e4c3d4198d59ea00a815bc837
+```
+$ flynn import --file flynncfg.tar.gz 
 ```
