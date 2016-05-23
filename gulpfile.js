@@ -17,6 +17,9 @@ var buildProperties = {
         './bower_components/components-font-awesome/css/font-awesome.css'
     ],
     comentarismoApi: [
+        './vendor/app.js',
+        './vendor/vendor.js',
+        './vendor/dev.js',
         './vendor/comentarismo-client.js',
         './vendor/comentarismo-client-min.map.json',
         './vendor/comentarismo-client-min.js'

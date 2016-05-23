@@ -27,7 +27,7 @@ var config = {
     root: [ path.join(__dirname, 'app') ]
   },
   output: {
-    path: path.join('./dist/static/'),
+    path: path.join(__dirname, 'vendor'),
     filename: DEBUG ? '[name].js' : '[name].[chunkhash].js'
   },
   plugins: [
@@ -76,7 +76,7 @@ if (DEBUG) {
       filname: '[name].[chunkhash].js'
     }),
     new webpack.optimize.UglifyJsPlugin(),
-    new AssetsPlugin({ path: path.join('./dist/static/') })
+    new AssetsPlugin({ path: path.join(__dirname, 'vendor') })
   ]);
 }
 
