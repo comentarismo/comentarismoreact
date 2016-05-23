@@ -546,12 +546,12 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
     client.get("intropage"+urlTag, function (err, js) {
         if (err || !js) {
             if (err) {
-                console.error(err.stack);
+                console.log("intropage err ",err);
             }
             //return res.status(500).send('Cache is broken!');
         }
         else {
-            logger.info("intropage"+urlTag + " will return cached result");
+            console.log("intropage"+urlTag + " will return cached result");
             if(EXPIRE_REDIS) {
                 client.expire("intropage"+urlTag, 1);
             }

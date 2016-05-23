@@ -80,10 +80,11 @@ Avoid errors like: `make: g++: Command not found` by installing:
 # ENV Configuration 
 `NODE_ENV`
 
-`REDISURL`
-`REDISPORT`
-`REDISPASS`
+`REDIS_HOST`
+`REDIS_PORT`
+`REDIS_PASSWORD`
 `EXPIRE_REDIS`
+`expiretime`
 
 `RETHINKURL`
 `RETHINKPORT`
