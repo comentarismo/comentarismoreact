@@ -7,7 +7,7 @@
     "test": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js' -w",
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
-    "build": "rimraf dist/ && npm run webpack && gulp prod",
+    "build": "rimraf ./dist/ && npm run webpack && gulp prod",
     "postinstall": "bower install && npm run build"
   },
   "engines": {

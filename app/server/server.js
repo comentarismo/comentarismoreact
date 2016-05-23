@@ -64,8 +64,8 @@ let styleSrc;
 if (process.env.NODE_ENV === 'production') {
     //let assets = require('../../dist/webpack-assets.json');
     scriptSrcs = [
-        `/vendor.js`,
-        `/app.js`,
+        `/static/vendor.js`,
+        `/static/app.js`,
         '/static/all.min.js'
     ];
     styleSrc = [
