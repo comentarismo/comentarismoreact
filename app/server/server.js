@@ -25,9 +25,9 @@ import r from 'rethinkdb';
 import {generateSitemap,generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
 
-var REDIS_URL = process.env.REDISURL || "g7-box";
-var REDIS_PORT = process.env.REDISPORT || 6379;
-var REDISPASS = process.env.REDISPASS || "";
+var REDIS_HOST = process.env.REDIS_HOST || "g7-box";
+var REDIS_PORT = process.env.REDIS_PORT || 6379;
+var REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
 
 let { getAllByIndexOrderBySkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
@@ -84,8 +84,11 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
+
+console.log(`REDIS_HOST -> ${REDIS_HOST}, REDIS_PORT -> ${REDIS_PORT}, REDIS_PASSWORD -> ${REDIS_PASSWORD}`);
+
 var client = redis.createClient({
-    host: REDIS_URL, port: REDIS_PORT, password: REDISPASS,
+    host: REDIS_HOST, port: REDIS_PORT, password: REDIS_PASSWORD,
     retry_strategy: function (options) {
 
         if (options.error && options.error.code === 'ECONNREFUSED') {

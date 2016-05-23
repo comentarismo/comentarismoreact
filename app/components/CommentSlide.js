@@ -17,11 +17,11 @@ var CommentSlide = React.createClass({
                     <div className="col-md-10 col-md-offset-1">
                         <div className="facts-box testimonial-cta">
                             <div className="row">
-                                <div className="col-sm-12">
-                                    <div className="col-xs-1">
+                                <div className="col-xs-12">
+                                    <div className="col-md-1">
                                         <Icon nick={comment.nick} size={50}/>
                                     </div>
-                                    <div className="col-xs-10">
+                                    <div className="col-md-11">
                                         <div className="text-blue">
                                             <a href={`/news/${comment.titleurlize}`} target="_blank">
                                                 <XDiv text={comment.title}/>

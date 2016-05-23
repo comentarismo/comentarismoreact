@@ -58,7 +58,7 @@
     background: #fff none repeat scroll 0 0;
     border: 1px solid #e1e8ed;
     border-radius: 6px;
-    height: 200px;
+    height: 300px;
     overflow: hidden;
     /*max-width: 340px; // orginal twitter width: 290px;*/
 }
@@ -537,7 +537,7 @@ textarea {
 .image {
     position: relative;
     overflow: hidden;
-    padding-bottom: 40%;
+    padding-bottom: 90%;
 }
 
 .image img {

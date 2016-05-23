@@ -139,6 +139,14 @@ http://dashboard.36zv.flynnhub.com
 token a7c7e02383e16cce32944d9f52d9f88a 
 ```
 
+# Deploy app to Flynn
+```
+flynn limit set slugbuilder memory=2GB
+git push flynn master
+
+https://git.36zv.flynnhub.com/comentarismoreact.git
+```
+
 Backup cluster:
 ```
 $ flynn -a comentarismo export --file flynncfg.tar.gz
