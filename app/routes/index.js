@@ -23,6 +23,8 @@ import Notfound from 'containers/Notfound';
 import AdminList from 'admin/AdminList';
 import AdminEdit from 'admin/AdminEdit';
 
+import SentimentComment from 'containers/SentimentComment';
+
 export default function (history) {
     return (
         <Router history={history}>
@@ -36,6 +38,8 @@ export default function (history) {
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
+                <Route path="sentiment/:url" component={SentimentComment}/>
+
 
                 <Route path="admin/r/:table/:index" component={AdminEdit}/>
                 <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
@@ -46,3 +50,5 @@ export default function (history) {
         </Router>
     );
 };
+//<Route path="sentiment/likes/:url" component={SentimentComment}/>
+//<Route path="sentiment/all/:url" component={SentimentComment}/>

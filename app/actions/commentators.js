@@ -67,3 +67,20 @@ export function loadSuggestCommentDetail({ index,value,skip,limit }) {
         ]
     }
 }
+
+export const LOADED_SENTIMENTCOMMENT_DETAIL = Symbol('LOADED_SENTIMENTCOMMENT_DETAIL');
+export function loadSentimentCommentDetail({ url }) {
+    return {
+        [CHAIN_API]: [
+            ()=> {
+                return {
+                    [CALL_API]: {
+                        method: 'get',
+                        path: `${config.SNT_URL}/moody?vid=${url}`,
+                        successType: LOADED_SENTIMENTCOMMENT_DETAIL
+                    }
+                }
+            }
+        ]
+    }
+}
