@@ -38,7 +38,7 @@ export function loadArticleLegacy ({ index,value }) {
         return {
           [CALL_API]: {
             method: 'get',
-            path: `/api/news/${value}`,
+            path: `${config.BASE_URL}/api/news/${value}`,
             successType: LOADED_ARTICLE_DETAIL
           }
         }
