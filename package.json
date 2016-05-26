@@ -1,6 +1,6 @@
 {
   "name": "comentarismoreact",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Comentarismo ReactJS",
   "scripts": {
     "start": "cross-env NODE_PATH=./app concurrent --kill-others \"nodemon app/server\" \"node webpack.server.js\" \"gulp css:watch\"",

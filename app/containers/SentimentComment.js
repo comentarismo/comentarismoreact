@@ -21,8 +21,13 @@ import {GoogleSearchScript} from 'components/GoogleSearchScript';
 class SentimentComment extends Component {
     static fetchData({ store, params }) {
         let { url } = params;
-        console.log(url);
+        //console.log(url);
         return store.dispatch(loadSentimentCommentDetail({url}))
+    }
+
+    componentDidMount() {
+        let { url } = this.props.params;
+        this.props.loadSentimentCommentDetail({url});
     }
 
     render() {
@@ -30,7 +35,7 @@ class SentimentComment extends Component {
         let { comment } = this.props;
         var url = this.props.params.url;
         console.log(comment.id);
-        console.log(url);
+        console.log(comment.metadata);
 
         if(!comment || !comment.metadata) {
             return  (
@@ -51,7 +56,7 @@ class SentimentComment extends Component {
                                     search </p>
                             </div>
                         </div>
-                        <GoogleSearchScript search={this.props.params}/>
+                        <GoogleSearchScript search={this.props.params.url}/>
                     </div>
                     <div className="clearfix"></div>
                     <footer className="footer bg-dark">
