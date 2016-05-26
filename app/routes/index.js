@@ -29,6 +29,7 @@ export default function (history) {
     return (
         <Router history={history}>
             <Route path="/" component={App}>
+                <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="commentators/:id" component={Commentator}/>
                 <Route path="commentators/:index/:value" component={Commentators}/>
                 <Route path="news/:id" component={Article}/>
@@ -38,14 +39,13 @@ export default function (history) {
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
-                <Route path="sentiment/:url" component={SentimentComment}/>
 
 
                 <Route path="admin/r/:table/:index" component={AdminEdit}/>
                 <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
 
-                <Route path="*" component={Notfound}/>
                 <IndexRoute component={Intro}/>
+                <Route path="*" component={Notfound}/>
             </Route>
         </Router>
     );

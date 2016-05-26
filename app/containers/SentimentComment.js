@@ -21,55 +21,39 @@ import {GoogleSearchScript} from 'components/GoogleSearchScript';
 class SentimentComment extends Component {
     static fetchData({ store, params }) {
         let { url } = params;
-        //console.log(url);
+        console.log("fetchData -> ", url);
         return store.dispatch(loadSentimentCommentDetail({url}))
     }
 
     componentDidMount() {
         let { url } = this.props.params;
-        this.props.loadSentimentCommentDetail({url});
+        let { comment } = this.props;
+        if (!comment || !comment.metadata) {
+            console.log("componentDidMount -> ", url)
+            this.props.loadSentimentCommentDetail({url});
+        }
     }
 
     render() {
         //console.log(this.props)
         let { comment } = this.props;
-        var url = this.props.params.url;
-        console.log(comment.id);
-        console.log(comment.metadata);
+        if (typeof window !== 'undefined') {
+            var url = this.props.params.url;
 
-        if(!comment || !comment.metadata) {
-            return  (
-                <div>
-                    <MainNavbar/>
+            console.log("render -> ", url);
+            console.log("render -> ", comment.id);
+            console.log("render -> ", comment.metadata);
+
+            if (!comment || !comment.metadata) {
+                return (
                     <div>
-                        <div className="col-xs-6">
-                            <h3>The page you are looking for might be incorrect, have been removed, had its name
-                                changed, or is
-                                temporarily unavailable.</h3>
-                            <div className="image">
-                                <img className="img img-responsive"
-                                     src="/static/img/404notfound.jpeg"/>
-                            </div>
-                            <div className="text-404">
-
-                                <p>Please Use the Google Search box below and optimize your
-                                    search </p>
+                        <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+                            <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i>
                             </div>
                         </div>
-                        <GoogleSearchScript search={this.props.params.url}/>
                     </div>
-                    <div className="clearfix"></div>
-                    <footer className="footer bg-dark">
-                        <div className="container">
-                            <div className="row">
-                                <div className="col-sm-12 text-center">
-                                    <p className="copyright">© 2016 Comentarismo.com</p>
-                                </div>
-                            </div>
-                        </div>
-                    </footer>
-                </div>
-            )
+                )
+            }
         }
 
 
@@ -122,11 +106,10 @@ var Sentiment = React.createClass({
 
     handleChange: function (event) {
         var change = event.target.value;
-        this.setState({vid:change});
+        this.setState({vid: change});
     },
 
     render: function () {
-
 
 
         let { comment } = this.props;
@@ -306,7 +289,7 @@ var Sentiment = React.createClass({
                                     <input type="text" className="form-control" placeholder="Post URL" name="vid"
                                            value={this.state.vid} onChange={this.handleChange}
                                            style={{width: "350px"}}/>
-                                    <a  className="btn btn-default" onClick={this.runReport}>Run
+                                    <a className="btn btn-default" onClick={this.runReport}>Run
                                     </a>
                                 </div>
                             </div>
