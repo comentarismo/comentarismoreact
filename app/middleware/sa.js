@@ -40,3 +40,12 @@ export function doImageResize(url,data,cb){
         cb(err,res)
     });
 }
+
+export function saSentimentCommentDetail(url,cb){
+    var target = `${config.SNT_URL}/moody?vid=${url}`;
+    console.log(target);
+    superAgent.get(target).end(function(err, res){
+        console.log(res.body)
+        cb(err,res)
+    });
+}

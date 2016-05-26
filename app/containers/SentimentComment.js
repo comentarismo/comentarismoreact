@@ -17,6 +17,7 @@ import Date from "components/Date"
 var MainNavbar = require('components/MainNavbar');
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
+import {saSentimentCommentDetail} from '../middleware/sa';
 
 class SentimentComment extends Component {
     static fetchData({ store, params }) {
@@ -25,35 +26,22 @@ class SentimentComment extends Component {
         return store.dispatch(loadSentimentCommentDetail({url}))
     }
 
-    componentDidMount() {
-        let { url } = this.props.params;
-        let { comment } = this.props;
-        if (!comment || !comment.metadata) {
-            console.log("componentDidMount -> ", url)
-            this.props.loadSentimentCommentDetail({url});
-        }
+    constructor(props) {
+        super();
+        this.state = {
+            comment: {},
+        };
     }
 
     render() {
         //console.log(this.props)
-        let { comment } = this.props;
+        let { comment } = this.state;
         if (typeof window !== 'undefined') {
             var url = this.props.params.url;
 
             console.log("render -> ", url);
             console.log("render -> ", comment.id);
             console.log("render -> ", comment.metadata);
-
-            if (!comment || !comment.metadata) {
-                return (
-                    <div>
-                        <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                            <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
         }
 
 
@@ -71,7 +59,7 @@ class SentimentComment extends Component {
                 />
 
 
-                <Sentiment comment={comment}/>
+                <Sentiment comment={comment} url={this.props.params.url}/>
 
                 <div className="clearfix"></div>
                 <footer className="footer bg-dark">
@@ -88,13 +76,48 @@ class SentimentComment extends Component {
     }
 }
 
+var terrible = "Terrible!";
+var sucks = "Sucks";
+var bad = "Bad";
+var notgood = "Not Good";
+var eh = "Eh";
+var neutral = "Neutral";
+var ok = "OK";
+var good = "Good";
+var likeit = "Like It";
+var lovedit = "Loved It";
+var awesome = "Awesome!";
+var unknown = "Unknown";
 
 var Sentiment = React.createClass({
     displayName: 'Sentiment',
 
     getInitialState: function () {
+        let { url,comment } = this.props;
         return {
-            vid: this.props.comment.url
+            vid: url,
+            comment: comment
+        }
+    },
+
+    componentDidMount() {
+        let { url,comment } = this.props;
+        if (!comment || !comment.metadata) {
+            console.log("componentDidMount -> ", url)
+            //this.props.loadSentimentCommentDetail({url});
+
+            saSentimentCommentDetail(url, function (err, res) {
+                // Do something
+                if (err || !res || res.body.length == 0) {
+                    console.log("Got error when trying to fallback on sentiment report :| ",err)
+                } else {
+                    var comment = res.body;
+                    console.log("fallback ok :D , updating view ",comment.metadata);
+                    this.setState({comment:comment});
+                    //this.forceUpdate();
+                }
+            }.bind(this));
+
         }
     },
 
@@ -111,20 +134,20 @@ var Sentiment = React.createClass({
 
     render: function () {
 
+        let { comment } = this.state;
 
-        let { comment } = this.props;
-        var terrible = "Terrible!";
-        var sucks = "Sucks";
-        var bad = "Bad";
-        var notgood = "Not Good";
-        var eh = "Eh";
-        var neutral = "Neutral";
-        var ok = "OK";
-        var good = "Good";
-        var likeit = "Like It";
-        var lovedit = "Loved It";
-        var awesome = "Awesome!";
-        var unknown = "Unknown";
+        //if (!comment || !comment.metadata) {
+        //    return (
+        //        <div>
+        //            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+        //                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i>
+        //                </div>
+        //            </div>
+        //        </div>
+        //    )
+        //}
+
+
         var emojis = {
             "Terrible!": terrible + emojione.shortnameToUnicode(":scream:"),
             "Sucks": sucks + emojione.shortnameToUnicode(":angry:"),
@@ -140,7 +163,7 @@ var Sentiment = React.createClass({
             "Unknown": unknown + emojione.shortnameToUnicode(":no_mouth:")
         };
 
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && comment && comment.metadata) {
             $("#header").css({
                 "background-image": "url('" + comment.metadata.thumbnail + "')"
             });
@@ -183,9 +206,11 @@ var Sentiment = React.createClass({
 
                 dp[n] = p;
             }
-
-            var ctx = document.getElementById("myChart").getContext("2d");
-
+            var element = document.getElementById("myChart");
+            var ctx = {};
+            if(element) {
+                ctx = element.getContext("2d");
+            }
             // Bar Chart
             var data = {
                 labels: elabels,
@@ -259,6 +284,8 @@ var Sentiment = React.createClass({
 
 
         }
+
+
         return (
             <div className="container">
 
@@ -330,6 +357,7 @@ var Sentiment = React.createClass({
                         </div>
                     </div>
 
+
                     <div className="row">
 
                         <div className="col-md-5">
@@ -342,7 +370,8 @@ var Sentiment = React.createClass({
                         </div>
                     </div>
 
-                    <CommentsView comment={comment.topcomments} emojis={emojis} sentimentlist={comment.sentimentlist}/>
+
+                    <CommentsView comment={this.state.comment.topcomments} emojis={emojis} sentimentlist={this.state.comment.sentimentlist}/>
 
 
                 </div>
@@ -361,21 +390,9 @@ var PlayButton = React.createClass({
     }
 });
 
-var terrible = "Terrible!";
-var sucks = "Sucks";
-var bad = "Bad";
-var notgood = "Not Good";
-var eh = "Eh";
-var neutral = "Neutral";
-var ok = "OK";
-var good = "Good";
-var likeit = "Like It";
-var lovedit = "Loved It";
-var awesome = "Awesome!";
-var unknown = "Unknown";
-
 var CommentsView = React.createClass({
     displayName: 'CommentsView',
+
     getInitialState: function () {
         let { comment,emojis,sentimentlist } = this.props;
         return {
@@ -384,6 +401,14 @@ var CommentsView = React.createClass({
             sentimentlist: sentimentlist
         }
     },
+
+    componentWillReceiveProps: function(p){
+        //console.log(p);
+        let { comment,sentimentlist } = p;
+        console.log("componentWillReceiveProps -> ")
+        this.setState({comment:comment,sentimentlist:sentimentlist});
+    },
+
 
     loadterrible: function () {
         let { sentimentlist } = this.state;
@@ -475,6 +500,7 @@ var CommentsView = React.createClass({
                     {loadunknownButton}
                 </div>
                 <div className="col-xs-12" style={{height: "45px"}}></div>
+
 
                 <div className="col-md-12">
                     {
