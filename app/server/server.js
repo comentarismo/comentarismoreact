@@ -775,13 +775,13 @@ server.get('*', (req, res, next)=> {
 });
 
 server.on('error', (err) => {
-    console.error("server.on('error' --> " + err);
+    console.error("server.on('error' --> " , err);
 });
 
 server.use((err, req, res, next)=> {
     if (err) {
-        console.error("server.use((err, --> " + err);
-        logger.info(err.stack);
+        console.error("server.use((err, --> " , err);
+        logger.info("err stack ",err.stack);
     }
     // TODO report error here or do some further handlings
 
@@ -798,7 +798,7 @@ r.connect({
 }, function (err, c) {
     conn = c;
     if (err) {
-        logger.info(err);
+        logger.info("rethinkdb -> ",err);
     } else {
         logger.info("Rethinkdb is connected");
 

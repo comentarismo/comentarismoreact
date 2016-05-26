@@ -70,13 +70,15 @@ export function loadSuggestCommentDetail({ index,value,skip,limit }) {
 
 export const LOADED_SENTIMENTCOMMENT_DETAIL = Symbol('LOADED_SENTIMENTCOMMENT_DETAIL');
 export function loadSentimentCommentDetail({ url }) {
+    var target = `${config.SNT_URL}/moody?vid=${url}`;
+    console.log("loadSentimentCommentDetail -> ",target);
     return {
         [CHAIN_API]: [
             ()=> {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `${config.SNT_URL}/moody?vid=${url}`,
+                        path: target,
                         successType: LOADED_SENTIMENTCOMMENT_DETAIL
                     }
                 }

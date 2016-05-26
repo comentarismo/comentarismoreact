@@ -34,7 +34,7 @@ export default ({ dispatch, getState }) => next => action => {
     overall.finally(()=> {
         deferred.resolve()
     }).catch((err)=> {
-        console.log(err);
+        console.log("API catch((err) ",err);
     });
 
     return deferred.promise
@@ -46,11 +46,12 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
         let deferred = Promise.defer();
 
         let params = extractParams(apiAction[CALL_API]);
-        console.log(params.url);
+        console.log("createRequestPromise -> ",params.url);
         superAgent[params.method](params.url)
             .withCredentials()
             .end((err, res)=> {
                 if (err) {
+                    console.log("createRequestPromise err -> ",err);
                     if (params.errorType) {
                         dispatch({
                             type: params.errorType,

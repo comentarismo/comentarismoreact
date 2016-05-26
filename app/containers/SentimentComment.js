@@ -67,7 +67,7 @@ class SentimentComment extends Component {
                     {"name": "description", "content": "Welcome to Comentarismo"},
                     {"property": "og:type", "content": "article"}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
+                    onChangeClientState={(newState) => console.log("Helmet state -> ",newState)}
                 />
 
 
@@ -304,7 +304,7 @@ var Sentiment = React.createClass({
                     <div id="header" className="stroke">
                         <h1 id="video_title">{comment.title}</h1>
                         <h4>
-                            <span id="channel_title">{comment.metadata.channeltitle}</span> on <span
+                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span> on <span
                             id="network_title">{comment.type}</span>
                         </h4>
 
@@ -312,11 +312,11 @@ var Sentiment = React.createClass({
 
                         <div className="row bignums">
                             <div className="col-xs-4 col-xs-offset-4">
-                                <span id="total_comments">{comment.metadata.totalcomments}</span>
+                                <span id="total_comments">{comment.metadata ? comment.metadata.totalcomments : ""}</span>
                                 <span className="desc">Total Comments</span>
                             </div>
                             <div className="col-xs-4">
-                                <span id="comments_per_day">{comment.commentavgperday.toFixed(2)}</span>
+                                <span id="comments_per_day">{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</span>
                                 <span className="desc">By Day</span>
                             </div>
                         </div>
@@ -437,6 +437,10 @@ var CommentsView = React.createClass({
 
     render: function () {
         let { comment,emojis } = this.state;
+
+        if(!comment){
+            comment = [];
+        }
 
         var loadterribleButton = <PlayButton label={emojis[terrible]} onClick={this.loadterrible}/>;
         var loadsucksButton = <PlayButton label={emojis[sucks]} onClick={this.loadsucks}/>;
