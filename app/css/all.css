@@ -539,6 +539,11 @@ textarea {
     padding-bottom: 90%;
 }
 
+.image-video {
+    position: relative;
+    overflow: hidden;
+}
+
 .image img {
     position: absolute;
 }

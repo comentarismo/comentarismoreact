@@ -25,11 +25,14 @@ import AdminEdit from 'admin/AdminEdit';
 
 import SentimentComment from 'containers/SentimentComment';
 
+import TopVideos from 'containers/TopVideos';
+
 export default function (history) {
     return (
         <Router history={history}>
             <Route path="/" component={App}>
                 <Route path="sentiment/:url" component={SentimentComment}/>
+                <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
                 <Route path="commentators/:index/:value" component={Commentators}/>
                 <Route path="news/:id" component={Article}/>

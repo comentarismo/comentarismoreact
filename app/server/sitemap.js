@@ -76,7 +76,12 @@ function generateIndexXml(table, index, value, conn, cb) {
     table = (table == "commentators" ? "commentator" : table);
     var pluck = (table == "news" ? "titleurlize" : "slug");
 
+    if(table == "sentiment_report"){
+        pluck = "url";
+    }
+
     if(!table || !index || !value){
+        console.log("search query is not correct ",table,index,value)
         return ("search query is not correct.")
     }
 
@@ -86,6 +91,7 @@ function generateIndexXml(table, index, value, conn, cb) {
             logger.error(err);
             return cb(err || "503 - not valid query");
         }
+        //console.log(values)
         if (table == "news") {
             for (var i = 0; i < values.length; i++) {
                 sitemap.add({url: '/news/' + values[i].titleurlize});
@@ -94,6 +100,11 @@ function generateIndexXml(table, index, value, conn, cb) {
         } else if (table == "commentator") {
             for (var i = 0; i < values.length; i++) {
                 sitemap.add({url: '/commentators/' + value +"-" + values[i].slug});
+            }
+            return cb(null, sitemap.toString());
+        } else if (table == "sentiment_report") {
+            for (var i = 0; i < values.length; i++) {
+                sitemap.add({url: '/sentiment/' + encodeURIComponent(values[i].url)});
             }
             return cb(null, sitemap.toString());
         } else {
