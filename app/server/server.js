@@ -380,7 +380,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}`;
-    logger.info(urlTag);
+    //logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {

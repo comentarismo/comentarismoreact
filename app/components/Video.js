@@ -2,19 +2,10 @@
 
 var React = require('react');
 
-var base64Encode = require("../util/imgresizer").base64Encode;
-
-var width = "388";
-var height = "395";
-var quality = "50";
-
-var $ = require('jquery');
 import Date from "components/Date"
 import Icon from "components/Icon"
 
 var jdenticon = require("jdenticon");
-var md5 = require('md5');
-
 
 module.exports = React.createClass({
     displayName: 'Video',
@@ -26,8 +17,6 @@ module.exports = React.createClass({
     },
 
     getDescription: function () {
-        //var description = this.props.video.description;
-        //return description ? <p className='video-description'>{description}</p> : null;
         return (<div>
             <span id="comments_per_day">By Day {this.props.video.commentavgperday ? this.props.video.commentavgperday.toFixed(2) : "0" }</span>
         </div>)
