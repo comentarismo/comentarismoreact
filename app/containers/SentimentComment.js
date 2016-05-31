@@ -15,9 +15,13 @@ var $ = require('jquery')
 var emojione = require("emojione");
 import Date from "components/Date"
 var MainNavbar = require('components/MainNavbar');
+var SentimentNavBar = require("components/SentimentNavBar");
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {saSentimentCommentDetail} from '../middleware/sa';
+
+import YouTube from 'react-youtube';
+
 
 class SentimentComment extends Component {
     static fetchData({ store, params }) {
@@ -25,6 +29,7 @@ class SentimentComment extends Component {
         console.log("fetchData -> ", url);
         return store.dispatch(loadSentimentCommentDetail({url}))
     }
+
 
     constructor(props) {
         super();
@@ -109,11 +114,11 @@ var Sentiment = React.createClass({
             saSentimentCommentDetail(url, function (err, res) {
                 // Do something
                 if (err || !res || res.body.length == 0) {
-                    console.log("Got error when trying to fallback on sentiment report :| ",err)
+                    console.log("Got error when trying to fallback on sentiment report :| ", err)
                 } else {
                     var comment = res.body;
-                    console.log("fallback ok :D , updating view ",comment.metadata);
-                    this.setState({comment:comment});
+                    console.log("fallback ok :D , updating view ", comment.metadata);
+                    this.setState({comment: comment});
                     //this.forceUpdate();
                 }
             }.bind(this));
@@ -135,18 +140,6 @@ var Sentiment = React.createClass({
     render: function () {
 
         let { comment } = this.state;
-
-        //if (!comment || !comment.metadata) {
-        //    return (
-        //        <div>
-        //            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-        //                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i>
-        //                </div>
-        //            </div>
-        //        </div>
-        //    )
-        //}
-
 
         var emojis = {
             "Terrible!": terrible + emojione.shortnameToUnicode(":scream:"),
@@ -208,7 +201,7 @@ var Sentiment = React.createClass({
             }
             var element = document.getElementById("myChart");
             var ctx = {};
-            if(element) {
+            if (element) {
                 ctx = element.getContext("2d");
             }
             // Bar Chart
@@ -284,16 +277,22 @@ var Sentiment = React.createClass({
 
 
         }
-
+        const opts = {
+            height: '390',
+            width: '640',
+            playerVars: { // https://developers.google.com/youtube/player_parameters
+                autoplay: 1
+            }
+        };
 
         return (
             <div className="container">
+                <SentimentNavBar />
 
                 <div className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header navbar-brand">
-                            Paste a Youtube or Facebook URL below And Get a <b>Free</b> Sentiment <b>Analysis</b> Right
-                            <b>Now!</b>
+                            Paste a Youtube URL below And Get a <b>Free</b> Sentiment <b>Analysis</b> Right <b> Now!</b>
                         </div>
                     </div>
                 </div>
@@ -331,7 +330,8 @@ var Sentiment = React.createClass({
                     <div id="header" className="stroke">
                         <h1 id="video_title">{comment.title}</h1>
                         <h4>
-                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span> on <span
+                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span>
+                            on <span
                             id="network_title">{comment.type}</span>
                         </h4>
 
@@ -339,25 +339,33 @@ var Sentiment = React.createClass({
 
                         <div className="row bignums">
                             <div className="col-xs-4 col-xs-offset-4">
-                                <span id="total_comments">{comment.metadata ? comment.metadata.totalcomments : ""}</span>
+                                <span
+                                    id="total_comments">{comment.metadata ? comment.metadata.totalcomments : ""}</span>
                                 <span className="desc">Total Comments</span>
                             </div>
                             <div className="col-xs-4">
-                                <span id="comments_per_day">{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</span>
+                                <span
+                                    id="comments_per_day">{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</span>
                                 <span className="desc">By Day</span>
                             </div>
                         </div>
                     </div>
-
-                    <div className="progress">
-                        <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
-                             aria-valuemin="0"
-                             aria-valuemax="100" style={{width: "0%"}}>
-                            Comments Analyzed: 0%
+                    <div className="row">
+                        <div className="progress">
+                            <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100" style={{width: "0%"}}>
+                                Comments Analyzed: 0%
+                            </div>
                         </div>
                     </div>
-
-
+                    <div className="row">
+                        <YouTube
+                            videoId={comment.id}
+                            opts={opts}
+                            onReady={this._onReady}
+                        />
+                    </div>
                     <div className="row">
 
                         <div className="col-md-5">
@@ -368,15 +376,24 @@ var Sentiment = React.createClass({
                             <h5>Scale of values </h5>
                             <canvas id="scaleChart" width="100%" height="300"></canvas>
                         </div>
+                        <div className="col-md-5">
+
+                        </div>
                     </div>
 
 
-                    <CommentsView comment={this.state.comment.topcomments} emojis={emojis} sentimentlist={this.state.comment.sentimentlist}/>
+                    <CommentsView comment={this.state.comment.topcomments} emojis={emojis}
+                                  sentimentlist={this.state.comment.sentimentlist}/>
 
 
                 </div>
             </div>
         );
+    },
+
+    _onReady: function (event) {
+        // access to player in all event handlers via event.target
+        //event.target.pauseVideo();
     }
 });
 
@@ -402,11 +419,11 @@ var CommentsView = React.createClass({
         }
     },
 
-    componentWillReceiveProps: function(p){
+    componentWillReceiveProps: function (p) {
         //console.log(p);
         let { comment,sentimentlist } = p;
         console.log("componentWillReceiveProps -> ")
-        this.setState({comment:comment,sentimentlist:sentimentlist});
+        this.setState({comment: comment, sentimentlist: sentimentlist});
     },
 
 
@@ -463,7 +480,7 @@ var CommentsView = React.createClass({
     render: function () {
         let { comment,emojis } = this.state;
 
-        if(!comment){
+        if (!comment) {
             comment = [];
         }
 
@@ -574,3 +591,6 @@ SentimentComment.propTypes = {
 
 export { SentimentComment }
 export default connect(mapStateToProps, {loadSentimentCommentDetail})(SentimentComment)
+
+
+//<img src="/static/img/flags/png/us.png"/> <img src="/static/img/flags/png/es.png"/> <img src="/static/img/flags/png/br.png"/> <img src="/static/img/flags/png/it.png"/>
