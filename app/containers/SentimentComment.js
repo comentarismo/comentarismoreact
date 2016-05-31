@@ -15,7 +15,9 @@ var $ = require('jquery')
 var emojione = require("emojione");
 import Date from "components/Date"
 var MainNavbar = require('components/MainNavbar');
-var SentimentNavBar = require("components/SentimentNavBar");
+
+var SentimentNavBar = require('components/SentimentNavbar');
+
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {saSentimentCommentDetail} from '../middleware/sa';
