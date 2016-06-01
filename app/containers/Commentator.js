@@ -43,7 +43,7 @@ class Commentator extends Component {
                     <a id="comentarismo-operator" data-id={ commentator.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript/>
+                    <XScript index="nick"/>
                     <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
                         <div className="col-sm-10 col-sm-offset-1 col-xs-12 article-body ">

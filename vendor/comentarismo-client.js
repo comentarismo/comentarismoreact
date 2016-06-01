@@ -24,12 +24,42 @@ var comentarismoContainerHtml =
     "</div>" +
     "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
 
-var initComentarismoContainer = function initComentarismoContainer(div) {
+var comentarismoContainerHtmlNoReply =
+    "<div class='success' style='display:none;'></div>" +
+    "<div class='error' style='display:none;'></div>" +
+    "<div class='add-comment'><img src='http://api.comentarismo.com/static/images/comments.ico' style='width:30px;height:30px;'/><span id='comments-count'></span></div>" +
+    "<form class='hidden form comment-form' id='comment-form' action=''>" +
+    "<div class='form-group'>" +
+    "<div class='textarea-wrapper'>" +
+    "<textarea class='textarea' name='body' id='new-todo' tabindex='1' rows='2' cols='40' placeholder='Comment (mandatory)'></textarea>" +
+    "</div>" +
+    "<section class='auth-section'>" +
+    "<p class='input-wrapper'><img id='captchaimage' src='' alt='Captcha image'></p>" +
+    "<p class='input-wrapper'><input type='hidden' name='captchaid' id='captchaid' value=''>" +
+    "<input id='captchasolution' name='captchasolution' value='' placeholder='Captcha (mandatory)'/>" +
+    "</p>" +
+    "<p class='post-action'>" +
+    "<input id='submit-btn' value='Submit' type='submit'/>" +
+    "</p>" +
+    "</section>" +
+    "</div>" +
+    "</form>" +
+    "<h3 class='timeline'>Comentarismo Timeline</h3>" +
+    "<div id='comments-list'>" +
+    "</div>" +
+    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
+
+
+var initComentarismoContainer = function initComentarismoContainer(div, noreply) {
+    var targetHtml = comentarismoContainerHtml;
+    if (noreply == "nick") {
+        targetHtml = comentarismoContainerHtmlNoReply
+    }
     if (!div) {
         div = "#comentarismo-container";
     }
     var htmlElement = $(div);
-    htmlElement.html(comentarismoContainerHtml);
+    htmlElement.html(targetHtml);
 };
 
 
@@ -54,7 +84,7 @@ var addCommentIndex = function (list, item, cb) {
 
 module.exports = {
     initComentarismoContainer: initComentarismoContainer,
-    addCommentIndex:addCommentIndex
+    addCommentIndex: addCommentIndex
 }
 
 
@@ -134,6 +164,7 @@ module.exports = {
     elkCountArticle:elkCountArticle
 }
 },{}],4:[function(require,module,exports){
+
 
 function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
 
@@ -370,6 +401,8 @@ var showCommentForm = function (targetFrom) {
 var onClickShowCommentForm = function (evt,that) {
     evt.stopPropagation();
     evt.preventDefault();
+
+    console.log("onClickShowCommentForm ",that.defaultIndex);
 
     ga('send', 'event', 'onClickShowCommentForm', '/auth/islogin', that.page, 0);
 
@@ -795,10 +828,6 @@ $ = require('jquery'),
     load_api = require('./funcs/load_api.js'),
     load_elk = require('./funcs/load_elk.js');
 
-var ws;
-
-var commentForm;
-var page;
 
 var getIndexFromPath = function getIndexFromPath(index) {
     var path = window.location.pathname.split('/');
@@ -829,30 +858,26 @@ $.extend({
 });
 
 var host = "";
-var wshost = "";
 var elk = "";
 var key = "";
 
 var user = "";
-var captchaid = "";
 
-var categories = "";
-var countries = "";
+//value for getting articles is called titleurlize, due to the nature of the field being a urlization of a title
+var page;
+
+//operator is the main index, used mainly for ElasticSearch index
 var operator = "";
-var genre = "";
-var titleurlize = "";
 
-var year = "";
-var month = "";
-var day = "";
-var cached = false;
-
+//Index is the index to be used to query anything
 var defaultIndex = "titleurlize";
+
+var cached = false;
 
 Comentarismo = function (options) {
 
     //initialize comentarismo-container
-    container.initComentarismoContainer(options.selector);
+    container.initComentarismoContainer(options.selector,options.index);
 
     //start analytics
     analytics('create', 'UA-51773618-1', 'auto');
@@ -891,35 +916,35 @@ Comentarismo = function (options) {
         cached = options.cached.length > 0;
     }
 
-    //do customization for legacy
     if (this.forum === "comentarismo") {
-        //other mandatory fields for comment creation on the api
-        categories = getIndexFromPath(2);
-        countries = getIndexFromPath(3);
-        operator = getIndexFromPath(4);
-        genre = getIndexFromPath(5);
-
-        year = getIndexFromPath(6);
-        month = getIndexFromPath(7);
-        day = getIndexFromPath(8);
-
-        titleurlize = page = getIndexFromPath(9);
-    }else if(this.forum === "comentarismo-social-test"){
         console.log("Loading Comentarismo Social Plugin");
-        titleurlize = page = getIndexFromPath(3);
-        operator = getIndexFromPath(2);
-        console.log("comentarismo-social --> "+titleurlize);
-        defaultIndex = "nick";
-    }else if(this.forum === "comentarismo-social"){
-        console.log("Loading Comentarismo Social Plugin");
-        titleurlize = page = options.page;
-        operator = options.operator;
-        console.log("comentarismo-social --> "+titleurlize);
-        defaultIndex = options.index || "nick";
+        var testpage = options.page;
+        if(!testpage){
+            //fallback to indexFromPath
+            testpage = getIndexFromPath(3);
+            if(!testpage){
+                throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{page:'pageID'} ")
+            }
+        }
+        var testoperator = options.operator;
+        if(!testoperator){
+            testoperator = getIndexFromPath(2);
+            if(!testoperator){
+                throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{operator:'operatorID'} ")
+            }
+        }
+        var testdefaultIndex = options.index;
+        if(testdefaultIndex){
+            defaultIndex = testdefaultIndex;
+        }
+
+        page = testpage;
+        operator = testoperator;
+
+    }else {
+        //WTF ?
+        throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
     }
-
-    console.log(this.elk);
-    console.log(this.host);
 
     this.commentForm = $('#comment-form');
     this.commentForm.on('submit', _.bind(this.onSubmitCommentForm, this));
@@ -937,11 +962,11 @@ Comentarismo = function (options) {
     this.toggleComment.on('click', _.bind(this.onClickDisLikeComment, this));
 
     if (cached) {
-        count_elk.elkCountArticle(this, defaultIndex, sel, titleurlize, operator, function (err) {
+        count_elk.elkCountArticle(this, defaultIndex, sel, page, operator, function (err) {
             count_api.afterCountArticle(err, end);
         });
     } else {
-        count_api.countArticle(this,defaultIndex,titleurlize, function (err) {
+        count_api.countArticle(this,defaultIndex,page, function (err) {
             count_api.afterCountArticle(err, end);
         });
     }
@@ -950,7 +975,7 @@ Comentarismo = function (options) {
         running = true;
         $('a#inifiniteLoader').show();
         //that, operator, thekey, list, page, skip, limit,user,
-        load_elk.elkLoadArticle(this, operator, defaultIndex, sel, titleurlize, skip, limit, user, function (length, err) {
+        load_elk.elkLoadArticle(this, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 limit = limit + 50;
                 skip = skip + 50;
@@ -961,7 +986,7 @@ Comentarismo = function (options) {
     } else {
         running = true;
         $('a#inifiniteLoader').show();
-        load_api.loadArticle(this, defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
+        load_api.loadArticle(this, defaultIndex, sel, page, skip, limit,user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 limit = limit + 50;
                 skip = skip + 50;
@@ -984,7 +1009,7 @@ Comentarismo = function (options) {
 
             if (cached) {
 
-                load_elk.elkLoadArticle(that,operator,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
+                load_elk.elkLoadArticle(that,operator,defaultIndex, sel, page, skip, limit,user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         limit = limit + 50;
                         skip = skip + 50;
@@ -994,7 +1019,7 @@ Comentarismo = function (options) {
                 });
             } else {
 
-                load_api.loadArticle(that,defaultIndex, sel, titleurlize, skip, limit,user, function (length, err) {
+                load_api.loadArticle(that,defaultIndex, sel, page, skip, limit,user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         limit = limit + 50;
                         skip = skip + 50;
@@ -1062,11 +1087,15 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         form = this.commentForm[0];
     }
 
+    if(!page){
+        console.log("KARAIDIASA!")
+    }
+
     var js = {
         captchasolution: form.captchasolution.value,
         captchaid: form.captchaid.value,
         comment: form.body.value,
-        titleurlize: page
+        page: page
     };
     console.log(js);
 

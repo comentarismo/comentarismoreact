@@ -17,39 +17,7 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
-class XScript extends React.Component {
-    static initScripts(el, url) {
-        var script = document.createElement('script')
-        script.setAttribute('type', 'text/javascript');
-        script.setAttribute('src', url);
-        el.appendChild(script);
-    }
-
-    componentDidMount() {
-        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
-    }
-
-    render() {
-        return <div ref="it"
-                    dangerouslySetInnerHTML={{__html:
-                    '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
-                    '<script>$(function () {' +
-                      'var operator = $("#comentarismo-operator").attr("data-id"); ' +
-                      'var page = $("#comentarismo-page").attr("data-id"); '+
-                        'var comentarismo = new Comentarismo({' +
-                            'host: "api.comentarismo.com",' +
-                            'cached: "elk.comentarismo.com",'+
-                            'forum: "comentarismo-social",' +
-                            'key: "-U7sw_7qY7vw-qCXi3M8KJPYSzMEOxEbZCnLUDBO7EGum8uKg2f5rreFIv8aSWS16jmNngoIRZHs",' +
-                            'page: encodeURIComponent(page),' +
-                            'operator: operator,' +
-                            'index: "titleurlize"' +
-                        '});' +
-                      '});' +
-                    '</script>'}}
-        ></div>
-    }
-}
+import {XScript} from 'components/XScript';
 
 class Article extends Component {
     static fetchData({ store, params }) {
@@ -158,7 +126,7 @@ class Article extends Component {
                     <a id="comentarismo-operator" data-id={ article.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript/>
+                    <XScript index="titleurlize"/>
                     <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
                         <div className="article-body">
