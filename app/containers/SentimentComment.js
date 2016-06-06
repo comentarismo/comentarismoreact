@@ -24,6 +24,7 @@ import {saSentimentCommentDetail} from '../middleware/sa';
 
 import YouTube from 'react-youtube';
 
+import BubbleChart from 'components/BubbleChart';
 
 class SentimentComment extends Component {
     static fetchData({ store, params }) {
@@ -103,7 +104,8 @@ var Sentiment = React.createClass({
         let { url,comment } = this.props;
         return {
             vid: url,
-            comment: comment
+            comment: comment,
+            numBubbles:70,
         }
     },
 
@@ -141,7 +143,8 @@ var Sentiment = React.createClass({
 
     render: function () {
 
-        let { comment } = this.state;
+        let { comment,numBubbles } = this.state;
+        var bubblechart = [];
 
         var emojis = {
             "Terrible!": terrible + emojione.shortnameToUnicode(":scream:"),
@@ -287,6 +290,34 @@ var Sentiment = React.createClass({
             }
         };
 
+        if(this.state.comment.sentimentlist) {
+            var that = this;
+            Object.keys(this.state.comment.sentimentlist).forEach(function(key) {
+                var row = that.state.comment.sentimentlist[key];
+                if (row){
+                    for (var j = 0; j < row.length; j++) {
+                        var row2 = row[j];
+                        if(row2 && row2.keywords){
+                            if(row2.sentimentscores){
+                                Object.keys(row2.sentimentscores).forEach(function(k) {
+                                    var target = {
+                                        _id:k,
+                                        sentiment: row2.sentimentscores[k],
+                                        value: bubblechart.length+10
+                                    }
+                                    if(bubblechart.length<numBubbles) {
+                                        bubblechart.push(target);
+                                    }
+                                });
+                            }
+
+                        }
+                    }
+                }
+
+            })
+        }
+
         return (
             <div className="container">
                 <SentimentNavBar />
@@ -298,6 +329,8 @@ var Sentiment = React.createClass({
                         </div>
                     </div>
                 </div>
+
+
                 <nav className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header">
@@ -384,15 +417,29 @@ var Sentiment = React.createClass({
                     </div>
 
 
+                    <BubbleChart data={bubblechart}/>
+                    <div className="">
+                        <div className="">{numBubbles + (numBubbles === 1 ? " Circle" : " Circles")}</div>
+                        <input
+                            className=""
+                            type="range"
+                            min="1"
+                            max="250"
+                            value={numBubbles}
+                            steps="250"
+                            onChange={this.onChange} />
+                    </div>
+
                     <CommentsView comment={this.state.comment.topcomments} emojis={emojis}
                                   sentimentlist={this.state.comment.sentimentlist}/>
-
 
                 </div>
             </div>
         );
     },
-
+    onChange: function(e) {
+        this.setState({numBubbles:e.target.value})
+    },
     _onReady: function (event) {
         // access to player in all event handlers via event.target
         //event.target.pauseVideo();
