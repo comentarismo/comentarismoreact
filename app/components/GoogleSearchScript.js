@@ -30,6 +30,11 @@ export class GoogleSearchScript extends React.Component {
                 //console.log("Will load Google auto search");
 
                 try {
+                    if(!id){
+                        var path = window.location.pathname.split('/');
+                        id = path[2];
+                    }
+
                     //split on dashes
                     var searchTerm = id.split("-").join(" ");
                     searchTerm = searchTerm.split("/").join(" ");
