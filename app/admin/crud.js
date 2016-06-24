@@ -1,7 +1,7 @@
 var React = require('react');
 var _ = require("underscore");
 
-function handleDeleteButton($,target){
+function handleDeleteButton($,target,cb){
     var successbox = $(".success");
     var errorbox = $(".error");
 
@@ -20,6 +20,7 @@ function handleDeleteButton($,target){
             console.log("delete success");
             successbox.html("delete success");
             successbox.show();
+            cb();
         },
         error: function (err) {
             $('a#inifiniteLoader').hide();
@@ -28,10 +29,49 @@ function handleDeleteButton($,target){
                 console.log("delete success");
                 successbox.html("delete success");
                 successbox.show();
+                cb();
             } else {
                 console.log(err);
                 successbox.hide();
                 errorbox.html("delete failed " + JSON.stringify(err));
+                errorbox.show();
+                cb(err);
+            }
+        }
+    });
+}
+
+function handleSpamButton($,target){
+    var successbox = $(".success");
+    var errorbox = $(".error");
+
+    // post to comentarismo api
+    console.log("handleSpamButton, ",target);
+    $.post({
+        url: target,
+        type: 'post',
+        data: {},
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function (user) {
+            $('a#inifiniteLoader').hide();
+            console.log(user);
+            console.log("spam success");
+            successbox.html("spam success");
+            successbox.show();
+        },
+        error: function (err) {
+            $('a#inifiniteLoader').hide();
+            if (err.status === 200) {
+                console.log(err);
+                console.log("spam success");
+                successbox.html("spam success");
+                successbox.show();
+            } else {
+                console.log(err);
+                successbox.hide();
+                errorbox.html("spam failed " + JSON.stringify(err));
                 errorbox.show();
             }
         }

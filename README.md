@@ -1,5 +1,10 @@
 # Comentarismo REACT JS
 
+What are the biggest killers of conversions on websites today?
+Poor images, bad copy, lack of information, confusing navigation/layout, long forms, unclear error messages.
+
+[0] r.table('news').getAll('eurocopa-2016-del-bosque-pedro-esta-arrepentido-no-queria-meterse-con-nadie-marcacom', {index: 'titleurlize'}).update({"permalink_url":"http://soundcloud.com/user46387694/eurocopa-2016-del-bosque-pedro"})
+
 # Install
 `npm install`
 
@@ -72,6 +77,9 @@ Avoid errors like: `make: g++: Command not found` by installing:
 
 # Make sure Rethinkdb has indexes for table shorturl:
 `longurl`
+
+# Make sure Rethinkdb has indexes for table sentiment_report:
+`type`
 
 
 # RethinkDB queries reference
@@ -160,4 +168,54 @@ Restore cluster flynn20may --> 9d89f9e731ef54111ca1846cfd849b245786bb2e4c3d4198d
 $ flynn import --file flynncfg.tar.gz 
 ```
 
-Img http://www.famfamfam.com/lab/icons/flags/
+Img 
+
+to use in the commentators page
+https://github.com/patientslikeme/react-calendar-heatmap
+
+to use in the bv
+https://github.com/fullstackreact/react-yelp-clone
+
+
+
+wordcloud ?
+https://react.rocks/example/lymbus
+
+nice way to show the news ?
+https://react.rocks/example/Conf_videos
+
+cake chart with clicable and rendering after the click
+https://github.com/alexkuz/cake-chart
+
+
+insights for comentarismo ?
+https://github.com/IBM-Bluemix/election-insights
+
+analytics for comentarismo ?
+https://github.com/janajri/analytics-influxdb
+https://github.com/influxdata/telegraf
+
+
+comentarismo dashboards ?
+https://github.com/Raathigesh/Dazzle
+https://github.com/thecitysecretltd/lumen-fx
+
+steps
+https://react.rocks/example/react-steps
+
+
+charts
+https://react.rocks/example/mutation-observer
+
+Graphs of Twitter trends for the 2015 Oscars. Themes are top / red carpet / actors / films / noteworthy. Uses react-router, material-ui, dygraphs. Social sharing to Facebook / Twitter.
+https://github.com/ecesena/oscars2015
+
+Amazing project -- visualizing concepts such as Markov chains, conditional probability with interactive D3 visualizations.
+https://github.com/vicapow/explained-visually
+
+Visualization of student skills in Wellington NZ. Group, color by attribute. Bubble graphs, very fluid.
+https://github.com/widged/SOT-skills-report
+
+
+cheapass
+https://github.com/aakashlpin/cheapass-ios-app

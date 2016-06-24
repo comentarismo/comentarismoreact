@@ -29,14 +29,14 @@ var buildProperties = {
 
 gulp.task('css', function () {
     return gulp.src(buildProperties.cssFiles)
-        //.pipe($.sourcemaps.init())
+        .pipe($.sourcemaps.init())
         //.pipe($.sass().on('error', $.sass.logError))
         //.pipe($.autoprefixer({
         //    browsers: ['last 2 versions'],
         //    cascade: false
         //}))
-        //.pipe($.sourcemaps.write())
         .pipe(concat('all.css'))
+        .pipe($.sourcemaps.write())
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {
             console.log(error);

@@ -18,7 +18,7 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {XScript} from 'components/XScript';
-
+import {XSoundcloud} from 'components/XSoundcloud'
 class Article extends Component {
     static fetchData({ store, params }) {
         let { id } = params
@@ -127,7 +127,6 @@ class Article extends Component {
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
                     <XScript index="titleurlize"/>
-                    <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
                         <div className="article-body">
                             <div className="container">
@@ -166,6 +165,11 @@ class Article extends Component {
                                                 { article.title }
                                             </div>
                                         </div>
+
+                                        <XSoundcloud permalink_url={article.permalink_url}/>
+
+
+
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">

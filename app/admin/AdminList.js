@@ -13,6 +13,12 @@ import Date from "components/Date"
 import Helmet from "react-helmet";
 import Image from "components/Image";
 
+import {handleDeleteButton,handleSpamButton} from "./crud"
+var $ = require("jquery");
+
+import config from 'config'
+var host = config.API_URL;
+
 class CommentatorContainer extends Component {
     constructor(props) {
         super();
@@ -186,28 +192,61 @@ var CommentatorList = React.createClass({
 });
 
 var CommentsList = React.createClass({
+
+    onclickSpam: function (event) {
+        var props = this.props;
+        console.log("onclickSpam", props.id);
+    },
+
+    onclickDelete: function (event) {
+        let {id} = this.props;
+        var target = `${host}/delete/commentaries/${id}/`;
+        console.log("onclickDelete", target);
+
+        handleDeleteButton($, target, function(err){
+            if(err){
+                $(`#${id}`).hide();
+            } else {
+                $(`#error-${id}`).html("delete failed " + JSON.stringify(err));
+
+            }
+        });
+    },
+
     render: function () {
         var props = this.props;
         return (
-            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 thumbnail article">
-                <a href={`/admin/r/${props.table}/${props.id}`} className=''>
+            <div id={props.id} className="col-lg-12 col-md-12 col-sm-12 col-xs-12 thumbnail article">
+                <div className=''>
                     <div className="col-xs-2">
                         <div className="imageNoPadding">
                             <Icon nick={props.nick} size={125}/>
                         </div>
+                        <div className="col-xs-1">
+                            <a href={`/admin/r/${props.table}/${props.id}`}><i className="fa fa-pencil-square-o"
+                                                                               aria-hidden="true"/></a>
+                        </div>
+                        <div className="col-xs-1">
+                            <a href="#" onClick={this.onclickSpam}><i className="fa fa-trash-o" aria-hidden="true"/></a>
+                        </div>
+                        <div className="col-xs-1">
+                            <a href="#" onClick={this.onclickDelete}><i className="fa fa-times" aria-hidden="true"/></a>
+                        </div>
+                        <div id={`error-${props.id}`} className='error' style={{"display": "none"}}></div>
                     </div>
                     <div className="col-xs-10">
                         <div className='caption'>
                             <h3 className='article-header'>{props.title}</h3>
                             <p>Date: <Date date={props.date}/></p>
                             <p>Interest:
-                            {props.genre && Object.keys(props.genre).map(function (char, idx) {
-                                return <span key={idx} > {props.genre[idx]} </span>
-                            }.bind(this))}</p>
-                            <div className='source' key={props.id} dangerouslySetInnerHTML={{__html:props.comment}}></div>
+                                {props.genre && Object.keys(props.genre).map(function (char, idx) {
+                                    return <span key={idx}> {props.genre[idx]} </span>
+                                }.bind(this))}</p>
+                            <div className='source' key={props.id}
+                                 dangerouslySetInnerHTML={{__html:props.comment}}></div>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         )
     }
