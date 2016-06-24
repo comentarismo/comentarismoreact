@@ -3,8 +3,6 @@
 What are the biggest killers of conversions on websites today?
 Poor images, bad copy, lack of information, confusing navigation/layout, long forms, unclear error messages.
 
-[0] r.table('news').getAll('eurocopa-2016-del-bosque-pedro-esta-arrepentido-no-queria-meterse-con-nadie-marcacom', {index: 'titleurlize'}).update({"permalink_url":"http://soundcloud.com/user46387694/eurocopa-2016-del-bosque-pedro"})
-
 # Install
 `npm install`
 
@@ -143,6 +141,11 @@ sysctl vm.overcommit_memory=1 or vi /etc/sysctl.conf --> vm.overcommit_memory=1
 
 
 # Flynn cluster
+
+flynn -a controller pg psql -- -c 'UPDATE apps SET deploy_timeout = 600'
+
+
+
 ```
 http://dashboard.36zv.flynnhub.com 
 token a7c7e02383e16cce32944d9f52d9f88a 

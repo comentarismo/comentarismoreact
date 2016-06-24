@@ -37,12 +37,11 @@ export default function (history) {
                 <Route path="commentators/:index/:value" component={Commentators}/>
                 <Route path="news/:id" component={Article}/>
                 <Route path="news/:index/:value" component={Articles}/>
-                <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value/" component={ArticleLegacy}/>
-                <Route path="news/:continent/:country/:index/:year/:month/:day/:value/" component={ArticleLegacy}/>
+
+                <Route path="news/:continent/:country/:index/:year/:month/:day/:value" component={ArticleLegacy}/>
+                <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value" component={ArticleLegacy}/>
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
-
-
 
                 <Route path="admin/r/:table/:index" component={AdminEdit}/>
                 <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>

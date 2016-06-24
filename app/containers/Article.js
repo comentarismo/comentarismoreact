@@ -116,6 +116,9 @@ class Article extends Component {
                     meta={[
                     {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "article"},
+
+                    {"property": "og:audio", "content": `${article.permalink_url ? article.permalink_url : ''}`},
+
                     {"property": "og:image", "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`}
                 ]}
                     onChangeClientState={(newState) => console.log(newState)}

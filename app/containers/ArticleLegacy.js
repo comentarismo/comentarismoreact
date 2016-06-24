@@ -13,11 +13,12 @@ import { Notfound } from 'containers/Notfound'
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import XScript from 'components/XScript';
+import {XSoundcloud} from 'components/XSoundcloud'
 
 class ArticleLegacy extends Component {
     static fetchData({ store, params }) {
         let { index,value } = params
-        return store.dispatch(loadArticleLegacy({index,value}))
+        return store.dispatch(loadArticleLegacy({index, value}))
     }
 
 
@@ -31,14 +32,15 @@ class ArticleLegacy extends Component {
         // use default image if meta:og is missing
         var srcfallback = "/static/img/comentarismo-bg-450-150.png";
 
-        return src ? <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
+        return src ?
+            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
     }
 
     render() {
         let { article } = this.props;
 
-        if(!article.comments) {
-            return  (
+        if (!article.comments) {
+            return (
                 <div>
                     <MainNavbar/>
                     <div>
@@ -88,6 +90,8 @@ class ArticleLegacy extends Component {
                     meta={[
                     {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "article"},
+                    {"property": "og:audio", "content": `${article.permalink_url ? article.permalink_url : ''}`},
+
                     //{"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
                     {"property": "og:image", "content": `${article.image}`}
                 ]}
@@ -99,14 +103,13 @@ class ArticleLegacy extends Component {
                     <a id="comentarismo-operator" data-id={ article.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript index="titleurlize"/>
                     <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
                         <div className="article-body">
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <img id={article.id} />
+                                        <img id={article.id}/>
                                         {this.getImageElement()}
                                     </div>
                                     <div>
@@ -120,6 +123,9 @@ class ArticleLegacy extends Component {
                                                 { article.title }
                                             </div>
                                         </div>
+
+                                        <XSoundcloud permalink_url={article.permalink_url}/>
+
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
@@ -134,7 +140,8 @@ class ArticleLegacy extends Component {
                                                 <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Publish Date</span>
-                                                    <span className="profile-StatValue"><Date date={article.date}/></span>
+                                                    <span className="profile-StatValue"><Date
+                                                        date={article.date}/></span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -179,12 +186,13 @@ class ArticleLegacy extends Component {
                                                     <div className="col-sm-1 hidden-xs">
                                                         <a className="avatar- img-responsive user-photo"/>
                                                         <Icon nick={q.nick} size={50}/>
-                                                    </div>†
+                                                    </div>
                                                     <div className="text-wrapper">
-                                                        <b>{q.date }</b>
+
+
                                                         <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
-                                                            <b>{ q.title }</b>
+                                                            <b>{ q.nick }</b>
                                                         </span>
                                                         </div>
                                                         <div className="text">
