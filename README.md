@@ -222,3 +222,26 @@ https://github.com/widged/SOT-skills-report
 
 cheapass
 https://github.com/aakashlpin/cheapass-ios-app
+
+
+AUDIO:
+https://www.npmjs.com/package/react-music-player
+https://www.npmjs.com/package/react-cl-audio-player
+https://github.com/souporserious/react-media-player
+https://github.com/humanhighway/react-audio-player
+https://react.rocks/example/react-audio-player
+
+https://www.npmjs.com/package/player
+
+https://github.com/maruf89/soundcloud-node
+
+audio app
+https://github.com/StreamMachine/StreamMachine
+https://github.com/TooTallNate/node-lame
+https://github.com/michael-gillett/node-stream-player
+
+https://www.npmjs.com/package/websockets-streaming-audio
+
+https://github.com/TooTallNate/node-speaker
+
+

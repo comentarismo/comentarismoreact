@@ -1,4 +1,4 @@
-var BASE_URL = 'http://comentarismo.com';
+var BASE_URL = 'http://www.comentarismo.com';
 var API_URL = 'http://api.comentarismo.com';
 var ELK_URL = 'http://elk.comentarismo.com';
 var SNT_URL = 'http://sentiment.comentarismo.com';

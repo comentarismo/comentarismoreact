@@ -56,6 +56,19 @@ var PlayComment = React.createClass({
 
     getInitialState: function () {
         let { comment,skip } = this.props;
+        if (!comment) {
+            return {
+                comment: {},
+                currentSlide: {},
+                counter: 0,
+                playing: this.props.playing || false,
+                loading: false,
+                skip: skip,
+                currentSlideId: "",
+                currentSlideLike: false,
+                currentSlideDisLike: false
+            }
+        }
         return {
             comment: comment,
             currentSlide: comment[0],
@@ -67,25 +80,30 @@ var PlayComment = React.createClass({
             currentSlideLike: false,
             currentSlideDisLike: false
         }
-    },
+    }
+    ,
 
     goToPage: function (index) {
         this.setState({counter: index, currentSlide: data[index]});
         this.pauseRotation();
-    },
+    }
+    ,
     componentWillUnmount: function () {
         clearInterval(this.interval);
-    },
+    }
+    ,
     startRotation: function () {
         console.log("play");
         this.interval = setInterval(this.rotate, (this.props.playingtimeout || 10000));
         this.setState({playing: true});
-    },
+    }
+    ,
     pauseRotation: function () {
         console.log("pause");
         clearInterval(this.interval);
         this.setState({playing: false});
-    },
+    }
+    ,
     rotate: function () {
         var data = this.state.comment;
         var slidesCount = this.state.comment.length;
@@ -138,7 +156,8 @@ var PlayComment = React.createClass({
         }
 
         this.setState({counter: counter, currentSlide: data[counter], currentSlideId: data[counter].id});
-    },
+    }
+    ,
     goToPrevious: function () {
         console.log("previous");
         var data = this.state.comment;
@@ -152,13 +171,16 @@ var PlayComment = React.createClass({
         }
         this.setState({counter: counter, currentSlide: data[counter]});
         this.pauseRotation();
-    },
+    }
+    ,
     goToNext: function () {
         console.log("next");
         this.rotate();
         this.pauseRotation();
-    },
-    changeFlag(props) {
+    }
+    ,
+    changeFlag(props)
+    {
         this.setState({
             selectedFlag: props.flag
         }, () => {
@@ -167,7 +189,8 @@ var PlayComment = React.createClass({
             //else
             //    $('html').removeClass('arabic');
         });
-    },
+    }
+    ,
 
 
     render: function () {
@@ -185,7 +208,6 @@ var PlayComment = React.createClass({
 
         return (
             <div className="container">
-
 
 
                 <div className="row">

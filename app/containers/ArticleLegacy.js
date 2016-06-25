@@ -188,12 +188,10 @@ class ArticleLegacy extends Component {
                                                         <Icon nick={q.nick} size={50}/>
                                                     </div>
                                                     <div className="text-wrapper">
-
-
                                                         <div role="meta" className="comentarismo-comment-header">
-                                                        <span className="author">
-                                                            <b>{ q.nick }</b>
-                                                        </span>
+                                                            <span className="author">
+                                                                <b>{ q.nick }</b>
+                                                            </span>
                                                         </div>
                                                         <div className="text">
                                                             <p>{ q.comment }</p>
