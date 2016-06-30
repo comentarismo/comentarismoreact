@@ -38,7 +38,7 @@ class Intro extends Component {
                             <div className="col-md-12 col-md-offset-0">
                                 <div className="col-md-2 col-xs-2"></div>
 
-                                <div className="col-md-6 col-xs-2 home-wrapper text-center">
+                                <div className="col-md-6 col-xs-12 home-wrapper text-center">
 
                                     <div className="text-tran-box">
                                         <h1 className="text-transparent">
