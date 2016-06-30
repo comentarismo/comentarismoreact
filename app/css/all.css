@@ -1,7 +1,10 @@
+@import '//fonts.googleapis.com/css?family=Reem+Kufi';
+@import '//fonts.googleapis.com/css?family=Lusitana';
+@import '//fonts.googleapis.com/css?family=Raleway:300';
 /** override bootstrap defaults **/
 * {
-    font-family: "FontAwesome", Helvetica, Arial, sans-serif;
-    font-size: 18px;
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 1.5rem;
 }
 
 .img-404 {
@@ -34,8 +37,35 @@
     font-size: 18px !important;
 }
 
+* .navbar-inverse .navbar-nav > .open > a {
+    background: #fff !important;
+}
+
+* .dropdown-menu {
+
+    background: #f1f1f1 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0px !important;
+}
+
 * .navbar .navbar-inverse {
     font-size: 18px !important;
+    background-color: #fff !important;
+    border-color: #fff !important;
+}
+
+* .navbar-inverse .navbar-nav > li > a {
+    font-size: 4rem !important;
+    text-transform: uppercase !important;
+    color: #000000 !important;
+    font-family: 'Lusitana', sans-serif !important;
+}
+
+* .navbar-inverse {
+    font-size: 18px !important;
+    background-color: #fff !important;
+    border-color: #fff !important;
 }
 
 * .btn {
@@ -940,6 +970,20 @@ a {
     -o-transition: all 400ms ease-in-out;
     transition: all 400ms ease-in-out;
 }
+.btn-red {
+    background-color: #fff;
+    border-radius: 0px !important;
+    border: 1px solid #D0011B !important;
+    color: #D0011B !important;
+    padding: 9px 20px !important;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    -webkit-transition: all 400ms ease-in-out;
+    -moz-transition: all 400ms ease-in-out;
+    -o-transition: all 400ms ease-in-out;
+    transition: all 400ms ease-in-out;
+}
 
 .btn-white {
     background-color: #fff;
@@ -970,6 +1014,12 @@ a {
 
 .btn-dark:hover, .btn-white:hover {
     background-color: #43cea2;
+    color: #fff !important;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.btn-red:hover {
+    background-color: #D0011B;
     color: #fff !important;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
@@ -1198,7 +1248,7 @@ iframe {
 /* Navbar */
 .navbar-default .navbar-nav > li > a {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 25px !important;
     color: #182433;
     letter-spacing: 0.03em;
     font-family: 'Josefin Sans', sans-serif;
@@ -1353,22 +1403,23 @@ iframe {
 
 /* Home */
 .home {
-    background-color: #f2f6fa;
-    padding-bottom: 150px;
+    padding: 25px;
+    background: url('/static/img/landing-page-bg.svg') no-repeat 95px -129px;
+    background-size: 100%;
+    width: 100%;
+    height: 128vh;
 }
-
 .home-wrapper p {
-    font-size: 15px;
+    font-size: 28px;
     letter-spacing: 2px;
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 700;
-    color: #787787;
+    font-family: 'Raleway', sans-serif;
+    color: #fff;
 }
 
 .text-tran-box {
-    background: #43cea2; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #43cea2, #185a9d); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #43cea2, #185a9d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: transparent; /* fallback for old browsers */
+    /*background: -webkit-linear-gradient(to left, #43cea2, #185a9d); !* Chrome 10-25, Safari 5.1-6 *!*/
+    /*background: linear-gradient(to left, #43cea2, #185a9d); !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!*/
 }
 
 .text-tran-box-dark {
@@ -1378,13 +1429,13 @@ iframe {
 }
 
 .text-transparent {
-    background: #f2f6fa;
-    color: #240e35;
-    mix-blend-mode: lighten;
+    background: transparent;
+    color: #000;
     overflow: hidden;
-    font-size: 48px;
-    margin-bottom: 40px;
-    line-height: 54px;
+    font-size: 51px;
+    margin-top: 200px;
+    line-height: 58px;
+
 }
 
 .text-tran-box-dark .text-transparent {

@@ -34,7 +34,7 @@ module.exports = React.createClass({
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav>
+                    <Nav pullRight>
                         <NavDropdown eventKey={3} title="World News & Headlines" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
@@ -216,15 +216,13 @@ module.exports = React.createClass({
                                 <MenuItem eventKey={3.1} href="/commentators/languages/russian">Russian All</MenuItem>
                             </NavDropdown>
                         </NavDropdown>
-                    </Nav>
-                    <Nav pullRight>
+
                         <NavItem eventKey={8} href={`${host}/login`}>
                             <span
                                 className="mobile-show">{LoginStore.isLoggedIn() ? ''+LoginStore.user.username : 'Login'}
                             </span>
                         </NavItem>
-                    </Nav>
-                    <Nav pullRight>
+
                         <NavItem eventKey={9} href="https://comentarismo.on.spiceworks.com/portal" target="_blank"><span
                             className="mobile-show">Support</span></NavItem>
                     </Nav>
