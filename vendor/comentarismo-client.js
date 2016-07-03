@@ -19,18 +19,18 @@ var comentarismoContainerHtml =
     "<a class='add-comment' style='cursor:pointer;'><img src='http://api.comentarismo.com/static/images/comments.ico' style='width:30px;height:30px;'/><span id='comments-count'></span> | Add a comment</a>" +
     "<ul id='filtersentiment' class='sentimentmenu'><li>Filter By <a href='#'>Sentiment</a><ul>" +
 
-    "<li><a href='#' id='-5'>" + emojione.shortnameToUnicode(":scream:") + " " + terrible + "</a></li>" +
-    "<li><a href='#' id='-4'>" + emojione.shortnameToUnicode(":angry:") + " " + sucks + "</a></li>" +
-    "<li><a href='#' id='-3'>" + emojione.shortnameToUnicode(":worried:") + " " + bad + "</a></li>" +
-    "<li><a href='#' id='-2'>" + emojione.shortnameToUnicode(":unamused:") + " " + notgood + "</a></li>" +
-    "<li><a href='#' id='-1'>" + emojione.shortnameToUnicode(":confused:") + " " + eh + "</a></li>" +
-    "<li><a href='#' id='0'>" + emojione.shortnameToUnicode(":expressionless:") + " " + neutral + "</a></li>" +
-    "<li><a href='#' id='1'>" + emojione.shortnameToUnicode(":neutral_face:") + " " + ok + "</a></li>" +
-    "<li><a href='#' id='2'>" + emojione.shortnameToUnicode(":smile:") + " " + good + "</a></li>" +
-    "<li><a href='#' id='3'>" + emojione.shortnameToUnicode(":smiley:") + " " + likeit + "</a></li>" +
-    "<li><a href='#' id='4'>" + emojione.shortnameToUnicode(":yum:") + " " + lovedit + "</a></li>" +
-    "<li><a href='#' id='5'>" + emojione.shortnameToUnicode(":grinning:") + " " + awesome + "</a></li>" +
-    "<li><a href='#' id='6'>" + emojione.shortnameToUnicode(":no_mouth:") + " " + unknown + "</a></li>" +
+    "<li><a href='#filtersentiment' id='-5'>" + emojione.shortnameToUnicode(":scream:") + " " + terrible + "</a></li>" +
+    "<li><a href='#filtersentiment' id='-4'>" + emojione.shortnameToUnicode(":angry:") + " " + sucks + "</a></li>" +
+    "<li><a href='#filtersentiment' id='-3'>" + emojione.shortnameToUnicode(":worried:") + " " + bad + "</a></li>" +
+    "<li><a href='#filtersentiment' id='-2'>" + emojione.shortnameToUnicode(":unamused:") + " " + notgood + "</a></li>" +
+    "<li><a href='#filtersentiment' id='-1'>" + emojione.shortnameToUnicode(":confused:") + " " + eh + "</a></li>" +
+    "<li><a href='#filtersentiment' id='0'>" + emojione.shortnameToUnicode(":expressionless:") + " " + neutral + "</a></li>" +
+    "<li><a href='#filtersentiment' id='1'>" + emojione.shortnameToUnicode(":neutral_face:") + " " + ok + "</a></li>" +
+    "<li><a href='#filtersentiment' id='2'>" + emojione.shortnameToUnicode(":smile:") + " " + good + "</a></li>" +
+    "<li><a href='#filtersentiment' id='3'>" + emojione.shortnameToUnicode(":smiley:") + " " + likeit + "</a></li>" +
+    "<li><a href='#filtersentiment' id='4'>" + emojione.shortnameToUnicode(":yum:") + " " + lovedit + "</a></li>" +
+    "<li><a href='#filtersentiment' id='5'>" + emojione.shortnameToUnicode(":grinning:") + " " + awesome + "</a></li>" +
+    "<li><a href='#filtersentiment' id='6'>" + emojione.shortnameToUnicode(":no_mouth:") + " " + unknown + "</a></li>" +
 
     "</ul>" +
     "</li></ul>" +
@@ -55,7 +55,8 @@ var comentarismoContainerHtml =
         //TODO: place recommendations here ?
     "<div id='comments-list'>" +
     "</div>" +
-    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
+    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
+    "<a id='commentsloadmore' style='display:none;'>Load more ...</a>";
 
 var comentarismoContainerHtmlNoReply =
     "<div class='success' style='display:none;'></div>" +
@@ -82,7 +83,8 @@ var comentarismoContainerHtmlNoReply =
     "" +
     "<div id='comments-list'>" +
     "</div>" +
-    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
+    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
+    "<a id='commentsloadmore' >Load more...</a>";
 
 
 var initComentarismoContainer = function initComentarismoContainer(div, noreply) {
@@ -214,7 +216,7 @@ module.exports = {
 var emojione = require("emojione");
 
 var emojis = {
-    "-5!": emojione.shortnameToUnicode(":scream:"),
+    "-5": emojione.shortnameToUnicode(":scream:"),
     "-4": emojione.shortnameToUnicode(":angry:"),
     "-3": emojione.shortnameToUnicode(":worried:"),
     "-2": emojione.shortnameToUnicode(":unamused:"),
@@ -229,7 +231,7 @@ var emojis = {
 };
 
 var sentiment = {
-    "-5!": "Terrible!",
+    "-5": "Terrible!",
     "-4": "Sucks",
     "-3": "Bad",
     "-2": "Not Good",
@@ -1092,6 +1094,11 @@ var defaultIndex = "titleurlize";
 var cached = false;
 
 window.debug = false;
+var end = false;
+var running = false;
+var limit = 50;
+var skip = 0;
+var sel;
 
 Comentarismo = function (options) {
 
@@ -1135,11 +1142,10 @@ Comentarismo = function (options) {
     }
     this.key = key = options.key;
 
-    var limit = options.limit || 50;
-    var skip = options.skip || 0;
-    var sel = this.$el;
-    var end = false;
-    var running = false;
+    limit = options.limit || 50;
+    skip = options.skip || 0;
+    sel = this.$el;
+
 
     cached = false;
     if (options.cached) {
@@ -1193,9 +1199,6 @@ Comentarismo = function (options) {
     this.toggleComment = $('a[id^=dislike]');
     this.toggleComment.on('click', _.bind(this.onClickDisLikeComment, this));
 
-    this.filtersentiment = $('#filtersentiment');
-    this.filtersentiment.on('click', _.bind(this.onClickFiltersentiment, this));
-
     if (cached) {
         count_elk.elkCountArticle(this, defaultIndex, sel, page, operator, function (err) {
             count_api.afterCountArticle(err, end);
@@ -1240,35 +1243,11 @@ Comentarismo = function (options) {
         }
         if (end) {
             $('a#inifiniteLoader').hide('1000');
+            $('a#commentsloadmore').hide('1000');
             return;
         }
         if ($(window).scrollTop() == $(document).height() - $(window).height() && !running && !end) {
-            running = true;
-            $('a#inifiniteLoader').show();
-
-            if (cached) {
-
-                load_elk.elkLoadArticle(that, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
-                    load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
-                        that.filterAllSentiment();
-                        limit = limit + 50;
-                        skip = skip + 50;
-                        running = false;
-                        end = e;
-                    });
-                });
-            } else {
-
-                load_api.loadArticle(that, defaultIndex, sel, page, skip, limit, user, function (length, err) {
-                    load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
-                        that.filterAllSentiment();
-                        limit = limit + 50;
-                        skip = skip + 50;
-                        running = false;
-                        end = e;
-                    });
-                });
-            }
+            that.loadMoreComments();
 
             return false;
         }
@@ -1277,10 +1256,44 @@ Comentarismo = function (options) {
     var interval = setInterval(function () {
         if (typeof $('.sentimentmenu').dropit === "function") {
             $('.sentimentmenu').dropit();
+
+            that.filtersentiment = $('#filtersentiment');
+            that.filtersentiment.on('click', _.bind(that.onClickFiltersentiment, that));
+
             clearInterval(interval);
         }
     },1000)
 
+};
+
+Comentarismo.prototype.loadMoreComments = function(){
+    var that = this;
+    running = true;
+    $('a#inifiniteLoader').show();
+
+    if (cached) {
+
+        load_elk.elkLoadArticle(that, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+            load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                that.filterAllSentiment();
+                limit = limit + 50;
+                skip = skip + 50;
+                running = false;
+                end = e;
+            });
+        });
+    } else {
+
+        load_api.loadArticle(that, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+            load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                that.filterAllSentiment();
+                limit = limit + 50;
+                skip = skip + 50;
+                running = false;
+                end = e;
+            });
+        });
+    }
 };
 
 Comentarismo.prototype.filterAllSentiment = function () {
@@ -1303,6 +1316,7 @@ Comentarismo.prototype.filterAllSentiment = function () {
 var sentimentFilter = "";
 
 Comentarismo.prototype.onClickFiltersentiment = function (e) {
+    var that = this;
     //console.log("onClickFiltersentiment, ", e.target.id)
     sentimentFilter = e.target.id;
     if(sentimentFilter) {
@@ -1319,6 +1333,15 @@ Comentarismo.prototype.onClickFiltersentiment = function (e) {
                 $(this).hide()
             }
         });
+        setTimeout(function(){
+            if(!running && !end){
+                $("#commentsloadmore").on('click', _.bind(that.loadMoreComments, that));
+
+                $("#commentsloadmore").show();
+
+            }
+        },1000)
+
     }
 };
 
