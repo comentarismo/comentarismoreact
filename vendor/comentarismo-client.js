@@ -17,11 +17,23 @@ var comentarismoContainerHtml =
     "<div class='error' style='display:none;'></div>" +
 
     "<a class='add-comment' style='cursor:pointer;'><img src='http://api.comentarismo.com/static/images/comments.ico' style='width:30px;height:30px;'/><span id='comments-count'></span> | Add a comment</a>" +
-    //"<ul class='sentimentmenu'><li>Sort By <a href='#'>Sentiment</a><ul>"+
-    //"<li><a href='#'>" + emojione.shortnameToUnicode(":angry:")  + " "+  "Not Good" + "</a></li>" +
-    //"<li><a href='#'>" + emojione.shortnameToUnicode(":grinning:")  + " "+  "Good" + "</a></li>" +
-    //"</ul>"+
-    "</li></ul>"+
+    "<ul id='filtersentiment' class='sentimentmenu'><li>Filter By <a href='#'>Sentiment</a><ul>" +
+
+    "<li><a href='#' id='-5'>" + emojione.shortnameToUnicode(":scream:") + " " + terrible + "</a></li>" +
+    "<li><a href='#' id='-4'>" + emojione.shortnameToUnicode(":angry:") + " " + sucks + "</a></li>" +
+    "<li><a href='#' id='-3'>" + emojione.shortnameToUnicode(":worried:") + " " + bad + "</a></li>" +
+    "<li><a href='#' id='-2'>" + emojione.shortnameToUnicode(":unamused:") + " " + notgood + "</a></li>" +
+    "<li><a href='#' id='-1'>" + emojione.shortnameToUnicode(":confused:") + " " + eh + "</a></li>" +
+    "<li><a href='#' id='0'>" + emojione.shortnameToUnicode(":expressionless:") + " " + neutral + "</a></li>" +
+    "<li><a href='#' id='1'>" + emojione.shortnameToUnicode(":neutral_face:") + " " + ok + "</a></li>" +
+    "<li><a href='#' id='2'>" + emojione.shortnameToUnicode(":smile:") + " " + good + "</a></li>" +
+    "<li><a href='#' id='3'>" + emojione.shortnameToUnicode(":smiley:") + " " + likeit + "</a></li>" +
+    "<li><a href='#' id='4'>" + emojione.shortnameToUnicode(":yum:") + " " + lovedit + "</a></li>" +
+    "<li><a href='#' id='5'>" + emojione.shortnameToUnicode(":grinning:") + " " + awesome + "</a></li>" +
+    "<li><a href='#' id='6'>" + emojione.shortnameToUnicode(":no_mouth:") + " " + unknown + "</a></li>" +
+
+    "</ul>" +
+    "</li></ul>" +
 
     "<form class='hidden form comment-form' id='comment-form' action=''>" +
     "<div class='form-group'>" +
@@ -89,8 +101,8 @@ var initComentarismoContainer = function initComentarismoContainer(div, noreply)
 
 
 var addCommentIndex = function (list, item, cb) {
-    if(window.debug) {
-        console.log("addCommentIndex, ",item);
+    if (window.debug) {
+        console.log("addCommentIndex, ", item);
     }
     list.prepend(
         "<div id='toggle' data-id='" + item.id + "' class='row'>" +
@@ -233,7 +245,7 @@ var sentiment = {
 
 function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
 
-    var cmt = "<div id='toggle' data-id='" + item.id + "' class='comentarismo-comment'>" +
+    var cmt = "<div id='toggle' sentiment='"+item.sentiment+"' data-id='" + item.id + "' class='comentarismo-comment'>" +
         "<div class='avatar'>" +
         ( item.avatarurl != null
             ? "<img class='img-responsive user-photo' src='" + item.avatarurl + "'/>"
@@ -957,29 +969,29 @@ var getUrlVars = function getUrlVars() {
 };
 
 
-$.fn.dropit = function(method) {
+$.fn.dropit = function (method) {
     /*
      * Dropit v1.1.0
      * The MIT license http://www.opensource.org/licenses/mit-license.php
      */
     var methods = {
 
-        init : function(options) {
+        init: function (options) {
             this.dropit.settings = $.extend({}, this.dropit.defaults, options);
-            return this.each(function() {
+            return this.each(function () {
                 var $el = $(this),
                     el = this,
                     settings = $.fn.dropit.settings;
 
                 // Hide initial submenus
                 $el.addClass('dropit')
-                    .find('>'+ settings.triggerParentEl +':has('+ settings.submenuEl +')').addClass('dropit-trigger')
+                    .find('>' + settings.triggerParentEl + ':has(' + settings.submenuEl + ')').addClass('dropit-trigger')
                     .find(settings.submenuEl).addClass('dropit-submenu').hide();
 
                 // Open on click
-                $el.off(settings.action).on(settings.action, settings.triggerParentEl +':has('+ settings.submenuEl +') > '+ settings.triggerEl +'', function(){
+                $el.off(settings.action).on(settings.action, settings.triggerParentEl + ':has(' + settings.submenuEl + ') > ' + settings.triggerEl + '', function () {
                     // Close click menu's if clicked again
-                    if(settings.action == 'click' && $(this).parents(settings.triggerParentEl).hasClass('dropit-open')){
+                    if (settings.action == 'click' && $(this).parents(settings.triggerParentEl).hasClass('dropit-open')) {
                         settings.beforeHide.call(this);
                         $(this).parents(settings.triggerParentEl).removeClass('dropit-open').find(settings.submenuEl).hide();
                         settings.afterHide.call(this);
@@ -1000,15 +1012,15 @@ $.fn.dropit = function(method) {
                 });
 
                 // Close if outside click
-                $(document).on('click', function(){
+                $(document).on('click', function () {
                     settings.beforeHide.call(this);
                     $('.dropit-open').removeClass('dropit-open').find('.dropit-submenu').hide();
                     settings.afterHide.call(this);
                 });
 
                 // If hover
-                if(settings.action == 'mouseenter'){
-                    $el.on('mouseleave', '.dropit-open', function(){
+                if (settings.action == 'mouseenter') {
+                    $el.on('mouseleave', '.dropit-open', function () {
                         settings.beforeHide.call(this);
                         $(this).removeClass('dropit-open').find(settings.submenuEl).hide();
                         settings.afterHide.call(this);
@@ -1026,7 +1038,7 @@ $.fn.dropit = function(method) {
     } else if (typeof method === 'object' || !method) {
         return methods.init.apply(this, arguments);
     } else {
-        $.error( 'Method "' +  method + '" does not exist in dropit plugin!');
+        $.error('Method "' + method + '" does not exist in dropit plugin!');
     }
 
 };
@@ -1036,26 +1048,31 @@ $.fn.dropit.defaults = {
     submenuEl: 'ul', // The submenu element
     triggerEl: 'a', // The trigger element
     triggerParentEl: 'li', // The trigger parent element
-    afterLoad: function(){}, // Triggers when plugin has loaded
-    beforeShow: function(){}, // Triggers before submenu is shown
-    afterShow: function(){}, // Triggers after submenu is shown
-    beforeHide: function(){}, // Triggers before submenu is hidden
-    afterHide: function(){} // Triggers before submenu is hidden
+    afterLoad: function () {
+    }, // Triggers when plugin has loaded
+    beforeShow: function () {
+    }, // Triggers before submenu is shown
+    afterShow: function () {
+    }, // Triggers after submenu is shown
+    beforeHide: function () {
+    }, // Triggers before submenu is hidden
+    afterHide: function () {
+    } // Triggers before submenu is hidden
 };
 
 $.fn.dropit.settings = {};
 
-$.extend({
-
-    getIndexFromPath: getIndexFromPath,
-    getFromPath: function (index) {
-        return $.getIndexFromPath(index);
-    },
-    getUrlVars: getUrlVars,
-    getUrlVar: function (name) {
-        return $.getUrlVars()[name];
-    }
-});
+//$.extend({
+//
+//    getIndexFromPath: getIndexFromPath,
+//    getFromPath: function (index) {
+//        return $.getIndexFromPath(index);
+//    },
+//    getUrlVars: getUrlVars,
+//    getUrlVar: function (name) {
+//        return $.getUrlVars()[name];
+//    }
+//});
 
 var host = "";
 var elk = "";
@@ -1079,7 +1096,7 @@ window.debug = false;
 Comentarismo = function (options) {
 
     //initialize comentarismo-container
-    container.initComentarismoContainer(options.selector,options.index);
+    container.initComentarismoContainer(options.selector, options.index);
 
     //start analytics
     analytics('create', 'UA-51773618-1', 'auto');
@@ -1091,7 +1108,6 @@ Comentarismo = function (options) {
     $(".success").hide();
     $(".error").hide();
 
-    //$('.sentimentmenu').dropit();
 
     //declare all vars
     this.forum = options.forum;
@@ -1101,19 +1117,19 @@ Comentarismo = function (options) {
         this.host = "http://" + "localhost:3000";
         //this.wshost = "ws://" + "localhost:3000";
         this.elk = "http://" + "g7-box:9200";
-    }else {
+    } else {
         this.host = host = "http://" + options.host;
         //wshost = "ws://" + options.host;
         this.elk = elk = "http://" + options.cached;
     }
 
-    if(options.debug && options.debug == "true"){
+    if (options.debug && options.debug == "true") {
         window.debug = true;
     }
 
-    if(options.css) {
-        $('head').append('<link rel="stylesheet" href="' + options.css +'" type="text/css" />');
-    }else {
+    if (options.css) {
+        $('head').append('<link rel="stylesheet" href="' + options.css + '" type="text/css" />');
+    } else {
         //run default CSS
         $('head').append('<link rel="stylesheet" href="' + host + '/static/css/demo.css" type="text/css" />');
     }
@@ -1131,33 +1147,33 @@ Comentarismo = function (options) {
     }
 
     if (this.forum === "comentarismo") {
-        if(window.debug) {
+        if (window.debug) {
             console.log("Loading Comentarismo Social Plugin");
         }
         var testpage = options.page;
-        if(!testpage){
+        if (!testpage) {
             //fallback to indexFromPath
             testpage = getIndexFromPath(3);
-            if(!testpage){
+            if (!testpage) {
                 throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{page:'pageID'} ")
             }
         }
         var testoperator = options.operator;
-        if(!testoperator){
+        if (!testoperator) {
             testoperator = getIndexFromPath(2);
-            if(!testoperator){
+            if (!testoperator) {
                 throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{operator:'operatorID'} ")
             }
         }
         var testdefaultIndex = options.index;
-        if(testdefaultIndex){
+        if (testdefaultIndex) {
             defaultIndex = testdefaultIndex;
         }
 
         page = testpage;
         operator = testoperator;
 
-    }else {
+    } else {
         //WTF ?
         throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
     }
@@ -1177,12 +1193,15 @@ Comentarismo = function (options) {
     this.toggleComment = $('a[id^=dislike]');
     this.toggleComment.on('click', _.bind(this.onClickDisLikeComment, this));
 
+    this.filtersentiment = $('#filtersentiment');
+    this.filtersentiment.on('click', _.bind(this.onClickFiltersentiment, this));
+
     if (cached) {
         count_elk.elkCountArticle(this, defaultIndex, sel, page, operator, function (err) {
             count_api.afterCountArticle(err, end);
         });
     } else {
-        count_api.countArticle(this,defaultIndex,page, function (err) {
+        count_api.countArticle(this, defaultIndex, page, function (err) {
             count_api.afterCountArticle(err, end);
         });
     }
@@ -1193,6 +1212,7 @@ Comentarismo = function (options) {
         //that, operator, thekey, list, page, skip, limit,user,
         load_elk.elkLoadArticle(this, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                that.filterAllSentiment();
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
@@ -1202,8 +1222,9 @@ Comentarismo = function (options) {
     } else {
         running = true;
         $('a#inifiniteLoader').show();
-        load_api.loadArticle(this, defaultIndex, sel, page, skip, limit,user, function (length, err) {
+        load_api.loadArticle(this, defaultIndex, sel, page, skip, limit, user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                that.filterAllSentiment();
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
@@ -1214,7 +1235,7 @@ Comentarismo = function (options) {
 
     var that = this;
     $(window).scroll(function () {
-        if(window.debug) {
+        if (window.debug) {
             console.log("scroll");
         }
         if (end) {
@@ -1227,8 +1248,9 @@ Comentarismo = function (options) {
 
             if (cached) {
 
-                load_elk.elkLoadArticle(that,operator,defaultIndex, sel, page, skip, limit,user, function (length, err) {
+                load_elk.elkLoadArticle(that, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                        that.filterAllSentiment();
                         limit = limit + 50;
                         skip = skip + 50;
                         running = false;
@@ -1237,8 +1259,9 @@ Comentarismo = function (options) {
                 });
             } else {
 
-                load_api.loadArticle(that,defaultIndex, sel, page, skip, limit,user, function (length, err) {
+                load_api.loadArticle(that, defaultIndex, sel, page, skip, limit, user, function (length, err) {
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
+                        that.filterAllSentiment();
                         limit = limit + 50;
                         skip = skip + 50;
                         running = false;
@@ -1250,11 +1273,58 @@ Comentarismo = function (options) {
             return false;
         }
     });
+
+    var interval = setInterval(function () {
+        if (typeof $('.sentimentmenu').dropit === "function") {
+            $('.sentimentmenu').dropit();
+            clearInterval(interval);
+        }
+    },1000)
+
 };
 
+Comentarismo.prototype.filterAllSentiment = function () {
+
+    $("div[id^=toggle]").each(function (i, c) {
+        if (c.attributes["sentiment"]) {
+            var sentiment = c.attributes["sentiment"].nodeValue;
+            if (!sentimentFilter || sentiment === sentimentFilter) {
+                $(this).show()
+            } else {
+                $(this).hide()
+            }
+        } else {
+            console.log("Could not get the sentiment :| ", i, c);
+            $(this).hide()
+        }
+    });
+};
+
+var sentimentFilter = "";
+
+Comentarismo.prototype.onClickFiltersentiment = function (e) {
+    //console.log("onClickFiltersentiment, ", e.target.id)
+    sentimentFilter = e.target.id;
+    if(sentimentFilter) {
+        $("div[id^=toggle]").each(function (i, c) {
+            if (c.attributes["sentiment"]) {
+                var sentiment = c.attributes["sentiment"].nodeValue;
+                if (sentiment === sentimentFilter) {
+                    $(this).show()
+                } else {
+                    $(this).hide()
+                }
+            } else {
+                console.log("Could not get the sentiment :| ", i, c);
+                $(this).hide()
+            }
+        });
+    }
+};
 
 Comentarismo.prototype.connect = function () {
-}
+
+};
 
 Comentarismo.prototype.islogin = function (cb) {
 
@@ -1267,8 +1337,8 @@ Comentarismo.prototype.islogin = function (cb) {
     });
 
     request.done(function (data, textStatus, jqXHR) {
-        if(window.debug) {
-            console.log("islogin, ",data);
+        if (window.debug) {
+            console.log("islogin, ", data);
         }
         //this.user = data;
         cb(data);
@@ -1279,21 +1349,21 @@ Comentarismo.prototype.islogin = function (cb) {
 };
 
 Comentarismo.prototype.onClickDeleteComment = function (param) {
-    if(window.debug) {
+    if (window.debug) {
         console.log("onClickDeleteComment, ", param.currentTarget);
     }
     delete_.deleteComment(param);
 };
 
 Comentarismo.prototype.onClickLikeComment = function (param) {
-    if(window.debug) {
+    if (window.debug) {
         console.log("onClickLikeComment, ", param.currentTarget);
     }
     like.likeComment(param);
 };
 
 Comentarismo.prototype.onClickDisLikeComment = function (param) {
-    if(window.debug) {
+    if (window.debug) {
         console.log("onClickDisLikeComment, ", param.currentTarget);
     }
     dislike.dislikeComment(param);
@@ -1308,7 +1378,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
 
     var form = evt.currentTarget.form;
 
-    if(!form || !form.captchaid){
+    if (!form || !form.captchaid) {
         form = this.commentForm[0];
     }
 
@@ -1319,8 +1389,8 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         page: page
     };
 
-    if(window.debug) {
-        console.log("onSubmitCommentForm, ",js);
+    if (window.debug) {
+        console.log("onSubmitCommentForm, ", js);
     }
 
     var formid = form.formid;
@@ -1345,11 +1415,11 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
     });
 
     request.done(function (data, textStatus, jqXHR) {
-        if(window.debug) {
-            console.log("onSubmitCommentForm, ",jqXHR);
+        if (window.debug) {
+            console.log("onSubmitCommentForm, ", jqXHR);
         }
         errorbox.hide();
-        successbox.html(jqXHR.statusText +" - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience.");
+        successbox.html(jqXHR.statusText + " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience.");
         successbox.show();
 
         $('#new-todo').val('');
@@ -1364,7 +1434,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
     request.fail(function (jqXHR) {
         if (jqXHR.status === 200) {
             errorbox.hide();
-            successbox.html(jqXHR.statusText +" - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience.");
+            successbox.html(jqXHR.statusText + " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience.");
             successbox.show();
 
             $('#new-todo').val('');
@@ -1382,7 +1452,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             $('#captchasolution').val('');
         } else {
             successbox.hide();
-            errorbox.html(jqXHR.status + " " + jqXHR.statusText + " ... Something bad happened, are you logged in ?? <a href='"+that.host+"/login'>Login</a>");
+            errorbox.html(jqXHR.status + " " + jqXHR.statusText + " ... Something bad happened, are you logged in ?? <a href='" + that.host + "/login'>Login</a>");
             errorbox.show();
             errorbox.focus();
         }
@@ -1393,7 +1463,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
 
 
 Comentarismo.prototype.onClickShowCommentForm = function (evt) {
-    form_.onClickShowCommentForm(evt,this);
+    form_.onClickShowCommentForm(evt, this);
 };
 
 Comentarismo.prototype.showCommentForm = function () {
@@ -1405,39 +1475,39 @@ Comentarismo.prototype.imgresize = function (selector) {
 };
 
 
-Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that,list, item, thekey, user, cb) {
+Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list, item, thekey, user, cb) {
     var date_cmt = moment.utc(item.created).toString();
     var date_news = moment.utc(item.date).toString();
 
     var replies = "";
     if (item && item.replies && item.replies.length > 0) {
-        if(window.debug) {
+        if (window.debug) {
             console.log("addCommentHtmlNew, replies ");
         }
         var i = 0;
         for (; i < item.replies.length;) {
-            if(window.debug) {
+            if (window.debug) {
                 console.log("addCommentHtmlNew, " + i);
             }
             var reply = item.replies[i];
-            if(window.debug) {
-                console.log("addCommentHtmlNew, ",reply);
+            if (window.debug) {
+                console.log("addCommentHtmlNew, ", reply);
             }
             reply.operator = item.operator;
             reply.titleurlize = item.titleurlize;
             reply.title = item.title;
 
             var newone = create_.createReplyComment(reply, date_cmt);
-            if(window.debug) {
-                console.log("addCommentHtmlNew, createReplyComment after, ",newone);
+            if (window.debug) {
+                console.log("addCommentHtmlNew, createReplyComment after, ", newone);
             }
             replies = replies + newone;
             //+ replies;
 
             if (i === item.replies.length - 1) {
                 var finalHtml = create_.createComment(item, date_cmt, date_news, replies, thekey, user);
-                if(window.debug) {
-                    console.log("addCommentHtmlNew, createComment after, ",finalHtml);
+                if (window.debug) {
+                    console.log("addCommentHtmlNew, createComment after, ", finalHtml);
                 }
                 list.prepend(
                     finalHtml
@@ -1447,7 +1517,7 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that,list,
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-dislike]', dislike.dislikeComment.bind(that));
                 $('#toggle > div').on('click', '[class="add-comment"]', form_.onClickShowCommentForm.bind(that));
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-reply]', form_.onClickShowCommentReplyForm.bind(that));
-                if(window.debug) {
+                if (window.debug) {
                     console.log("addCommentHtmlNew, end addCommentHtmlNew replies")
                 }
                 return cb();
@@ -1458,11 +1528,11 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that,list,
 
     } else {
 
-        if(window.debug) {
-            console.log("addCommentHtmlNew, ",item);
+        if (window.debug) {
+            console.log("addCommentHtmlNew, ", item);
         }
         list.prepend(
-            create_.createComment(item, date_cmt, date_news, "",thekey)
+            create_.createComment(item, date_cmt, date_news, "", thekey)
         );
 
         $('#toggle > div').on('click', '[data-id=' + item.id + '-delete]', delete_.deleteComment.bind(that));

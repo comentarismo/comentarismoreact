@@ -254,7 +254,7 @@ a#inifiniteLoaderPlay {
 .comentarismo-postbox > .avatar {
     display: block;
     float: left;
-    width: 7%;
+    /*width: 7%;*/
     margin: 3px 15px 0 0;
 }
 
@@ -489,6 +489,10 @@ form > .form-group > .auth-section .post-action > input:active {
     z-index: 1;
     top: -5px;
     left: 105%;
+}
+
+.sentimentmenu {
+    margin-top: 10px;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
