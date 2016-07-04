@@ -735,9 +735,13 @@ server.get('*', (req, res, next)=> {
                         head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
                     }
 
+                    var searchCss = [];
+                    if(reqUrl.indexOf("/search") !== -1){
+                        searchCss.push("/static/search_theme.css")
+                    }
 
                     if (getCurrentUrl() === reqUrl) {
-                        res.render('index', {html, head, scriptSrcs, reduxState, styleSrc});
+                        res.render('index', {html, head, scriptSrcs, reduxState, styleSrc,searchCss});
                     } else {
                         logger.info("Redirect 302 " + location);
                         res.redirect(302, getCurrentUrl());
@@ -751,6 +755,9 @@ server.get('*', (req, res, next)=> {
                 });
             function getReduxPromise() {
                 let { query, params } = renderProps;
+                if(!renderProps.components[renderProps.components.length - 1]){
+                    return Promise.resolve()
+                }
                 let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
                 let promise = comp.fetchData ?
                     comp.fetchData({query, params, store, history}) :

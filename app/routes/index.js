@@ -27,6 +27,8 @@ import SentimentComment from 'containers/SentimentComment';
 
 import TopVideos from 'containers/TopVideos';
 
+import Search from 'containers/Search';
+
 export default function (history) {
     return (
         <Router history={history}>
@@ -45,6 +47,7 @@ export default function (history) {
 
                 <Route path="admin/r/:table/:index" component={AdminEdit}/>
                 <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
+                <Route path="search" component={Search}/>
 
                 <IndexRoute component={Intro}/>
                 <Route path="*" component={Notfound}/>

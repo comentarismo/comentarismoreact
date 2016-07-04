@@ -22,7 +22,8 @@ var buildProperties = {
         './vendor/dev.js',
         './vendor/comentarismo-client.js',
         './vendor/comentarismo-client-min.map.json',
-        './vendor/comentarismo-client-min.js'
+        './vendor/comentarismo-client-min.js',
+        './vendor/search_theme.css',
     ],
     imageFiles: ['./img/**/*']
 };
