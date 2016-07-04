@@ -14,7 +14,7 @@ var Empty = React.createClass({
 var PlayButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-1 btn btn-custom" onClick={this.props.onClick}>
+            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
                 <span className="fa fa-play" data-text="play"/>
             </div>
         )
@@ -24,7 +24,7 @@ var PlayButton = React.createClass({
 var PauseButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-1 btn btn-custom" onClick={this.props.onClick}>
+            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
                 <span className="fa fa-pause" data-text="play"/>
             </div>
         )
@@ -34,7 +34,7 @@ var PauseButton = React.createClass({
 var PreviousButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-1 btn btn-custom" onClick={this.props.onClick}>
+            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
                 <span className="fa fa-step-backward" data-text="left-open-mini"/>
             </div>
         )
@@ -44,7 +44,7 @@ var PreviousButton = React.createClass({
 var NextButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-1 next btn btn-custom" onClick={this.props.onClick}>
+            <div className="col-xs-4 next btn btn-custom" onClick={this.props.onClick}>
                 <span className="fa fa-step-forward" data-text="right-open-mini"/>
             </div>
         )
@@ -204,22 +204,17 @@ var PlayComment = React.createClass({
             this.state.currentSlide = this.state.comment["0"];
         }
 
-        var slide = <CommentSlide key={this.state.currentSlide.id} comment={this.state.currentSlide}/>;
+        var slide = <CommentSlide key={this.state.currentSlide ? this.state.currentSlide.id : 0} comment={this.state.currentSlide}/>;
 
         return (
             <div className="container">
 
-
                 <div className="row">
 
-                    <div className="col-sm-4 btn-default">
-                    </div>
                     {previousButton} {this.state.playing ? pauseButton : playButton} {nextButton}
                 </div>
 
-
                 <div className="col-xs-12" style={{height: "45px"}}></div>
-
 
                 <a id="inifiniteLoaderPlay"><img src="/static/img/ajax-loader.gif"/></a>
                 <div className="slideshow">

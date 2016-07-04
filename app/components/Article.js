@@ -72,7 +72,7 @@ module.exports = React.createClass({
 
     getTitle: function () {
         return (
-            <h3 className='article-header'>{this.props.article.title}</h3>
+            <h3 className='article-header'>{this.props.article.title && this.props.article.title.length > 45 ? this.props.article.title.substring(0,45)+"..."  :  this.props.article.title }</h3>
         );
     },
 
@@ -88,7 +88,7 @@ module.exports = React.createClass({
 
     getTotalComments: function () {
         var totalComments = this.props.article.totalComments;
-        return totalComments ? <p className='source'>Comments {totalComments} </p> : null;
+        return totalComments ? <p className='source'>Comments {totalComments} </p> :  <p className='source'>Comments 0 </p> ;
     },
 
     getArticleLink: function () {

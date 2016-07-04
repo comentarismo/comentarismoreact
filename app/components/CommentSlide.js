@@ -3,6 +3,7 @@ import {XDiv} from 'components/XDiv';
 import {ShareNetworks} from 'components/ShareNetworks';
 import Date from "components/Date";
 import Icon from "components/Icon";
+import Sentiment from "components/Sentiment";
 
 //import config from 'config'
 //var host = config.BASE_URL;
@@ -26,14 +27,16 @@ var CommentSlide = React.createClass({
                                             <a href={`/news/${comment.titleurlize}`} target="_blank">
                                                 <XDiv text={comment.title}/>
                                                 <Date date={comment.date}/>
+                                                <Sentiment sentiment={comment.sentiment} />
                                             </a>
                                         </div>
                                     </div>
-                                    <div className="col-xs-12">
-                                    <XDiv text={"<b>"+comment.comment+"</b>"}/>
-                                    <span className="btn-default">
-                                        <span className="text-colored"><h1><XDiv text={"@"+comment.nick}/></h1></span>
-                                    </span>
+                                    <div className="col-md-12">
+                                        <XDiv text={"<b>"+comment.comment+"</b>"}/>
+
+                                        <span className="btn-default">
+                                            <span className="text-colored"><h1><XDiv text={"@"+comment.nick}/></h1></span>
+                                        </span>
                                     </div>
                                     <ShareNetworks comment={comment}/>
                                 </div>
