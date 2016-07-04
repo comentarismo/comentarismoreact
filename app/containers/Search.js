@@ -9,6 +9,8 @@ import Helmet from "react-helmet";
 import { loadIntroDetail } from 'actions/intro'
 
 import {SearchCommentsList} from 'components/SearchCommentsList';
+var analytics = require('ga-browser')();
+import Sentiment from "components/Sentiment";
 
 import {
     SearchBox,
@@ -22,6 +24,7 @@ import {
     ActionBar,
     ActionBarRow,
     MovieHitsGridItem,
+    TagCloud,
 
     RefinementListFilter,
     NoHits,
@@ -36,11 +39,42 @@ import {
 } from "searchkit";
 const searchkit = new SearchkitManager("http://elk.comentarismo.com/_all");
 
+const RefinementOption = (props) => (
+    <div className={props.bemBlocks.option().state({selected:props.selected}).mix(props.bemBlocks.container("item"))} onClick={props.onClick}>
+        <div className={props.bemBlocks.option("text")}><Sentiment sentiment={props.label} /></div>
+        <div className={props.bemBlocks.option("count")}>{props.count}</div>
+    </div>
+);
+
+const SelectedFilter = (props) => (
+    <div className={props.bemBlocks.option()
+    .mix(props.bemBlocks.container("item"))
+    .mix(`selected-filter--${props.filterId}`)()}>
+        <div className={props.bemBlocks.option("name")}>{props.labelKey}: {props.labelKey =="Sentiment" ? <Sentiment sentiment={props.labelValue} /> : props.labelValue}</div>
+        <div className={props.bemBlocks.option("remove-action")} onClick={props.removeFilter}>x</div>
+    </div>
+);
+
+const customHitStats = (props) => {
+    const {bemBlocks, hitsCount, timeTaken} = props;
+
+    return (
+        <div className={bemBlocks.container()} data-qa="hits-stats">
+            <div className={bemBlocks.container("info")} data-qa="info">
+                We found {hitsCount} comments in {timeTaken}ms!
+
+            </div>
+        </div>
+    )
+};
 
 class Search extends Component {
 
     componentDidMount() {
-
+        analytics('create', 'UA-51773618-1', 'auto');
+        setInterval(function () {
+            ga('send', 'event', 'ping', window.location.href, {}, 0)
+        }, 10000);
     }
 
     render() {
@@ -49,37 +83,50 @@ class Search extends Component {
         if (typeof window !== 'undefined') {
 
             searcbox = <SearchkitProvider searchkit={searchkit}>
-
                 <Layout>
                     <TopBar>
                         <SearchBox
                             autofocus={false}
                             searchThrottleTime={500}
                             searchOnChange={true}
-                            prefixQueryFields={["nick^5","genre^5","operator^5","title^10","language^5"]}/>
+                            prefixQueryFields={["nick","genre","operator","title","language","sentiment"]}/>
                     </TopBar>
                     <LayoutBody>
                         <SideBar>
-                            <HierarchicalMenuFilter
-                                fields={["new_val.operator"]}
-                                title="Source"
-                                id="new_val.operator"/>
+                            <RefinementListFilter
+                                id="new_val.languages"
+                                title="Language"
+                                field="new_val.languages"
+                                operator="AND"
+                                size={1}/>
                             <RefinementListFilter
                                 id="new_val.nick"
                                 title="Author"
                                 field="new_val.nick"
                                 operator="AND"
-                                size={10}/>
+                                size={5}/>
+                            <RefinementListFilter
+                                id="new_val.sentiment"
+                                title="Sentiment"
+                                field="new_val.sentiment"
+                                operator="AND"
+                                size={5} itemComponent={RefinementOption}/>
+
+                            <HierarchicalMenuFilter
+                                fields={["new_val.operator"]}
+                                title="Source"
+                                id="new_val.operator"/>
                         </SideBar>
                         <LayoutResults>
+
                             <ActionBar>
 
                                 <ActionBarRow>
-                                    <HitsStats/>
+                                    <HitsStats component={customHitStats}/>
                                 </ActionBarRow>
 
                                 <ActionBarRow>
-                                    <SelectedFilters/>
+                                    <SelectedFilters itemComponent={SelectedFilter}/>
                                     <ResetFilters/>
                                 </ActionBarRow>
 
@@ -87,7 +134,7 @@ class Search extends Component {
                             <Pagination showNumbers={true}/>
 
                             <Hits mod="sk-hits-grid" hitsPerPage={10} listComponent={SearchCommentsList}
-                                  sourceFilter={["new_val.title", "new_val.comment", "new_val.nick","new_val.operator"]}/>
+                                  sourceFilter={["new_val.title", "new_val.comment", "new_val.nick","new_val.operator","new_val.sentiment"]}/>
                             <NoHits/>
                             <Pagination showNumbers={true}/>
 
