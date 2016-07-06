@@ -23,22 +23,19 @@ class SearchCommentsList extends React.Component {
                         <th></th>
                         <th>Author</th>
                         <th>Comment</th>
-                        <th>Source</th>
-                        <th>Title</th>
+                        <th>News</th>
                     </tr>
                     </thead>
                     <tbody>
                     {_.map(hits, hit => (
 
                         <tr key={hit._id}>
-                            <td><Icon nick={hit._source.new_val ? hit._source.new_val.nick : ""} size={40}/>
-                            </td>
-                            <td>{hit._source.new_val? hit._source.new_val.nick : ""}</td>
+                            <td><Icon nick={hit._source.new_val ? hit._source.new_val.nick : ""} size={40}/>{hit._source.new_val? hit._source.new_val.operator : ""}</td>
+                            <td><b>{hit._source.new_val? hit._source.new_val.nick : ""}</b></td>
                             <td>
                                 <Sentiment sentiment={hit._source.new_val? hit._source.new_val.sentiment : ""} />
                                 {hit._source.new_val? hit._source.new_val.comment : ""}
                             </td>
-                            <td>{hit._source.new_val? hit._source.new_val.operator : ""}</td>
                             <td>{hit._source.new_val? (hit._source.new_val.title && hit._source.new_val.title.length > 35 ? hit._source.new_val.title.substring(0,35) + "..." : hit._source.new_val.title) : ""}</td>
                         </tr>
                     ))}

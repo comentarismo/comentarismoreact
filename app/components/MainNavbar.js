@@ -117,11 +117,12 @@ module.exports = React.createClass({
                                 </NavDropdown>
                                 <NavDropdown eventKey={3} title="Brazil" id="basic-nav-dropdown">
                                     <MenuItem eventKey={7.1} href="/news/operator/g1">G1</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/news/operator/uol">UOL</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/news/operator/ultimosegundo">IG</MenuItem>
-                                    <MenuItem eventKey={7.1}
+                                    <MenuItem eventKey={7.2} href="/news/operator/uol">UOL</MenuItem>
+                                    <MenuItem eventKey={7.3} href="/news/operator/ultimosegundo">IG</MenuItem>
+                                    <MenuItem eventKey={7.4}
                                               href="/news/operator/folhapolitica">FolhaPolitica</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/news/operator/cartacapital">CartaCapital</MenuItem>
+                                    <MenuItem eventKey={7.5} href="/news/operator/cartacapital">CartaCapital</MenuItem>
+                                    <MenuItem eventKey={7.6} href="/news/operator/jornalggn">JornalGGN</MenuItem>
                                 </NavDropdown>
                                 <MenuItem eventKey={3.1} href="/news/languages/portuguese">Portuguese All</MenuItem>
                             </NavDropdown>

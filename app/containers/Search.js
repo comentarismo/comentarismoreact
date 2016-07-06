@@ -37,7 +37,7 @@ import {
     Pagination,
     ResetFilters
 } from "searchkit";
-const searchkit = new SearchkitManager("http://elk.comentarismo.com/_all");
+
 
 const RefinementOption = (props) => (
     <div className={props.bemBlocks.option().state({selected:props.selected}).mix(props.bemBlocks.container("item"))} onClick={props.onClick}>
@@ -67,6 +67,14 @@ const customHitStats = (props) => {
         </div>
     )
 };
+function gup( name, url ) {
+    if (!url) url = location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    return results == null ? null : results[1];
+}
 
 class Search extends Component {
 
@@ -81,13 +89,22 @@ class Search extends Component {
 
         var searcbox = "";
         if (typeof window !== 'undefined') {
+            var searchOnLoad = false;
+            var q = gup("q");
+            if(q){
+                searchOnLoad = true;
+            }
 
-            searcbox = <SearchkitProvider searchkit={searchkit}>
+            const searchkit = new SearchkitManager("http://elk.comentarismo.com/_all",{
+                searchOnLoad:searchOnLoad,
+                useHistory:true
+            });
+            searcbox = <SearchkitProvider searchkit={searchkit} >
                 <Layout>
                     <TopBar>
                         <SearchBox
                             autofocus={false}
-                            searchThrottleTime={500}
+                            searchThrottleTime={1500}
                             searchOnChange={true}
                             prefixQueryFields={["nick","genre","operator","title","language","sentiment"]}/>
                     </TopBar>
