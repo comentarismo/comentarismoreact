@@ -102,7 +102,7 @@ module.exports = React.createClass({
                     <div id={"fb-"+this.props.article.id} style={{"display": "none"}}>
                         <Icon nick={this.props.article.titleurlize} size={125}/>
                     </div>
-                    <div id={"img-"+this.props.article.id} className="image">
+                    <div id={"img-"+this.props.article.id} className="col-sm-9 col-xs-12 image">
                         <img id={this.props.article.id} />
                         {this.getImageElement()}
                     </div>

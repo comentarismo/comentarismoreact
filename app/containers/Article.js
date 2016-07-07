@@ -134,9 +134,26 @@ class Article extends Component {
                         <div className="article-body">
                             <div className="container">
                                 <div className="row">
-                                    <div className="profile-div">
-                                        <div id={"img-"+this.props.article.id}>
+                                    <div className="profile-div col-sm-9 col-xs-12 ">
+
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Title</span>
+                                                    <span className="profile-StatValue">{ article.title }</span>
+                                                </li>
+                                                <button className="btn btn-primary"><i
+                                                    className="glyphicon glyphicon-link"/>
+                                                </button>
+                                            </ul>
+                                        </div>
+
+
+
+                                        <div className="image" id={"img-"+this.props.article.id}>
                                             {this.getImageElement()}
+
                                         </div>
                                         <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
                                             <div className="col-xs-12 col-md-2">
@@ -159,18 +176,15 @@ class Article extends Component {
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
                                     <div>
                                         <div className="profile-button">
-                                            <button className="btn btn-primary"><i
-                                                className="glyphicon glyphicon-link"/>
-                                            </button>
+
                                         </div>
                                         <div className="profile-nick">
                                             <div className="profile-nickName">
-                                                { article.title }
+
                                             </div>
                                         </div>
 
                                         <XSoundcloud permalink_url={article.permalink_url}/>
-
 
 
                                         <div className="profile-divStats">

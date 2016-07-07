@@ -86,7 +86,7 @@
 
 .profile-div {
     background: #fff none repeat scroll 0 0;
-    border: 1px solid #e1e8ed;
+    /*border: 1px solid #e1e8ed;*/
     border-radius: 6px;
     height: 300px;
     overflow: hidden;

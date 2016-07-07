@@ -5,6 +5,7 @@ import configureStore from 'store/configureStore';
 
 import App from 'containers/App';
 import Intro from 'containers/Intro';
+import IntroOld from 'containers/Intro_old';
 
 import Commentators from 'containers/Commentators';
 import Commentator from 'containers/Commentator';
@@ -49,7 +50,7 @@ export default function (history) {
                 <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
                 <Route path="search" component={Search}/>
 
-                <IndexRoute component={Intro}/>
+                <IndexRoute component={IntroOld}/>
                 <Route path="*" component={Notfound}/>
             </Route>
         </Router>
