@@ -112,6 +112,15 @@
     width: 100%;
 }
 
+.profile-bg-products {
+    background-position: 0 50%;
+    background-size: 100% auto;
+    border-bottom: 1px solid #e1e8ed;
+    border-radius: 4px 4px 0 0;
+    height: 40%;
+    width: 40%;
+}
+
 .profile-block {
     display: block !important;
 }
@@ -615,6 +624,7 @@ textarea {
 
 .image img {
     position: absolute;
+    max-width: 100%;
 }
 
 .article {
@@ -2701,3 +2711,35 @@ textarea.form-control {
 .bg-orange {
     background-color: rgba(49, 133, 192, 0.98)
 }
+
+
+
+/* stars css component */
+.stars-container {
+    position: relative;
+    display: inline-block;
+    color: transparent;
+}
+
+.stars-container:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '★★★★★';
+    color: lightgray;
+}
+
+.stars-container:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: gold;
+    overflow: hidden;
+}
+
+.stars-0:after { content: ''; }
+.stars-1:after { content: '★'; }
+.stars-2:after { content: '★★'; }
+.stars-3:after { content: '★★★'; }
+.stars-4:after { content: '★★★★'; }
+.stars-5:after { content: '★★★★★'; }

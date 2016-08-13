@@ -44,7 +44,6 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `genre`
 `countries`
 `created`
-`languages`
 `operator`
 `titleurlize`
 `date`

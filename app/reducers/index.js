@@ -4,6 +4,7 @@ import commentators from 'reducers/commentators';
 import commentatorDetail from 'reducers/commentatorDetail';
 import articles from 'reducers/articles';
 import articleDetail from 'reducers/articleDetail';
+import productDetail from 'reducers/productDetail';
 import commentDetail from 'reducers/commentDetail';
 
 import suggestCommentDetail from 'reducers/suggestCommentDetail'
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     suggestCommentDetail,
     articles,
     articleDetail,
+    productDetail,
     introDetail,
     adminDetail
 });

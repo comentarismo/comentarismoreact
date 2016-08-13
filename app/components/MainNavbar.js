@@ -35,7 +35,15 @@ module.exports = React.createClass({
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav pullRight>
-                        <NavDropdown eventKey={3} title="World News & Headlines" id="basic-nav-dropdown">
+                        <NavDropdown eventKey={3} title="Products" id="basic-nav-dropdown">
+                            <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
+                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
+                                    <MenuItem eventKey={3.1} href="/product/genre/bestseller">Best Seller</MenuItem>
+                                </NavDropdown>
+                            </NavDropdown>
+                        </NavDropdown>
+
+                        <NavDropdown eventKey={3} title="World News" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
                                     <MenuItem eventKey={3.1} href="/news/genre/business">Business</MenuItem>
@@ -149,7 +157,7 @@ module.exports = React.createClass({
                                 <MenuItem eventKey={3.1} href="/news/languages/russian">Russian All</MenuItem>
                             </NavDropdown>
                         </NavDropdown>
-                        <NavDropdown eventKey={3} title="World Commentator List" id="basic-nav-dropdown">
+                        <NavDropdown eventKey={3} title="World Commentators" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="UK" id="basic-nav-dropdown">
                                     <MenuItem eventKey={3.1} href="/commentators/operator/bbcuk">BBC</MenuItem>

@@ -136,9 +136,9 @@ module.exports = {
 
 },{}],2:[function(require,module,exports){
 
-var countArticle = function countArticle(that,thekey, page, cb) {
-    var url = that.host + "/listbykeycount/commentaries/"+thekey+"/" + page + "/";
-    ga('send', 'event', 'countArticle', "/listbykeycount/commentaries/"+thekey+"/" + page + "/", {}, 0);
+var countArticle = function countArticle(that,table, thekey, page, cb) {
+    var url = that.host + "/listbykeycount/"+table+"/"+thekey+"/" + page + "/";
+    ga('send', 'event', 'countArticle', "/listbykeycount/"+table+"/"+thekey+"/" + page + "/", {}, 0);
 
     if(window.debug) {
         console.log("countArticle, ",url);
@@ -268,10 +268,15 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
         "</span>" +
         "</div>" )  +
 
-        (item.sentiment ?
+        (item.sentiment || item.sentiment === 0 ?
         "<div class='sentiment-tooltip'>Sentiment: " +emojis[item.sentiment] +
         "<span class='sentiment-tooltiptext'>"+sentiment[item.sentiment]+"</span>" +
         "</div>"  : "")
+        +
+
+        (item.rating ?
+        "<div class=''>Rating: <span class='stars-container stars-"+item.rating+"'>★★★★★</span></div>"
+            : "")
         +
 
         "<div class='text'><p>" + item.comment + "</p></div>" +
@@ -738,10 +743,10 @@ module.exports = {
 },{}],9:[function(require,module,exports){
 var container = require("./container");
 
-function loadArticle(that, thekey, list, page, skip, limit, user, cb) {
-    ga('send', 'event', 'loadArticle', "/listbykeyskiplimit/commentaries/" + thekey + "/" + page + "/" + skip + "/" + limit + "/", page, 0);
+function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
+    ga('send', 'event', 'loadArticle', "/listbykeyskiplimit/"+table+"/" + thekey + "/" + page + "/" + skip + "/" + limit + "/", page, 0);
 
-    var url = that.host + "/listbykeyskiplimit/commentaries/" + thekey + "/" + page + "/" + skip + "/" + limit + "/";
+    var url = that.host + "/listbykeyskiplimit/"+table+"/" + thekey + "/" + page + "/" + skip + "/" + limit + "/";
     if(window.debug) {
         console.log("loadArticle, ",url);
     }
@@ -1099,6 +1104,7 @@ var running = false;
 var limit = 50;
 var skip = 0;
 var sel;
+var table;
 
 Comentarismo = function (options) {
 
@@ -1133,6 +1139,8 @@ Comentarismo = function (options) {
     if (options.debug && options.debug == "true") {
         window.debug = true;
     }
+
+    table = options.table || "commentaries"
 
     if (options.css) {
         $('head').append('<link rel="stylesheet" href="' + options.css + '" type="text/css" />');
@@ -1204,7 +1212,7 @@ Comentarismo = function (options) {
             count_api.afterCountArticle(err, end);
         });
     } else {
-        count_api.countArticle(this, defaultIndex, page, function (err) {
+        count_api.countArticle(this, table, defaultIndex, page, function (err) {
             count_api.afterCountArticle(err, end);
         });
     }
@@ -1225,7 +1233,7 @@ Comentarismo = function (options) {
     } else {
         running = true;
         $('a#inifiniteLoader').show();
-        load_api.loadArticle(this, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+        load_api.loadArticle(this, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 that.filterAllSentiment();
                 limit = limit + 50;
@@ -1246,6 +1254,10 @@ Comentarismo = function (options) {
             $('a#commentsloadmore').hide('1000');
             return;
         }
+
+        console.log("$(window).scrollTop(), == ,$(document).height(), -, $(window).height(), &&, !running , &&, !end");
+        console.log($(window).scrollTop(), "==" ,$(document).height(), "-", $(window).height(), "("+ $(document).height() - $(window).height() +")", "&&", !running , "&&", !end);
+
         if ($(window).scrollTop() == $(document).height() - $(window).height() && !running && !end) {
             that.loadMoreComments();
 
@@ -1284,7 +1296,7 @@ Comentarismo.prototype.loadMoreComments = function(){
         });
     } else {
 
-        load_api.loadArticle(that, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+        load_api.loadArticle(that, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 that.filterAllSentiment();
                 limit = limit + 50;

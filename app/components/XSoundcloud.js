@@ -19,9 +19,9 @@ class CustomPlayer extends React.Component {
             <div className="col-lg-12 col-xs-12">
                 <div className="row">
                     <PlayButton
-                        className="col-lg-1 col-xs-1 button-outline bg-orange" {...this.props} />
+                        className="col-lg-1 col-xs-2 button-outline bg-orange" {...this.props} />
 
-                <div className="col-lg-11 col-xs-11">
+                <div className="col-lg-11 col-xs-10">
                     <Progress
                         className=" rounded"
                         innerClassName="rounded-left"

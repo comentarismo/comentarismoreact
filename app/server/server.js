@@ -530,6 +530,63 @@ server.get('/api/news/:id', (req, res)=> {
 
 });
 
+
+//bind to action/articles.js -> loadArticleDetail
+server.get('/api/product/:id', (req, res)=> {
+    var sort = req.query.sort;
+
+    var urlTag = `/api/product/${req.params.id}`;
+    //logger.info(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+            }
+            //return res.status(500).send('Cache is broken!');
+        } else {
+            logger.info(urlTag + " will return cached result ");
+            if(EXPIRE_REDIS) {
+                client.expire(urlTag,1);
+            }
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+
+        getOneBySecondaryIndex("product", "titleurlize", req.params.id, conn, function (err, news) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            } else if (!news) {
+                logger.info("Product not found --> " + req.params.id);
+                return res.status(404).send("News not found --> " + req.params.id);
+            }
+            getAllByIndexOrderBySkipLimit("commentaries_product", "titleurlize", req.params.id, 0, 50, sort, conn, function (err, comments) {
+                if (err) {
+                    console.error(err.stack);
+                    return res.status(500).send('Something broke!');
+                }
+                //logger.info(comments.length)
+                news.comments = comments;
+
+                if (news) {
+                    //-------REDIS CACHE SAVE START ------//
+                    logger.info(urlTag + " will save cached");
+                    client.set(urlTag, JSON.stringify(news), redis.print);
+                    client.expire(urlTag, expireTime);
+                    //-------REDIS CACHE SAVE END ------//
+                }
+                res.send(news);
+            });
+        });
+
+    });
+
+});
+
 var comentarismosite = "http://www.comentarismo.com";
 server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
 

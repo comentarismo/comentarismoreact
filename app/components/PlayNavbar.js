@@ -117,7 +117,7 @@ module.exports = React.createClass({
                                     <MenuItem eventKey={7.1} href="/play/operator/ultimosegundo/0/50/">Play IG</MenuItem>
                                     <MenuItem eventKey={7.1}
                                               href="/play/operator/folhapolitica">Play FolhaPolitica</MenuItem>
-                                    <MenuItem eventKey={7.1} href="/news/operator/cartacapital">Play CartaCapital</MenuItem>
+                                    <MenuItem eventKey={7.1} href="/play/operator/cartacapital">Play CartaCapital</MenuItem>
                                 </NavDropdown>
                                 <MenuItem eventKey={3.1} href="/play/languages/portuguese/0/50/">Play Portuguese All</MenuItem>
                             </NavDropdown>

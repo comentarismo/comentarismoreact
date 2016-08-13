@@ -92,7 +92,7 @@ module.exports = React.createClass({
     },
 
     getArticleLink: function () {
-        return '/news/' + this.props.article.titleurlize;
+        return '/product/' + this.props.article.titleurlize;
     },
 
     render: function () {
@@ -102,7 +102,7 @@ module.exports = React.createClass({
                     <div id={"fb-"+this.props.article.id} style={{"display": "none"}}>
                         <Icon nick={this.props.article.titleurlize} size={125}/>
                     </div>
-                    <div id={"img-"+this.props.article.id} className="col-xs-12 image">
+                    <div id={"img-"+this.props.article.id} className="col-xs-12 image profile-bg-products">
                         <img id={this.props.article.id} />
                         {this.getImageElement()}
                     </div>

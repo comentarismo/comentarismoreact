@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadArticleDetail } from 'actions/articles'
+import { loadProductDetail } from 'actions/products'
+
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
 var MainNavbar = require('components/MainNavbar');
@@ -17,18 +18,15 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
-import {XScript} from 'components/XScript';
+import {XScript} from 'components/XScriptProduct';
 import {XSoundcloud} from 'components/XSoundcloud'
-class Article extends Component {
+class Product extends Component {
     static fetchData({ store, params }) {
         let { id } = params
-        return store.dispatch(loadArticleDetail({id}))
+        return store.dispatch(loadProductDetail({id}))
     }
 
     componentDidMount() {
-        //let { id } = this.props.params
-        //this.props.loadArticleDetail({id})
-
         var src;
         // use meta:og image if available
         if (this.props.article && this.props.article.image) {
@@ -37,7 +35,8 @@ class Article extends Component {
         var id = this.props.article.id;
 
         var host = "http://img.comentarismo.com/r";
-        console.log("IMGRESIZER ", this.props.article.image)
+        console.log("IMGRESIZER ", this.props.article.image);
+
         //do img resize
         var request = $.ajax({
             url: host + '/img/',
@@ -55,7 +54,7 @@ class Article extends Component {
                 console.log("imgresizer DONE OK");
                 var base64Data = base64Encode(binaryData);
                 var src = "data:image/jpeg;base64," + base64Data;
-                $(".profile-bg-news").attr("src", src);
+                $(".profile-bg-products").attr("src", src);
             } else {
                 console.log("IMGRESIZER failed, will use default identicon for it");
                 $("#fb-" + id).show();
@@ -73,11 +72,14 @@ class Article extends Component {
         var src = "/static/img/ajax-loader.gif";
         var srcfallback = "/static/img/comentarismo-bg-450-150.png";
         return src ?
-            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
+            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback}
+                            classes={'img-thumbnail profile-bg-products'}/> : null;
     }
 
     render() {
         let { article } = this.props;
+
+        console.log(this.props)
 
         if (!article || !article.operator) {
             return (
@@ -150,7 +152,6 @@ class Article extends Component {
                                         </div>
 
 
-
                                         <div className="image" id={"img-"+this.props.article.id}>
                                             {this.getImageElement()}
 
@@ -185,7 +186,16 @@ class Article extends Component {
                                         </div>
 
                                         <XSoundcloud permalink_url={article.permalink_url}/>
-
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Rating: {this.props.article.rating}</span>
+                                                    <span
+                                                        className={"stars-container stars-"+Math.round(this.props.article.rating ? this.props.article.rating : 0)}>★★★★★</span>
+                                                </li>
+                                            </ul>
+                                        </div>
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
@@ -196,6 +206,7 @@ class Article extends Component {
                                                 </li>
                                             </ul>
                                         </div>
+
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
@@ -206,6 +217,29 @@ class Article extends Component {
                                                 </li>
                                             </ul>
                                         </div>
+
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Brand</span>
+                                                    <span
+                                                        className="profile-StatValue">{this.props.article.brand}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Categories</span>
+                                                    <span
+                                                        className="profile-StatValue">{this.props.article.categories}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
@@ -234,6 +268,7 @@ class Article extends Component {
                                             </ul>
                                         </div>
                                     </div>
+
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
 
                                 </div>
@@ -277,12 +312,12 @@ class Article extends Component {
 }
 
 function mapStateToProps(state) {
-    return {article: state.articleDetail}
+    return {article: state.productDetail}
 }
 
-Article.propTypes = {
+Product.propTypes = {
     article: PropTypes.object.isRequired
 };
 
-export { Article }
-export default connect(mapStateToProps, {loadArticleDetail})(Article)
+export { Product }
+export default connect(mapStateToProps, {loadProductDetail})(Product)
