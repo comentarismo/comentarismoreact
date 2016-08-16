@@ -20,6 +20,9 @@ import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {XScript} from 'components/XScriptProduct';
 import {XSoundcloud} from 'components/XSoundcloud'
+
+var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
+
 class Product extends Component {
     static fetchData({ store, params }) {
         let { id } = params
@@ -140,14 +143,12 @@ class Product extends Component {
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
+
                                                 <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Title</span>
                                                     <span className="profile-StatValue">{ article.title }</span>
                                                 </li>
-                                                <button className="btn btn-primary"><i
-                                                    className="glyphicon glyphicon-link"/>
-                                                </button>
                                             </ul>
                                         </div>
 
@@ -211,7 +212,7 @@ class Product extends Component {
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Publish Date</span>
+                                                            className="profile-StatLabel profile-block">Last Update</span>
                                                         <span className="profile-StatValue"><Date
                                                             date={this.props.article.date}/></span>
                                                 </li>
