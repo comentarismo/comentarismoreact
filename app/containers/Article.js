@@ -8,6 +8,8 @@ var MainNavbar = require('components/MainNavbar');
 import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
+import Slider from 'containers/ImageSlider';
+
 
 var width = "388";
 var height = "395";
@@ -73,8 +75,17 @@ class Article extends Component {
         var src = "/static/img/ajax-loader.gif";
         var srcfallback = "/static/img/comentarismo-bg-450-150.png";
         return src ?
-            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
+            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'img-thumbnail profile-bg-news'}/> : null;
     }
+
+    getMoreImages() {
+        if (typeof window !== 'undefined' && this.props.article.images_url){
+            return <Slider images={this.props.article.images_url} isInfinite={false} delay={5000}/>;
+        }else {
+            return this.getImageElement()
+        }
+    }
+
 
     render() {
         let { article } = this.props;
@@ -149,12 +160,8 @@ class Article extends Component {
                                             </ul>
                                         </div>
 
+                                            {this.getMoreImages()}
 
-
-                                        <div className="image" id={"img-"+this.props.article.id}>
-                                            {this.getImageElement()}
-
-                                        </div>
                                         <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
                                             <div className="col-xs-12 col-md-2">
                                                 <Icon nick={article.titleurlize} size={205}/>

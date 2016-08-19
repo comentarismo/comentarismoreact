@@ -19,7 +19,10 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {XScript} from 'components/XScriptProduct';
-import {XSoundcloud} from 'components/XSoundcloud'
+import {XSoundcloud} from 'components/XSoundcloud';
+
+var Carousel = require('react-responsive-carousel').Carousel;
+import Slider from 'containers/ImageSlider';
 
 var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
 
@@ -77,6 +80,14 @@ class Product extends Component {
         return src ?
             <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback}
                             classes={'img-thumbnail profile-bg-products'}/> : null;
+    }
+
+    getMoreImages() {
+        if (typeof window !== 'undefined' && this.props.article.images_url){
+            return <Slider images={this.props.article.images_url} isInfinite={false} delay={5000}/>;
+        }else {
+            return this.getImageElement()
+        }
     }
 
     render() {
@@ -153,10 +164,9 @@ class Product extends Component {
                                         </div>
 
 
-                                        <div className="image" id={"img-"+this.props.article.id}>
-                                            {this.getImageElement()}
+                                        {this.getMoreImages()}
 
-                                        </div>
+
                                         <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
                                             <div className="col-xs-12 col-md-2">
                                                 <Icon nick={article.titleurlize} size={205}/>
@@ -311,6 +321,52 @@ class Product extends Component {
 
     }
 }
+
+
+
+
+
+var DemoCarousel = React.createClass({
+
+    onChange() {
+        console.log('onChange', arguments);
+    },
+
+    onClickItem() {
+        console.log('onClickItem', arguments);
+    },
+
+    onClickThumb() {
+        console.log('onClickThumb', arguments);
+    },
+
+    render() {
+
+        if (typeof window !== 'undefined' && this.props && this.props.images_url) {
+
+            return (
+                <Carousel showArrows={true} onChange={this.onChange} onClickItem={this.onClickItem}
+                          onClickThumb={this.onClickThumb}>
+
+                    {
+                        this.props.images_url.map((q)=> {
+                            return (
+                                <div key={q}>
+                                    <img src={q}/>
+                                    <p className="legend"></p>
+                                </div>
+                            )
+                        })
+                    }
+
+                </Carousel>
+            );
+        } else {
+            return <div/>;
+        }
+
+    }
+});
 
 function mapStateToProps(state) {
     return {article: state.productDetail}
