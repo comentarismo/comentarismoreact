@@ -145,7 +145,7 @@ class Article extends Component {
                         <div className="article-body">
                             <div className="container">
                                 <div className="row">
-                                    <div className="profile-div col-sm-9 col-xs-12 ">
+                                    <div className="profile-div col-sm-6 col-xs-12 ">
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
