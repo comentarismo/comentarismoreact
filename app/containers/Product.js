@@ -21,7 +21,6 @@ import {GoogleSearchScript} from 'components/GoogleSearchScript';
 import {XScript} from 'components/XScriptProduct';
 import {XSoundcloud} from 'components/XSoundcloud';
 
-var Carousel = require('react-responsive-carousel').Carousel;
 import Slider from 'containers/ImageSlider';
 
 var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
@@ -324,49 +323,6 @@ class Product extends Component {
 
 
 
-
-
-var DemoCarousel = React.createClass({
-
-    onChange() {
-        console.log('onChange', arguments);
-    },
-
-    onClickItem() {
-        console.log('onClickItem', arguments);
-    },
-
-    onClickThumb() {
-        console.log('onClickThumb', arguments);
-    },
-
-    render() {
-
-        if (typeof window !== 'undefined' && this.props && this.props.images_url) {
-
-            return (
-                <Carousel showArrows={true} onChange={this.onChange} onClickItem={this.onClickItem}
-                          onClickThumb={this.onClickThumb}>
-
-                    {
-                        this.props.images_url.map((q)=> {
-                            return (
-                                <div key={q}>
-                                    <img src={q}/>
-                                    <p className="legend"></p>
-                                </div>
-                            )
-                        })
-                    }
-
-                </Carousel>
-            );
-        } else {
-            return <div/>;
-        }
-
-    }
-});
 
 function mapStateToProps(state) {
     return {article: state.productDetail}
