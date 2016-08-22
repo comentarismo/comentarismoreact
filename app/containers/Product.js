@@ -25,68 +25,15 @@ import Slider from 'containers/ImageSlider';
 
 var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
 
+import {PlayImages} from './PlayImages';
+
+import { Tabs,Tab } from 'react-bootstrap';
+
+
 class Product extends Component {
     static fetchData({ store, params }) {
         let { id } = params
         return store.dispatch(loadProductDetail({id}))
-    }
-
-    componentDidMount() {
-        var src;
-        // use meta:og image if available
-        if (this.props.article && this.props.article.image) {
-            src = this.props.article.image;
-        }
-        var id = this.props.article.id;
-
-        var host = "http://img.comentarismo.com/r";
-        console.log("IMGRESIZER ", this.props.article.image);
-
-        //do img resize
-        var request = $.ajax({
-            url: host + '/img/',
-            type: 'post',
-            data: {
-                url: this.props.article.image,
-                width: width,
-                height: height,
-                quality: quality
-            },
-            mimeType: "text/plain; charset=x-user-defined"
-        });
-        request.done(function (binaryData) {
-            if (binaryData && binaryData !== "") {
-                console.log("imgresizer DONE OK");
-                var base64Data = base64Encode(binaryData);
-                var src = "data:image/jpeg;base64," + base64Data;
-                $(".profile-bg-products").attr("src", src);
-            } else {
-                console.log("IMGRESIZER failed, will use default identicon for it");
-                $("#fb-" + id).show();
-                $("#img-" + id).hide();
-            }
-        });
-        request.error(function (err) {
-            console.log("IMGRESIZER failed, will use default identicon for it");
-            $("#fb-" + id).show();
-            $("#img-" + id).hide();
-        });
-    }
-
-    getImageElement() {
-        var src = "/static/img/ajax-loader.gif";
-        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
-        return src ?
-            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback}
-                            classes={'img-thumbnail profile-bg-products'}/> : null;
-    }
-
-    getMoreImages() {
-        if (typeof window !== 'undefined' && this.props.article.images_url){
-            return <Slider images={this.props.article.images_url} isInfinite={false} delay={5000}/>;
-        }else {
-            return this.getImageElement()
-        }
     }
 
     render() {
@@ -149,7 +96,7 @@ class Product extends Component {
                         <div className="article-body">
                             <div className="container">
                                 <div className="row">
-                                    <div className="profile-div col-sm-6 col-xs-12 ">
+                                    <div className="row">
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
@@ -161,31 +108,23 @@ class Product extends Component {
                                                 </li>
                                             </ul>
                                         </div>
+                                    </div>
 
+                                    <div className="row">
 
-                                        {this.getMoreImages()}
+                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                            <Tab eventKey={1} title="Images">
+                                                <PlayImages images={this.props.article.search} playing={true}
+                                                            playingtimeout={10000}/>
+                                            </Tab>
+                                            <Tab eventKey={2} title="Videos" disabled>
+                                                More Videos soon ...
+                                            </Tab>
+                                        </Tabs>
 
-
-                                        <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
-                                    <div>
+                                    <div className="row">
                                         <div className="profile-button">
 
                                         </div>
@@ -207,25 +146,21 @@ class Product extends Component {
                                             </ul>
                                         </div>
 
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                        <div className="row">
+                                            <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                                <Tab eventKey={1} title="Resume">
+                                                    <div className="profile-divStats">
+                                                        <ul className="profile-commentsfollowfollowers">
+                                                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Resume</span>
-                                                    <span className="profile-StatValue">{ getContentBody() }</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Last Update</span>
-                                                        <span className="profile-StatValue"><Date
-                                                            date={this.props.article.date}/></span>
-                                                </li>
-                                            </ul>
+                                                            <span
+                                                                className="profile-StatValue">{ getContentBody() }</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </Tab>
+                                            </Tabs>
                                         </div>
 
                                         <div className="profile-divStats">
@@ -243,12 +178,27 @@ class Product extends Component {
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Categories</span>
-                                                    <span
-                                                        className="profile-StatValue">{this.props.article.categories}</span>
+                                                            className="profile-StatLabel profile-block">Last Update</span>
+                                                        <span className="profile-StatValue"><Date
+                                                            date={this.props.article.date}/></span>
                                                 </li>
                                             </ul>
                                         </div>
+
+                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                            <Tab eventKey={1} title="Categories">
+                                                <div className="profile-divStats">
+                                                    <ul className="profile-commentsfollowfollowers">
+                                                        <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block">Categories</span>
+                                                    <span
+                                                        className="profile-StatValue">{this.props.article.categories}</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </Tab>
+                                        </Tabs>
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
@@ -278,10 +228,10 @@ class Product extends Component {
                                             </ul>
                                         </div>
                                     </div>
-
-                                    <div className="col-xs-12" style={{height: '25px'}}></div>
-
                                 </div>
+
+                                <div className="col-xs-12" style={{height: '25px'}}></div>
+
 
                                 <div id="comentarismo-container" className="comentarismo-comment"
                                      className="col-md-12">
@@ -309,8 +259,8 @@ class Product extends Component {
                                         })
                                     }
                                 </div>
-
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -320,8 +270,6 @@ class Product extends Component {
 
     }
 }
-
-
 
 
 function mapStateToProps(state) {

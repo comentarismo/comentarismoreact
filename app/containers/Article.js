@@ -2,20 +2,16 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { loadArticleDetail } from 'actions/articles'
 import ReactDOM from 'react-dom';
-var ImageComponent = require('components/Image');
 var MainNavbar = require('components/MainNavbar');
 
 import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
 import Slider from 'containers/ImageSlider';
+import {PlayImages} from './PlayImages';
 
+import { Tabs,Tab } from 'react-bootstrap';
 
-var width = "388";
-var height = "395";
-var quality = "50";
-var $ = require('jquery');
-var base64Encode = require("../util/imgresizer").base64Encode;
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -26,66 +22,6 @@ class Article extends Component {
         let { id } = params
         return store.dispatch(loadArticleDetail({id}))
     }
-
-    componentDidMount() {
-        //let { id } = this.props.params
-        //this.props.loadArticleDetail({id})
-
-        var src;
-        // use meta:og image if available
-        if (this.props.article && this.props.article.image) {
-            src = this.props.article.image;
-        }
-        var id = this.props.article.id;
-
-        var host = "http://img.comentarismo.com/r";
-        console.log("IMGRESIZER ", this.props.article.image)
-        //do img resize
-        var request = $.ajax({
-            url: host + '/img/',
-            type: 'post',
-            data: {
-                url: this.props.article.image,
-                width: width,
-                height: height,
-                quality: quality
-            },
-            mimeType: "text/plain; charset=x-user-defined"
-        });
-        request.done(function (binaryData) {
-            if (binaryData && binaryData !== "") {
-                console.log("imgresizer DONE OK");
-                var base64Data = base64Encode(binaryData);
-                var src = "data:image/jpeg;base64," + base64Data;
-                $(".profile-bg-news").attr("src", src);
-            } else {
-                console.log("IMGRESIZER failed, will use default identicon for it");
-                $("#fb-" + id).show();
-                $("#img-" + id).hide();
-            }
-        });
-        request.error(function (err) {
-            console.log("IMGRESIZER failed, will use default identicon for it");
-            $("#fb-" + id).show();
-            $("#img-" + id).hide();
-        });
-    }
-
-    getImageElement() {
-        var src = "/static/img/ajax-loader.gif";
-        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
-        return src ?
-            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'img-thumbnail profile-bg-news'}/> : null;
-    }
-
-    getMoreImages() {
-        if (typeof window !== 'undefined' && this.props.article.images_url){
-            return <Slider images={this.props.article.images_url} isInfinite={false} delay={5000}/>;
-        }else {
-            return this.getImageElement()
-        }
-    }
-
 
     render() {
         let { article } = this.props;
@@ -118,6 +54,13 @@ class Article extends Component {
                         dangerouslySetInnerHTML={{__html: article.resume}}></div>
         }
 
+        //<button className="btn btn-primary"><i
+        //    className="glyphicon glyphicon-link"/>
+        //</button>
+
+
+        var searclist = this.props.article.search || [{title: article.title,gimage:article.image}];
+
         return (
             <div>
                 <Helmet
@@ -145,7 +88,7 @@ class Article extends Component {
                         <div className="article-body">
                             <div className="container">
                                 <div className="row">
-                                    <div className="profile-div col-sm-6 col-xs-12 ">
+                                    <div className="row">
 
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
@@ -154,32 +97,22 @@ class Article extends Component {
                                                             className="profile-StatLabel profile-block">Title</span>
                                                     <span className="profile-StatValue">{ article.title }</span>
                                                 </li>
-                                                <button className="btn btn-primary"><i
-                                                    className="glyphicon glyphicon-link"/>
-                                                </button>
+
                                             </ul>
                                         </div>
 
-                                            {this.getMoreImages()}
-
-                                        <div id={"fb-"+article.id} style={{"display": "none"}} className="fb-image">
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                            <div className="col-xs-12 col-md-2">
-                                                <Icon nick={article.titleurlize} size={205}/>
-                                            </div>
-                                        </div>
                                     </div>
+
+                                    <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                        <Tab eventKey={1} title="Images">
+                                            <PlayImages images={searclist} playing={true}
+                                                        playingtimeout={10000}/>
+                                        </Tab>
+                                        <Tab eventKey={2} title="Videos" disabled>
+                                            More Videos soon ...
+                                        </Tab>
+                                    </Tabs>
+
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
                                     <div>
                                         <div className="profile-button">
@@ -194,25 +127,49 @@ class Article extends Component {
                                         <XSoundcloud permalink_url={article.permalink_url}/>
 
 
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                            <Tab eventKey={1} title="Resume">
+                                                <div className="profile-divStats">
+                                                    <ul className="profile-commentsfollowfollowers">
+                                                        <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Resume</span>
-                                                    <span className="profile-StatValue">{ getContentBody() }</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
+                                                            className="profile-StatLabel profile-block"></span>
+                                                            <span
+                                                                className="profile-StatValue">{ getContentBody() }</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </Tab>
+                                        </Tabs>
+
+
+                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                            <Tab eventKey={1} title="Publish Date">
+                                                <div className="profile-divStats">
+                                                    <ul className="profile-commentsfollowfollowers">
+                                                        <li className="profile-commentsfollowfollowersLi">
                                                         <span
-                                                            className="profile-StatLabel profile-block">Publish Date</span>
+                                                            className="profile-StatLabel profile-block"></span>
                                                         <span className="profile-StatValue"><Date
                                                             date={this.props.article.date}/></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </Tab>
+                                        </Tabs>
+
+                                        <div className="profile-divStats">
+                                            <ul className="profile-commentsfollowfollowers">
+                                                <li className="profile-commentsfollowfollowersLi">
+                                                <span
+                                                    className="profile-StatLabel profile-block">Tags</span>
+                                            <span
+                                                className="profile-StatValue">{this.props.article.tags.join(", ")}</span>
                                                 </li>
                                             </ul>
                                         </div>
+
+
                                         <div className="profile-divStats">
                                             <ul className="profile-commentsfollowfollowers">
                                                 <li className="profile-commentsfollowfollowersLi">
@@ -233,11 +190,7 @@ class Article extends Component {
                                                         <span
                                                             className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
                                                 </li>
-                                                <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Followers</span>
-                                                    <span className="profile-StatValue"/>
-                                                </li>
+
                                             </ul>
                                         </div>
                                     </div>
