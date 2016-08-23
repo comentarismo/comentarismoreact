@@ -54,12 +54,12 @@ class Article extends Component {
                         dangerouslySetInnerHTML={{__html: article.resume}}></div>
         }
 
-        //<button className="btn btn-primary"><i
-        //    className="glyphicon glyphicon-link"/>
-        //</button>
+        var searchlist = this.props.article.search;
 
-
-        var searclist = this.props.article.search || [{title: article.title,gimage:article.image}];
+        if(!searchlist){
+            searchlist = [];
+            searchlist.push({title: article.title,gimage:article.image});
+        }
 
         return (
             <div>
@@ -105,7 +105,7 @@ class Article extends Component {
 
                                     <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                                         <Tab eventKey={1} title="Images">
-                                            <PlayImages images={searclist} playing={true}
+                                            <PlayImages images={searchlist} playing={true}
                                                         playingtimeout={10000}/>
                                         </Tab>
                                         <Tab eventKey={2} title="Videos" disabled>

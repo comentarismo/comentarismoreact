@@ -1255,8 +1255,8 @@ Comentarismo = function (options) {
             return;
         }
 
-        console.log("$(window).scrollTop(), == ,$(document).height(), -, $(window).height(), &&, !running , &&, !end");
-        console.log($(window).scrollTop(), "==" ,$(document).height(), "-", $(window).height(), "("+ $(document).height() - $(window).height() +")", "&&", !running , "&&", !end);
+        //console.log("$(window).scrollTop(), == ,$(document).height(), -, $(window).height(), &&, !running , &&, !end");
+        //console.log($(window).scrollTop(), "==" ,$(document).height(), "-", $(window).height(), "("+ $(document).height() - $(window).height() +")", "&&", !running , "&&", !end);
 
         if ($(window).scrollTop() == $(document).height() - $(window).height() && !running && !end) {
             that.loadMoreComments();
