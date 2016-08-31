@@ -16,7 +16,7 @@ var comentarismoContainerHtml =
     "<div class='success' style='display:none;'></div>" +
     "<div class='error' style='display:none;'></div>" +
 
-    "<a class='add-comment' style='cursor:pointer;'><img src='http://api.comentarismo.com/static/images/comments.ico' style='width:30px;height:30px;'/><span id='comments-count'></span> | Add a comment</a>" +
+    "<a class='add-comment' style='cursor:pointer;'><img src='#COMMENT_ICON' style='width:30px;height:30px;'/><span id='comments-count'></span> | Add a comment</a>" +
     "<ul id='filtersentiment' class='sentimentmenu'><li>Filter By <a href='#'>Sentiment</a><ul>" +
 
     "<li><a href='#filtersentiment' id='-5'>" + emojione.shortnameToUnicode(":scream:") + " " + terrible + "</a></li>" +
@@ -55,14 +55,14 @@ var comentarismoContainerHtml =
         //TODO: place recommendations here ?
     "<div id='comments-list'>" +
     "</div>" +
-    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
+    "<a id='inifiniteLoader' style='display:none;'><img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
     "<a id='commentsloadmore' style='display:none;'>Load more ...</a>";
 
 var comentarismoContainerHtmlNoReply =
     "<div class='success' style='display:none;'></div>" +
     "<div class='error' style='display:none;'></div>" +
 
-    "<div class='add-comment'><img src='http://api.comentarismo.com/static/images/comments.ico' style='width:30px;height:30px;'/><span id='comments-count'></span></div>" +
+    "<div class='add-comment'><img src='#COMMENT_ICON' style='width:30px;height:30px;'/><span id='comments-count'></span></div>" +
 
     "<form class='hidden form comment-form' id='comment-form' action=''>" +
     "<div class='form-group'>" +
@@ -83,14 +83,17 @@ var comentarismoContainerHtmlNoReply =
     "" +
     "<div id='comments-list'>" +
     "</div>" +
-    "<a id='inifiniteLoader' style='display:none;'>Loading... <img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
+    "<a id='inifiniteLoader' style='display:none;'><img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
     "<a id='commentsloadmore' >Load more...</a>";
 
+var initComentarismoContainer = function initComentarismoContainer(div, noreply, options) {
+    var commenticon = (options && options.commenticon) ? options.commenticon : "http://api.comentarismo.com/static/images/comments.ico";
 
-var initComentarismoContainer = function initComentarismoContainer(div, noreply) {
-    var targetHtml = comentarismoContainerHtml;
+    var targetHtml;
     if (noreply == "nick") {
-        targetHtml = comentarismoContainerHtmlNoReply
+        targetHtml =  comentarismoContainerHtmlNoReply.replace('#COMMENT_ICON', commenticon);
+    }else {
+        targetHtml = comentarismoContainerHtml.replace('#COMMENT_ICON', commenticon);
     }
     if (!div) {
         div = "#comentarismo-container";
@@ -126,13 +129,7 @@ var addCommentIndex = function (list, item, cb) {
 module.exports = {
     initComentarismoContainer: initComentarismoContainer,
     addCommentIndex: addCommentIndex
-}
-
-
-
-
-
-
+};
 
 },{}],2:[function(require,module,exports){
 
@@ -247,6 +244,10 @@ var sentiment = {
 
 function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
 
+    var thumbsup = item.icons && item.icons.thumbsup ? item.icons.thumbsup : '/static/img/thumbs-up.png';
+    var thumbsdown = item.icons && item.icons.thumbsdown ? item.icons.thumbsdown : '/static/img/thumbs-down.png';
+    var reply = item.icons && item.icons.replybtn ? item.icons.replybtn : ' Reply';
+
     var cmt = "<div id='toggle' sentiment='"+item.sentiment+"' data-id='" + item.id + "' class='comentarismo-comment'>" +
         "<div class='avatar'>" +
         ( item.avatarurl != null
@@ -264,7 +265,7 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
             :
         "<div role='meta' class='comentarismo-comment-header'>" +
         "<span class='author'>" +
-        "<a target='_blank' href='/commentators/"+item.operator+"-"+(item.slug ? item.slug : item.nick)+"'>" + item.nick +"</a>" +
+        "<a "+ (item.mobile ? "" : "target='_blank' href='/commentators/"+item.operator+"-"+(item.slug ? item.slug : item.nick)+"'") +">" + item.nick + "</a>" +
         "</span>" +
         "</div>" )  +
 
@@ -283,14 +284,14 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
         "</div>" +
 
         "<div class='comentarismo-comment-footer'>" +
-        "<a class='upvote' id='like' href='#' data-id='" + item.id + "-like'><img src='/static/img/thumbs-up.png' style='width: 10px;height: 10px;'> " + ( item.likes ? item.likes.length : 0) + "</a>" +
+        "<a class='upvote' id='like' href='#' data-id='" + item.id + "-like'><img src='"+thumbsup+"' style='width: 10px;height: 10px;'> " + ( item.likes ? item.likes.length : 0) + "</a>" +
         "<span class='spacer'>|</span>" +
-        "<a class='downvote' id='dislike' href='#' data-id='" + item.id + "-dislike'><img src='/static/img/thumbs-down.png' style='width: 10px;height: 10px;'> " + ( item.dislikes ? item.dislikes.length : 0) + "</a>" +
+        "<a class='downvote' id='dislike' href='#' data-id='" + item.id + "-dislike'><img src='"+thumbsdown+"' style='width: 10px;height: 10px;'> " + ( item.dislikes ? item.dislikes.length : 0) + "</a>" +
         (user && user.Name && user.Name === item.nick ?
         "<a class='button destroy' id='delete' data-id='" + item.id + "-delete' class='button destroy'></a>" : "") +
         "<span class='spacer'>|</span>" +
 
-        "<a data-id='" + item.id + "-reply' href='#' class='reply'> Reply</a>" +
+        "<a data-id='" + item.id + "-reply' href='#' class='reply'>"+reply+"</a>" +
         "</div>" +
 
         "<div class='comentarismo-follow-up' id='" + item.id + "-reply-thread'>" +
@@ -309,7 +310,7 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
     return cmt;
 }
 
-
+//TODO: support reply like / dislike
 function createReplyComment(item, date_cmt) {
     var cmt =
         "<div id='toggle' data-id='" + item.id + "' class='comentarismo-comment'>" +
@@ -322,7 +323,7 @@ function createReplyComment(item, date_cmt) {
         "<div role='meta' class='comentarismo-comment-header'>" +
 
         "<span class='author'>" +
-            "<a target='_blank' href='/commentators/"+item.operator+"-"+(item.slug ? item.slug : item.nick)+"'>" + item.nick + "</a>" +
+            "<a "+ (item.mobile ? "" : "target='_blank' href='/commentators/"+item.operator+"-"+(item.slug ? item.slug : item.nick)+"'") +">" + item.nick + "</a>" +
         "</span>"  +
 
         "<span class='spacer'>•</span>" +
@@ -429,7 +430,15 @@ var dislikeComment = function (evt) {
     }
 
     var domTarget = $("[data-id=" + id + "-dislike]");
-    var itwas = like_.addCount(domTarget,'/static/img/thumbs-down.png');
+
+    var imgsrc = $("[data-id=" + id + "-dislike] > img");
+    if(imgsrc){
+        imgsrc = imgsrc.attr("src");
+    }else {
+        imgsrc = "/static/img/thumbs-down.jpg";
+    }
+
+    var itwas = like_.addCount(domTarget,imgsrc);
 
     var request = $.ajax({
         url: that.host + '/auth/dislike/' + id,
@@ -662,7 +671,15 @@ var likeComment = function (evt) {
         console.log("likeComment, " + id);
     }
     var domTarget = $("[data-id=" + id + "-like]");
-    var itwas = addCount(domTarget,'/static/img/thumbs-up.png');
+
+    var imgsrc = $("[data-id=" + id + "-like] > img");
+    if(imgsrc){
+        imgsrc = imgsrc.attr("src");
+    }else {
+        imgsrc = "/static/img/thumbs-up.jpg";
+    }
+
+    var itwas = addCount(domTarget,imgsrc);
 
     var request = $.ajax({
         url: that.host + '/auth/like/' + id,
@@ -785,11 +802,6 @@ function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
 
 
 var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, cb) {
-    if(window.debug) {
-        console.log("afterLoadArticle, length, limit, skip");
-        console.log("afterLoadArticle, ",length, limit, skip);
-        console.log("afterLoadArticle, ",length < limit - skip);
-    }
     if (length < limit - skip) {
         if(window.debug) {
             console.log("afterLoadArticle, scroll loader END <---");
@@ -801,9 +813,8 @@ var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, 
 
     if (err) {
         if(window.debug) {
-            console.log("afterLoadArticle, ",err);
-            console.log("afterLoadArticle, length: " + length + " ,limit:" + limit + " ,skip:" + skip);
-            console.log("afterLoadArticle, ERR loadArticle ");
+            console.log(err);
+            console.log("Error: afterLoadArticle, length: " + length + " ,limit:" + limit + " ,skip:" + skip);
         }
         return cb(end);
         //err.status === 400
@@ -855,25 +866,25 @@ module.exports = {
 var container = require("./container");
 
 
-var elkLoadArticle = function elkLoadArticle(that,operator, thekey, list, page, skip, limit,user, cb) {
+var elkLoadArticle = function elkLoadArticle(that, operator, thekey, list, page, skip, limit, user, cb) {
     //var url = host + "/listbykeyskiplimit/commentaries/" + key + "/" + page + "/" + skip + "/" + limit + "/";
     if (!page) {
         var error = "error, no page defined";
-        if(window.debug) {
-            console.log("elkLoadArticle, ",error);
+        if (window.debug) {
+            console.log("elkLoadArticle, ", error);
         }
-        return cb(null, error)
+        return cb(0, error)
     }
 
     var prefix = "/";
     prefix = prefix + operator;
-    prefix = prefix + "/_search?q=new_val."+thekey+":\"" + page + "\"&from=" + skip + "&size=" + limit;
+    prefix = prefix + "/_search?q=new_val." + thekey + ":\"" + page + "\"&from=" + skip + "&size=" + limit;
     var url = that.elk + prefix;
 
     ga('send', 'event', 'loadArticle', prefix, page, 0);
 
-    if(window.debug) {
-        console.log("elkLoadArticle, ",url);
+    if (window.debug) {
+        console.log("elkLoadArticle, " + url);
     }
     $.ajax({
         url: url,
@@ -883,19 +894,20 @@ var elkLoadArticle = function elkLoadArticle(that,operator, thekey, list, page, 
         success: function (json) {
 
             if (!json || !json.hits || !json.hits.hits) {
-                if(window.debug) {
-                    console.log("elkLoadArticle, ",json);
+                if (window.debug) {
+                    console.log("Error when loading elkLoadArticle, response is null or invalid ");
                 }
                 return cb(0, "json is invalid");
             }
 
-            if(window.debug) {
-                console.log("elkLoadArticle, loadArticle user filled");
-            }
+
             for (var i = 0; i < json.hits.hits.length; i++) {
                 var item = json.hits.hits[i];
                 that.addCommentHtmlNew(that, list, item._source.new_val, thekey, user, function () {
                     if (i == json.hits.hits.length - 1) {
+                        if (window.debug) {
+                            console.log("elkLoadArticle, load ok ");
+                        }
                         return cb(json.hits.hits.length, null);
                     }
                 });
@@ -903,6 +915,9 @@ var elkLoadArticle = function elkLoadArticle(that,operator, thekey, list, page, 
             }
         },
         error: function (err) {
+            if (window.debug) {
+                console.log("Error: elkLoadArticle + "+JSON.stringify(err));
+            }
             return cb(0, err);
         }
     });
@@ -910,7 +925,7 @@ var elkLoadArticle = function elkLoadArticle(that,operator, thekey, list, page, 
 
 
 module.exports = {
-    elkLoadArticle:elkLoadArticle
+    elkLoadArticle: elkLoadArticle
 };
 
 
@@ -1108,8 +1123,18 @@ var table;
 
 Comentarismo = function (options) {
 
+    //initialize comentarismo icons
+    if(options && options.icons) {
+        this.icons = {
+            commenticon: options.icons.commenticon,
+            thumbsup: options.icons.thumbsup,
+            thumbsdown: options.icons.thumbsdown,
+            replybtn: options.icons.replybtn
+        };
+    }
+
     //initialize comentarismo-container
-    container.initComentarismoContainer(options.selector, options.index);
+    container.initComentarismoContainer(options.selector, options.index, this.icons);
 
     //start analytics
     analytics('create', 'UA-51773618-1', 'auto');
@@ -1138,6 +1163,12 @@ Comentarismo = function (options) {
 
     if (options.debug && options.debug == "true") {
         window.debug = true;
+    }
+
+    //check if is mobile app
+    this.mobile = options.mobile ? true : false;
+    if(this.mobile && window.debug){
+        console.log("COMENTARISMO STARTING AS MOBILE APP. ")
     }
 
     table = options.table || "commentaries"
@@ -1217,6 +1248,8 @@ Comentarismo = function (options) {
         });
     }
 
+    var that = this;
+
     if (cached) {
         running = true;
         $('a#inifiniteLoader').show();
@@ -1227,7 +1260,7 @@ Comentarismo = function (options) {
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
-                end = e;
+                that.end = end = e;
             });
         });
     } else {
@@ -1239,7 +1272,7 @@ Comentarismo = function (options) {
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
-                end = e;
+                that.end = end = e;
             });
         });
     }
@@ -1278,7 +1311,7 @@ Comentarismo = function (options) {
 
 };
 
-Comentarismo.prototype.loadMoreComments = function(){
+Comentarismo.prototype.loadMoreComments = function(cb){
     var that = this;
     running = true;
     $('a#inifiniteLoader').show();
@@ -1291,7 +1324,10 @@ Comentarismo.prototype.loadMoreComments = function(){
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
-                end = e;
+                that.end = end = e;
+                if(cb){
+                    cb(null,e);
+                }
             });
         });
     } else {
@@ -1302,7 +1338,10 @@ Comentarismo.prototype.loadMoreComments = function(){
                 limit = limit + 50;
                 skip = skip + 50;
                 running = false;
-                end = e;
+                that.end = end = e;
+                if(cb){
+                    cb(null,e);
+                }
             });
         });
     }
@@ -1514,6 +1553,16 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list
     var date_cmt = moment.utc(item.created).toString();
     var date_news = moment.utc(item.date).toString();
 
+    //verify if we are on mobile mode
+    if(that.mobile){
+        item.mobile = true;
+    }
+
+    //add icon customizations
+    if(that.icons){
+        item.icons = that.icons;
+    }
+
     var replies = "";
     if (item && item.replies && item.replies.length > 0) {
         if (window.debug) {
@@ -1532,6 +1581,9 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list
             reply.titleurlize = item.titleurlize;
             reply.title = item.title;
 
+            if(that.mobile){
+                reply.mobile = true;
+            }
             var newone = create_.createReplyComment(reply, date_cmt);
             if (window.debug) {
                 console.log("addCommentHtmlNew, createReplyComment after, ", newone);
@@ -1578,6 +1630,28 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list
 
         return cb();
     }
+};
+
+Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie){
+    $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+
+        if(options.url && options.url.indexOf("elk.")!==-1){
+            //skip elk operations
+        }else {
+            // if there is data being sent
+            // add the sessionId to it
+            if (options.data) {
+                options.data += '&' + cookie;
+            }
+
+            // if there is no data being sent
+            // create the data and add the sessionId
+            else {
+                options.data = cookie;
+            }
+        }
+
+    });
 };
 },{"./funcs/container.js":1,"./funcs/count_api.js":2,"./funcs/count_elk.js":3,"./funcs/create.js":4,"./funcs/delete_.js":5,"./funcs/dislike.js":6,"./funcs/form_.js":7,"./funcs/like.js":8,"./funcs/load_api.js":9,"./funcs/load_elk.js":10,"emojione":12,"ga-browser":13,"jdenticon":15,"jquery":16,"md5":17,"moment":21,"underscore":22}],12:[function(require,module,exports){
 /* jshint maxerr: 10000 */

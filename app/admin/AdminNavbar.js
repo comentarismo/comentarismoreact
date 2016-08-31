@@ -44,7 +44,7 @@ module.exports = React.createClass({
                         </NavDropdown>
 
                         <NavDropdown eventKey={1} title="Commentators" id="basic-nav-dropdown">
-                            <MenuItem eventKey={1.1} href="/admin/l/commentator/languages/english/0/50/maxdate">English</MenuItem>
+                            <MenuItem eventKey={1.1} href="/admin/l/commentator/languages/english/0/50/maxDate">English</MenuItem>
                             <MenuItem eventKey={1.2} href="/admin/l/commentator/languages/spanish/0/50/maxDate">Spanish</MenuItem>
                             <MenuItem eventKey={1.3} href="/admin/l/commentator/languages/french/0/50/maxDate">French</MenuItem>
                             <MenuItem eventKey={1.4} href="/admin/l/commentator/languages/italian/0/50/maxDate">Italian</MenuItem>

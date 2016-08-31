@@ -27,6 +27,7 @@
     "d3": "^3.5.17",
     "drift-zoom": "^0.3.4",
     "ejs": "^2.3.4",
+    "elasticsearch": "^11.0.1",
     "emojione": "^2.1.4",
     "express": "^4.13.3",
     "ga-browser": "^1.0.0",

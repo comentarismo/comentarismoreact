@@ -204,7 +204,7 @@ var CommentsList = React.createClass({
         console.log("onclickDelete", target);
 
         handleDeleteButton($, target, function(err){
-            if(err){
+            if(!err){
                 $(`#${id}`).hide();
             } else {
                 $(`#error-${id}`).html("delete failed " + JSON.stringify(err));

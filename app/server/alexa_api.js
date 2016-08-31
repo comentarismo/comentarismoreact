@@ -6,6 +6,8 @@ import config from 'config'
 var host = config.BASE_URL;
 import r from 'rethinkdb';
 
+let {getAllByIndexOrderBySkipLimit} = require("./comentarismo_api");
+
 /** LOGGER **/
 var log = require("./logger");
 var logger = log.getLogger();
@@ -51,8 +53,8 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort, conn, 
                     };
 
                     //var target = `${host}/${urlTag}`;
-
-                    getAllByIndexOrderByFilterDateSkipLimit(table, index, value, skip, limit, sort, conn, function (err, r) {
+                    //table, index, value, skip, limit, sort, conn, cb
+                    getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, r) {
                         if (err) {
                             cb("error when running --> " + target);
                         } else {
@@ -71,6 +73,20 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort, conn, 
     });
 }
 
+/**
+ * Deprected - not used, not performant.
+ * Use getAllByIndexOrderBySkipLimit instead
+ *
+ * @param table
+ * @param index
+ * @param value
+ * @param skip
+ * @param limit
+ * @param sort
+ * @param conn
+ * @param cb
+ * @returns {*}
+ */
 export function getAllByIndexOrderByFilterDateSkipLimit(table, index, value, skip, limit, sort, conn, cb) {
     if (!table || !index || !value) {
         logger.warn("table --> " + table + " index -> " + index + " value --> " + value);

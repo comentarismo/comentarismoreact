@@ -244,3 +244,8 @@ https://www.npmjs.com/package/websockets-streaming-audio
 https://github.com/TooTallNate/node-speaker
 
 
+
+$ rethinkdb proxy --join 91.121.75.229:29015
+
+$ RETHINKURL=localhost forever updateImagesProductNewsWebDriver.js
+$ RETHINKURL=localhost node updateSentimentNews.js

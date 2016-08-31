@@ -247,7 +247,7 @@ server.get('/api/commentators/:id', (req, res)=> {
         //-------REDIS CACHE END ------//
 
 
-        getCommentator(req.params.id, conn, function (err, data) {
+        getCommentatorByNick(req.params.id, conn, function (err, data) {
             if (err) {
                 logger.info("Error: " + err);
                 //console.error(err.stack);
@@ -507,7 +507,7 @@ server.get('/api/news/:id', (req, res)=> {
                 logger.info("News not found --> " + req.params.id);
                 return res.status(404).send("News not found --> " + req.params.id);
             }
-            getAllByIndexOrderBySkipLimit("commentaries", "titleurlize", req.params.id, 0, 50, sort, conn, function (err, comments) {
+            getAllByIndexSkipLimit("commentaries", "titleurlize", req.params.id, 0, 50, conn, function (err, comments) {
                 if (err) {
                     console.error(err.stack);
                     return res.status(500).send('Something broke!');

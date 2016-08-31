@@ -13,6 +13,8 @@ var log = require("./logger");
 var logger = log.getLogger();
 /** LOGGER **/
 
+var elk_api = require("./elk_api");
+
 var errMsg = "Error: ";
 export function getAllPluckDistinct(conn, table, pluck, cb) {
     if (!table || !pluck) {
@@ -117,19 +119,20 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     if (sort) {
         indexSort = sort;
     }
+    console.log("getAllByIndexOrderBySkipLimit, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+
     r.table(table)
-        .getAll(value, {index: index})
-        .limit(50000)
-        .orderBy(r.desc(indexSort))
+        .orderBy({"index": r.desc(indexSort)})
+        .filter(r.row(index).eq(value))
         .skip(skip).limit(limit)
         .run(conn, function (err, cursor) {
             if (err || !cursor) {
-                //logger.info(err);
+                logger.info(err);
                 cb(err);
             } else {
                 cursor.toArray(function (err, results) {
                     if (err) return cb(err);
-                    //logger.info(results.length);
+                    console.log("getAllByIndexOrderBySkipLimit", results.length);
                     cb(null, results);
                 });
             }
@@ -142,6 +145,7 @@ export function getAllByIndexSkipLimit(table, index, value, skip, limit, conn, c
         logger.warn(errMsg + "getAllByIndexSkipLimit --> search query is not correct.");
         return cb()
     }
+    console.log("getAllByIndexSkipLimit, ", " r.table('" + table + "').getAll('" + value + "', {index: '" + index + "'}).skip(" + skip + ").limit(" + limit + ")");
 
     r.table(table)
         .getAll(value, {index: index})
@@ -176,25 +180,44 @@ export function getCommentator(id, conn, cb) {
     }
     //get commentator by id
     getByID("commentator", id, conn, function (err, commentator) {
-        if (err || !commentator) {
-            logger.warn(err);
-            cb(`getByID commentator ${id} not found`);
-        } else {
-            //get all comments by index nick
-            //table, index, value, skip, limit, sort, conn, cb
-            getAllByIndexOrderBySkipLimit("commentaries", "nick", commentator.nick, 0, 50, "date", conn, function (err, comments) {
-                if (err || !commentator) {
-                    if (err) {
-                        logger.warn(err);
-                    }
-                    cb(`getAllByIndexOrderBySkipLimit commentator nick ${commentator.nick} not found`);
-                } else {
-                    commentator.comments = comments;
-                    //logger.info(commentator);
-                    cb(null, commentator);
+        //if (err || !commentator) {
+        logger.warn(err);
+        console.log(`getByID commentator ${id} not found`);
+        //} else {
+        //get all comments by index nick
+        //table, index, value, skip, limit, sort, conn, cb
+        //
+        var nick = commentator ? commentator.nick : id;
+
+        getAllByIndexSkipLimit("commentaries", "nick", nick, 0, 50, conn, function (err, comments) {
+            if (err || !commentator) {
+                if (err) {
+                    logger.warn(err);
                 }
-            });
-        }
+
+                //TODO: create commentator if comments are returned from elk
+
+                var commentator = {
+                    "categories": comments[0].categories,
+                    "countries": comments[0].countries,
+                    "genre": comments[0].genre,
+                    "id": comments[0].id,
+                    "languages": comments[0].languages,
+                    "nick": comments[0].nick,
+                    "operator": comments[0].operator,
+                    "slug": comments[0].nick,
+                    "totalComments": comments.length
+                };
+
+                cb(null, commentator);
+                //cb(`getAllByIndexOrderBySkipLimit commentator nick ${commentator.nick} not found`);
+            } else {
+                commentator.comments = comments;
+                //logger.info(commentator);
+                cb(null, commentator);
+            }
+        });
+        //}
     });
 }
 
@@ -205,24 +228,82 @@ export function getCommentatorByNick(id, conn, cb) {
     }
     //get commentator by id
     getOneBySecondaryIndex("commentator", "nick", id, conn, function (err, commentator) {
+        var nick = commentator ? commentator.nick : id;
+        var index = commentator ? commentator.operator : "_all";
         if (err || !commentator) {
-            logger.warn(err);
-            cb(err);
-        } else {
-            logger.warn(commentator)
-            //get all comments by index nick
-            getAllByIndexOrderBySkipLimit("commentaries", "nick", commentator.nick,
-                0, 50, "date", conn, function (err, comments) {
-                    if (err || !commentator) {
-                        logger.info(err);
-                        cb(err);
-                    } else {
-                        commentator.comments = comments;
-                        logger.info(commentator.comments.length);
-                        cb(null, commentator);
-                    }
-                });
+            logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ",err);
         }
+        //get all comments by index nick
+
+        elk_api.getElkByQuery(index, 'commentaries', {
+            "query": {
+                "bool": {
+                    "should": [
+                        {
+                            "simple_query_string": {
+                                "query": nick,
+                                "fields": [
+                                    "new_val.nick"]
+                            }
+                        }]
+                }
+            },
+            "size": 100
+        }, function (err, resp) {
+            if (err) {
+                logger.info(err);
+                cb(err);
+            } else if (!resp || resp.length === 0) {
+                if(!commentator){
+                    commentator = {
+                        "categories": "",
+                        "countries": "",
+                        "genre": "",
+                        "id": "",
+                        "languages": "",
+                        "nick": id,
+                        "operator": "",
+                        "slug": "",
+                        "totalComments": 0
+                    };
+                }
+                commentator.comments = [];
+
+                console.log("Got no comments :(");
+                cb(null, commentator);
+            } else {
+
+                if(!commentator){
+                    commentator = {
+                        "categories": resp[0].categories,
+                        "countries": resp[0].countries,
+                        "genre": resp[0].genre,
+                        "id": resp[0].id,
+                        "languages": resp[0].languages,
+                        "nick": resp[0].nick,
+                        "operator": resp[0].operator,
+                        "slug": resp[0].nick,
+                        "totalComments": resp.length
+                    };
+                }
+
+                commentator.comments = resp;
+                console.log("Got comments :D ", resp.length);
+                cb(null, commentator);
+            }
+        });
+
+        //getAllByIndexSkipLimit("commentaries", "nick", commentator.nick,
+        //    0, 50, conn, function (err, comments) {
+        //        if (err || !commentator) {
+        //            logger.info(err);
+        //            cb(err);
+        //        } else {
+        //            commentator.comments = comments;
+        //            logger.info(commentator.comments.length);
+        //            cb(null, commentator);
+        //        }
+        //    });
     });
 }
 

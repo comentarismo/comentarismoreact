@@ -225,7 +225,7 @@ class Article extends Component {
 
                                     <div id="report">
                                         <div id="header" className="stroke"
-                                             style={{"background-image": "url('" + article.image + "')"}}>
+                                             style={{"backgroundImage": "url('" + article.image + "')"}}>
                                             <h1 id="video_title">{article.title}</h1>
                                             <h4>
                                                 <span

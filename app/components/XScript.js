@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 class XScript extends React.Component {
     static initScripts(el, url) {
-        var script = document.createElement('script')
+        var script = document.createElement('script');
         script.setAttribute('type', 'text/javascript');
         script.setAttribute('src', url);
         el.appendChild(script);

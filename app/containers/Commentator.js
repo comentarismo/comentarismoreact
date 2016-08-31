@@ -4,9 +4,11 @@ import { connect } from 'react-redux'
 import { loadCommentatorDetail } from 'actions/commentators'
 import {XScript} from 'components/XScript'
 var MainNavbar = require('components/MainNavbar');
+import Icon from "components/Icon"
 
 import Date from "components/Date"
 import Helmet from "react-helmet";
+var moment = require("moment");
 
 class Commentator extends Component {
     static fetchData({ store, params }) {
@@ -24,6 +26,28 @@ class Commentator extends Component {
         if (!commentator.comments){
             commentator.comments = [];
         }
+
+        var commentContainer = <XScript index="nick"/>;
+
+        var commentsavgperday = 0.0;
+
+        try {
+            var dt = moment(commentator.date);
+            var today = moment();
+
+            var diffInDays = today.diff(dt, 'days'); // x days
+
+            commentsavgperday = parseFloat(article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+        }catch(e){
+            console.log("Error when getting commentsavgperday :| ",e);
+        }
+
+        if (typeof window !== 'undefined') {
+            $(".progress-bar").attr('aria-valuenow', 100)
+                .css({'width': 100 + '%'})
+                .text('Comments Analyzed: ' + 100 + '%');
+        }
+
         return (
             <div>
                 <Helmet
@@ -43,24 +67,49 @@ class Commentator extends Component {
                     <a id="comentarismo-operator" data-id={ commentator.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript index="nick"/>
+                    {commentContainer}
                     <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
-                        <div className="col-sm-10 col-sm-offset-1 col-xs-12 article-body ">
+                        <div className="article-body">
                             <div className="container">
                                 <div className="row">
                                     <div className="profile-div">
-                                        <a className='profile-bg profile-block'/>
-                                        <div>
-                                            <div className="profile-button">
-                                                <button className="btn btn-primary"><i
-                                                    className="glyphicon glyphicon-pencil"/>
-                                                </button>
+                                        <div id="report">
+                                            <div id="header" className="stroke"
+                                                 style={{"backgroundImage": "url('" + "https://unsplash.it/1400/350?random" + "')"}}>
+                                                <h1 id="video_title">{commentator.nick}</h1>
+                                                <h4>
+                                                <span
+                                                    id="channel_title">{commentator.operator ? commentator.operator : ""}</span> on <span id="network_title">Comment & Sentiment Analysis Project</span>
+                                                </h4>
+
+                                                <hr/>
+
+                                                <div className="row bignums">
+                                                    <div className="col-xs-4 col-xs-offset-4">
+                                                <span
+                                                    id="total_comments">{commentator.totalComments ? commentator.totalComments : ""}</span>
+                                                        <span className="desc">Total Comments</span>
+                                                    </div>
+                                                    <div className="col-xs-4">
+                                                <span
+                                                    id="comments_per_day">{commentsavgperday ? commentsavgperday.toFixed(2) : "0" }</span>
+                                                        <span className="desc">By Day</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <a title="" id="profile-avatar" href="#" className="profile-goup">
-                                                <img src="/static/img/comentarismo-extra-mini-logo.png"/>
-                                            </a>
+                                            <div className="row">
+                                                <div className="progress">
+                                                    <div className="progress-bar progress-bar-success" role="progressbar"
+                                                         aria-valuenow="0"
+                                                         aria-valuemin="0"
+                                                         aria-valuemax="100" style={{width: "0%"}}>
+                                                        Comments Analyzed: 0%
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
 
                                     </div>
                                     <div className="profile-nick">
@@ -118,20 +167,26 @@ class Commentator extends Component {
                                 <div id="comentarismo-container" className="comentarismo-comment">
                                     {
                                         commentator.comments.map((q)=> {
+                                            var date = q.date && q.date.epoch_time ? <Date date={q.date}/> : q.date;
+
                                             return (
                                                 <div key={q.id}
                                                      className="col-md-12">
                                                     <div className="col-sm-1 hidden-xs">
-                                                        <a className="avatar-{q.nick} img-responsive user-photo"/>
+                                                        <Icon nick={q.nick} size={50}/>
                                                     </div>
                                                     <div className="text-wrapper">
-                                                        <b>{q.date }</b>
+                                                        <b>{ date }</b>
                                                         <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b>{ q.title }</b>
                                                         </span>
                                                             <a href="#" className="permalink"> Read more</a>
                                                         </div>
+                                                        <div className="text">
+                                                            <p>Commentator: { q.nick }</p>
+                                                        </div>
+
                                                         <div className="text">
                                                             <p>{ q.comment }</p>
                                                         </div>
