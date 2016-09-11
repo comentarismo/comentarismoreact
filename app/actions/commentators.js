@@ -69,8 +69,16 @@ export function loadSuggestCommentDetail({ index,value,skip,limit }) {
 }
 
 export const LOADED_SENTIMENTCOMMENT_DETAIL = Symbol('LOADED_SENTIMENTCOMMENT_DETAIL');
-export function loadSentimentCommentDetail({ url }) {
+export function loadSentimentCommentDetail({ url, lang, refresh }) {
     var target = `${config.SNT_URL}/moody?vid=${url}`;
+    if(lang) {
+        target =  target+`&lang=${lang}`;
+    }
+
+    if(refresh){
+        target =  target+`&refresh=${refresh}`;
+    }
+
     console.log("loadSentimentCommentDetail -> ",target);
     return {
         [CHAIN_API]: [

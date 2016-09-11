@@ -39,8 +39,6 @@ class Product extends Component {
     render() {
         let { article } = this.props;
 
-        console.log(this.props)
-
         if (!article || !article.operator) {
             return (
                 <div>
@@ -69,6 +67,14 @@ class Product extends Component {
                         dangerouslySetInnerHTML={{__html: article.resume}}></div>
         }
 
+        var searchlist = this.props.article.search;
+
+        if (!searchlist) {
+            searchlist = [];
+            searchlist.push({title: article.title, gimage: article.image});
+        }
+
+
         return (
             <div>
                 <Helmet
@@ -83,7 +89,6 @@ class Product extends Component {
 
                     {"property": "og:image", "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <MainNavbar/>
                 <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
@@ -114,7 +119,7 @@ class Product extends Component {
 
                                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                                             <Tab eventKey={1} title="Images">
-                                                <PlayImages images={this.props.article.search} playing={true}
+                                                <PlayImages images={searchlist} playing={true}
                                                             playingtimeout={10000}/>
                                             </Tab>
                                             <Tab eventKey={2} title="Videos" disabled>

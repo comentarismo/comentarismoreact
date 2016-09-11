@@ -10,6 +10,14 @@ export function getAllByIndexFilterSkipLimit(table,index,value,skip,limit,sort,c
     });
 }
 
+export function getAllByIndexOrderByFilterSkipLimit(table,index,value,skip,limit,sort,orderby,cb){
+    console.log("/gapi/"+table+"/"+index+"/"+value+"/"+skip+"/"+limit+"?sort="+sort+"&order="+orderby);
+    superAgent
+        .get("/gapi/"+table+"/"+index+"/"+value+"/"+skip+"/"+limit+"?sort="+sort+"&order="+orderby).end(function(err, res){
+        cb(err,res)
+    });
+}
+
 export function getAPIAllByIndexFilterSkipLimit(table,index,value,skip,limit,sort,cb){
     var target = `${host}/listallbyindexorderby/${table}/${index}/${value}/${skip}/${limit}/${sort}/`;
     console.log(target);
@@ -41,8 +49,15 @@ export function doImageResize(url,data,cb){
     });
 }
 
-export function saSentimentCommentDetail(url,cb){
+export function saSentimentCommentDetail(url,lang,refresh,cb){
     var target = `${config.SNT_URL}/moody?vid=${url}`;
+    if(lang) {
+        target =  target+`&lang=${lang}`;
+    }
+
+    if(refresh){
+        target =  target+`&refresh=${refresh}`;
+    }
     console.log(target);
     superAgent.get(target).end(function(err, res){
         console.log(res.body)

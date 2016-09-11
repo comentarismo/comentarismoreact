@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 import _ from 'lodash'
 var MainNavbar = require('components/MainNavbar');
 
-import {getAllByIndexFilterSkipLimit} from '../middleware/sa'
+import {getAllByIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
 var Product = require('components/Product');
 
@@ -32,7 +32,7 @@ class ProductContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByIndexFilterSkipLimit("product", index, value, skip, limit, "date", function (err, res) {
+        getAllByIndexOrderByFilterSkipLimit("product", index, value, skip, limit, "date","desc",  function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;

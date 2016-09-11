@@ -30,7 +30,7 @@ var REDIS_PORT = process.env.REDIS_PORT || 6379;
 var REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
 
-let { getAllByIndexOrderBySkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
+let { getAllByIndexOrderBySkipLimit,getAllByIndexOrderByFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -378,9 +378,11 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
     var limit = parseInt(req.params.limit);
 
     var sort = req.query.sort;
+    var order = req.query.order || "desc";
 
-    var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}`;
-    //logger.info(urlTag);
+
+    var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}&order=${order}`;
+    // logger.info(urlTag);
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
@@ -400,7 +402,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
         //-------REDIS CACHE END ------//
 
 
-        getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
+        getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, function (err, data) {
             if (err) {
                 console.error(err.stack);
                 return res.status(500).send('Something broke!');

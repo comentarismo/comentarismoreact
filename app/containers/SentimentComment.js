@@ -1,22 +1,24 @@
-import React, { Component,ReactClass,PropTypes } from 'react';
+import React, {Component, ReactClass, PropTypes} from 'react';
 
-import { State, Navigation } from 'react-router';
+import {State, Navigation} from 'react-router';
 
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import {connect} from 'react-redux';
+import {Link} from 'react-router';
 
 import Helmet from "react-helmet";
 import Icon from "components/Icon"
 
+import {FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 
-import { loadSentimentCommentDetail } from 'actions/commentators'
+
+import {loadSentimentCommentDetail} from 'actions/commentators'
 
 var $ = require('jquery')
 var emojione = require("emojione");
 import Date from "components/Date"
-var MainNavbar = require('components/MainNavbar');
 
-var SentimentNavBar = require('components/SentimentNavbar');
+// var SentimentNavBar = require('components/SentimentNavbar');
+var MainNavbar = require('components/MainNavbar');
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -27,10 +29,10 @@ import YouTube from 'react-youtube';
 import BubbleChart from 'components/BubbleChart';
 
 class SentimentComment extends Component {
-    static fetchData({ store, params }) {
-        let { url } = params;
-        console.log("fetchData -> ", url);
-        return store.dispatch(loadSentimentCommentDetail({url}))
+    static fetchData({store, params}) {
+        let {url, lang, refresh} = params;
+        console.log("fetchData -> ", url, lang, refresh);
+        return store.dispatch(loadSentimentCommentDetail({url, lang, refresh}))
     }
 
 
@@ -41,15 +43,26 @@ class SentimentComment extends Component {
         };
     }
 
+    getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
     render() {
         //console.log(this.props)
-        let { comment } = this.state;
+        let {comment} = this.state;
+        let {url} = this.props.params;
         if (typeof window !== 'undefined') {
-            var url = this.props.params.url;
-
-            console.log("render -> ", url);
-            console.log("render -> ", comment.id);
-            console.log("render -> ", comment.metadata);
+            var vars = this.getUrlVars();
+            var lang = vars["lang"]
+            var refresh = vars["refresh"]
+            console.log("render -> ", url, lang, refresh);
         }
 
 
@@ -60,14 +73,14 @@ class SentimentComment extends Component {
                     title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": "Welcome to Comentarismo"},
-                    {"property": "og:type", "content": "article"}
-                ]}
-                    onChangeClientState={(newState) => console.log("Helmet state -> ",newState)}
+                        {"name": "description", "content": "Welcome to Comentarismo"},
+                        {"property": "og:type", "content": "article"}
+                    ]}
+                    onChangeClientState={(newState) => console.log("Helmet state -> ", newState)}
                 />
 
 
-                <Sentiment comment={comment} url={this.props.params.url}/>
+                <Sentiment comment={comment} url={url} lang={lang} refresh={refresh}/>
 
                 <div className="clearfix"></div>
                 <footer className="footer bg-dark">
@@ -101,28 +114,31 @@ var Sentiment = React.createClass({
     displayName: 'Sentiment',
 
     getInitialState: function () {
-        let { url,comment } = this.props;
+        let {url, comment, lang, refresh} = this.props;
+
         return {
             vid: url,
             comment: comment,
-            numBubbles:70,
+            numBubbles: 70,
+            lang: lang,
+            refresh: refresh,
         }
     },
 
     componentDidMount() {
-        let { url,comment } = this.props;
+        let {url, comment, lang, refresh} = this.props;
         if (!comment || !comment.metadata) {
             console.log("componentDidMount -> ", url)
             //this.props.loadSentimentCommentDetail({url});
 
-            saSentimentCommentDetail(url, function (err, res) {
+            saSentimentCommentDetail(url, lang, refresh, function (err, res) {
                 // Do something
                 if (err || !res || res.body.length == 0) {
                     console.log("Got error when trying to fallback on sentiment report :| ", err)
                 } else {
                     var comment = res.body;
                     console.log("fallback ok :D , updating view ", comment.metadata);
-                    this.setState({comment: comment});
+                    this.setState({comment: comment, lang: comment.metadata.language});
                     //this.forceUpdate();
                 }
             }.bind(this));
@@ -132,7 +148,14 @@ var Sentiment = React.createClass({
 
     runReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/sentiment/' + encodeURIComponent(this.state.vid);
+            window.location.href = '/sentiment/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "");
+        }
+    },
+
+
+    updateReport: function () {
+        if (typeof window !== 'undefined') {
+            window.location.href = '/sentiment/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "") + "&refresh=true";
         }
     },
 
@@ -141,9 +164,14 @@ var Sentiment = React.createClass({
         this.setState({vid: change});
     },
 
+    handleChangeLang: function (event) {
+        var change = event.target.value;
+        this.setState({lang: change});
+    },
+
     render: function () {
 
-        let { comment,numBubbles } = this.state;
+        let {comment, numBubbles} = this.state;
         var bubblechart = [];
 
         var emojis = {
@@ -283,29 +311,29 @@ var Sentiment = React.createClass({
 
         }
         const opts = {
-            height: '390',
+            height: '290',
             width: '640',
             playerVars: { // https://developers.google.com/youtube/player_parameters
                 autoplay: 1
             }
         };
 
-        if(this.state.comment.sentimentlist) {
+        if (this.state.comment.sentimentlist) {
             var that = this;
-            Object.keys(this.state.comment.sentimentlist).forEach(function(key) {
+            Object.keys(this.state.comment.sentimentlist).forEach(function (key) {
                 var row = that.state.comment.sentimentlist[key];
-                if (row){
+                if (row) {
                     for (var j = 0; j < row.length; j++) {
                         var row2 = row[j];
-                        if(row2 && row2.keywords){
-                            if(row2.sentimentscores){
-                                Object.keys(row2.sentimentscores).forEach(function(k) {
+                        if (row2 && row2.keywords) {
+                            if (row2.sentimentscores) {
+                                Object.keys(row2.sentimentscores).forEach(function (k) {
                                     var target = {
-                                        _id:k,
+                                        _id: k,
                                         sentiment: row2.sentimentscores[k],
-                                        value: bubblechart.length+10
+                                        value: bubblechart.length + 10
                                     }
-                                    if(bubblechart.length<numBubbles) {
+                                    if (bubblechart.length < numBubbles) {
                                         bubblechart.push(target);
                                     }
                                 });
@@ -320,7 +348,7 @@ var Sentiment = React.createClass({
 
         return (
             <div className="container">
-                <SentimentNavBar />
+                <MainNavbar />
 
                 <div className="navbar navbar-default">
                     <div className="container-fluid">
@@ -342,7 +370,8 @@ var Sentiment = React.createClass({
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <span className="navbar-brand">Comentarismo, Sentiment Analyzer</span>
+                            <span
+                                className="navbar-brand">Insert a Youtube URL, Select the language and press Run.</span>
                         </div>
                         <div id="navbar" className="navbar-collapse collapse col-xs-12 col-md-12 col-lg-12">
                             <div className="navbar-form navbar-left form-horizontal">
@@ -350,35 +379,54 @@ var Sentiment = React.createClass({
                                     <input type="text" className="form-control" placeholder="Post URL" name="vid"
                                            value={this.state.vid} onChange={this.handleChange}
                                            style={{width: "350px"}}/>
-                                    <a className="btn btn-default" onClick={this.runReport}>Run
+                                    <FormControl componentClass="select" placeholder="select" value={this.state.lang}
+                                                 onChange={this.handleChangeLang}>
+                                        <option value="en">English</option>
+                                        <option value="es">Spanish</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="fr">French</option>
+                                        <option value="it">Italian</option>
+                                        <option value="ru">Russian</option>
+                                        <option value="hr">Croatian</option>
+                                    </FormControl>
+
+                                    <a className="btn btn-primary" onClick={this.runReport}>Run
                                     </a>
                                 </div>
                             </div>
                             <ul className="nav navbar-nav">
-
                             </ul>
                         </div>
                     </div>
                 </nav>
 
+                <a type="button" className="btn btn-primary" onClick={this.updateReport}>Update Report</a>
+
+
                 <div id="report">
                     <div id="header" className="stroke">
                         <h1 id="video_title">{comment.title}</h1>
                         <h4>
-                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span>
-                            on <span
-                            id="network_title">{comment.type}</span>
+                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span> on
+                            <span id="network_title">{comment.type}</span>
                         </h4>
 
                         <hr/>
 
+
                         <div className="row bignums">
-                            <div className="col-xs-4 col-xs-offset-4">
+                            <div className="col-xs-2 col-xs-offset-2">
+                                <span
+                                    id="total_comments">{comment.metadata ? comment.metadata.videoviews : ""} </span>
+                                <span className="desc">Total Views</span>
+                            </div>
+
+                            <div className="col-xs-2 col-xs-offset-2">
                                 <span
                                     id="total_comments">{comment.metadata ? comment.metadata.totalcomments : ""}</span>
                                 <span className="desc">Total Comments</span>
                             </div>
-                            <div className="col-xs-4">
+                            <div className="col-xs-2">
                                 <span
                                     id="comments_per_day">{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</span>
                                 <span className="desc">By Day</span>
@@ -393,6 +441,7 @@ var Sentiment = React.createClass({
                                 Comments Analyzed: 0%
                             </div>
                         </div>
+
                     </div>
                     <div className="row">
                         <YouTube
@@ -427,7 +476,7 @@ var Sentiment = React.createClass({
                             max="250"
                             value={numBubbles}
                             steps="250"
-                            onChange={this.onChange} />
+                            onChange={this.onChange}/>
                     </div>
 
                     <CommentsView comment={this.state.comment.topcomments} emojis={emojis}
@@ -437,8 +486,8 @@ var Sentiment = React.createClass({
             </div>
         );
     },
-    onChange: function(e) {
-        this.setState({numBubbles:e.target.value})
+    onChange: function (e) {
+        this.setState({numBubbles: e.target.value})
     },
     _onReady: function (event) {
         // access to player in all event handlers via event.target
@@ -460,7 +509,7 @@ var CommentsView = React.createClass({
     displayName: 'CommentsView',
 
     getInitialState: function () {
-        let { comment,emojis,sentimentlist } = this.props;
+        let {comment, emojis, sentimentlist} = this.props;
         return {
             comment: comment,
             emojis: emojis,
@@ -470,64 +519,64 @@ var CommentsView = React.createClass({
 
     componentWillReceiveProps: function (p) {
         //console.log(p);
-        let { comment,sentimentlist } = p;
+        let {comment, sentimentlist} = p;
         console.log("componentWillReceiveProps -> ")
         this.setState({comment: comment, sentimentlist: sentimentlist});
     },
 
 
     loadterrible: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[terrible]});
     },
     loadsucks: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[sucks]});
     },
     loadbad: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[bad]});
     },
     loadnotgood: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[notgood]});
     },
     loadeh: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[eh]});
     },
     loadneutral: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[neutral]});
     },
     loadok: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[ok]});
     },
     loadgood: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[good]});
     },
     loadlikeit: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[likeit]});
     },
     loadlovedit: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[lovedit]});
     },
     loadawesome: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[awesome]});
     },
     loadunknown: function () {
-        let { sentimentlist } = this.state;
+        let {sentimentlist} = this.state;
         this.setState({comment: sentimentlist[unknown]});
     },
 
 
     render: function () {
-        let { comment,emojis } = this.state;
+        let {comment, emojis} = this.state;
 
         if (!comment) {
             comment = [];
@@ -548,8 +597,7 @@ var CommentsView = React.createClass({
 
         return (
 
-            <div id="comentarismo-container" className="comentarismo-comment"
-                 className="col-md-10">
+            <div id="comentarismo-container" className="comentarismo-comment col-md-10">
 
                 <div className="col-md-12">
                     {loadterribleButton}
@@ -593,7 +641,10 @@ var CommentsView = React.createClass({
                                             <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b><img src="/static/img/thumbs-up.png"
-                                                                    style={{width: "10px",height: "10px"}}/> { q.likes }
+                                                                    style={{
+                                                                        width: "10px",
+                                                                        height: "10px"
+                                                                    }}/> { q.likes }
                                                             </b>
                                                         </span>
                                             </div>
@@ -638,7 +689,7 @@ SentimentComment.propTypes = {
 };
 
 
-export { SentimentComment }
+export {SentimentComment}
 export default connect(mapStateToProps, {loadSentimentCommentDetail})(SentimentComment)
 
 

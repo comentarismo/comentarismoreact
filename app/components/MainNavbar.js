@@ -35,12 +35,12 @@ module.exports = React.createClass({
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav pullRight>
+                        <NavDropdown eventKey={3} title="Videos" id="basic-nav-dropdown">
+                            <MenuItem eventKey={3.1} href="/topvideos/type/YouTubeVideo">Youtube</MenuItem>
+                        </NavDropdown>
+
                         <NavDropdown eventKey={3} title="Products" id="basic-nav-dropdown">
-                            <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
-                                <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
-                                    <MenuItem eventKey={3.1} href="/product/genre/bestseller">Best Seller</MenuItem>
-                                </NavDropdown>
-                            </NavDropdown>
+                            <MenuItem eventKey={3.1} href="/product/genre/bestseller">Amazon Best Seller</MenuItem>
                         </NavDropdown>
 
                         <NavDropdown eventKey={3} title="World News" id="basic-nav-dropdown">

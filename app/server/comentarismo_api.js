@@ -139,6 +139,43 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
         });
 }
 
+export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, cb) {
+    if (!table || !index || !value) {
+        logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
+        logger.warn(errMsg + "getAllByIndexOrderByFilterSkipLimit --> search query is not correct.");
+        return cb()
+    }
+    var indexSort = "date";
+    if (sort) {
+        indexSort = sort;
+    }
+    if(order == "asc"){
+        order = r.asc(indexSort)
+        console.log("getAllByIndexOrderByFilterSkipLimit, ", " r.table('" + table + "').orderBy({'index': r.asc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    }else {
+        order = r.desc(indexSort)
+        console.log("getAllByIndexOrderByFilterSkipLimit, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    }
+
+    r.table(table)
+        .orderBy({"index": order})
+        .filter(r.row(index).eq(value))
+        .skip(skip).limit(limit)
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                logger.info(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    console.log("getAllByIndexOrderByFilterSkipLimit", results.length);
+                    cb(null, results);
+                });
+            }
+        });
+}
+
+
 export function getAllByIndexSkipLimit(table, index, value, skip, limit, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
