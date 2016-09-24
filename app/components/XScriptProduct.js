@@ -16,6 +16,8 @@ class XScript extends React.Component {
     //'cached: "elk.comentarismo.com",'+
 
     render() {
+        var replybtn = "<img src='/static/img/comentarismo_reply.jpg' style='width:10px; height:10px;'/>";
+
         return <div ref="it"
                     dangerouslySetInnerHTML={{__html:
                     '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
@@ -23,12 +25,17 @@ class XScript extends React.Component {
                       'var operator = $("#comentarismo-operator").attr("data-id"); ' +
                       'var page = $("#comentarismo-page").attr("data-id"); '+
                         'var comentarismo = new Comentarismo({' +
+                            ' icons: {'+
+                                'commenticon: "/static/img/comentarismo_add_comment.jpg",'+
+                                'thumbsup: "/static/img/thumbs-up.jpg",'+
+                                'thumbsdown: "/static/img/thumbs-down.jpg",'+
+                                'replybtn: "'+ replybtn +'"'+
+                            ' },'+
                             'host: "api.comentarismo.com",' +
-                            'cached: "elk.comentarismo.com",'+
+                            'cached: "api.comentarismo.com/elk",'+
                             'table:"commentaries_product",' +
                             'forum: "comentarismo",' +
-                            'debug: "true",' +
-                            'key: "GtD6uKQYLccK59umRSrwque0JH6s6l5xi3epPy-SGhJ0P6PC55jZg7-vI41tPfRx6wdko8t1",' +
+                            'key: "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY=",' +
                             'page: encodeURIComponent(page),' +
                             'operator: operator,' +
                             "index:'"+this.props.index+"',"+

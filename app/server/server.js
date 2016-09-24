@@ -38,11 +38,11 @@ let scriptSrcs;
 
 let conn;
 
-var conn_url = process.env.RETHINKURL || 'g7-box';
-var dbport = process.env.RETHINKPORT || 28015;
-var authKey = process.env.RETHINKAUTHKEY || '';
+var conn_url = process.env.RETHINKDB_HOST || 'g7-box';
+var dbport = process.env.RETHINKDB_PORT || 28015;
+var authKey = process.env.RETHINKDB_KEY || '';
 
-var rethinkdb_table = process.env.RETHINKTABLE || 'test';
+var rethinkdb_table = process.env.RETHINKDB_TABLE || 'test';
 
 var aday = 86400000;
 var dayHours = 24;

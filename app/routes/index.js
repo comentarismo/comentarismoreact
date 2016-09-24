@@ -31,7 +31,7 @@ import SentimentComment from 'containers/SentimentComment';
 
 import TopVideos from 'containers/TopVideos';
 
-import Search from 'containers/Search';
+import Search from 'containers/SearchComponent';
 
 export default function (history) {
     return (
@@ -53,8 +53,7 @@ export default function (history) {
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
-                <Route path="admin/r/:table/:index" component={AdminEdit}/>
-                <Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
+
                 <Route path="search" component={Search}/>
 
                 <IndexRoute component={IntroOld}/>
@@ -63,5 +62,7 @@ export default function (history) {
         </Router>
     );
 };
+//<Route path="admin/r/:table/:index" component={AdminEdit}/>
+//<Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
 //<Route path="sentiment/likes/:url" component={SentimentComment}/>
 //<Route path="sentiment/all/:url" component={SentimentComment}/>

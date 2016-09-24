@@ -1,4 +1,4 @@
-import React, { Component,ReactClass,PropTypes } from 'react';
+import React, {Component, ReactClass, PropTypes} from 'react';
 
 import * as _ from "lodash";
 
@@ -9,9 +9,9 @@ import Sentiment from "components/Sentiment";
 class SearchCommentsList extends React.Component {
 
     render() {
-        const { hits } = this.props;
+        const {hits} = this.props;
 
-        if(!hits || hits.length == 0){
+        if (!hits || hits.length == 0) {
             return ("")
         }
 
@@ -30,13 +30,14 @@ class SearchCommentsList extends React.Component {
                     {_.map(hits, hit => (
 
                         <tr key={hit._id}>
-                            <td><Icon nick={hit._source.new_val ? hit._source.new_val.nick : ""} size={40}/>{hit._source.new_val? hit._source.new_val.operator : ""}</td>
-                            <td><b>{hit._source.new_val? hit._source.new_val.nick : ""}</b></td>
+                            <td><Icon nick={hit._source ? hit._source.nick : ""}
+                                      size={40}/>{hit._source ? hit._source.operator : ""}</td>
+                            <td><b>{hit._source ? hit._source.nick : ""}</b></td>
                             <td>
-                                <Sentiment sentiment={hit._source.new_val? hit._source.new_val.sentiment : ""} />
-                                {hit._source.new_val? hit._source.new_val.comment : ""}
+                                <Sentiment sentiment={hit._source ? hit._source.sentiment : ""}/>
+                                {hit._source ? hit._source.comment : ""}
                             </td>
-                            <td>{hit._source.new_val? (hit._source.new_val.title && hit._source.new_val.title.length > 35 ? hit._source.new_val.title.substring(0,35) + "..." : hit._source.new_val.title) : ""}</td>
+                            <td>{hit._source ? (hit._source.title && hit._source.title.length > 35 ? hit._source.title.substring(0, 35) + "..." : hit._source.title) : ""}</td>
                         </tr>
                     ))}
                     </tbody>
@@ -46,4 +47,4 @@ class SearchCommentsList extends React.Component {
     }
 }
 
-export { SearchCommentsList }
+export {SearchCommentsList}

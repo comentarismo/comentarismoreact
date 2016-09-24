@@ -50,12 +50,14 @@ class Article extends Component {
         var commentsavgperday = 0.0;
 
         try {
-            var dt = moment(article.date);
-            var today = moment();
+            if (article && article.date && article.totalComments) {
+                var dt = moment(article.date);
+                var today = moment();
 
-            var diffInDays = today.diff(dt, 'days'); // x days
+                var diffInDays = today.diff(dt, 'days'); // x days
 
-            commentsavgperday = parseFloat(article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+                commentsavgperday = parseFloat(article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+            }
         }catch(e){
             console.log("Error when getting commentsavgperday :| ",e);
         }

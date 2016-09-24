@@ -26,7 +26,8 @@ class CommentatorContainer extends Component {
             skip: 0,
             limit: 5,
             articles: [],
-            hasMore: true
+            hasMore: true,
+            sidebarOpen: false, sidebarDocked: false
         };
     }
 
@@ -58,11 +59,32 @@ class CommentatorContainer extends Component {
         );
     }
 
+
+    onSetSidebarOpen(open) {
+        this.setState({sidebarOpen: open});
+    }
+
+    componentWillMount() {
+        var mql = window.matchMedia(`(min-width: 800px)`);
+        mql.addListener(this.mediaQueryChanged);
+        this.setState({mql: mql, sidebarDocked: mql.matches});
+    }
+
+    componentWillUnmount() {
+        this.state.mql.removeListener(this.mediaQueryChanged);
+    }
+
+    mediaQueryChanged() {
+        this.setState({sidebarDocked: this.state.mql.matches});
+    }
+
     render() {
 
         if (!this.state.articles) {
             this.state.articles = [];
         }
+
+        var sidebarContent = <b>Sidebar content</b>;
 
         return (
             <div>
@@ -78,6 +100,14 @@ class CommentatorContainer extends Component {
                     onChangeClientState={(newState) => console.log(newState)}
                 />
                 <AdminNavbar/>
+
+                <Sidebar sidebar={sidebarContent}
+                         open={this.state.sidebarOpen}
+                         docked={this.state.sidebarDocked}
+                         onSetOpen={this.onSetSidebarOpen}>
+                    <b>Main content</b>
+                </Sidebar>
+
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
                         <div className="col-xs-12">
@@ -173,6 +203,17 @@ var CommentatorList = React.createClass({
                         <div className="imageNoPadding">
                             <Icon nick={props.nick} size={125}/>
                         </div>
+                        <div className="col-xs-1">
+                            <a href={`/admin/r/${props.table}/${props.id}`}><i className="fa fa-pencil-square-o"
+                                                                               aria-hidden="true"/></a>
+                        </div>
+                        <div className="col-xs-1">
+                            <a href="#" onClick={this.onclickSpam}><i className="fa fa-trash-o" aria-hidden="true"/></a>
+                        </div>
+                        <div className="col-xs-1">
+                            <a href="#" onClick={this.onclickDelete}><i className="fa fa-times" aria-hidden="true"/></a>
+                        </div>
+                        <div id={`error-${props.id}`} className='error' style={{"display": "none"}}></div>
                     </div>
                     <div className="col-xs-10">
                         <div className='caption'>
@@ -191,6 +232,8 @@ var CommentatorList = React.createClass({
     }
 });
 
+var Sidebar = require('react-sidebar').default;
+
 var CommentsList = React.createClass({
 
     onclickSpam: function (event) {
@@ -203,8 +246,8 @@ var CommentsList = React.createClass({
         var target = `${host}/delete/commentaries/${id}/`;
         console.log("onclickDelete", target);
 
-        handleDeleteButton($, target, function(err){
-            if(!err){
+        handleDeleteButton($, target, function (err) {
+            if (!err) {
                 $(`#${id}`).hide();
             } else {
                 $(`#error-${id}`).html("delete failed " + JSON.stringify(err));
@@ -216,34 +259,40 @@ var CommentsList = React.createClass({
     render: function () {
         var props = this.props;
         return (
-            <div id={props.id} className="col-lg-12 col-md-12 col-sm-12 col-xs-12 thumbnail article">
-                <div className=''>
-                    <div className="col-xs-2">
-                        <div className="imageNoPadding">
-                            <Icon nick={props.nick} size={125}/>
+
+            <div>
+
+                <div id={props.id} className="col-lg-12 col-md-12 col-sm-12 col-xs-12 thumbnail article">
+
+
+                    <div className=''>
+                        <div className="col-xs-2">
+                            <div className="imageNoPadding">
+                                <Icon nick={props.nick} size={125}/>
+                            </div>
+                            <div className="col-xs-1">
+                                <a href={`/admin/r/${props.table}/${props.id}`}><i className="fa fa-pencil-square-o"
+                                                                                   aria-hidden="true"/></a>
+                            </div>
+                            <div className="col-xs-1">
+                                <a href="#" onClick={this.onclickSpam}><i className="fa fa-trash-o" aria-hidden="true"/></a>
+                            </div>
+                            <div className="col-xs-1">
+                                <a href="#" onClick={this.onclickDelete}><i className="fa fa-times" aria-hidden="true"/></a>
+                            </div>
+                            <div id={`error-${props.id}`} className='error' style={{"display": "none"}}></div>
                         </div>
-                        <div className="col-xs-1">
-                            <a href={`/admin/r/${props.table}/${props.id}`}><i className="fa fa-pencil-square-o"
-                                                                               aria-hidden="true"/></a>
-                        </div>
-                        <div className="col-xs-1">
-                            <a href="#" onClick={this.onclickSpam}><i className="fa fa-trash-o" aria-hidden="true"/></a>
-                        </div>
-                        <div className="col-xs-1">
-                            <a href="#" onClick={this.onclickDelete}><i className="fa fa-times" aria-hidden="true"/></a>
-                        </div>
-                        <div id={`error-${props.id}`} className='error' style={{"display": "none"}}></div>
-                    </div>
-                    <div className="col-xs-10">
-                        <div className='caption'>
-                            <h3 className='article-header'>{props.title}</h3>
-                            <p>Date: <Date date={props.date}/></p>
-                            <p>Interest:
-                                {props.genre && Object.keys(props.genre).map(function (char, idx) {
-                                    return <span key={idx}> {props.genre[idx]} </span>
-                                }.bind(this))}</p>
-                            <div className='source' key={props.id}
-                                 dangerouslySetInnerHTML={{__html:props.comment}}></div>
+                        <div className="col-xs-10">
+                            <div className='caption'>
+                                <h3 className='article-header'>{props.title}</h3>
+                                <p>Date: <Date date={props.date}/></p>
+                                <p>Interest:
+                                    {props.genre && Object.keys(props.genre).map(function (char, idx) {
+                                        return <span key={idx}> {props.genre[idx]} </span>
+                                    }.bind(this))}</p>
+                                <div className='source' key={props.id}
+                                     dangerouslySetInnerHTML={{__html:props.comment}}></div>
+                            </div>
                         </div>
                     </div>
                 </div>

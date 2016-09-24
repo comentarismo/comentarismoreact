@@ -13,6 +13,7 @@ var buildProperties = {
     cssFiles: [
         //'app/styles/main.scss',
         'app/css/all.css',
+        './vendor/comentarismo-client.css',
         './bower_components/bootstrap/dist/css/bootstrap.css',
         './bower_components/components-font-awesome/css/font-awesome.css'
     ],

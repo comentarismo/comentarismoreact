@@ -109,8 +109,8 @@ Avoid errors like: `make: g++: Command not found` by installing:
 * Make sure `etc/hosts` have `g7-box` and is properly configured
 * Make sure Redis server is started 
 * Default Start `NODE_ENV=production NODE_PATH=./app node app/server`
-* Configure Redis and RethinkDB: `NODE_ENV=production REDISURL=37.139.13.224 REDISPASS=go3322321 RETHINKURL=g7-box NODE_PATH=./app nohup forever app/server &.`
-* Optional password `RETHINKAUTHKEY=12345 REDISPASS=12345`
+* Configure Redis and RethinkDB: `NODE_ENV=production REDIS_HOST=37.139.13.224 REDIS_PASSWORD=go3322321 RETHINKDB_HOST=g7-box NODE_PATH=./app nohup forever app/server &.`
+* Optional password `RETHINKDB_KEY=12345 REDIS_PASSWORD=12345`
 
 # VI
 ```
@@ -247,5 +247,5 @@ https://github.com/TooTallNate/node-speaker
 
 $ rethinkdb proxy --join 91.121.75.229:29015
 
-$ RETHINKURL=localhost forever updateImagesProductNewsWebDriver.js
-$ RETHINKURL=localhost node updateSentimentNews.js
+$ RETHINKDB_HOST=localhost forever updateImagesProductNewsWebDriver.js
+$ RETHINKDB_HOST=localhost node updateSentimentNews.js
