@@ -1,7 +1,7 @@
 var xml2js = require("xml2js");
 //var config = require('config')
 //var ELK_URL = config.ELK_URL;
-var ELK_URL = "http://elk.comentarismo.com";
+var ELK_URL = "http://188.166.57.236:8080";
 
 /** LOGGER **/
 var log = require("./logger");
@@ -15,6 +15,7 @@ var client = new elasticsearch.Client({
     log: 'info'
 });
 export function getElkByQuery(index, type, query, cb) {
+    console.log("getElkByQuery, ",index, type, query)
 
     client.search({
         index: index,
@@ -45,7 +46,7 @@ function filterArray(hits, i, target, cb) {
     var row = hits[i];
     if (row) {
         try {
-            var r = row["_source"]["new_val"];
+            var r = row["_source"];
             target.push(r);
         }catch(e){
             console.log("filterArray err: ",err);

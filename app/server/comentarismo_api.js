@@ -268,7 +268,7 @@ export function getCommentatorByNick(id, conn, cb) {
         var nick = commentator ? commentator.nick : id;
         var index = commentator ? commentator.operator : "_all";
         if (err || !commentator) {
-            logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ",err);
+            logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ",nick, err);
         }
         //get all comments by index nick
 
@@ -280,7 +280,7 @@ export function getCommentatorByNick(id, conn, cb) {
                             "simple_query_string": {
                                 "query": nick,
                                 "fields": [
-                                    "new_val.nick"]
+                                    "nick"]
                             }
                         }]
                 }

@@ -265,13 +265,13 @@ server.get('/api/commentators/:id', (req, res)=> {
                 res.send(data);
             } else {
 
-                logger.info("commentator not found, will retry with nick");
 
                 //retry
                 var idAux = "";
                 if (req.params.id.indexOf("-") !== -1) {
                     idAux = req.params.id.split("-")[1];
                 }
+                logger.info("commentator not found, will retry with nick, ",idAux, "original: ",req.params.id);
 
                 if(!idAux){
                     logger.info("Error: " + err);

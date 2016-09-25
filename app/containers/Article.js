@@ -50,13 +50,14 @@ class Article extends Component {
         var commentsavgperday = 0.0;
 
         try {
-            if (article && article.date && article.totalComments) {
-                var dt = moment(article.date);
+            if (this.props.article && this.props.article.date && this.props.article.totalComments) {
+                var dt = moment(this.props.article.date);
                 var today = moment();
 
                 var diffInDays = today.diff(dt, 'days'); // x days
-
-                commentsavgperday = parseFloat(article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+                if(diffInDays > 0) {
+                    commentsavgperday = parseFloat(this.props.article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+                }
             }
         }catch(e){
             console.log("Error when getting commentsavgperday :| ",e);
@@ -360,8 +361,7 @@ class Article extends Component {
 
                                 </div>
 
-                                <div id="comentarismo-container" className="comentarismo-comment"
-                                     className="col-md-12">
+                                <div id="comentarismo-container" className="comentarismo-comment col-md-12">
                                     {
                                         article.comments.map((q)=> {
                                             return (

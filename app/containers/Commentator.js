@@ -17,7 +17,7 @@ class Commentator extends Component {
     }
 
     componentDidMount() {
-        let { id } = this.props.params
+        let { id } = this.props.params;
         this.props.loadCommentatorDetail({id})
     }
 
@@ -26,20 +26,28 @@ class Commentator extends Component {
         if (!commentator.comments){
             commentator.comments = [];
         }
+        let { id } = this.props.params;
 
         var commentContainer = <XScript index="nick"/>;
 
         var commentsavgperday = 0.0;
 
         try {
-            var dt = moment(commentator.date);
+            var targetDate = moment();
+            if(commentator.minDate){
+                targetDate = moment(commentator.minDate);
+            }
             var today = moment();
 
-            var diffInDays = today.diff(dt, 'days'); // x days
+            var diffInDays = today.diff(targetDate, 'days'); // x days
 
-            commentsavgperday = parseFloat(article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+            console.log("commentsavgperday, diffInDays, ",diffInDays)
+
+            if(diffInDays > 0) {
+                commentsavgperday = parseFloat(commentator.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+            }
         }catch(e){
-            console.log("Error when getting commentsavgperday :| ",e);
+            console.log("Error when getting commentsavgperday :| ",e, id);
         }
 
         if (typeof window !== 'undefined') {
@@ -63,8 +71,8 @@ class Commentator extends Component {
                 />
                 <MainNavbar/>
                 <div className="container-fluid single-post-wrapper">
-                    <a id="comentarismo-page" data-id={ commentator.nick }/>
-                    <a id="comentarismo-operator" data-id={ commentator.operator }/>
+                    <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>
+                    <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
                     {commentContainer}
@@ -93,7 +101,7 @@ class Commentator extends Component {
                                                     </div>
                                                     <div className="col-xs-4">
                                                 <span
-                                                    id="comments_per_day">{commentsavgperday ? commentsavgperday.toFixed(2) : "0" }</span>
+                                                    id="comments_per_day">{commentsavgperday && commentsavgperday !== "0" ? commentsavgperday.toFixed(2) : "0" }</span>
                                                         <span className="desc">By Day</span>
                                                     </div>
                                                 </div>
@@ -170,7 +178,7 @@ class Commentator extends Component {
                                             var date = q.date && q.date.epoch_time ? <Date date={q.date}/> : q.date;
 
                                             return (
-                                                <div key={q.id}
+                                                <div key={q.id + Math.random()}
                                                      className="col-md-12">
                                                     <div className="col-sm-1 hidden-xs">
                                                         <Icon nick={q.nick} size={50}/>
@@ -201,8 +209,7 @@ class Commentator extends Component {
                                                             <img src="/static/img/thumbs-down.png"
                                                                  style={{width: '10px',height: '10px'}}/>
                                                         </a>
-                                                        <a className="button destroy" id="delete" data-id="-delete"
-                                                           className="button destroy"/>
+                                                        <a className="button destroy" id="delete" data-id="-delete"/>
                                                         <span className="spacer">|</span>
                                                         <a data-id="-reply" className="reply"> Reply</a>
                                                     </div>
