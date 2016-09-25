@@ -60,10 +60,10 @@ class Commentator extends Component {
             <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title={`Latest Comments - Commentator Profile -> @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} `}
+                    title={`Latest Comments - Commentator Profile -> @${commentator.slug && typeof commentator.slug.toUpperCase === "function" ? commentator.slug.toUpperCase() : commentator.nick} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": `Find all comments for @${commentator.slug ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
+                    {"name": "description", "content": `Find all comments for @${commentator.slug && typeof commentator.slug.toUpperCase === "function" ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "comments"},
                     {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}
                 ]}

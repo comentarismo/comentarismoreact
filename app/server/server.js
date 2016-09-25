@@ -706,7 +706,7 @@ server.get('*', (req, res, next)=> {
 
         logger.info("table: "+table+" index: "+index+" value: "+value);
 
-        if (table == "news" || table == "commentators" || table == "sentiment_report") {
+        if (table == "news" || table == "commentators" || table == "sentiment_report" || table == "product") {
 
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//

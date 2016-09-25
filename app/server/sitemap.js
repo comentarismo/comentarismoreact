@@ -5,7 +5,7 @@ var log = require("./logger");
 var logger = log.getLogger();
 /** LOGGER **/
 
-import  {getAllPluckDistinct,getAllByIndexPluckDistinct} from './comentarismo_api'
+import  {getAllPluckDistinct, getAllByIndexPluckDistinct} from './comentarismo_api'
 
 function generateSitemap(conn, cb) {
     //r.db('test').table('news').pluck("operator").distinct()
@@ -74,18 +74,18 @@ function generateIndexXml(table, index, value, conn, cb) {
         cacheTime: 600000
     });
     table = (table == "commentators" ? "commentator" : table);
-    var pluck = (table == "news" ? "titleurlize" : "slug");
+    var pluck = (table == "news" || table === "product" ? "titleurlize" : "slug");
 
-    if(table == "sentiment_report"){
+    if (table == "sentiment_report") {
         pluck = "url";
     }
 
-    if(!table || !index || !value){
-        console.log("search query is not correct ",table,index,value)
+    if (!table || !index || !value) {
+        console.log("search query is not correct ", table, index, value)
         return ("search query is not correct.")
     }
 
-    getAllByIndexPluckDistinct(table, index, value, pluck, conn,  function (err, values) {
+    getAllByIndexPluckDistinct(table, index, value, pluck, conn, function (err, values) {
         if (err || !values) {
             logger.error(values)
             logger.error(err);
@@ -99,7 +99,7 @@ function generateIndexXml(table, index, value, conn, cb) {
             return cb(null, sitemap.toString());
         } else if (table == "commentator") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/commentators/' + value +"-" + values[i].slug});
+                sitemap.add({url: '/commentators/' + value + "-" + values[i].slug});
             }
             return cb(null, sitemap.toString());
         } else if (table == "sentiment_report") {
@@ -107,7 +107,14 @@ function generateIndexXml(table, index, value, conn, cb) {
                 sitemap.add({url: '/sentiment/' + encodeURIComponent(values[i].url)});
             }
             return cb(null, sitemap.toString());
-        } else {
+        } else if (table == "product") {
+            for (var i = 0; i < values.length; i++) {
+                sitemap.add({url: '/product/' + encodeURIComponent(values[i].titleurlize)});
+            }
+            return cb(null, sitemap.toString());
+        }
+
+        else {
             return cb("not valid table");
         }
     });
