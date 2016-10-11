@@ -74,7 +74,6 @@ class ArticleContainer extends Component {
                     onChangeClientState={(newState) => console.log(newState)}
                 />
                 <MainNavbar/>
-                <Link to="/">Back to Home</Link>
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
                         <div className="col-xs-12">

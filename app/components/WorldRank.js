@@ -7,7 +7,6 @@ module.exports = React.createClass({
 
     render: function () {
         let { alexarank } = this.props;
-        //console.log(alexarank);
 
         return (
             <section>
@@ -21,12 +20,12 @@ module.exports = React.createClass({
                                         <p className="text-muted">Indexed Comments</p>
                                     </div>
                                     <div className="col-sm-3 col-xs-6">
-                                        <h2>{alexarank.reach.RANK}</h2>
+                                        <h2>{!alexarank ? "" : alexarank.reach.RANK}</h2>
                                         <p className="text-muted">World Rank</p>
                                     </div>
                                     <div className="col-sm-3 col-xs-6">
-                                        <h2>{alexarank.country.RANK}</h2>
-                                        <p className="text-muted">{alexarank.country.CODE} Rank</p>
+                                        <h2>{!alexarank ? "" : alexarank.country.RANK}</h2>
+                                        <p className="text-muted">{!alexarank ? "" : alexarank.country.CODE} Rank</p>
                                     </div>
                                     <div className="col-sm-3 col-xs-6">
                                         <h2>+7.000</h2>
