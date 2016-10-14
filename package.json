@@ -57,6 +57,7 @@
     "redux": "^3.5.1",
     "redux-logger": "^1.0.9",
     "redux-thunk": "^0.1.0",
+    "request-ip": "^1.2.2",
     "rethinkdb": "^2.3.1",
     "rewire": "^2.3.4",
     "searchkit": "^0.10.0",

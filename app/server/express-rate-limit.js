@@ -4,29 +4,6 @@
 var defaults = require('defaults');
 var url = require("url");
 
-var net = require('net');
-function getNetworkIP(callback) {
-    var socket = net.createConnection(80, 'www.google.com');
-    socket.on('connect', function () {
-        callback(undefined, socket.address().address);
-        socket.end();
-    });
-    socket.on('error', function (e) {
-        callback(e, 'error');
-    });
-}
-
-
-var myip = "";
-getNetworkIP(function (error, ip) {
-    console.log("getNetworkIP -> ", ip);
-    if (error) {
-        console.log('error:', error);
-    } else {
-        myip = ip;
-    }
-});
-
 function RateLimit(options) {
 
     options = defaults(options, {
@@ -66,10 +43,6 @@ function RateLimit(options) {
 
     function rateLimit(req, res, next) {
 
-        var ip = req.headers['x-forwarded-for'] ||
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            req.connection.socket.remoteAddress;
 
         var pathname = url.parse(req.url).pathname;
 
@@ -85,17 +58,13 @@ function RateLimit(options) {
         ) {
             return next();
         }
-
-        if (ip && ip.indexOf(myip) !==-1) {
-            console.log("RateLimit Allow -> Request path " + pathname + " for IP -> ", ip);
+        var ip = req.clientIp;
+        if (!ip || ip && ip.indexOf("127.0.0.1") !== -1) {
+            // console.log("Could not get valid IP")
             return next();
         }
 
-        console.log("RateLimit Block -> Request path " + pathname + " for IP -> ", ip);
-
-        var key = options.keyGenerator(req, res);
-
-        options.store.incr(key, function (err, current) {
+        options.store.incr(ip, function (err, current) {
             if (err) {
                 return next(err);
             }
@@ -108,7 +77,11 @@ function RateLimit(options) {
             if (options.headers) {
                 res.setHeader('X-RateLimit-Limit', options.max);
                 res.setHeader('X-RateLimit-Remaining', req.rateLimit.remaining);
-                console.log("Remaining, ",req.rateLimit.remaining," RateLimit ",options.max, "IP -> ",key)
+            }
+            if (!req.rateLimit.remaining) {
+                console.log("WARN: RateLimit -> ", req.rateLimit.remaining, ip, pathname);
+            } else {
+                console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
             }
 
             if (options.max && current > options.max) {

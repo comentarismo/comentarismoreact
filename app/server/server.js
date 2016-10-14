@@ -141,6 +141,9 @@ server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 server.use(favicon(path.join(__dirname, '../..', 'dist/static/img/favicon.ico')));
 
+var requestIp = require('request-ip');
+server.use(requestIp.mw())
+
 
 var limithtml = "";
 var fs = require('fs');
@@ -155,24 +158,25 @@ fs.readFile(path.join(__dirname, '404.html'), function (err, html) {
 var url = require("url");
 function limiterhandler(req, res) {
     var pathname = url.parse(req.url).pathname;
-    console.log("Too many requests -> ", pathname, ", IP -> ", req.ip);
+    var ip = req.clientIp;
+    console.log("Too many requests -> ", ip);
 
     //save possible abuser to ratelimit table
-    r.table('ratelimit').get(req.ip).update(
+    r.table('ratelimit').get(ip).update(
         { blocks: r.row('blocks').add(1),
             pathname: r.branch(r.row('pathname').default([]).contains(pathname),
                 r.row('pathname'),
                 r.row('pathname').default([]).append(pathname))}).run(conn).then(function(dbresult){
         if(dbresult.skipped > 0) {
             //nothing found, so lets insert
-            r.table('ratelimit').insert({id:req.ip,blocks:0,pathname:[pathname]}, {
+            r.table('ratelimit').insert({id:ip,blocks:0,pathname:[pathname]}, {
                 returnChanges: false,
                 conflict: "replace"
             }).run(conn).then(function(dbres){
                 console.log(dbres);
             })
         }
-    })
+    });
 
     res.format({
         html: function () {
@@ -818,7 +822,7 @@ server.get('*', limiter, (req, res, next)=> {
     } else {
 
         //logger.info(location);
-        console.log("React Render ", location.pathname)
+        // console.log("React Render ", location.pathname)
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (redirectLocation) {
                 return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
