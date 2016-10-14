@@ -156,6 +156,24 @@ var url = require("url");
 function limiterhandler(req, res) {
     var pathname = url.parse(req.url).pathname;
     console.log("Too many requests -> ", pathname, ", IP -> ", req.ip);
+
+    //save possible abuser to ratelimit table
+    r.table('ratelimit').get(req.ip).update(
+        { blocks: r.row('blocks').add(1),
+            pathname: r.branch(r.row('pathname').default([]).contains(pathname),
+                r.row('pathname'),
+                r.row('pathname').default([]).append(pathname))}).run(conn).then(function(dbresult){
+        if(dbresult.skipped > 0) {
+            //nothing found, so lets insert
+            r.table('ratelimit').insert({id:req.ip,blocks:0,pathname:[pathname]}, {
+                returnChanges: false,
+                conflict: "replace"
+            }).run(conn).then(function(dbres){
+                console.log(dbres);
+            })
+        }
+    })
+
     res.format({
         html: function () {
             res.status(429).end(limithtml);

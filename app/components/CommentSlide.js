@@ -12,10 +12,14 @@ var CommentSlide = React.createClass({
     render: function () {
         let { comment } = this.props;
 
+        if(!comment){
+            comment = {}
+        }
         return (
             <div>
                 <div className="row">
                     <div className="col-md-10 col-md-offset-1">
+
                         <div className="facts-box testimonial-cta">
                             <div className="row">
                                 <div className="col-xs-12">
