@@ -14,7 +14,10 @@ Poor images, bad copy, lack of information, confusing navigation/layout, long fo
 `gulp`
 
 # Run
-`npm init`
+`npm run start`
+
+## Run custom elk + rethinkdb + rethinkdb custom table + redis
+ELASTICSEARCH_HOST=g7-box RETHINKDB_HOS=g7-box RETHINKDB_TABLE=test REDIS_HOST=g7-box npm run start
 
 # System Requirements
 ## NodeJS 5.6.0
@@ -64,6 +67,7 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `operator`
 `titleurlize`
 `genre`
+`updatedAt`
 # trash zone:
 ---`countries`,`created` ---
 

@@ -1,12 +1,12 @@
 import superAgent from 'superagent';
-import Promise, { using } from 'bluebird';
+import Promise, {using} from 'bluebird';
 import _ from 'lodash';
 import config from 'config';
 
 export const CALL_API = Symbol('CALL_API');
 export const CHAIN_API = Symbol('CHAIN_API');
 
-export default ({ dispatch, getState }) => next => action => {
+export default ({dispatch, getState}) => next => action => {
     if (action[CALL_API]) {
         return dispatch({
             [CHAIN_API]: [
@@ -31,10 +31,10 @@ export default ({ dispatch, getState }) => next => action => {
         })
     }, Promise.resolve());
 
-    overall.finally(()=> {
-        deferred.resolve()
+    overall.finally((err)=> {
+        deferred.resolve(err)
     }).catch((err)=> {
-        console.log("API catch((err) ",err);
+        console.log("createRequestPromise catch((err)", err);
     });
 
     return deferred.promise
@@ -46,12 +46,12 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
         let deferred = Promise.defer();
 
         let params = extractParams(apiAction[CALL_API]);
-        console.log("createRequestPromise -> ",params.url);
+        console.log("createRequestPromise -> ", params.url);
         superAgent[params.method](params.url)
             .withCredentials()
             .end((err, res)=> {
                 if (err) {
-                    console.log("createRequestPromise err -> ",err);
+                    console.log("createRequestPromise err -> ", res.error.message);
                     if (params.errorType) {
                         dispatch({
                             type: params.errorType,
@@ -88,7 +88,7 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
 }
 
 function extractParams(callApi) {
-    let { method, path, successType, errorType, afterSuccess, afterError } = callApi;
+    let {method, path, successType, errorType, afterSuccess, afterError} = callApi;
     let url = `${path}`;
 
     return {

@@ -3,26 +3,27 @@ import path from 'path';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { RoutingContext, match } from 'react-router';
+import {RoutingContext, match} from 'react-router';
 
 var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 import {GoogleSearchScript} from "components/GoogleSearchScript"
 import {MainNavbar} from "components/MainNavbar"
 
+var favicon = require('serve-favicon');
 var redis = require("redis");
 
-import { createMemoryHistory, useQueries } from 'history';
+import {createMemoryHistory, useQueries} from 'history';
 import compression from 'compression';
 import Promise from 'bluebird';
 
 import configureStore from 'store/configureStore';
 import createRoutes from 'routes/index';
 
-import { Provider } from 'react-redux';
+import {Provider} from 'react-redux';
 
 import r from 'rethinkdb';
 
-import {generateSitemap,generateIndexXml} from './sitemap';
+import {generateSitemap, generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
 
 var REDIS_HOST = process.env.REDIS_HOST || "g7-box";
@@ -30,7 +31,7 @@ var REDIS_PORT = process.env.REDIS_PORT || 6379;
 var REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
 
-let { getAllByIndexOrderBySkipLimit,getAllByIndexOrderByFilterSkipLimit,getOneBySecondaryIndex,getCommentator,getCommentatorByNick,getByID,getAllByIndexSkipLimit } = require('./comentarismo_api');
+let {getAllByIndexOrderBySkipLimit, getAllByIndexOrderByFilterSkipLimit, getOneBySecondaryIndex, getCommentator, getCommentatorByNick, getByID, getAllByIndexSkipLimit} = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -84,7 +85,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-
 console.log(`REDIS_HOST -> ${REDIS_HOST}, REDIS_PORT -> ${REDIS_PORT}, REDIS_PASSWORD -> ${REDIS_PASSWORD}`);
 
 var client = redis.createClient({
@@ -109,22 +109,65 @@ var client = redis.createClient({
 });
 
 client.on("connect", function () {
-    //client.set("foo_rand000000000000", "testing redis connection", redis.print);
-    //client.get("foo_rand000000000000", redis.print);
+    client.set("foo_rand000000000000", "testing redis connection", redis.print);
+    client.get("foo_rand000000000000", redis.print);
 });
 
-client.on("error",function(err){
-   logger.error(err);
+client.on("error", function (err) {
+    logger.error(err);
 });
 
+var RateLimit = require('./express-rate-limit');
+var RedisStore = require('./redis-store');
 
+var expireLimit = process.env.EXPIRE_LIMIT || 60;
+var maxLimit = process.env.MAX_LIMIT || 20;
+var delayLimit = process.env.DELAY_LIMIT || 0;
+
+var limiter = new RateLimit({
+    store: new RedisStore({
+        client: client,
+        expiry: expireLimit
+    }),
+    max: maxLimit, // limit each IP to 100 requests per windowMs
+    delayMs: delayLimit, // disable delaying - full speed until the max limit is reached
+    handler: limiterhandler
+});
+
+server.use(limiter);
 server.use(compression());
 server.use(Express.static(path.join(__dirname, '../..', 'dist')));
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
+server.use(favicon(path.join(__dirname, '../..', 'dist/static/img/favicon.ico')));
 
 
-server.get('/api/comment/:id', (req, res) => {
+var limithtml = "";
+var fs = require('fs');
+fs.readFile(path.join(__dirname, '404.html'), function (err, html) {
+    if (!err) {
+        limithtml = html;
+    } else {
+        console.log("Could not open html for 404 err :(")
+    }
+});
+
+var url = require("url");
+function limiterhandler(req, res) {
+    var pathname = url.parse(req.url).pathname;
+    console.log("Too many requests -> ", pathname, ", IP -> ", req.ip);
+    res.format({
+        html: function () {
+            res.status(429).end(limithtml);
+        },
+        json: function () {
+            res.status(429).json({message: "Too many accounts created from this IP, please try again after an hour"});
+        }
+    });
+}
+
+
+server.get('/api/comment/:id', limiter, (req, res) => {
     var id = req.params.id;
     logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
@@ -137,7 +180,7 @@ server.get('/api/comment/:id', (req, res) => {
     });
 });
 
-server.get('/api/suggestcomment/:id', (req, res) => {
+server.get('/api/suggestcomment/:id', limiter, (req, res) => {
     var id = req.params.id;
     logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
@@ -150,11 +193,11 @@ server.get('/api/suggestcomment/:id', (req, res) => {
     });
 });
 
-server.get('/api/admin/r/:table/:id', (req, res) => {
+server.get('/api/admin/r/:table/:id', limiter, (req, res) => {
     var table = req.params.table;
     var id = req.params.id;
     var targetUrl = `/api/admin/r/${table}/${id}`;
-    logger.info(""+targetUrl);
+    logger.info("" + targetUrl);
     getByID(`${table}`, id, conn, function (err, data) {
         if (err || !data) {
             console.error(err);
@@ -167,7 +210,7 @@ server.get('/api/admin/r/:table/:id', (req, res) => {
 
 
 //bind to action/commentators.js -> loadCommentators
-server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
+server.get('/fapi/commentators/:index/:value/:skip/:limit', limiter, (req, res)=> {
     logger.info(req.params);
     var index = req.params.index;
     var value = req.params.value;
@@ -187,8 +230,8 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
             }
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -219,7 +262,7 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', (req, res)=> {
 });
 
 //bind to action/commentators.js -> loadCommentatorDetail
-server.get('/api/commentators/:id', (req, res)=> {
+server.get('/api/commentators/:id', limiter, (req, res)=> {
     var id = req.params.id;
 
     if (!id) {
@@ -238,7 +281,7 @@ server.get('/api/commentators/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
+            if (EXPIRE_REDIS) {
                 client.expire(urlTag, 1);
             }
             res.type('application/json');
@@ -271,9 +314,9 @@ server.get('/api/commentators/:id', (req, res)=> {
                 if (req.params.id.indexOf("-") !== -1) {
                     idAux = req.params.id.split("-")[1];
                 }
-                logger.info("commentator not found, will retry with nick, ",idAux, "original: ",req.params.id);
+                logger.info("commentator not found, will retry with nick, ", idAux, "original: ", req.params.id);
 
-                if(!idAux){
+                if (!idAux) {
                     logger.info("Error: " + err);
                     console.error(err.stack);
                     return res.status(404).send();
@@ -294,7 +337,7 @@ server.get('/api/commentators/:id', (req, res)=> {
                         //-------REDIS CACHE SAVE END ------//
                     } else {
 
-                        logger.info("nothing found ? how did we got here ?  getCommentatorByNick --> "+urlTag)
+                        logger.info("nothing found ? how did we got here ?  getCommentatorByNick --> " + urlTag)
                     }
 
                     res.send(data);
@@ -310,7 +353,7 @@ server.get('/api/commentators/:id', (req, res)=> {
 /**
  * Get all from a table with a index and its value and optional pos filtering like /genre/politics with skip and limit
  */
-server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req, res)=> {
+server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limiter, (req, res)=> {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -337,8 +380,8 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -370,7 +413,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', (req,
  * bind to app/sa.js -> used for listing all news and commentators infinitescroll
  *
  */
-server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
+server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -393,8 +436,8 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -429,7 +472,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', (req, res)=> {
  * bind to app/sa.js -> used for listing all news and commentators infinitescroll
  *
  */
-server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
+server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -448,8 +491,8 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             console.log(urlTag + " will return cached result");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -477,7 +520,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', (req, res)=> {
 });
 
 //bind to action/articles.js -> loadArticleDetail
-server.get('/api/news/:id', (req, res)=> {
+server.get('/api/news/:id', limiter, (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/api/news/${req.params.id}`;
@@ -492,8 +535,8 @@ server.get('/api/news/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -534,7 +577,7 @@ server.get('/api/news/:id', (req, res)=> {
 
 
 //bind to action/articles.js -> loadArticleDetail
-server.get('/api/product/:id', (req, res)=> {
+server.get('/api/product/:id', limiter, (req, res)=> {
     var sort = req.query.sort;
 
     var urlTag = `/api/product/${req.params.id}`;
@@ -549,8 +592,8 @@ server.get('/api/product/:id', (req, res)=> {
             //return res.status(500).send('Cache is broken!');
         } else {
             logger.info(urlTag + " will return cached result ");
-            if(EXPIRE_REDIS) {
-                client.expire(urlTag,1);
+            if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
@@ -590,7 +633,7 @@ server.get('/api/product/:id', (req, res)=> {
 });
 
 var comentarismosite = "http://www.comentarismo.com";
-server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
+server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
     var table = req.params.table;
     var index = req.params.index;
@@ -602,31 +645,31 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
     //console.log(urlTag);
 
     //-------REDIS CACHE START ------//
-    client.get("intropage"+urlTag, function (err, js) {
+    client.get("intropage" + urlTag, function (err, js) {
         if (err || !js) {
             if (err) {
-                console.log("intropage err ",err);
+                console.log("intropage err ", err);
             }
             //return res.status(500).send('Cache is broken!');
         }
         else {
-            console.log("intropage"+urlTag + " will return cached result");
-            if(EXPIRE_REDIS) {
-                client.expire("intropage"+urlTag, 1);
+            console.log("intropage" + urlTag + " will return cached result");
+            if (EXPIRE_REDIS) {
+                client.expire("intropage" + urlTag, 1);
             }
             res.type('application/json');
             return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
-        let { getAlexaRank } = require('./alexa_api');
+        let {getAlexaRank} = require('./alexa_api');
 
-        getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", conn, function(err,alexarank){
-            if(err){
+        getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", conn, function (err, alexarank) {
+            if (err) {
                 return res.status(500).send({});
-            }else {
-                client.set("intropage"+urlTag, JSON.stringify(alexarank), redis.print);
-                client.expire("intropage"+urlTag, expireTime);
+            } else {
+                client.set("intropage" + urlTag, JSON.stringify(alexarank), redis.print);
+                client.expire("intropage" + urlTag, expireTime);
                 res.type('application/json');
                 //-------REDIS CACHE SAVE END ------//
                 //get comments
@@ -639,7 +682,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', (req, res) => {
 
 //TODO: cache sitemap with redis
 
-server.get('*', (req, res, next)=> {
+server.get('*', limiter, (req, res, next)=> {
     let history = useQueries(createMemoryHistory)();
     let location = history.createLocation(req.url);
     let reqUrl = location.pathname + location.search;
@@ -662,7 +705,7 @@ server.get('*', (req, res, next)=> {
                 //return res.status(500).send('Cache is broken!');
             } else {
                 logger.info(urlTag + " will return cached result ");
-                if(EXPIRE_REDIS) {
+                if (EXPIRE_REDIS) {
                     client.expire(urlTag, 1);
                 }
                 res.header('Content-Type', 'application/xml');
@@ -704,7 +747,7 @@ server.get('*', (req, res, next)=> {
         var index = vars[2];
         var value = vars[3];
 
-        logger.info("table: "+table+" index: "+index+" value: "+value);
+        logger.info("table: " + table + " index: " + index + " value: " + value);
 
         if (table == "news" || table == "commentators" || table == "sentiment_report" || table == "product") {
 
@@ -718,8 +761,8 @@ server.get('*', (req, res, next)=> {
                     //return res.status(500).send('Cache is broken!');
                 } else {
                     logger.info(urlTag + " will return cached result ");
-                    if(EXPIRE_REDIS) {
-                        client.expire(urlTag,1);
+                    if (EXPIRE_REDIS) {
+                        client.expire(urlTag, 1);
                     }
                     res.header('Content-Type', 'application/xml');
                     return res.send(js);
@@ -757,6 +800,7 @@ server.get('*', (req, res, next)=> {
     } else {
 
         //logger.info(location);
+        console.log("React Render ", location.pathname)
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (redirectLocation) {
                 return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
@@ -770,51 +814,51 @@ server.get('*', (req, res, next)=> {
             let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
 
             getReduxPromise().then(()=> {
-                    let reduxState = escape(JSON.stringify(store.getState()));
-                    let html = ReactDOMServer.renderToString(
-                        <Provider store={store}>
-                            { <RoutingContext {...renderProps}/> }
-                        </Provider>
-                    );
+                let reduxState = escape(JSON.stringify(store.getState()));
+                let html = ReactDOMServer.renderToString(
+                    <Provider store={store}>
+                        { <RoutingContext {...renderProps}/> }
+                    </Provider>
+                );
 
-                    //let html = ReactDOMServer.renderToStaticMarkup(body(null,
-                    //    div({id: 'content', dangerouslySetInnerHTML: {__html:
-                    //        //ReactDOMServer.renderToString(App(props))
-                    //        ReactDOMServer.renderToString(
-                    //            <Provider store={store}>
-                    //                { <RoutingContext {...renderProps}/> }
-                    //            </Provider>)
-                    //    }})
-                    //    //script({src: '/bundle.js'})
-                    //));
+                //let html = ReactDOMServer.renderToStaticMarkup(body(null,
+                //    div({id: 'content', dangerouslySetInnerHTML: {__html:
+                //        //ReactDOMServer.renderToString(App(props))
+                //        ReactDOMServer.renderToString(
+                //            <Provider store={store}>
+                //                { <RoutingContext {...renderProps}/> }
+                //            </Provider>)
+                //    }})
+                //    //script({src: '/bundle.js'})
+                //));
 
-                    let head = Helmet.rewind();
-                    //logger.info("Helmet.rewind -> "+head.title.toString());
-                    if (head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
-                        head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
-                    }
+                let head = Helmet.rewind();
+                //logger.info("Helmet.rewind -> "+head.title.toString());
+                if (head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
+                    head.title = "<title data-react-helmet=\"true\">404 Not Found</title>";
+                }
 
-                    var searchCss = [];
-                    if(reqUrl.indexOf("/search") !== -1){
-                        searchCss.push("/static/search_theme.css")
-                    }
+                var searchCss = [];
+                if (reqUrl.indexOf("/search") !== -1) {
+                    searchCss.push("/static/search_theme.css")
+                }
 
-                    if (getCurrentUrl() === reqUrl) {
-                        res.render('index', {html, head, scriptSrcs, reduxState, styleSrc,searchCss});
-                    } else {
-                        logger.info("Redirect 302 " + location);
-                        res.redirect(302, getCurrentUrl());
-                    }
+                if (getCurrentUrl() === reqUrl) {
+                    res.render('index', {html, head, scriptSrcs, reduxState, styleSrc, searchCss});
+                } else {
+                    logger.info("Redirect 302 " + location);
+                    res.redirect(302, getCurrentUrl());
+                }
 
-                    unsubscribe();
-                })
+                unsubscribe();
+            })
                 .catch((err)=> {
                     unsubscribe();
                     next(err);
                 });
             function getReduxPromise() {
-                let { query, params } = renderProps;
-                if(!renderProps.components[renderProps.components.length - 1]){
+                let {query, params} = renderProps;
+                if (!renderProps.components[renderProps.components.length - 1]) {
                     return Promise.resolve()
                 }
                 let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
@@ -841,13 +885,13 @@ server.get('*', (req, res, next)=> {
 });
 
 server.on('error', (err) => {
-    console.error("server.on('error' --> " , err);
+    console.error("server.on('error' --> ", err);
 });
 
 server.use((err, req, res, next)=> {
     if (err) {
-        console.error("server.use((err, --> " , err);
-        logger.info("err stack ",err.stack);
+        console.error("server.use((err, --> ", err);
+        logger.info("err stack ", err.stack);
     }
     // TODO report error here or do some further handlings
 
@@ -864,7 +908,7 @@ r.connect({
 }, function (err, c) {
     conn = c;
     if (err) {
-        logger.info("rethinkdb -> ",err);
+        logger.info("rethinkdb -> ", err);
     } else {
         logger.info("Rethinkdb is connected");
 
