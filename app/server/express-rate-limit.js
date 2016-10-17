@@ -112,7 +112,7 @@ function RateLimit(options) {
                 console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
             }
 
-            console.log("log view to influxdb, ",req.headers)
+            // console.log("log view to influxdb, ",req.headers)
             const job = analyticsQueue.createJob({
                 view: {
                     pathname: pathname,
