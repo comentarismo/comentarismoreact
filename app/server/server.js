@@ -39,11 +39,12 @@ let scriptSrcs;
 
 let conn;
 
-var conn_url = process.env.RETHINKDB_HOST || 'g7-box';
-var dbport = process.env.RETHINKDB_PORT || 28015;
-var authKey = process.env.RETHINKDB_KEY || '';
+var rethinkdbHost = process.env.RETHINKDB_HOST || 'g7-box';
+var rethinkdbPort = process.env.RETHINKDB_PORT || 28015;
+var rethinkdbKey = process.env.RETHINKDB_KEY || '';
 
 var rethinkdb_table = process.env.RETHINKDB_TABLE || 'test';
+var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
 
 var aday = 86400000;
 var dayHours = 24;
@@ -142,7 +143,52 @@ server.set('view engine', 'ejs');
 server.use(favicon(path.join(__dirname, '../..', 'dist/static/img/favicon.ico')));
 
 var requestIp = require('request-ip');
-server.use(requestIp.mw())
+server.use(requestIp.mw());
+
+var Stats = require('influx-collector');
+
+var INFLUX_HOST = process.env.INFLUX_HOST || "178.62.232.43";
+var INFLUX_PORT = process.env.INFLUX_PORT || "8086";
+var INFLUX_TABLE = process.env.INFLUX_TABLE || "comentarismoanalytics";
+var INFLUX_USERNAME = process.env.INFLUX_USERNAME || "admin";
+var INFLUX_PASSWORD = process.env.INFLUX_PASSWORD || "admin";
+
+var uri = `http://${INFLUX_USERNAME}:${INFLUX_PASSWORD}@${INFLUX_HOST}:${INFLUX_PORT}/${INFLUX_TABLE}`;
+// create a stats collector
+var mem_stats = Stats('test', uri);
+
+var ENABLE_INFLUX = process.env.ENABLE_INFLUX || true;
+
+// example stat collection of process memory usage
+console.log("stat influxdb collection of process memory usage for this app");
+
+setInterval(function () {
+    var mem = process.memoryUsage();
+
+    // collect this stat into the 'process-memory-usage' series
+    // first argument is the data points
+    // second (optional) argument are the tags
+    if (ENABLE_INFLUX == true) {
+        mem_stats.collect({
+            rss: mem.rss,
+            heap_total: mem.heapTotal,
+            heap_used: mem.heapUsed
+        }, {
+            pid: process.pid,
+            app: 'comentarismoreact'
+        });
+    }
+}, 10 * 1000);
+
+mem_stats.on("error", function (err) {
+    console.log("influxdb stats err, ", err);
+});
+
+// make sure to handle errors to avoid uncaughtException
+// would be annoying if stats crashed your app :)
+mem_stats.on('error', function (err) {
+    console.error(err); // or whatever you want
+});
 
 
 var limithtml = "";
@@ -163,17 +209,19 @@ function limiterhandler(req, res) {
 
     //save possible abuser to ratelimit table
     r.table('ratelimit').get(ip).update(
-        { blocks: r.row('blocks').add(1),
+        {
+            blocks: r.row('blocks').add(1),
             pathname: r.branch(r.row('pathname').default([]).contains(pathname),
                 r.row('pathname'),
-                r.row('pathname').default([]).append(pathname))}).run(conn).then(function(dbresult){
-        if(dbresult.skipped > 0) {
+                r.row('pathname').default([]).append(pathname))
+        }).run(conn).then(function (dbresult) {
+        if (dbresult.skipped > 0) {
             //nothing found, so lets insert
-            r.table('ratelimit').insert({id:ip,blocks:0,pathname:[pathname]}, {
+            r.table('ratelimit').insert({id: ip, blocks: 0, pathname: [pathname]}, {
                 returnChanges: false,
                 conflict: "replace"
-            }).run(conn).then(function(dbres){
-                console.log(dbres);
+            }).run(conn).then(function (dbres) {
+                // console.log(dbres);
             })
         }
     });
@@ -920,12 +968,11 @@ server.use((err, req, res, next)=> {
     res.status(500).send("something went wrong... --> " + err.stack)
 });
 
-
 //auth rethinkdb
 r.connect({
-    host: conn_url,
-    port: dbport,
-    authKey: authKey,
+    host: rethinkdbHost,
+    port: rethinkdbPort,
+    authKey: rethinkdbKey,
     db: rethinkdb_table
 }, function (err, c) {
     conn = c;
@@ -938,5 +985,3 @@ r.connect({
         server.listen(port);
     }
 });
-
-

@@ -4,6 +4,34 @@
 var defaults = require('defaults');
 var url = require("url");
 
+const Queue = require('rethinkdb-job-queue');
+
+var rethinkdbHost = process.env.RETHINKDB_HOST || 'g7-box';
+var rethinkdbPort = process.env.RETHINKDB_PORT || 28015;
+var rethinkdbKey = process.env.RETHINKDB_KEY || '';
+
+var RETHINKDB_QUEUE_TABLE = process.env.RETHINKDB_QUEUE_TABLE || "comentarismosync";
+var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
+
+var r = require('rethinkdbdash');
+const connection = r({
+    db: RETHINKDB_QUEUE_TABLE,
+    timeout: targetTimeout,
+
+    servers: [
+        {
+            host: rethinkdbHost,
+            port: rethinkdbPort
+        }
+    ]
+});
+
+const analyticsQueueOptions = {
+    name: "analyticsQueue"
+};
+const analyticsQueue = new Queue(connection, analyticsQueueOptions);
+
+
 function RateLimit(options) {
 
     options = defaults(options, {
@@ -42,8 +70,6 @@ function RateLimit(options) {
 
 
     function rateLimit(req, res, next) {
-
-
         var pathname = url.parse(req.url).pathname;
 
         //avoid limiting static files, for now
@@ -78,11 +104,29 @@ function RateLimit(options) {
                 res.setHeader('X-RateLimit-Limit', options.max);
                 res.setHeader('X-RateLimit-Remaining', req.rateLimit.remaining);
             }
+            var limit = 0;
             if (!req.rateLimit.remaining) {
                 console.log("WARN: RateLimit -> ", req.rateLimit.remaining, ip, pathname);
+                limit = 1;
             } else {
                 console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
             }
+
+            console.log("log view to influxdb, ",req.headers)
+            const job = analyticsQueue.createJob({
+                view: {
+                    pathname: pathname,
+                    headers: req.headers,
+                    ip: ip,
+                    remaining: req.rateLimit.remaining,
+                    max: options.max,
+                    limit: limit
+                }
+            });
+
+            analyticsQueue.addJob(job).catch((err) => {
+                console.error(err);
+            });
 
             if (options.max && current > options.max) {
                 return options.handler(req, res, next);
