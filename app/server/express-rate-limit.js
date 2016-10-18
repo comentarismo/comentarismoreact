@@ -30,7 +30,12 @@ const analyticsQueueOptions = {
     name: "analyticsQueue"
 };
 const analyticsQueue = new Queue(connection, analyticsQueueOptions);
-
+analyticsQueue.jobOptions = {
+    priority: 'highest',
+    timeout: 300000,
+    retryMax: 5,
+    retryDelay: 60000
+};
 
 function RateLimit(options) {
 
@@ -86,7 +91,7 @@ function RateLimit(options) {
         }
         var ip = req.clientIp;
         if (!ip || ip && ip.indexOf("127.0.0.1") !== -1) {
-            // console.log("Could not get valid IP")
+            // console.log("Skipping not valid IP --> ",ip)
             return next();
         }
 
@@ -112,16 +117,19 @@ function RateLimit(options) {
                 console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
             }
 
-            // console.log("log view to influxdb, ",req.headers)
+            var v = {
+                pathname: pathname,
+                headers: req.headers,
+                ip: ip,
+                remaining: parseInt(req.rateLimit.remaining || 0),
+                max: parseInt(options.max || 0),
+                limit: parseInt(limit || 0),
+                time: new Date()
+            };
+
+            // console.log("log view to influxdb, ", v);
             const job = analyticsQueue.createJob({
-                view: {
-                    pathname: pathname,
-                    headers: req.headers,
-                    ip: ip,
-                    remaining: req.rateLimit.remaining,
-                    max: options.max,
-                    limit: limit
-                }
+                view: v
             });
 
             analyticsQueue.addJob(job).catch((err) => {
