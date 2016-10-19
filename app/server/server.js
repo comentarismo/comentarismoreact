@@ -819,7 +819,11 @@ server.get('*', limiter, (req, res, next)=> {
 
         logger.info("table: " + table + " index: " + index + " value: " + value);
 
-        if (table == "news" || table == "commentators" || table == "sentiment_report" || table == "product") {
+        if(table == "topvideos"){
+            table = "sentiment_report"
+        }
+
+        if (table === "news" || table === "commentators" || table === "sentiment_report" || table === "product" || table === "sentiment_report") {
 
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//
