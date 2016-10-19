@@ -750,6 +750,27 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 });
 
 
+server.get("/random", limiter, (req, res)=> {
+    r.table("sentiment_report")
+        .sample(1)
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                console.log("Got an error when doing /random --> ", err);
+                return res.redirect(301, "/topvideos/type/YouTubeVideo");
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) {
+                        console.log("Got an error when doing /random --> ", err);
+                        return res.redirect(301, "/topvideos/type/YouTubeVideo");
+                    }
+                    var theone = results[0];
+
+                    return res.redirect(301, "/sentiment/" + encodeURIComponent(theone.url));
+                });
+            }
+        });
+});
+
 //TODO: cache sitemap with redis
 
 server.get('*', limiter, (req, res, next)=> {
@@ -771,6 +792,7 @@ server.get('*', limiter, (req, res, next)=> {
                 if (err) {
                     logger.info("Error: Redis client " + location);
                     console.error(err.stack);
+                    res.status(500).send("Server unavailable");
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -819,7 +841,7 @@ server.get('*', limiter, (req, res, next)=> {
 
         logger.info("table: " + table + " index: " + index + " value: " + value);
 
-        if(table == "topvideos"){
+        if (table === "topvideos") {
             table = "sentiment_report"
         }
 
