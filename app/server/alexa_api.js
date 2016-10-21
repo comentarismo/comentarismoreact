@@ -6,7 +6,7 @@ import config from 'config'
 var host = config.BASE_URL;
 import r from 'rethinkdb';
 
-let {getAllByIndexOrderBySkipLimit} = require("./comentarismo_api");
+let {getSample} = require("./comentarismo_api");
 
 /** LOGGER **/
 var log = require("./logger");
@@ -54,7 +54,7 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort, conn, 
 
                     //var target = `${host}/${urlTag}`;
                     //table, index, value, skip, limit, sort, conn, cb
-                    getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, r) {
+                    getSample(table, index, value, skip, limit, sort, conn, function (err, r) {
                         if (err) {
                             cb("error when running --> " + target);
                         } else {

@@ -11,6 +11,7 @@ import { loadIntroDetail } from 'actions/intro'
 
 import WorldRank from 'components/WorldRank';
 import LoginStore from 'store/LoginStore';
+import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 class Intro extends Component {
     static fetchData({ store, params }) {
@@ -81,11 +82,8 @@ class Intro extends Component {
                     onChangeClientState={(newState) => console.log(newState)}
                 />
                 <MainNavbar/>
+                <YoutubeReportRun/>
 
-                <div className="home-wrapper text-center">
-                    <p>*NEW Comentarismo Play, use the controller below to read unlimited comments</p>
-                    <p>{LoginStore.isLoggedIn() ? 'Welcome back ' + JSON.stringify(LoginStore.user.username) : ''}</p>
-                </div>
                 <PlayComment playing={true} comment={comment.comment} index={index} value={value} skip={skip} limit={limit} playingtimeout={10000}/>
 
                 <section className="section home" id="home">

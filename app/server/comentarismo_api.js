@@ -108,6 +108,36 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
 }
 
 
+export function getSample(table, index, value, skip, limit, sort, conn, cb){
+    if (!table || !index || !value) {
+        logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
+        logger.warn(errMsg + "getAllByIndexOrderBySkipLimit --> search query is not correct.");
+        return cb()
+    }
+    var indexSort = "date";
+    if (sort) {
+        indexSort = sort;
+    }
+    // console.log("getSample, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+
+    r.table(table)
+        .orderBy({"index": r.desc(indexSort)})
+        .filter(r.row(index).eq(value))
+        .skip(0).limit(5000).sample(100)
+        .run(conn, function (err, cursor) {
+            if (err || !cursor) {
+                logger.info(err);
+                cb(err);
+            } else {
+                cursor.toArray(function (err, results) {
+                    if (err) return cb(err);
+                    // console.log("getAllByIndexOrderBySkipLimit", results.length);
+                    cb(null, results);
+                });
+            }
+        });
+}
+
 //"commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50,
 export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, cb) {
     if (!table || !index || !value) {

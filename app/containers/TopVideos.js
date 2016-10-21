@@ -11,6 +11,7 @@ var Video = require('components/Video');
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import Helmet from "react-helmet";
+import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 class ArticleContainer extends Component {
     //static fetchData({ store, params }) {
@@ -74,6 +75,7 @@ class ArticleContainer extends Component {
                     onChangeClientState={(newState) => console.log(newState)}
                 />
                 <MainNavbar/>
+                <YoutubeReportRun/>
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
                         <div className="col-xs-12">

@@ -118,6 +118,7 @@ function RateLimit(options) {
             }
 
             var v = {
+                app: "comentarismoreact",
                 pathname: pathname,
                 headers: req.headers,
                 ip: ip,

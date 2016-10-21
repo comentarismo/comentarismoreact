@@ -46,13 +46,13 @@ var rethinkdbKey = process.env.RETHINKDB_KEY || '';
 var rethinkdb_table = process.env.RETHINKDB_TABLE || 'test';
 var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
 
-var aday = 86400000;
-var dayHours = 24;
+// var aday = 86400000;
+// var dayHours = 24;
+// var expireTime = aday / dayHours;
 
-var expireTime = aday / dayHours;
-var expireTimeStr = process.env.expiretime;
-if (expireTimeStr) {
-    expireTime = parseInt(expireTimeStr);
+var REDIS_EXPIRE = process.env.REDIS_EXPIRE || 3600; //1h
+if (REDIS_EXPIRE) {
+    REDIS_EXPIRE = parseInt(REDIS_EXPIRE);
 }
 
 /** LOGGER **/
@@ -60,7 +60,7 @@ var log = require("./logger");
 var logger = log.getLogger();
 /** LOGGER **/
 
-logger.info("Will set expire time for redis/cache as --> " + expireTime);
+logger.info("Will set expire time for redis/cache as --> " + REDIS_EXPIRE);
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
@@ -373,7 +373,7 @@ server.get('/api/commentators/:id', limiter, (req, res)=> {
                 var js = JSON.stringify(data);
                 //logger.info(js);
                 client.set(urlTag, js, redis.print);
-                client.expire(urlTag, expireTime);
+                client.expire(urlTag, REDIS_EXPIRE);
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             } else {
@@ -403,7 +403,7 @@ server.get('/api/commentators/:id', limiter, (req, res)=> {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
                         client.set(urlTag, JSON.stringify(data), redis.print);
-                        client.expire(urlTag, expireTime);
+                        client.expire(urlTag, REDIS_EXPIRE);
                         //-------REDIS CACHE SAVE END ------//
                     } else {
 
@@ -469,7 +469,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, expireTime);
+                client.expire(urlTag, REDIS_EXPIRE);
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -526,7 +526,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
                 logger.info(urlTag + " will save cached");
                 res.type('application/json');
                 client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, expireTime);
+                client.expire(urlTag, REDIS_EXPIRE);
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -580,7 +580,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
                 console.log(urlTag + " will save cached fdp");
                 res.type('application/json');
                 client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, expireTime);
+                client.expire(urlTag, REDIS_EXPIRE);
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -634,7 +634,7 @@ server.get('/api/news/:id', limiter, (req, res)=> {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
                     client.set(urlTag, JSON.stringify(news), redis.print);
-                    client.expire(urlTag, expireTime);
+                    client.expire(urlTag, REDIS_EXPIRE);
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.send(news);
@@ -691,7 +691,7 @@ server.get('/api/product/:id', limiter, (req, res)=> {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
                     client.set(urlTag, JSON.stringify(news), redis.print);
-                    client.expire(urlTag, expireTime);
+                    client.expire(urlTag, REDIS_EXPIRE);
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.send(news);
@@ -725,6 +725,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
         else {
             console.log("intropage" + urlTag + " will return cached result");
             if (EXPIRE_REDIS) {
+                console.log("Will expire REDIS")
                 client.expire("intropage" + urlTag, 1);
             }
             res.type('application/json');
@@ -739,7 +740,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
                 return res.status(500).send({});
             } else {
                 client.set("intropage" + urlTag, JSON.stringify(alexarank), redis.print);
-                client.expire("intropage" + urlTag, expireTime);
+                client.expire("intropage" + urlTag, REDIS_EXPIRE);
                 res.type('application/json');
                 //-------REDIS CACHE SAVE END ------//
                 //get comments
@@ -818,7 +819,7 @@ server.get('*', limiter, (req, res, next)=> {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
                     client.set(urlTag, xml, redis.print);
-                    client.expire(urlTag, expireTime);
+                    client.expire(urlTag, REDIS_EXPIRE);
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.header('Content-Type', 'application/xml');
@@ -878,7 +879,7 @@ server.get('*', limiter, (req, res, next)=> {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
                         client.set(urlTag, xml, redis.print);
-                        client.expire(urlTag, expireTime);
+                        client.expire(urlTag, REDIS_EXPIRE);
                         //-------REDIS CACHE SAVE END ------//
                     }
                     res.header('Content-Type', 'application/xml');

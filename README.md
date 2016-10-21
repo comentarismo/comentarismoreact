@@ -92,6 +92,7 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `REDIS_HOST`
 `REDIS_PORT`
 `REDIS_PASSWORD`
+`REDIS_EXPIRE`
 `EXPIRE_REDIS`
 `expiretime`
 
@@ -100,6 +101,7 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `RETHINKAUTHKEY`
 `RETHINKTABLE`
 
+`$ EXPIRE_REDIS=true REDIS_EXPIRE=10 npm run start`
 
 # For the admin panel to work for a user, make sure user has role admin:
 `r.db('test').table("user").get("USER_ID_").update({"role":"admin"})`
