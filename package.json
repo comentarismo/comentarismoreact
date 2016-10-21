@@ -7,8 +7,8 @@
     "test": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js' -w",
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
-    "build": "rimraf ./dist/ && npm run webpack && gulp prod",
-    "buildprod": "rimraf ./dist/ && gulp prod",
+    "build": "node_modules/rimraf/bin.js ./dist/ && npm run webpack && gulp prod",
+    "buildprod": "node_modules/rimraf/bin.js ./dist/ && gulp prod",
     "postinstall": "bower install && npm run buildprod"
   },
   "engines": {
@@ -101,7 +101,7 @@
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.2",
     "rewire-webpack": "^1.0.0",
-    "rimraf": "^2.5.2",
+    "rimraf": "^2.5.4",
     "sinon": "^1.17.1",
     "sinon-chai": "^2.8.0",
     "webpack": "^1.13.2",
