@@ -255,3 +255,25 @@ $ rethinkdb proxy --join 91.121.75.229:29015
 
 $ RETHINKDB_HOST=localhost forever updateImagesProductNewsWebDriver.js
 $ RETHINKDB_HOST=localhost node updateSentimentNews.js
+
+
+
+## Updating NodeJS
+`$ npm install -g n`
+
+Updating
+`$ n 5.9.1`
+
+
+Updating NPM
+`$ curl -0 -L https://npmjs.org/install.sh | sudo sh`
+
+Checking versions
+```
+$ node --version
+v5.9.1
+---
+$ npm --version
+3.10.9
+```
+

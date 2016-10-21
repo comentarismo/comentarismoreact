@@ -15,6 +15,7 @@ var buildProperties = {
         'app/css/all.css',
         './vendor/comentarismo-client.css',
         './bower_components/bootstrap/dist/css/bootstrap.css',
+        './bower_components/bootstrap/dist/css/bootstrap.css.map',
         './bower_components/components-font-awesome/css/font-awesome.css'
     ],
     comentarismoApi: [
@@ -29,16 +30,18 @@ var buildProperties = {
     imageFiles: ['./img/**/*']
 };
 
-gulp.task('css', function () {
+gulp.task('sourcemaps', function () {
+    return gulp.src(buildProperties.cssFiles)
+        .pipe(sourcemaps.init())
+        .pipe(sourcemaps.write('maps'))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('css', ["sourcemaps"], function () {
     return gulp.src(buildProperties.cssFiles)
         .pipe($.sourcemaps.init())
-        //.pipe($.sass().on('error', $.sass.logError))
-        //.pipe($.autoprefixer({
-        //    browsers: ['last 2 versions'],
-        //    cascade: false
-        //}))
         .pipe(concat('all.css'))
-        .pipe($.sourcemaps.write())
+        // .pipe($.sourcemaps.write())
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {
             console.log(error);
@@ -46,7 +49,8 @@ gulp.task('css', function () {
         .on('end', function () {
             console.log('Done css concat dependencies.');
         }).pipe(rename('all.min.css'))
-        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(cleanCSS({keepSpecialComments: 0, sourceMap: false,compatibility: 'ie8'}))
+        .pipe(sourcemaps.write('maps'))
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('end', function () {
             console.log('Done css minify dependencies.');
