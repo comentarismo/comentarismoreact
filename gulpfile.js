@@ -87,7 +87,7 @@ gulp.task('minify-js', function () {
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .pipe(babel({
-            presets: [require('babel-preset-es2015')]
+            presets: ['babel-preset-es2015'].map(require.resolve)
         }))
         .on('error', function (error) {
             console.log(error);

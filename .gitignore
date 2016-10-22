@@ -15,3 +15,5 @@ poc
 /dist/static/all.js
 /dist/static/all.css
 /dist/maps/
+/cert/flynn-ca.cer
+/vendor/dev.js
