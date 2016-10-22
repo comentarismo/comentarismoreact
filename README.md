@@ -6,12 +6,9 @@ Poor images, bad copy, lack of information, confusing navigation/layout, long fo
 # Install
 `npm install`
 
-# Install Bower dependencies
-`bower install`
-
-# Prepare CSS/JS
+# (Required step for Production deployments) Install Bower dependencies & Prepare CSS/JS
 ## In a new terminal window, execute Gulp and leave it there, so it can re-run after any changes.
-`gulp`
+`npm run build`
 
 # Run
 `npm run start`
@@ -20,7 +17,8 @@ Poor images, bad copy, lack of information, confusing navigation/layout, long fo
 ELASTICSEARCH_HOST=g7-box RETHINKDB_HOS=g7-box RETHINKDB_TABLE=test REDIS_HOST=g7-box npm run start
 
 # System Requirements
-## NodeJS 5.6.0
+## NodeJS 5.9.1
+## NPM 3.10.9
 ## Gulp
 ## Mocha to run the tests
 ## Bower to download css/js dependencies like bootstrap
@@ -35,7 +33,7 @@ Avoid errors like: `make: g++: Command not found` by installing:
 `sudo npm install -g n`
 
 ## Upgrade NodeJS
-`sudo n 5.6.0`
+`sudo n 5.9.1`
 
 # RethinkDB is required to be configured if you are running in `development` mode
 ## Please make sure etc/hosts is something like this / pointing to the correct ip of your rethinkdb
@@ -277,3 +275,6 @@ $ npm --version
 3.10.9
 ```
 
+
+
+https://devcenter.heroku.com/articles/node-best-practices#use-a-smart-npmrc
