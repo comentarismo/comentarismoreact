@@ -41,7 +41,6 @@ gulp.task('css', ["sourcemaps"], function () {
     return gulp.src(buildProperties.cssFiles)
         .pipe($.sourcemaps.init())
         .pipe(concat('all.css'))
-        // .pipe($.sourcemaps.write())
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {
             console.log(error);
