@@ -4,11 +4,11 @@
   "description": "Comentarismo ReactJS",
   "scripts": {
     "start": "cross-env NODE_PATH=./app concurrent --kill-others \"nodemon --harmony_array_includes app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
-    "start-prod":"NODE_ENV=production PORT=3001 NODE_PATH=./app node --harmony_array_includes app/server",
+    "start-prod": "NODE_ENV=production PORT=3001 NODE_PATH=./app node --harmony_array_includes app/server",
     "test": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js' -w",
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
-    "bower":"bower install",
+    "bower": "bower install",
     "build": "rimraf ./dist/ && npm run bower && npm run webpack && gulp prod"
   },
   "engines": {
@@ -75,8 +75,8 @@
     "babel-loader": "^6.2.0",
     "babel-plugin-react-transform": "^2.0.0",
     "babel-plugin-rewire": "^1.0.0-beta-5",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
+    "babel-preset-es2015": "6.16.0",
+    "babel-preset-react": "6.16.0",
     "babel-preset-react-hmre": "^1.0.1",
     "browser-sync": "^2.12.5",
     "chai": "^3.3.0",
@@ -85,6 +85,7 @@
     "cross-env": "^1.0.7",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "6.1.2",
     "gulp-clean-css": "^2.0.6",
     "gulp-concat": "^2.6.0",
     "gulp-load-plugins": "^1.2.0",

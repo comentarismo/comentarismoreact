@@ -5,3 +5,13 @@ node_modules
 bower_components
 .idea
 bin
+poc
+/dist/comentarismo-client.css
+/dist/font-awesome.css
+/dist/bootstrap.css
+/dist/all.css
+/dist/bootstrap.css.map
+/dist/static/dev.js
+/dist/static/all.js
+/dist/static/all.css
+/dist/maps/

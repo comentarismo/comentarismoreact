@@ -5,6 +5,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var cleanCSS = require('gulp-clean-css');
+var babel = require('gulp-babel');
 
 
 var buildProperties = {
@@ -85,6 +86,9 @@ gulp.task('minify-js', function () {
         .pipe(concat('all.js'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
+        .pipe(babel({
+            presets: [require('babel-preset-es2015')]
+        }))
         .on('error', function (error) {
             console.log(error);
         })
