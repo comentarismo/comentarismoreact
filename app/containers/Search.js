@@ -125,12 +125,6 @@ class Search extends Component {
                                 field="nick"
                                 operator="AND"
                                 size={5}/>
-                            <RefinementListFilter
-                                id="sentiment"
-                                title="Sentiment"
-                                field="sentiment"
-                                operator="AND"
-                                size={5} itemComponent={RefinementOption}/>
 
                             <HierarchicalMenuFilter
                                 fields={["operator"]}
