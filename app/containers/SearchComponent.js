@@ -6,8 +6,6 @@ import Helmet from "react-helmet";
 
 import { loadIntroDetail } from 'actions/intro'
 
-import {SearchCommentsList} from 'components/SearchCommentsList';
-
 import {Search} from './Search'
 
 class SearchComponent extends Component {

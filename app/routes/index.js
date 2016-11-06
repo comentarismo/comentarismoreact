@@ -1,10 +1,8 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { Router, Route, IndexRoute } from 'react-router';
-import configureStore from 'store/configureStore';
+import {Provider} from 'react-redux';
+import {Router, Route, IndexRoute} from 'react-router';
 
 import App from 'containers/App';
-import Intro from 'containers/Intro';
 import IntroOld from 'containers/Intro_old';
 
 import Commentators from 'containers/Commentators';
@@ -24,14 +22,12 @@ import SuggestComment from 'containers/SuggestComment'
 
 import Notfound from 'containers/Notfound';
 
-import AdminList from 'admin/AdminList';
-import AdminEdit from 'admin/AdminEdit';
-
 import SentimentComment from 'containers/SentimentComment';
 
 import TopVideos from 'containers/TopVideos';
 
 import Search from 'containers/SearchComponent';
+import SearchComponentJCP from 'containers/SearchComponentJCP';
 
 export default function (history) {
     return (
@@ -47,14 +43,15 @@ export default function (history) {
                 <Route path="product/:id" component={Product}/>
                 <Route path="product/:index/:value" component={ProductList}/>
 
-
                 <Route path="news/:continent/:country/:index/:year/:month/:day/:value" component={ArticleLegacy}/>
-                <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value" component={ArticleLegacy}/>
+                <Route path="news/:continent/:country/:index/:genre/:year/:month/:day/:value"
+                       component={ArticleLegacy}/>
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
 
                 <Route path="search" component={Search}/>
+                <Route path="jcp" component={SearchComponentJCP}/>
 
                 <IndexRoute component={IntroOld}/>
                 <Route path="*" component={Notfound}/>
@@ -62,7 +59,3 @@ export default function (history) {
         </Router>
     );
 };
-//<Route path="admin/r/:table/:index" component={AdminEdit}/>
-//<Route path="admin/l/:table/:index/:value/:skip/:limit/:sort" component={AdminList}/>
-//<Route path="sentiment/likes/:url" component={SentimentComment}/>
-//<Route path="sentiment/all/:url" component={SentimentComment}/>

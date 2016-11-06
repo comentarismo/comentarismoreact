@@ -936,7 +936,8 @@ server.get('*', limiter, (req, res, next)=> {
                 }
 
                 var searchCss = [];
-                if (reqUrl.indexOf("/search") !== -1) {
+                if (reqUrl.indexOf("/search") !== -1
+                || reqUrl.indexOf("/jcp") !== -1) {
                     searchCss.push("/static/search_theme.css")
                 }
 

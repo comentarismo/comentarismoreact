@@ -63,7 +63,7 @@
     "rethinkdb-job-queue": "^1.0.1",
     "rethinkdbdash": "^2.3.23",
     "rewire": "^2.3.4",
-    "searchkit": "^0.10.0",
+    "searchkit": "^0.10.1",
     "serve-favicon": "^2.3.0",
     "sitemap": "^1.6.0",
     "superagent": "^1.8.3",
