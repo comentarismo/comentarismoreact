@@ -1,17 +1,12 @@
 import Express from 'express';
 import path from 'path';
-
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {RoutingContext, match} from 'react-router';
-
-var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 import {GoogleSearchScript} from "components/GoogleSearchScript"
 import {MainNavbar} from "components/MainNavbar"
-
-var favicon = require('serve-favicon');
-var redis = require("redis");
-
+import favicon from 'serve-favicon';
+import redis from "redis";
 import {createMemoryHistory, useQueries} from 'history';
 import compression from 'compression';
 import Promise from 'bluebird';
@@ -21,10 +16,12 @@ import createRoutes from 'routes/index';
 
 import {Provider} from 'react-redux';
 
-import r from 'rethinkdb';
+// import r from 'rethinkdb';
 
 import {generateSitemap, generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
+
+// var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 
 var REDIS_HOST = process.env.REDIS_HOST || "g7-box";
 var REDIS_PORT = process.env.REDIS_PORT || 6379;
@@ -37,14 +34,12 @@ let server = new Express();
 let port = process.env.PORT || 3002;
 let scriptSrcs;
 
-let conn;
+var RETHINKDB_HOST = process.env.RETHINKDB_HOST || 'g7-box';
+var RETHINKDB_PORT = process.env.RETHINKDB_PORT || 28015;
+var RETHINKDB_KEY = process.env.RETHINKDB_KEY || '';
 
-var rethinkdbHost = process.env.RETHINKDB_HOST || 'g7-box';
-var rethinkdbPort = process.env.RETHINKDB_PORT || 28015;
-var rethinkdbKey = process.env.RETHINKDB_KEY || '';
-
-var rethinkdb_table = process.env.RETHINKDB_TABLE || 'test';
-var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
+var RETHINKDB_TABLE = process.env.RETHINKDB_TABLE || 'test';
+var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
 // var aday = 86400000;
 // var dayHours = 24;
@@ -85,6 +80,17 @@ if (process.env.NODE_ENV === 'production') {
     ];
 }
 
+var r = require('rethinkdbdash');
+var conn = r({
+    db: RETHINKDB_TABLE,
+    timeout: RETHINKDB_TIMEOUT,
+    servers: [
+        {
+            host: RETHINKDB_HOST,
+            port: RETHINKDB_PORT
+        }
+    ]
+});
 
 console.log(`REDIS_HOST -> ${REDIS_HOST}, REDIS_PORT -> ${REDIS_PORT}, REDIS_PASSWORD -> ${REDIS_PASSWORD}`);
 
@@ -208,22 +214,25 @@ function limiterhandler(req, res) {
     console.log("Too many requests -> ", ip);
 
     //save possible abuser to ratelimit table
-    r.table('ratelimit').get(ip).update(
+    conn.table('ratelimit').get(ip).update(
         {
-            blocks: r.row('blocks').add(1),
-            pathname: r.branch(r.row('pathname').default([]).contains(pathname),
-                r.row('pathname'),
-                r.row('pathname').default([]).append(pathname))
-        }).run(conn).then(function (dbresult) {
+            blocks: conn.row('blocks').add(1),
+            pathname: conn.branch(conn.row('pathname').default([]).contains(pathname),
+                conn.row('pathname'),
+                conn.row('pathname').default([]).append(pathname))
+        }).run().then(function (dbresult) {
         if (dbresult.skipped > 0) {
             //nothing found, so lets insert
-            r.table('ratelimit').insert({id: ip, blocks: 0, pathname: [pathname]}, {
+            conn.table('ratelimit').insert({id: ip, blocks: 0, pathname: [pathname]}, {
                 returnChanges: false,
                 conflict: "replace"
-            }).run(conn).then(function (dbres) {
+            }).run().then(function (dbres) {
                 // console.log(dbres);
             })
         }
+    }).catch(function (err) {
+        console.log("Error: limiterhandler, ", err);
+        cb(err);
     });
 
     res.format({
@@ -752,24 +761,21 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 
 
 server.get("/random", limiter, (req, res)=> {
-    r.table("sentiment_report")
+    conn.table("sentiment_report")
         .sample(1)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                console.log("Got an error when doing /random --> ", err);
-                return res.redirect(301, "/topvideos/type/YouTubeVideo");
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) {
-                        console.log("Got an error when doing /random --> ", err);
-                        return res.redirect(301, "/topvideos/type/YouTubeVideo");
-                    }
-                    var theone = results[0];
+        .run().then(function (results) {
+        if (!results) {
+            console.log("Got nothing when doing /random --> :| ");
+            return res.redirect(301, "/topvideos/type/YouTubeVideo");
+        } else {
+            var theone = results[0];
 
-                    return res.redirect(301, "/sentiment/" + encodeURIComponent(theone.url));
-                });
-            }
-        });
+            return res.redirect(301, "/sentiment/" + encodeURIComponent(theone.url));
+        }
+    }).catch(function(err){
+            console.log("Got an error when doing /random --> ", err);
+            return res.redirect(301, "/topvideos/type/YouTubeVideo");
+    })
 });
 
 //TODO: cache sitemap with redis
@@ -937,7 +943,7 @@ server.get('*', limiter, (req, res, next)=> {
 
                 var searchCss = [];
                 if (reqUrl.indexOf("/search") !== -1
-                || reqUrl.indexOf("/jcp") !== -1) {
+                    || reqUrl.indexOf("/jcp") !== -1) {
                     searchCss.push("/static/search_theme.css")
                 }
 
@@ -996,20 +1002,21 @@ server.use((err, req, res, next)=> {
     res.status(500).send("something went wrong... --> " + err.stack)
 });
 
-//auth rethinkdb
-r.connect({
-    host: rethinkdbHost,
-    port: rethinkdbPort,
-    authKey: rethinkdbKey,
-    db: rethinkdb_table
-}, function (err, c) {
-    conn = c;
-    if (err) {
-        logger.info("rethinkdb -> ", err);
-    } else {
-        logger.info("Rethinkdb is connected");
 
-        logger.info(`Server is listening to port: ${port}`);
-        server.listen(port);
-    }
-});
+// //auth rethinkdb
+// r.connect({
+//     host: rethinkdbHost,
+//     port: rethinkdbPort,
+//     authKey: rethinkdbKey,
+//     db: rethinkdb_table
+// }, function (err, c) {
+//     conn = c;
+//     if (err) {
+//         logger.info("rethinkdb -> ", err);
+//     } else {
+//         logger.info("Rethinkdb is connected");
+//
+logger.info(`Server is listening to port: ${port}`);
+server.listen(port);
+//     }
+// });

@@ -1,13 +1,11 @@
 let _ = require('lodash')
 
-import r from 'rethinkdb';
-
 //get all nicks for a operator
 //get all nicks for a language
-//get all nicks for a genre
-//get all comments for a nick
+//get all nicks for a genregetAllByIndexOrderByFilterSkipLimit
 //get commentator profile by nickurlize
 
+//r.db('test').table('commentaries').between(new Date().getDate()-5, r.maxval, {index: 'updatedAt'})
 /** LOGGER **/
 var log = require("./logger");
 var logger = log.getLogger();
@@ -22,20 +20,19 @@ export function getAllPluckDistinct(conn, table, pluck, cb) {
         return cb(errMsg + "getAllPluckDistinct --> search query is not correct.")
     }
 
-    r.table(table)
+    conn.table(table)
         .pluck(pluck)
         .distinct()
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.error(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            cb("Could not get getAllPluckDistinct");
+        } else {
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllPluckDistinct, ", err);
+        cb(err);
+    })
 }
 
 export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb) {
@@ -44,21 +41,20 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
         return cb(errMsg + "getAllByIndexPluckDistinct --> search query is not correct.")
     }
     logger.log('debug', "getAllByIndexPluckDistinct --> table: " + table + " index: " + index + " value: " + value + " pluck: " + pluck);
-    r.table(table)
+    conn.table(table)
         .getAll(value, {index: index}).limit(50000)
         .pluck(pluck)
         .distinct()
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.error(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            cb('');
+        } else {
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllByIndexPluckDistinct, ", err);
+        cb(err);
+    })
 }
 
 export function getByID(table, id, conn, cb) {
@@ -71,17 +67,20 @@ export function getByID(table, id, conn, cb) {
         //logger.info("getComments EOF ");
         return cb();
     }
-    r.table(table)
+    conn.table(table)
         .get(id)
-        .run(conn, function (err, result) {
-            if (err || !result) {
-                logger.info(err);
-                cb(err);
-            } else {
-                //logger.info(result);
-                cb(null, result);
-            }
-        });
+        .run().then(function (result) {
+        if (!result) {
+            logger.info('');
+            cb('');
+        } else {
+            //logger.info(result);
+            cb(null, result);
+        }
+    }).catch(function (err) {
+        console.log("Error: getByID, ", err);
+        cb(err);
+    });
 }
 
 export function getOneBySecondaryIndex(table, index, value, conn, cb) {
@@ -91,24 +90,24 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
         return cb()
     }
     logger.log('debug', "table --> " + table + ", index -> " + index + ", value --> " + value);
-    r.table(table)
+    conn.table(table)
         .getAll(value, {index: index}).limit(1)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.info(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    logger.info(results.length);
-                    cb(null, results[0]);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            logger.info('');
+            cb('');
+        } else {
+            logger.info(results.length);
+            cb(null, results[0]);
+        }
+    }).catch(function (err) {
+        console.log("Error: getOneBySecondaryIndex, ", err);
+        cb(err);
+    });
 }
 
 
-export function getSample(table, index, value, skip, limit, sort, conn, cb){
+export function getSample(table, index, value, skip, limit, sort, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
         logger.warn(errMsg + "getAllByIndexOrderBySkipLimit --> search query is not correct.");
@@ -118,24 +117,23 @@ export function getSample(table, index, value, skip, limit, sort, conn, cb){
     if (sort) {
         indexSort = sort;
     }
-    // console.log("getSample, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    // console.log("getSample, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
 
-    r.table(table)
-        .orderBy({"index": r.desc(indexSort)})
-        .filter(r.row(index).eq(value))
+    conn.table(table)
+        .orderBy({"index": conn.desc(indexSort)})
+        .filter(conn.row(index).eq(value))
         .skip(0).limit(5000).sample(100)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.info(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    // console.log("getAllByIndexOrderBySkipLimit", results.length);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            logger.info('');
+            cb('');
+        } else {
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getSample, ", err);
+        cb(err);
+    });
 }
 
 //"commentaries","nick",commentator.nick,{"operator":commentator.operator},0,50,
@@ -149,24 +147,24 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     if (sort) {
         indexSort = sort;
     }
-    console.log("getAllByIndexOrderBySkipLimit, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    console.log("getAllByIndexOrderBySkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
 
-    r.table(table)
-        .orderBy({"index": r.desc(indexSort)})
-        .filter(r.row(index).eq(value))
+    conn.table(table)
+        .orderBy({"index": conn.desc(indexSort)})
+        .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.info(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    console.log("getAllByIndexOrderBySkipLimit", results.length);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            logger.info('');
+            cb('');
+        } else {
+            console.log("getAllByIndexOrderBySkipLimit", results.length);
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllByIndexOrderBySkipLimit, ", err);
+        cb(err);
+    });
 }
 
 export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, cb) {
@@ -179,30 +177,30 @@ export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, l
     if (sort) {
         indexSort = sort;
     }
-    if(order == "asc"){
-        order = r.asc(indexSort)
-        console.log("getAllByIndexOrderByFilterSkipLimit, ", " r.table('" + table + "').orderBy({'index': r.asc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
-    }else {
-        order = r.desc(indexSort)
-        console.log("getAllByIndexOrderByFilterSkipLimit, ", " r.table('" + table + "').orderBy({'index': r.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    if (order == "asc") {
+        order = conn.asc(indexSort)
+        console.log("getAllByIndexOrderByFilterSkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.asc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    } else {
+        order = conn.desc(indexSort)
+        console.log("getAllByIndexOrderByFilterSkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
     }
 
-    r.table(table)
+    conn.table(table)
         .orderBy({"index": order})
-        .filter(r.row(index).eq(value))
+        .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                logger.info(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    console.log("getAllByIndexOrderByFilterSkipLimit", results.length);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            logger.info('');
+            cb('');
+        } else {
+            console.log("getAllByIndexOrderByFilterSkipLimit", results.length);
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllByIndexOrderByFilterSkipLimit, ", err);
+        cb(err);
+    });
 }
 
 
@@ -212,23 +210,23 @@ export function getAllByIndexSkipLimit(table, index, value, skip, limit, conn, c
         logger.warn(errMsg + "getAllByIndexSkipLimit --> search query is not correct.");
         return cb()
     }
-    console.log("getAllByIndexSkipLimit, ", " r.table('" + table + "').getAll('" + value + "', {index: '" + index + "'}).skip(" + skip + ").limit(" + limit + ")");
+    console.log("getAllByIndexSkipLimit, ", " conn.table('" + table + "').getAll('" + value + "', {index: '" + index + "'}).skip(" + skip + ").limit(" + limit + ")");
 
-    r.table(table)
+    conn.table(table)
         .getAll(value, {index: index})
         .skip(skip).limit(limit)
-        .run(conn, function (err, cursor) {
-            if (err || !cursor) {
-                //logger.info(err);
-                cb(err);
-            } else {
-                cursor.toArray(function (err, results) {
-                    if (err) return cb(err);
-                    //logger.info(results.length);
-                    cb(null, results);
-                });
-            }
-        });
+        .run().then(function (results) {
+        if (!results) {
+            //logger.info(err);
+            cb('');
+        } else {
+            //logger.info(results.length);
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllByIndexSkipLimit, ", err);
+        cb(err);
+    });
 }
 
 function question(id) {
@@ -281,7 +279,7 @@ export function getCommentator(id, conn, cb) {
             } else {
                 commentator.comments = comments;
                 //logger.info(commentator);
-                cb(null, commentator);
+                cb(null);
             }
         });
         //}
@@ -298,7 +296,7 @@ export function getCommentatorByNick(id, conn, cb) {
         var nick = commentator ? commentator.nick : id;
         var index = commentator ? commentator.operator : "_all";
         if (err || !commentator) {
-            logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ",nick, err);
+            logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ", nick, err);
         }
         //get all comments by index nick
 
@@ -321,7 +319,7 @@ export function getCommentatorByNick(id, conn, cb) {
                 logger.info(err);
                 cb(err);
             } else if (!resp || resp.length === 0) {
-                if(!commentator){
+                if (!commentator) {
                     commentator = {
                         "categories": "",
                         "countries": "",
@@ -340,7 +338,7 @@ export function getCommentatorByNick(id, conn, cb) {
                 cb(null, commentator);
             } else {
 
-                if(!commentator){
+                if (!commentator) {
                     commentator = {
                         "categories": resp[0].categories,
                         "countries": resp[0].countries,
@@ -410,9 +408,9 @@ export function allcommentators(conn, cb) {
         count = count + 1;
 
         logger.info("going to get more comments for operator " + operator);
-        r.table(table)
+        conn.table(table)
             .getAll(operator, {index: 'operator'})
-            .run(conn)
+            .run()
             .then(function (cursor) {
                 var hasNextRow = function (cb, prevRow) {
                     cursor.next(function (err, row) {
