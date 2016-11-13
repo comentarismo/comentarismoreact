@@ -63,11 +63,7 @@ function run() {
 }
 
 function send(that, type, payload) {
-
     new Fingerprint2().get(function (result, components) {
-        // console.log(result); //a hash, representing your device fingerprint
-        // console.log(components); // an array of FP components
-
         payload.type = type;
         payload.fp = result;
         // payload.fingerprint = components;
@@ -77,26 +73,23 @@ function send(that, type, payload) {
         var request = $.ajax({
             url: that.host + '/analytics',
             type: 'POST',
-            data: {track:payload},
+            data: {track: payload},
             dataType: 'json',
             headers: {"COMENTARISMO-KEY": that.key},
         });
 
         request.done(function (data, textStatus, jqXHR) {
-            // if (window.debug) {
+            if (window.debug) {
                 console.log("Comentarismo Analytics OK ", data);
-            // }
+            }
 
         });
         request.fail(function (jqXHR) {
-            console.log("ERROR: fail", jqXHR);
+            if (window.debug) {
+                console.log("ERROR: fail", jqXHR);
+            }
         });
-
-        console.log(result); //a hash, representing your device fingerprint
-        console.log(components); // an array of FP components
     });
-
-
 }
 
 function isMobile() {
@@ -1513,10 +1506,13 @@ Comentarismo = function (options) {
         // this.elk = "http://" + "g7-box:9200";
         this.elk = "http://" + "localhost:3000/elk";
 
-    } else if (options.host && options.cached && (options.host.indexOf("http") !== -1 && options.cached.indexOf("http") !== -1)) {
+    } else if (options.host
+        // && options.cached && (options.host.indexOf("http") !== -1 && options.cached.indexOf("http") !== -1)
+    ) {
         //if there is no http defined ? lets use default http
         this.host = host = "http://" + options.host;
         this.elk = elk = "http://" + options.cached;
+        // this.wshost = "ws://" + options.host;
     } else {
         //well then lets use whatever the user has defined :D
         this.host = host = options.host;
@@ -1537,11 +1533,6 @@ Comentarismo = function (options) {
     $('#filtersentiment').on('change', _.bind(this.onClickFiltersentiment, that));
 
     table = options.table || "commentaries";
-
-
-    var payload = analytichelper.run();
-    console.log(payload);
-    analytichelper.send(that, "view", payload);
 
 
     if (options.css) {
@@ -1694,6 +1685,12 @@ Comentarismo = function (options) {
     });
 
 
+
+    var payload = analytichelper.run();
+    if (window.debug) {
+        console.log("analytichelper payload",payload);
+    }
+    analytichelper.send(that, "view", payload);
 };
 
 Comentarismo.prototype.loadMoreComments = function (cb) {
