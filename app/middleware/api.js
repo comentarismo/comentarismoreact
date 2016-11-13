@@ -51,7 +51,7 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
             .withCredentials()
             .end((err, res)=> {
                 if (err) {
-                    console.log("createRequestPromise err -> ", err);
+                    // console.log("createRequestPromise err -> ", err.error);
                     if (params.errorType) {
                         dispatch({
                             type: params.errorType,

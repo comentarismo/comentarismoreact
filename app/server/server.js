@@ -214,13 +214,12 @@ function limiterhandler(req, res) {
     console.log("Too many requests -> ", ip);
 
     //save possible abuser to ratelimit table
-    conn.table('ratelimit').get(ip).update(
-        {
-            blocks: conn.row('blocks').add(1),
-            pathname: conn.branch(conn.row('pathname').default([]).contains(pathname),
-                conn.row('pathname'),
-                conn.row('pathname').default([]).append(pathname))
-        }).run().then(function (dbresult) {
+    conn.table('ratelimit').get(ip).update({
+        blocks: conn.row('blocks').add(1),
+        pathname: conn.branch(conn.row('pathname').default([]).contains(pathname),
+            conn.row('pathname'),
+            conn.row('pathname').default([]).append(pathname))
+    }).run().then(function (dbresult) {
         if (dbresult.skipped > 0) {
             //nothing found, so lets insert
             conn.table('ratelimit').insert({id: ip, blocks: 0, pathname: [pathname]}, {
@@ -772,9 +771,9 @@ server.get("/random", limiter, (req, res)=> {
 
             return res.redirect(301, "/sentiment/" + encodeURIComponent(theone.url));
         }
-    }).catch(function(err){
-            console.log("Got an error when doing /random --> ", err);
-            return res.redirect(301, "/topvideos/type/YouTubeVideo");
+    }).catch(function (err) {
+        console.log("Got an error when doing /random --> ", err);
+        return res.redirect(301, "/topvideos/type/YouTubeVideo");
     })
 });
 
@@ -1002,21 +1001,5 @@ server.use((err, req, res, next)=> {
     res.status(500).send("something went wrong... --> " + err.stack)
 });
 
-
-// //auth rethinkdb
-// r.connect({
-//     host: rethinkdbHost,
-//     port: rethinkdbPort,
-//     authKey: rethinkdbKey,
-//     db: rethinkdb_table
-// }, function (err, c) {
-//     conn = c;
-//     if (err) {
-//         logger.info("rethinkdb -> ", err);
-//     } else {
-//         logger.info("Rethinkdb is connected");
-//
 logger.info(`Server is listening to port: ${port}`);
 server.listen(port);
-//     }
-// });
