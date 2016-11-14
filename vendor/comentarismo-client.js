@@ -62,15 +62,14 @@ function run() {
     return track;
 }
 
-function send(that, type, payload) {
+function send(that, type, payload, operator) {
     new Fingerprint2().get(function (result, components) {
         payload.type = type;
         payload.fp = result;
         // payload.fingerprint = components;
         payload.key = that.key;
-        payload.operator = that.operator;
+        payload.operator = operator;
         payload.url = document.location.href;
-
 
 
         var request = $.ajax({
@@ -1544,13 +1543,6 @@ Comentarismo = function (options) {
 
     table = options.table || "commentaries";
 
-    var payload = analytichelper.run();
-    if (window.debug) {
-        console.log("analytichelper payload", payload);
-    }
-    analytichelper.send(that, "view", payload);
-
-
     if (options.css) {
         $('head').append('<link rel="stylesheet" href="' + options.css + '" type="text/css" />');
     } else {
@@ -1600,6 +1592,14 @@ Comentarismo = function (options) {
         //WTF ?
         throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
     }
+
+
+    var payload = analytichelper.run();
+    if (window.debug) {
+        console.log("analytichelper payload", payload);
+    }
+    analytichelper.send(that, "view", payload, operator);
+
 
     this.commentForm = $('#comment-form');
     this.commentForm.on('submit', _.bind(this.onSubmitCommentForm, this));
