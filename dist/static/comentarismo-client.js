@@ -69,9 +69,12 @@ function send(that, type, payload) {
         // payload.fingerprint = components;
         payload.key = that.key;
         payload.operator = that.operator;
+        payload.url = document.location.href;
+
+
 
         var request = $.ajax({
-            url: that.host + '/analytics',
+            url: that.analytics + '/analytics',
             type: 'POST',
             data: {track: payload},
             dataType: 'json',
@@ -1501,22 +1504,29 @@ Comentarismo = function (options) {
     this.$el = $("#comments-list");
 
     if (document.location.hostname.indexOf("localhost") !== -1) {
-        this.host = "http://" + "localhost:3000";
+        this.host = "http://localhost:3000";
         //this.wshost = "ws://" + "localhost:3000";
-        // this.elk = "http://" + "g7-box:9200";
-        this.elk = "http://" + "localhost:3000/elk";
-
-    } else if (options.host
-        // && options.cached && (options.host.indexOf("http") !== -1 && options.cached.indexOf("http") !== -1)
-    ) {
-        //if there is no http defined ? lets use default http
-        this.host = host = "http://" + options.host;
-        this.elk = elk = "http://" + options.cached;
-        // this.wshost = "ws://" + options.host;
+        this.elk = "http://localhost:3000/elk";
+        this.analytics = "http://localhost:3013";
     } else {
-        //well then lets use whatever the user has defined :D
-        this.host = host = options.host;
-        this.elk = elk = options.cached;
+        //if there is no https defined ? we use http
+        if (options.host && options.host.indexOf("https://") !== -1) {
+            this.host = host = options.host;
+        } else {
+            this.host = host = "http://" + options.host;
+        }
+        if (options.cached && options.cached.indexOf("https") !== -1) {
+            this.elk = elk = options.cached;
+        } else {
+            this.elk = elk = "http://" + options.cached;
+        }
+        if (options.analytics && options.analytics.indexOf("https") !== -1) {
+            this.analytics = options.analytics;
+        } else {
+            this.analytics = "http://analytics.comentarismo.com";
+        }
+
+        // this.wshost = "ws://" + options.host;
     }
 
     if (options.debug && options.debug == "true") {
@@ -1533,6 +1543,12 @@ Comentarismo = function (options) {
     $('#filtersentiment').on('change', _.bind(this.onClickFiltersentiment, that));
 
     table = options.table || "commentaries";
+
+    var payload = analytichelper.run();
+    if (window.debug) {
+        console.log("analytichelper payload", payload);
+    }
+    analytichelper.send(that, "view", payload);
 
 
     if (options.css) {
@@ -1685,12 +1701,6 @@ Comentarismo = function (options) {
     });
 
 
-
-    var payload = analytichelper.run();
-    if (window.debug) {
-        console.log("analytichelper payload",payload);
-    }
-    analytichelper.send(that, "view", payload);
 };
 
 Comentarismo.prototype.loadMoreComments = function (cb) {
