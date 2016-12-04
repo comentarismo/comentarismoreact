@@ -303,7 +303,7 @@ module.exports = {
     run: run,
     send: send,
 };
-},{"fingerprintjs2":14,"moment":23,"ua-parser-js":24}],2:[function(require,module,exports){
+},{"fingerprintjs2":18,"moment":24,"ua-parser-js":25}],2:[function(require,module,exports){
 /*!
  * jQuery i18n plugin
  * @requires jQuery v1.1 or later
@@ -317,7 +317,7 @@ module.exports = {
 var __slice = Array.prototype.slice;
 var i18n = {
     dict: null,
-    load: function(i18n_dict) {
+    load: function (i18n_dict) {
         if (this.dict !== null) {
             $.extend(this.dict, i18n_dict);
         } else {
@@ -334,70 +334,101 @@ var i18n = {
         // Substitute any params.
         return this.printf.apply(this, args);
     },
-    printf: function(str, args) {
+    printf: function (str, args) {
         if (arguments.length < 2) return str;
         args = $.isArray(args) ? args : __slice.call(arguments, 1);
-        return str.replace(/([^%]|^)%(?:(\d+)\$)?s/g, function(p0, p, position) {
+        return str.replace(/([^%]|^)%(?:(\d+)\$)?s/g, function (p0, p, position) {
             if (position) {
-                return p + args[parseInt(position)-1];
+                return p + args[parseInt(position) - 1];
             }
             return p + args.shift();
         }).replace(/%%s/g, '%s');
     }
 
 };
-$.fn._t = function(str, params) {
+$.fn._t = function (str, params) {
     return $(this).html(i18n._.apply(i18n, arguments));
 };
+
 $.i18n = i18n;
+var dictionary = require("./dictionary");
 
-var terrible = "Terrible!";
-var sucks = "Sucks";
-var bad = "Bad";
-var notgood = "Not Good";
-var eh = "Eh";
-var neutral = "Neutral";
-var ok = "OK";
-var good = "Good";
-var likeit = "Like It";
-var lovedit = "Loved It";
-var awesome = "Awesome!";
-var unknown = "Unknown";
+var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
 
+var targetLang = "english";
+if (userLang.indexOf("pt") !== -1) {
+    targetLang = "portuguese";
+} else if (userLang.indexOf("es") !== -1) {
+    targetLang = "spanish";
+} else if (userLang.indexOf("it") !== -1) {
+    targetLang = "italian";
+} else if (userLang.indexOf("fr") !== -1) {
+    targetLang = "french";
+} else if (userLang.indexOf("russian") !== -1) {
+    targetLang = "russian";
+} else if (userLang.indexOf("croatian") !== -1) {
+    targetLang = "croatian";
+} else {
+    console.log("default lang will be used");
+}
+
+console.log("Comentarismo Plugin Detected User Default Language Is: ", targetLang);
+
+
+i18n.load(dictionary.my_dictionary[targetLang]);
+
+var filterBySentiment = i18n._('filterBySentiment');
+var terrible = i18n._('terrible');
+var sucks = i18n._('sucks');
+var bad = i18n._('bad');
+var notgood = i18n._('notgood');
+var eh = i18n._('eh');
+var neutral = i18n._('neutral');
+var ok = i18n._('ok');
+var good = i18n._('good');
+var likeit = i18n._('likeit');
+var lovedit = i18n._('lovedit');
+var awesome = i18n._('awesome');
+var unknown = i18n._('unknown');
+
+
+//window.RateYo.rateYo();
 var comentarismoContainerHtml =
     "<div class='success' style='display:none;'></div>" +
     "<div class='error' style='display:none;'></div>" +
 
     "<a class='' style='cursor:pointer;'><img src='#COMMENT_ICON'/><span id='comments-count'></span></a>" +
 
-     "<select name='select-choice' id='filtersentiment'>" +
-     "<option value='' selected='selected'>Filter By Sentiment</option>" +
-     "<option value='-5'>" + emojione.shortnameToUnicode(':scream:') + " " + terrible + "</option>" +
-     "<option value='-4'>" + emojione.shortnameToUnicode(":angry:") + " " + sucks + "</option>" +
-     "<option value='-3'>" + emojione.shortnameToUnicode(":worried:") + " " + bad + "</option>" +
-     "<option value='-2'>" + emojione.shortnameToUnicode(":unamused:") + " " + notgood + "</option>" +
-     "<option value='-1'>" + emojione.shortnameToUnicode(":confused:") + " " + eh + "</option>" +
-     "<option value='0'>" + emojione.shortnameToUnicode(":expressionless:") + " " + neutral + "</option>" +
-     "<option value='1'>" + emojione.shortnameToUnicode(":neutral_face:") + " " + ok + "</option>" +
-     "<option value='2'>" + emojione.shortnameToUnicode(":smile:") + " " + good + "</option>" +
-     "<option value='3'>" + emojione.shortnameToUnicode(":smiley:") + " " + likeit + "</option>" +
-     "<option value='4'>" + emojione.shortnameToUnicode(":yum:") + " " + lovedit + "</option>" +
-     "<option value='5'>" + emojione.shortnameToUnicode(":grinning:") + " " + awesome + "</option>" +
-     "<option value='6'>" + emojione.shortnameToUnicode(":no_mouth:") + " " + unknown + "</option>" +
-     "</select>" +
+    "<select name='select-choice' id='filtersentiment'>" +
+    "<option value='' selected='selected'>"+filterBySentiment+"</option>" +
+    "<option value='-5'>" + emojione.shortnameToUnicode(':scream:') + " " + terrible + "</option>" +
+    "<option value='-4'>" + emojione.shortnameToUnicode(":angry:") + " " + sucks + "</option>" +
+    "<option value='-3'>" + emojione.shortnameToUnicode(":worried:") + " " + bad + "</option>" +
+    "<option value='-2'>" + emojione.shortnameToUnicode(":unamused:") + " " + notgood + "</option>" +
+    "<option value='-1'>" + emojione.shortnameToUnicode(":confused:") + " " + eh + "</option>" +
+    "<option value='0'>" + emojione.shortnameToUnicode(":expressionless:") + " " + neutral + "</option>" +
+    "<option value='1'>" + emojione.shortnameToUnicode(":neutral_face:") + " " + ok + "</option>" +
+    "<option value='2'>" + emojione.shortnameToUnicode(":smile:") + " " + good + "</option>" +
+    "<option value='3'>" + emojione.shortnameToUnicode(":smiley:") + " " + likeit + "</option>" +
+    "<option value='4'>" + emojione.shortnameToUnicode(":yum:") + " " + lovedit + "</option>" +
+    "<option value='5'>" + emojione.shortnameToUnicode(":grinning:") + " " + awesome + "</option>" +
+    "<option value='6'>" + emojione.shortnameToUnicode(":no_mouth:") + " " + unknown + "</option>" +
+    "</select>" +
 
     "<form class='form comment-form' id='comment-form' action=''>" +
     "<div class='form-group'>" +
+    "<div id='comment-rating'></div>" +
+    "</p>" +
     "<div class='textarea-wrapper'>" +
-    "<textarea class='textarea add-comment' name='body' id='new-todo' tabindex='1' rows='2' cols='40' placeholder='Add a comment'></textarea>" +
+    "<textarea class='textarea add-comment' name='body' id='new-todo' tabindex='1' rows='2' cols='40' placeholder='"+$.i18n._('new-todo')+"'></textarea>" +
     "</div>" +
     "<section class='auth-section'>" +
     "<p class='input-wrapper hidden'><img id='captchaimage' src='' alt='Captcha image'></p>" +
     "<p class='input-wrapper hidden'><input type='hidden' name='captchaid' id='captchaid' value=''>" +
-    "<input id='captchasolution' name='captchasolution' value='' placeholder='I am not a robot!'/>" +
+    "<input id='captchasolution' name='captchasolution' value='' placeholder='"+$.i18n._('inotrobot')+"'/>" +
     "</p>" +
     "<p class='post-action'>" +
-    "<input id='submit-btn' value='Submit' type='submit'/>" +
+    "<input id='submit-btn' value='"+$.i18n._('submit')+"' type='submit'/>" +
     "</p>" +
     "</section>" +
     "</div>" +
@@ -417,15 +448,15 @@ var comentarismoContainerHtmlNoReply =
     "<form class='hidden form comment-form' id='comment-form' action=''>" +
     "<div class='form-group'>" +
     "<div class='textarea-wrapper'>" +
-    "<textarea class='textarea' name='body' id='new-todo' tabindex='1' rows='2' cols='40' placeholder='Add a comment'></textarea>" +
+    "<textarea class='textarea' name='body' id='new-todo' tabindex='1' rows='2' cols='40' placeholder='"+$.i18n._('new-todo')+"'></textarea>" +
     "</div>" +
     "<section class='auth-section'>" +
     "<p class='input-wrapper'><img id='captchaimage' src='' alt='Captcha image'></p>" +
     "<p class='input-wrapper'><input type='hidden' name='captchaid' id='captchaid' value=''>" +
-    "<input id='captchasolution' name='captchasolution' value='' placeholder='I am not a robot!'/>" +
+    "<input id='captchasolution' name='captchasolution' value='' placeholder='"+$.i18n._('inotrobot')+"'/>" +
     "</p>" +
     "<p class='post-action'>" +
-    "<input id='submit-btn' value='Submit' type='submit'/>" +
+    "<input id='submit-btn' value='"+$.i18n._('submit')+"' type='submit'/>" +
     "</p>" +
     "</section>" +
     "</div>" +
@@ -436,37 +467,14 @@ var comentarismoContainerHtmlNoReply =
     "<a id='inifiniteLoader' style='display:none;'><img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
     "<a id='commentsloadmore' >Load more...</a>";
 
-var my_dictionary = {
-    "english": {
-        'submit': 'Submit'
-    },
-    "portuguese" : {
-        'submit': 'Enviar'
-    },
-    "spanish" : {
-        'submit': 'Enviar'
-    },
-    "italian" : {
-        'submit': 'Invio'
-    },
-    "french" : {
-        'submit': 'Soumettre'
-    },
-    "russian" : {
-        'submit': 'Отправить'
-    },
-    "croatian" : {
-        'submit': 'Podnijeti'
-    }
-};
 
 var initComentarismoContainer = function initComentarismoContainer(div, noreply, options) {
     var commenticon = (options && options.commenticon) ? options.commenticon : "http://api.comentarismo.com/static/images/comments.ico";
 
     var targetHtml;
     if (noreply == "nick") {
-        targetHtml =  comentarismoContainerHtmlNoReply.replace('#COMMENT_ICON', commenticon);
-    }else {
+        targetHtml = comentarismoContainerHtmlNoReply.replace('#COMMENT_ICON', commenticon);
+    } else {
         targetHtml = comentarismoContainerHtml.replace('#COMMENT_ICON', commenticon);
     }
     if (!div) {
@@ -475,32 +483,10 @@ var initComentarismoContainer = function initComentarismoContainer(div, noreply,
     var htmlElement = $(div);
     htmlElement.html(targetHtml);
 
-    var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
-
-    var targetLang = "english";
-    if (userLang.indexOf("pt") !== -1) {
-        targetLang = "portuguese";
-    } else if (userLang.indexOf("es") !== -1) {
-        targetLang = "spanish";
-    } else if (userLang.indexOf("it") !== -1) {
-        targetLang = "italian";
-    } else if (userLang.indexOf("fr") !== -1) {
-        targetLang = "french";
-    } else if (userLang.indexOf("russian") !== -1) {
-        targetLang = "russian";
-    } else if (userLang.indexOf("croatian") !== -1) {
-        targetLang = "croatian";
-    }else {
-        console.log("default lang will be used");
-    }
-
-    console.log("Comentarismo Plugin Detected User Default Language Is: ", targetLang);
-
-
-    i18n.load(my_dictionary[targetLang]);
-
     //bind lang to buttons
-    $('#submit-btn').val(i18n._('submit'));
+    //$('#submit-btn').val(i18n._('submit'));
+    //$('#new-todo').val(i18n._('new-todo'));
+    //$('#captchasolution').val(i18n._('inotrobot'));
 
 };
 
@@ -531,7 +517,7 @@ module.exports = {
     addCommentIndex: addCommentIndex
 };
 
-},{}],3:[function(require,module,exports){
+},{"./dictionary":7}],3:[function(require,module,exports){
 var countArticle = function countArticle(that, table, thekey, page, cb) {
     var url = that.host + "/listbykeycount/" + table + "/" + thekey + "/" + page + "/";
     ga('send', 'event', 'countArticle', "/listbykeycount/" + table + "/" + thekey + "/" + page + "/", {}, 0);
@@ -622,19 +608,20 @@ var emojis = {
 };
 
 var sentiment = {
-    "-5": "Terrible!",
-    "-4": "Sucks",
-    "-3": "Bad",
-    "-2": "Not Good",
-    "-1": "Eh",
-    "0": "Neutral",
-    "1": "OK",
-    "2": "Good",
-    "3": "Like It",
-    "4": "Loved It",
-    "5": "Awesome!",
-    "6": "Unknown",
+    "-5": $.i18n._('terrible'),
+    "-4": $.i18n._('sucks'),
+    "-3": $.i18n._('bad'),
+    "-2": $.i18n._('notgood'),
+    "-1": $.i18n._('eh'),
+    "0": $.i18n._('neutral'),
+    "1": $.i18n._('ok'),
+    "2": $.i18n._('good'),
+    "3": $.i18n._('likeit'),
+    "4": $.i18n._('lovedit'),
+    "5": $.i18n._('awesome'),
+    "6": $.i18n._('unknown'),
 };
+
 
 function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
 
@@ -664,7 +651,7 @@ function createComment(item, date_cmt,date_news, replies, defaultIndex,user) {
         "</div>" )  +
 
         (item.sentiment || item.sentiment === 0 ?
-        "<div class='sentiment-tooltip'>Sentiment: " +emojis[item.sentiment] +
+        "<div class='sentiment-tooltip'>"+$.i18n._('sentiment') +emojis[item.sentiment] +
         "<span class='sentiment-tooltiptext'>"+sentiment[item.sentiment]+"</span>" +
         "</div>"  : "")
         +
@@ -741,7 +728,7 @@ module.exports = {
     createReplyComment:createReplyComment,
     createComment:createComment
 }
-},{"emojione":13}],6:[function(require,module,exports){
+},{"emojione":16}],6:[function(require,module,exports){
 
 
 var deleteComment = function (param) {
@@ -791,9 +778,9 @@ var deleteComment = function (param) {
             $(".success").hide();
             var alertMsg;
             if(that.mobile) {
-                alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
+                alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
             } else {
-                alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
+                alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
             }
             that.showAlertMessage(alertMsg, $(".error"));
             return;
@@ -801,9 +788,9 @@ var deleteComment = function (param) {
         $(".success").hide();
         var alertMsg;
         if(that.mobile) {
-            alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
+            alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
         } else {
-            alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
+            alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
         }
         that.showAlertMessage(alertMsg, $(".error"));
     });
@@ -813,6 +800,201 @@ module.exports = {
     deleteComment:deleteComment
 }
 },{}],7:[function(require,module,exports){
+
+var my_dictionary = {
+    "english": {
+        'submit': 'Submit',
+        'new-todo': 'Add a comment',
+        'sentiment': 'Sentiment: ',
+        'filterBySentiment': 'Filter By Sentiment',
+        'terrible':'Terrible!',
+        'sucks':'Sucks',
+        'bad' :'Bad',
+        'notgood':'Not Good',
+        'eh':'Eh',
+        'neutral':'Neutral',
+        'ok':'OK',
+        'good':'Good',
+        'likeit':'Like It',
+        'lovedit':'Loved It',
+        'awesome':'Awesome!',
+        'unknown':'Unknown',
+        'inotrobot':'I am not a robot!',
+        'wrongcaptchasolution':'Wrong captcha solution! Please correct the captcha solution and try again !',
+        'itsemsthatyouhaveposted':'It seems that you have posted this comment before! You are allowed to comment only once!',
+        'pleaselog':'Please log in to continue!',
+        'commentwasdeleted':'... This comment was deleted',
+        'onlyvote1time':'Sorry, You can only vote 1 time per comment.',
+        'seemslikeyounotlogged':'Seems like you are not logged in.',
+        'isnoexistingcomment':'Seems like there is no existing comment with the filter selected!',
+        'hasbeenprocessed':'- Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience.'
+    },
+    "portuguese": {
+        'submit': 'Enviar',
+        'new-todo': 'Adicione um comentário',
+        'sentiment': 'Sentimento: ',
+        'filterBySentiment': 'Filtro pelo Sentimento',
+        'terrible':'Terrivel!',
+        'sucks':'É uma merda',
+        'bad' :'Mau',
+        'notgood':'Não é bom',
+        'eh':'Eh',
+        'neutral':'Neutro',
+        'ok':'Está bem',
+        'good':'Bem',
+        'likeit':'Gosto disso',
+        'lovedit':'Amei',
+        'awesome':'Impressionante!',
+        'unknown':'Desconhecido',
+        'inotrobot':'Eu não sou um robô',
+        'wrongcaptchasolution':'Solução errada do captcha! Corrija a solução captcha e tente novamente!',
+        'itsemsthatyouhaveposted':'Parece que você postou este comentário antes! Você tem permissão para comentar apenas uma vez!',
+        'pleaselog':'Por favor faça o login para continuar!',
+        'commentwasdeleted':'... Este comentário foi eliminado',
+        'onlyvote1time':'Desculpe, você só pode votar 1 vez por comentário.',
+        'seemslikeyounotlogged':'Parece que você não está logado.',
+        'isnoexistingcomment':'Parece que não há nenhum comentário existente com o filtro selecionado!',
+        'hasbeenprocessed':'- Seu comentário foi processado e estará disponível o mais cedo possível, logo após a verificação de spam ser concluída. Obrigado pela sua paciência.'
+    },
+    "spanish": {
+        'submit': 'Enviar',
+        'new-todo': 'Añadir un comentario',
+        'sentiment': 'Sentimiento: ',
+        'filterBySentiment': 'Filtrado por Sentimiento',
+        'terrible':'Terrible!',
+        'sucks':'libar',
+        'bad' :'Malo',
+        'notgood':'No está bien',
+        'eh':'Eh',
+        'neutral':'Neutral',
+        'ok':'DE ACUERDO',
+        'good':'Bueno',
+        'likeit':'Gusta',
+        'lovedit':'Me encantó',
+        'awesome':'Increíble!',
+        'unknown':'Desconocido',
+        'inotrobot':'No soy un robot',
+        'wrongcaptchasolution':'¡Solución incorrecta del captcha! Por favor corrija la solución captcha e inténtelo de nuevo!',
+        'itsemsthatyouhaveposted':'Parece que usted ha publicado este comentario antes! ¡Solo puedes comentar una vez!',
+        'seemslikeyounotlogged':'Parece que no has iniciado sesión.',
+        'pleaselog':'¡Por favor inicie sesión para continuar!',
+        'commentwasdeleted':'... Este comentario fue eliminado.',
+        'onlyvote1time':'Lo sentimos, solo puedes votar 1 vez por comentario.',
+        'isnoexistingcomment':'Parece que no hay ningún comentario con el filtro seleccionado!',
+        'hasbeenprocessed':'- Su comentario ha sido procesado y estará disponible lo antes posible, justo después de que se haya completado el chequeo de spam. Gracias por su paciencia.'
+    },
+    "italian": {
+        'submit': 'Invio',
+        'new-todo': 'Aggiungi un commento',
+        'sentiment': 'Sentimento: ',
+        'filterBySentiment': 'Filtra per Sentimento',
+        'terrible':'Terribile!',
+        'sucks':'succhiare',
+        'bad' :'Cattivo',
+        'notgood':'Non bene',
+        'eh':'Eh',
+        'neutral':'Neutro',
+        'ok':'OK',
+        'good':'Buona',
+        'likeit':'Mi piace',
+        'lovedit':'Lo amo',
+        'awesome':'Eccezionale!',
+        'unknown':'Sconosciuto',
+        'inotrobot':'Io non sono un robot',
+        'wrongcaptchasolution':'soluzione captcha Sbagliato! Si prega di correggere la soluzione captcha e riprova!',
+        'itsemsthatyouhaveposted':'Sembra che avete pubblicato questo commento prima! Hai il permesso di commentare una sola volta!',
+        'seemslikeyounotlogged':'Sembra che non si è connessi a.',
+        'pleaselog':'Please log in to continue!',
+        'commentwasdeleted':'... Questo commento è stato cancellato',
+        'onlyvote1time':'Sembra che non si è connessi a.',
+        'isnoexistingcomment':'Sembra che non vi è alcun commento esistente con il filtro selezionata!',
+        'hasbeenprocessed':'- Il tuo commento è stato elaborato e sarà disponibile al più presto, subito dopo spam è stato completato. Grazie per la vostra pazienza.'
+    },
+    "french": {
+        'submit': 'Soumettre',
+        'new-todo': 'Ajouter un commentaire',
+        'sentiment': 'Sentiment: ',
+        'filterBySentiment': 'Filtrer par Sentiment',
+        'terrible':'Terrible!',
+        'sucks':'suce',
+        'bad' :'Mal',
+        'notgood':'Pas bon',
+        'eh':'Eh',
+        'neutral':'Neutre',
+        'ok':'D\'accord',
+        'good':'Bien',
+        'likeit':'J\'aime ça',
+        'lovedit':'Aimé',
+        'awesome':'Génial!',
+        'unknown':'Inconnu',
+        'inotrobot':'Je ne suis pas un robot',
+        'wrongcaptchasolution':'Solution de captcha erronée! Veuillez corriger la solution captcha et réessayer!',
+        'itsemsthatyouhaveposted':'Il semble que vous ayez posté ce commentaire avant! Vous êtes autorisé à commenter une seule fois!',
+        'seemslikeyounotlogged':'Il semble que vous n\'êtes pas connecté.',
+        'pleaselog':'Merci de vous connecter pour continuer!',
+        'commentwasdeleted':'... Ce commentaire a été supprimé',
+        'onlyvote1time':'Désolé, Vous ne pouvez voter qu\'une seule fois par commentaire.',
+        'isnoexistingcomment':'Sembra che non vi è alcun commento esistente con il filtro selezionata!',
+        'hasbeenprocessed':'- Votre commentaire a été traité et sera disponible dès que possible. Merci pour votre patience.'
+    },
+    "russian": {
+        'submit': 'Отправить',
+        'new-todo': 'Добавить комментарий',
+        'sentiment': 'Cентиментальность: ',
+        'filterBySentiment': 'Сортировать по Cентиментальность',
+        'terrible':'ужасный!',
+        'sucks':'Отстой',
+        'bad' :'Плохо',
+        'notgood':'Нехорошо',
+        'eh':'Eh',
+        'neutral':'нейтральный',
+        'ok':'OK',
+        'good':'Хорошо',
+        'likeit':'Нравится',
+        'lovedit':'любил его',
+        'awesome':'Потрясающие!',
+        'unknown':'неизвестный',
+        'inotrobot':'Я не робот',
+        'wrongcaptchasolution':'Неправильное решение CAPTCHA на основе! Исправьте решение искаженным и попробуйте еще раз!',
+        'itsemsthatyouhaveposted':'Кажется, что вы разместили этот комментарий раньше! Вы можете комментировать только один раз!',
+        'seemslikeyounotlogged':'Похоже, вы не вошли в систему.',
+        'pleaselog':'Пожалуйста, войдите, чтобы продолжить!',
+        'commentwasdeleted':'... Этот комментарий был удален',
+        'onlyvote1time':'К сожалению, Вы можете голосовать только 1 раз в комментарий.',
+        'isnoexistingcomment':'Похоже, что нет существующего комментария с фильтром, выбранным!',
+        'hasbeenprocessed':'- Ваш комментарий был обработан и будет доступен как можно скорее, сразу после того, как спам проверка завершена. Спасибо за терпеливость.'
+    },
+    "croatian": {
+        'submit': 'Podnijeti',
+        'new-todo': 'Dodaj komentar',
+        'sentiment': 'Sentiment: ',
+        'filterBySentiment': 'Filtriraj po Sentiment',
+        'terrible':'užasan!',
+        'sucks':'Sucks',
+        'bad' :'Loše',
+        'notgood':'Nije dobro',
+        'eh':'Eh',
+        'neutral':'Neutralan',
+        'ok':'u redu',
+        'good':'Dobro',
+        'likeit':'Sviđa mi se',
+        'lovedit':'ljubio',
+        'awesome':'Super!',
+        'unknown':'nepoznat',
+        'inotrobot':'Nisam robot',
+        'wrongcaptchasolution':'Pogrešno captcha rješenje! Ispravite captcha rješenje i pokušajte ponovo',
+        'itsemsthatyouhaveposted':'Čini se da ste objavili ovaj komentar prije! Vi ste dozvoljeno da komentiraju samo jednom!',
+        'seemslikeyounotlogged':'Čini se kao da nisu prijavljeni.',
+        'pleaselog':'Molimo, prijavite se i dalje!',
+        'commentwasdeleted':'... Ovaj komentar je obrisan',
+        'onlyvote1time':'Nažalost, možete samo glasati 1 put po komentaru.',
+        'isnoexistingcomment':'Čini se kao ne postoji komentar s odabranom filtru',
+        'hasbeenprocessed':'- Tvoj komentar je obrađen te će biti dostupna što prije, odmah nakon spam provjera završena. Hvala na strpljenju.'
+    }
+};
+
+module.exports={my_dictionary:my_dictionary}
+},{}],8:[function(require,module,exports){
 var like_ = require("./like");
 
 var dislikeComment = function (evt) {
@@ -869,9 +1051,9 @@ var dislikeComment = function (evt) {
             $(".success").hide();
 
             if(that.mobile) {
-                alertMsg = 'Sorry, You can only vote 1 time per comment. <br>'
+                alertMsg = $.i18n._('onlyvote1time')+' <br>'
             } else {
-                alertMsg = "Sorry, You can only vote 1 time per comment";
+                alertMsg = $.i18n._('onlyvote1time');
             }
             that.showAlertMessage(alertMsg,$(".error"));
             return;
@@ -879,9 +1061,9 @@ var dislikeComment = function (evt) {
             like_.subtractCount(domTarget,itwas);
 
             if(that.mobile) {
-                alertMsg = '... This comment was deleted <br>'
+                alertMsg = $.i18n._('commentwasdeleted')+' <br>'
             } else {
-                alertMsg = "... This comment was deleted";
+                alertMsg = $.i18n._('commentwasdeleted');
             }
             that.showAlertMessage(alertMsg, $(".error"));
             // $(".error").show();
@@ -891,10 +1073,10 @@ var dislikeComment = function (evt) {
         like_.subtractCount(domTarget,itwas);
         $(".success").hide();
         if(that.mobile) {
-            alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
-        } else {
-            alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
-        }
+              alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
+           } else {
+              alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
+          }
         that.showAlertMessage(alertMsg, $(".error"));
     });
 };
@@ -904,7 +1086,7 @@ var dislikeComment = function (evt) {
 module.exports = {
     dislikeComment:dislikeComment
 };
-},{"./like":9}],8:[function(require,module,exports){
+},{"./like":10}],9:[function(require,module,exports){
 
 var showCommentForm = function (targetFrom) {
 
@@ -916,7 +1098,14 @@ var showCommentForm = function (targetFrom) {
 
     commentForm.removeClass('hidden');
     $('#new-todo').focus();
-    //commentForm.focus();
+
+    $("#comment-rating").rateYo({
+        halfStar: false,
+        normalFill: "#A0A0A0",
+        precision: 0,
+        minValue: 1,
+        maxValue: 5
+    });
 
 };
 
@@ -965,10 +1154,10 @@ var onClickShowCommentForm = function (evt,that) {
         $(".success").hide();
         var alertMsg;
         if(that.mobile) {
-            alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
-        } else {
-            alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
-        }
+        alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
+         } else {
+        alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
+         }
         that.showAlertMessage(alertMsg, $(".error"));
         return;
     });
@@ -1062,10 +1251,10 @@ var onClickShowCommentReplyForm = function (evt) {
         $(".success").hide();
         var alertMsg;
         if(that.mobile) {
-            alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
-        } else {
-            alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
-        }
+           alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
+         } else {
+            alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
+          }
         that.showAlertMessage(alertMsg, $(".error"));
         return;
         //setTimeout(function () {
@@ -1080,7 +1269,7 @@ module.exports = {
     showCommentForm:showCommentForm,
     onClickShowCommentReplyForm:onClickShowCommentReplyForm
 }
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var likeComment = function (evt) {
     evt.stopPropagation();
     evt.preventDefault();
@@ -1136,9 +1325,9 @@ var likeComment = function (evt) {
             $(".success").hide();
 
             if(that.mobile) {
-                alertMsg = 'Sorry, You can only vote 1 time per comment. <br>'
+                alertMsg = $.i18n._('onlyvote1time')+' <br>'
             } else {
-                alertMsg = "Sorry, You can only vote 1 time per comment";
+                alertMsg = $.i18n._('onlyvote1time');
             }
             that.showAlertMessage(alertMsg,$(".error"));
             return;
@@ -1146,9 +1335,9 @@ var likeComment = function (evt) {
             subtractCount(domTarget,itwas);
             $(".success").hide();
             if(that.mobile) {
-                alertMsg = '... This comment was deleted <br>'
+                alertMsg = $.i18n._('commentwasdeleted')+' <br>'
             } else {
-                alertMsg = "... This comment was deleted";
+                alertMsg = $.i18n._('commentwasdeleted');
             }
             that.showAlertMessage(alertMsg, $(".error"));
 
@@ -1157,9 +1346,9 @@ var likeComment = function (evt) {
         subtractCount(domTarget,itwas);
         $(".success").hide();
         if(that.mobile) {
-            alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
+            alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
         } else {
-            alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='"+that.host+"/login'>Login</a>'"
+            alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
         }
         that.showAlertMessage(alertMsg, $(".error"));
         //setTimeout(function () {
@@ -1195,7 +1384,7 @@ module.exports = {
     addCount:addCount,
     subtractCount:subtractCount
 };
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var container = require("./container");
 
 function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
@@ -1301,7 +1490,7 @@ module.exports = {
 }
 
 
-},{"./container":2}],11:[function(require,module,exports){
+},{"./container":2}],12:[function(require,module,exports){
 var container = require("./container");
 
 
@@ -1367,7 +1556,7 @@ module.exports = {
 };
 
 
-},{"./container":2}],12:[function(require,module,exports){
+},{"./container":2}],13:[function(require,module,exports){
 (function (global){
 // Avoid `console` errors in browsers that lack a console.
 (function () {
@@ -1396,6 +1585,7 @@ module.exports = {
 $ = require('jquery'),
     global.jQuery = $,
     Dropkick = require("./vendor/dropkick"),
+    rateyo = require('./vendor/jquery.rateyo'),
     require("./vendor/jquery-ui"),
     analytics = require('ga-browser')(),
     _ = require('underscore'),
@@ -1415,7 +1605,6 @@ $ = require('jquery'),
     form_ = require('./funcs/form_.js'),
     load_api = require('./funcs/load_api.js'),
     load_elk = require('./funcs/load_elk.js');
-
 
 var getIndexFromPath = function getIndexFromPath(index) {
     var path = window.location.pathname.split('/');
@@ -1549,6 +1738,14 @@ Comentarismo = function (options) {
         //run default CSS
         $('head').append('<link rel="stylesheet" href="' + host + '/static/css/custom.css" type="text/css" />');
     }
+    $('head').append('<style rel="text/css">.jq-ry-container { position: relative; padding: 0 5px; line-height: 0; display: block; ' +
+        'cursor: pointer; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; } ' +
+        '.jq-ry-container[readonly="readonly"] { cursor: default; } .jq-ry-container > .jq-ry-group-wrapper { position: relative; width: 100%; } ' +
+        '.jq-ry-container > .jq-ry-group-wrapper > .jq-ry-group { position: relative; line-height: 0; z-index: 10; white-space: nowrap; } ' +
+        '.jq-ry-container > .jq-ry-group-wrapper > .jq-ry-group > svg { display: inline-block; } .jq-ry-container > .jq-ry-group-wrapper > ' +
+        '.jq-ry-group.jq-ry-normal-group { width: 100%; } .jq-ry-container > .jq-ry-group-wrapper > .jq-ry-group.jq-ry-rated-group ' +
+        '{ width: 0; z-index: 11; position: absolute; top: 0; left: 0; overflow: hidden; }</style>');
+
     this.key = key = options.key;
 
     limit = options.limit || 50;
@@ -1804,7 +2001,7 @@ Comentarismo.prototype.onClickFiltersentiment = function (e) {
 
         if (counter === 0) {
             var errorbox = $(".error");
-            errorbox.html("Seems like there is no existing comment with the filter selected!");
+            errorbox.html($.i18n._('isnoexistingcomment'));
             errorbox.show();
             errorbox.focus();
 
@@ -1907,12 +2104,14 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         form = this.commentForm[0];
     }
 
+    //TODO: bind the value here
+    var rating = 0;
     var js = {
         captchasolution: form.captchasolution.value,
         captchaid: form.captchaid.value,
         comment: form.body.value,
         page: page,
-        operator: operator
+        operator: operator,
     };
 
     if (window.debug) {
@@ -1928,6 +2127,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         js.inreplyto = formid.value;
         //successbox = $("#" + formid.value + "-success");
         // errorbox = $("#" + formid.value + "-error");
+    }else {
+        rating = $("#comment-rating").rateYo("rating");
+        js.rating = rating;
     }
 
     var request = $.ajax({
@@ -1946,9 +2148,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             console.log("onSubmitCommentForm, ", jqXHR);
         }
         if (that.mobile) {
-            alertMsg = " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience."
+            alertMsg = $.i18n._('hasbeenprocessed')
         } else {
-            alertMsg = " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience."
+            alertMsg = $.i18n._('hasbeenprocessed')
         }
         that.showAlertMessage(alertMsg, $(".error"));
 
@@ -1965,9 +2167,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
     request.fail(function (jqXHR) {
         if (jqXHR.status === 200) {
             if (that.mobile) {
-                alertMsg = " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience."
+                alertMsg = $.i18n._('hasbeenprocessed')
             } else {
-                alertMsg = " - Your comment has been processed and will be available asap, right after spam check is completed. Thank you for your patience."
+                alertMsg = $.i18n._('hasbeenprocessed')
             }
             that.showAlertMessage(alertMsg, $(".error"));
 
@@ -1982,9 +2184,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         } else if (jqXHR.status === 400) {
             successbox.hide();
             if (that.mobile) {
-                alertMsg = " ... Wrong captcha solution! Please correct the captcha solution and try again !"
+                alertMsg = $.i18n._('wrongcaptchasolution')
             } else {
-                alertMsg = " ... Wrong captcha solution! Please correct the captcha solution and try again !"
+                alertMsg = $.i18n._('wrongcaptchasolution')
             }
             that.showAlertMessage(alertMsg, $(".error"));
 
@@ -1993,9 +2195,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         } else if (jqXHR.status === 406) {
             successbox.hide();
             if (that.mobile) {
-                alertMsg = " ... It seems that you have posted this comment before! You are allowed to comment only once!"
+                alertMsg = $.i18n._('youhavepostedthiscomment')
             } else {
-                alertMsg = " ... It seems that you have posted this comment before! You are allowed to comment only once!"
+                alertMsg = $.i18n._('youhavepostedthiscomment')
             }
 
             that.showAlertMessage(alertMsg, $(".error"));
@@ -2004,9 +2206,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         } else {
             successbox.hide();
             if (that.mobile) {
-                alertMsg = 'Seems like you are not logged in. <br> Please log in to continue!<br><a href="#" class="log-in">LOG IN</a>'
+                alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
             } else {
-                alertMsg = "Seems like you are not logged in. <br> Please log in to continue!<br><a href='" + that.host + "/login'>Login</a>'"
+                alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
             }
             that.showAlertMessage(alertMsg, $(".error"));
         }
@@ -2133,7 +2335,140 @@ Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie) {
     });
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./funcs/analytics-helper":1,"./funcs/container.js":2,"./funcs/count_api.js":3,"./funcs/count_elk.js":4,"./funcs/create.js":5,"./funcs/delete_.js":6,"./funcs/dislike.js":7,"./funcs/form_.js":8,"./funcs/like.js":9,"./funcs/load_api.js":10,"./funcs/load_elk.js":11,"./vendor/dropkick":26,"./vendor/jquery-ui":27,"emojione":13,"ga-browser":15,"jdenticon":17,"jquery":18,"md5":19,"moment":23,"underscore":25}],13:[function(require,module,exports){
+},{"./funcs/analytics-helper":1,"./funcs/container.js":2,"./funcs/count_api.js":3,"./funcs/count_elk.js":4,"./funcs/create.js":5,"./funcs/delete_.js":6,"./funcs/dislike.js":8,"./funcs/form_.js":9,"./funcs/like.js":10,"./funcs/load_api.js":11,"./funcs/load_elk.js":12,"./vendor/dropkick":27,"./vendor/jquery-ui":28,"./vendor/jquery.rateyo":29,"emojione":16,"ga-browser":19,"jdenticon":21,"jquery":22,"md5":23,"moment":24,"underscore":26}],14:[function(require,module,exports){
+var charenc = {
+  // UTF-8 encoding
+  utf8: {
+    // Convert a string to a byte array
+    stringToBytes: function(str) {
+      return charenc.bin.stringToBytes(unescape(encodeURIComponent(str)));
+    },
+
+    // Convert a byte array to a string
+    bytesToString: function(bytes) {
+      return decodeURIComponent(escape(charenc.bin.bytesToString(bytes)));
+    }
+  },
+
+  // Binary encoding
+  bin: {
+    // Convert a string to a byte array
+    stringToBytes: function(str) {
+      for (var bytes = [], i = 0; i < str.length; i++)
+        bytes.push(str.charCodeAt(i) & 0xFF);
+      return bytes;
+    },
+
+    // Convert a byte array to a string
+    bytesToString: function(bytes) {
+      for (var str = [], i = 0; i < bytes.length; i++)
+        str.push(String.fromCharCode(bytes[i]));
+      return str.join('');
+    }
+  }
+};
+
+module.exports = charenc;
+
+},{}],15:[function(require,module,exports){
+(function() {
+  var base64map
+      = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+
+  crypt = {
+    // Bit-wise rotation left
+    rotl: function(n, b) {
+      return (n << b) | (n >>> (32 - b));
+    },
+
+    // Bit-wise rotation right
+    rotr: function(n, b) {
+      return (n << (32 - b)) | (n >>> b);
+    },
+
+    // Swap big-endian to little-endian and vice versa
+    endian: function(n) {
+      // If number given, swap endian
+      if (n.constructor == Number) {
+        return crypt.rotl(n, 8) & 0x00FF00FF | crypt.rotl(n, 24) & 0xFF00FF00;
+      }
+
+      // Else, assume array and swap all items
+      for (var i = 0; i < n.length; i++)
+        n[i] = crypt.endian(n[i]);
+      return n;
+    },
+
+    // Generate an array of any length of random bytes
+    randomBytes: function(n) {
+      for (var bytes = []; n > 0; n--)
+        bytes.push(Math.floor(Math.random() * 256));
+      return bytes;
+    },
+
+    // Convert a byte array to big-endian 32-bit words
+    bytesToWords: function(bytes) {
+      for (var words = [], i = 0, b = 0; i < bytes.length; i++, b += 8)
+        words[b >>> 5] |= bytes[i] << (24 - b % 32);
+      return words;
+    },
+
+    // Convert big-endian 32-bit words to a byte array
+    wordsToBytes: function(words) {
+      for (var bytes = [], b = 0; b < words.length * 32; b += 8)
+        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
+      return bytes;
+    },
+
+    // Convert a byte array to a hex string
+    bytesToHex: function(bytes) {
+      for (var hex = [], i = 0; i < bytes.length; i++) {
+        hex.push((bytes[i] >>> 4).toString(16));
+        hex.push((bytes[i] & 0xF).toString(16));
+      }
+      return hex.join('');
+    },
+
+    // Convert a hex string to a byte array
+    hexToBytes: function(hex) {
+      for (var bytes = [], c = 0; c < hex.length; c += 2)
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+      return bytes;
+    },
+
+    // Convert a byte array to a base-64 string
+    bytesToBase64: function(bytes) {
+      for (var base64 = [], i = 0; i < bytes.length; i += 3) {
+        var triplet = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
+        for (var j = 0; j < 4; j++)
+          if (i * 8 + j * 6 <= bytes.length * 8)
+            base64.push(base64map.charAt((triplet >>> 6 * (3 - j)) & 0x3F));
+          else
+            base64.push('=');
+      }
+      return base64.join('');
+    },
+
+    // Convert a base-64 string to a byte array
+    base64ToBytes: function(base64) {
+      // Remove non-base-64 characters
+      base64 = base64.replace(/[^A-Z0-9+\/]/ig, '');
+
+      for (var bytes = [], i = 0, imod4 = 0; i < base64.length;
+          imod4 = ++i % 4) {
+        if (imod4 == 0) continue;
+        bytes.push(((base64map.indexOf(base64.charAt(i - 1))
+            & (Math.pow(2, -2 * imod4 + 8) - 1)) << (imod4 * 2))
+            | (base64map.indexOf(base64.charAt(i)) >>> (6 - imod4 * 2)));
+      }
+      return bytes;
+    }
+  };
+
+  module.exports = crypt;
+})();
+
+},{}],16:[function(require,module,exports){
 /* jshint maxerr: 10000 */
 /* jslint unused: true */
 /* jshint shadow: true */
@@ -2644,10 +2979,90 @@ Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie) {
 }(this.emojione = this.emojione || {}));
 if(typeof module === "object") module.exports = this.emojione;
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+/*!
+ * escape-html
+ * Copyright(c) 2012-2013 TJ Holowaychuk
+ * Copyright(c) 2015 Andreas Lubbe
+ * Copyright(c) 2015 Tiancheng "Timothy" Gu
+ * MIT Licensed
+ */
+
+'use strict';
+
+/**
+ * Module variables.
+ * @private
+ */
+
+var matchHtmlRegExp = /["'&<>]/;
+
+/**
+ * Module exports.
+ * @public
+ */
+
+module.exports = escapeHtml;
+
+/**
+ * Escape special characters in the given string of html.
+ *
+ * @param  {string} string The string to escape for inserting into HTML
+ * @return {string}
+ * @public
+ */
+
+function escapeHtml(string) {
+  var str = '' + string;
+  var match = matchHtmlRegExp.exec(str);
+
+  if (!match) {
+    return str;
+  }
+
+  var escape;
+  var html = '';
+  var index = 0;
+  var lastIndex = 0;
+
+  for (index = match.index; index < str.length; index++) {
+    switch (str.charCodeAt(index)) {
+      case 34: // "
+        escape = '&quot;';
+        break;
+      case 38: // &
+        escape = '&amp;';
+        break;
+      case 39: // '
+        escape = '&#39;';
+        break;
+      case 60: // <
+        escape = '&lt;';
+        break;
+      case 62: // >
+        escape = '&gt;';
+        break;
+      default:
+        continue;
+    }
+
+    if (lastIndex !== index) {
+      html += str.substring(lastIndex, index);
+    }
+
+    lastIndex = index + 1;
+    html += escape;
+  }
+
+  return lastIndex !== index
+    ? html + str.substring(lastIndex, index)
+    : html;
+}
+
+},{}],18:[function(require,module,exports){
 !function(e,t,i){"use strict";"undefined"!=typeof module&&module.exports?module.exports=i():"function"==typeof define&&define.amd?define(i):t[e]=i()}("Fingerprint2",this,function(){"use strict";Array.prototype.indexOf||(Array.prototype.indexOf=function(e,t){var i;if(null==this)throw new TypeError("'this' is null or undefined");var a=Object(this),r=a.length>>>0;if(0===r)return-1;var n=+t||0;if(Math.abs(n)===1/0&&(n=0),n>=r)return-1;for(i=Math.max(n>=0?n:r-Math.abs(n),0);r>i;){if(i in a&&a[i]===e)return i;i++}return-1});var e=function(e){var t={swfContainerId:"fingerprintjs2",swfPath:"flash/compiled/FontList.swf",detectScreenOrientation:!0,sortPluginsFor:[/palemoon/i],userDefinedFonts:[]};this.options=this.extend(e,t),this.nativeForEach=Array.prototype.forEach,this.nativeMap=Array.prototype.map};return e.prototype={extend:function(e,t){if(null==e)return t;for(var i in e)null!=e[i]&&t[i]!==e[i]&&(t[i]=e[i]);return t},log:function(e){window.console&&console.log(e)},get:function(e){var t=[];t=this.userAgentKey(t),t=this.languageKey(t),t=this.colorDepthKey(t),t=this.pixelRatioKey(t),t=this.screenResolutionKey(t),t=this.availableScreenResolutionKey(t),t=this.timezoneOffsetKey(t),t=this.sessionStorageKey(t),t=this.localStorageKey(t),t=this.indexedDbKey(t),t=this.addBehaviorKey(t),t=this.openDatabaseKey(t),t=this.cpuClassKey(t),t=this.platformKey(t),t=this.doNotTrackKey(t),t=this.pluginsKey(t),t=this.canvasKey(t),t=this.webglKey(t),t=this.adBlockKey(t),t=this.hasLiedLanguagesKey(t),t=this.hasLiedResolutionKey(t),t=this.hasLiedOsKey(t),t=this.hasLiedBrowserKey(t),t=this.touchSupportKey(t);var i=this;this.fontsKey(t,function(t){var a=[];i.each(t,function(e){var t=e.value;"undefined"!=typeof e.value.join&&(t=e.value.join(";")),a.push(t)});var r=i.x64hash128(a.join("~~~"),31);return e(r,t)})},userAgentKey:function(e){return this.options.excludeUserAgent||e.push({key:"user_agent",value:this.getUserAgent()}),e},getUserAgent:function(){return navigator.userAgent},languageKey:function(e){return this.options.excludeLanguage||e.push({key:"language",value:navigator.language||navigator.userLanguage||navigator.browserLanguage||navigator.systemLanguage||""}),e},colorDepthKey:function(e){return this.options.excludeColorDepth||e.push({key:"color_depth",value:screen.colorDepth}),e},pixelRatioKey:function(e){return this.options.excludePixelRatio||e.push({key:"pixel_ratio",value:this.getPixelRatio()}),e},getPixelRatio:function(){return window.devicePixelRatio||""},screenResolutionKey:function(e){return this.options.excludeScreenResolution?e:this.getScreenResolution(e)},getScreenResolution:function(e){var t;return t=this.options.detectScreenOrientation&&screen.height>screen.width?[screen.height,screen.width]:[screen.width,screen.height],"undefined"!=typeof t&&e.push({key:"resolution",value:t}),e},availableScreenResolutionKey:function(e){return this.options.excludeAvailableScreenResolution?e:this.getAvailableScreenResolution(e)},getAvailableScreenResolution:function(e){var t;return screen.availWidth&&screen.availHeight&&(t=this.options.detectScreenOrientation?screen.availHeight>screen.availWidth?[screen.availHeight,screen.availWidth]:[screen.availWidth,screen.availHeight]:[screen.availHeight,screen.availWidth]),"undefined"!=typeof t&&e.push({key:"available_resolution",value:t}),e},timezoneOffsetKey:function(e){return this.options.excludeTimezoneOffset||e.push({key:"timezone_offset",value:(new Date).getTimezoneOffset()}),e},sessionStorageKey:function(e){return!this.options.excludeSessionStorage&&this.hasSessionStorage()&&e.push({key:"session_storage",value:1}),e},localStorageKey:function(e){return!this.options.excludeSessionStorage&&this.hasLocalStorage()&&e.push({key:"local_storage",value:1}),e},indexedDbKey:function(e){return!this.options.excludeIndexedDB&&this.hasIndexedDB()&&e.push({key:"indexed_db",value:1}),e},addBehaviorKey:function(e){return document.body&&!this.options.excludeAddBehavior&&document.body.addBehavior&&e.push({key:"add_behavior",value:1}),e},openDatabaseKey:function(e){return!this.options.excludeOpenDatabase&&window.openDatabase&&e.push({key:"open_database",value:1}),e},cpuClassKey:function(e){return this.options.excludeCpuClass||e.push({key:"cpu_class",value:this.getNavigatorCpuClass()}),e},platformKey:function(e){return this.options.excludePlatform||e.push({key:"navigator_platform",value:this.getNavigatorPlatform()}),e},doNotTrackKey:function(e){return this.options.excludeDoNotTrack||e.push({key:"do_not_track",value:this.getDoNotTrack()}),e},canvasKey:function(e){return!this.options.excludeCanvas&&this.isCanvasSupported()&&e.push({key:"canvas",value:this.getCanvasFp()}),e},webglKey:function(e){return this.options.excludeWebGL?e:this.isWebGlSupported()?(e.push({key:"webgl",value:this.getWebglFp()}),e):e},adBlockKey:function(e){return this.options.excludeAdBlock||e.push({key:"adblock",value:this.getAdBlock()}),e},hasLiedLanguagesKey:function(e){return this.options.excludeHasLiedLanguages||e.push({key:"has_lied_languages",value:this.getHasLiedLanguages()}),e},hasLiedResolutionKey:function(e){return this.options.excludeHasLiedResolution||e.push({key:"has_lied_resolution",value:this.getHasLiedResolution()}),e},hasLiedOsKey:function(e){return this.options.excludeHasLiedOs||e.push({key:"has_lied_os",value:this.getHasLiedOs()}),e},hasLiedBrowserKey:function(e){return this.options.excludeHasLiedBrowser||e.push({key:"has_lied_browser",value:this.getHasLiedBrowser()}),e},fontsKey:function(e,t){return this.options.excludeJsFonts?this.flashFontsKey(e,t):this.jsFontsKey(e,t)},flashFontsKey:function(e,t){return this.options.excludeFlashFonts?t(e):this.hasSwfObjectLoaded()&&this.hasMinFlashInstalled()?"undefined"==typeof this.options.swfPath?t(e):void this.loadSwfAndDetectFonts(function(i){e.push({key:"swf_fonts",value:i.join(";")}),t(e)}):t(e)},jsFontsKey:function(e,t){var i=this;return setTimeout(function(){var a=["monospace","sans-serif","serif"],r=["Andale Mono","Arial","Arial Black","Arial Hebrew","Arial MT","Arial Narrow","Arial Rounded MT Bold","Arial Unicode MS","Bitstream Vera Sans Mono","Book Antiqua","Bookman Old Style","Calibri","Cambria","Cambria Math","Century","Century Gothic","Century Schoolbook","Comic Sans","Comic Sans MS","Consolas","Courier","Courier New","Garamond","Geneva","Georgia","Helvetica","Helvetica Neue","Impact","Lucida Bright","Lucida Calligraphy","Lucida Console","Lucida Fax","LUCIDA GRANDE","Lucida Handwriting","Lucida Sans","Lucida Sans Typewriter","Lucida Sans Unicode","Microsoft Sans Serif","Monaco","Monotype Corsiva","MS Gothic","MS Outlook","MS PGothic","MS Reference Sans Serif","MS Sans Serif","MS Serif","MYRIAD","MYRIAD PRO","Palatino","Palatino Linotype","Segoe Print","Segoe Script","Segoe UI","Segoe UI Light","Segoe UI Semibold","Segoe UI Symbol","Tahoma","Times","Times New Roman","Times New Roman PS","Trebuchet MS","Verdana","Wingdings","Wingdings 2","Wingdings 3"],n=["Abadi MT Condensed Light","Academy Engraved LET","ADOBE CASLON PRO","Adobe Garamond","ADOBE GARAMOND PRO","Agency FB","Aharoni","Albertus Extra Bold","Albertus Medium","Algerian","Amazone BT","American Typewriter","American Typewriter Condensed","AmerType Md BT","Andalus","Angsana New","AngsanaUPC","Antique Olive","Aparajita","Apple Chancery","Apple Color Emoji","Apple SD Gothic Neo","Arabic Typesetting","ARCHER","ARNO PRO","Arrus BT","Aurora Cn BT","AvantGarde Bk BT","AvantGarde Md BT","AVENIR","Ayuthaya","Bandy","Bangla Sangam MN","Bank Gothic","BankGothic Md BT","Baskerville","Baskerville Old Face","Batang","BatangChe","Bauer Bodoni","Bauhaus 93","Bazooka","Bell MT","Bembo","Benguiat Bk BT","Berlin Sans FB","Berlin Sans FB Demi","Bernard MT Condensed","BernhardFashion BT","BernhardMod BT","Big Caslon","BinnerD","Blackadder ITC","BlairMdITC TT","Bodoni 72","Bodoni 72 Oldstyle","Bodoni 72 Smallcaps","Bodoni MT","Bodoni MT Black","Bodoni MT Condensed","Bodoni MT Poster Compressed","Bookshelf Symbol 7","Boulder","Bradley Hand","Bradley Hand ITC","Bremen Bd BT","Britannic Bold","Broadway","Browallia New","BrowalliaUPC","Brush Script MT","Californian FB","Calisto MT","Calligrapher","Candara","CaslonOpnface BT","Castellar","Centaur","Cezanne","CG Omega","CG Times","Chalkboard","Chalkboard SE","Chalkduster","Charlesworth","Charter Bd BT","Charter BT","Chaucer","ChelthmITC Bk BT","Chiller","Clarendon","Clarendon Condensed","CloisterBlack BT","Cochin","Colonna MT","Constantia","Cooper Black","Copperplate","Copperplate Gothic","Copperplate Gothic Bold","Copperplate Gothic Light","CopperplGoth Bd BT","Corbel","Cordia New","CordiaUPC","Cornerstone","Coronet","Cuckoo","Curlz MT","DaunPenh","Dauphin","David","DB LCD Temp","DELICIOUS","Denmark","DFKai-SB","Didot","DilleniaUPC","DIN","DokChampa","Dotum","DotumChe","Ebrima","Edwardian Script ITC","Elephant","English 111 Vivace BT","Engravers MT","EngraversGothic BT","Eras Bold ITC","Eras Demi ITC","Eras Light ITC","Eras Medium ITC","EucrosiaUPC","Euphemia","Euphemia UCAS","EUROSTILE","Exotc350 Bd BT","FangSong","Felix Titling","Fixedsys","FONTIN","Footlight MT Light","Forte","FrankRuehl","Fransiscan","Freefrm721 Blk BT","FreesiaUPC","Freestyle Script","French Script MT","FrnkGothITC Bk BT","Fruitger","FRUTIGER","Futura","Futura Bk BT","Futura Lt BT","Futura Md BT","Futura ZBlk BT","FuturaBlack BT","Gabriola","Galliard BT","Gautami","Geeza Pro","Geometr231 BT","Geometr231 Hv BT","Geometr231 Lt BT","GeoSlab 703 Lt BT","GeoSlab 703 XBd BT","Gigi","Gill Sans","Gill Sans MT","Gill Sans MT Condensed","Gill Sans MT Ext Condensed Bold","Gill Sans Ultra Bold","Gill Sans Ultra Bold Condensed","Gisha","Gloucester MT Extra Condensed","GOTHAM","GOTHAM BOLD","Goudy Old Style","Goudy Stout","GoudyHandtooled BT","GoudyOLSt BT","Gujarati Sangam MN","Gulim","GulimChe","Gungsuh","GungsuhChe","Gurmukhi MN","Haettenschweiler","Harlow Solid Italic","Harrington","Heather","Heiti SC","Heiti TC","HELV","Herald","High Tower Text","Hiragino Kaku Gothic ProN","Hiragino Mincho ProN","Hoefler Text","Humanst 521 Cn BT","Humanst521 BT","Humanst521 Lt BT","Imprint MT Shadow","Incised901 Bd BT","Incised901 BT","Incised901 Lt BT","INCONSOLATA","Informal Roman","Informal011 BT","INTERSTATE","IrisUPC","Iskoola Pota","JasmineUPC","Jazz LET","Jenson","Jester","Jokerman","Juice ITC","Kabel Bk BT","Kabel Ult BT","Kailasa","KaiTi","Kalinga","Kannada Sangam MN","Kartika","Kaufmann Bd BT","Kaufmann BT","Khmer UI","KodchiangUPC","Kokila","Korinna BT","Kristen ITC","Krungthep","Kunstler Script","Lao UI","Latha","Leelawadee","Letter Gothic","Levenim MT","LilyUPC","Lithograph","Lithograph Light","Long Island","Lydian BT","Magneto","Maiandra GD","Malayalam Sangam MN","Malgun Gothic","Mangal","Marigold","Marion","Marker Felt","Market","Marlett","Matisse ITC","Matura MT Script Capitals","Meiryo","Meiryo UI","Microsoft Himalaya","Microsoft JhengHei","Microsoft New Tai Lue","Microsoft PhagsPa","Microsoft Tai Le","Microsoft Uighur","Microsoft YaHei","Microsoft Yi Baiti","MingLiU","MingLiU_HKSCS","MingLiU_HKSCS-ExtB","MingLiU-ExtB","Minion","Minion Pro","Miriam","Miriam Fixed","Mistral","Modern","Modern No. 20","Mona Lisa Solid ITC TT","Mongolian Baiti","MONO","MoolBoran","Mrs Eaves","MS LineDraw","MS Mincho","MS PMincho","MS Reference Specialty","MS UI Gothic","MT Extra","MUSEO","MV Boli","Nadeem","Narkisim","NEVIS","News Gothic","News GothicMT","NewsGoth BT","Niagara Engraved","Niagara Solid","Noteworthy","NSimSun","Nyala","OCR A Extended","Old Century","Old English Text MT","Onyx","Onyx BT","OPTIMA","Oriya Sangam MN","OSAKA","OzHandicraft BT","Palace Script MT","Papyrus","Parchment","Party LET","Pegasus","Perpetua","Perpetua Titling MT","PetitaBold","Pickwick","Plantagenet Cherokee","Playbill","PMingLiU","PMingLiU-ExtB","Poor Richard","Poster","PosterBodoni BT","PRINCETOWN LET","Pristina","PTBarnum BT","Pythagoras","Raavi","Rage Italic","Ravie","Ribbon131 Bd BT","Rockwell","Rockwell Condensed","Rockwell Extra Bold","Rod","Roman","Sakkal Majalla","Santa Fe LET","Savoye LET","Sceptre","Script","Script MT Bold","SCRIPTINA","Serifa","Serifa BT","Serifa Th BT","ShelleyVolante BT","Sherwood","Shonar Bangla","Showcard Gothic","Shruti","Signboard","SILKSCREEN","SimHei","Simplified Arabic","Simplified Arabic Fixed","SimSun","SimSun-ExtB","Sinhala Sangam MN","Sketch Rockwell","Skia","Small Fonts","Snap ITC","Snell Roundhand","Socket","Souvenir Lt BT","Staccato222 BT","Steamer","Stencil","Storybook","Styllo","Subway","Swis721 BlkEx BT","Swiss911 XCm BT","Sylfaen","Synchro LET","System","Tamil Sangam MN","Technical","Teletype","Telugu Sangam MN","Tempus Sans ITC","Terminal","Thonburi","Traditional Arabic","Trajan","TRAJAN PRO","Tristan","Tubular","Tunga","Tw Cen MT","Tw Cen MT Condensed","Tw Cen MT Condensed Extra Bold","TypoUpright BT","Unicorn","Univers","Univers CE 55 Medium","Univers Condensed","Utsaah","Vagabond","Vani","Vijaya","Viner Hand ITC","VisualUI","Vivaldi","Vladimir Script","Vrinda","Westminster","WHITNEY","Wide Latin","ZapfEllipt BT","ZapfHumnst BT","ZapfHumnst Dm BT","Zapfino","Zurich BlkEx BT","Zurich Ex BT","ZWAdobeF"];i.options.extendedJsFonts&&(r=r.concat(n)),r=r.concat(i.options.userDefinedFonts);var o="mmmmmmmmmmlli",s="72px",l=document.getElementsByTagName("body")[0],h=document.createElement("div"),u=document.createElement("div"),d={},c={},g=function(){var e=document.createElement("span");return e.style.position="absolute",e.style.left="-9999px",e.style.fontSize=s,e.innerHTML=o,e},p=function(e,t){var i=g();return i.style.fontFamily="'"+e+"',"+t,i},f=function(){for(var e=[],t=0,i=a.length;i>t;t++){var r=g();r.style.fontFamily=a[t],h.appendChild(r),e.push(r)}return e},m=function(){for(var e={},t=0,i=r.length;i>t;t++){for(var n=[],o=0,s=a.length;s>o;o++){var l=p(r[t],a[o]);u.appendChild(l),n.push(l)}e[r[t]]=n}return e},S=function(e){for(var t=!1,i=0;i<a.length;i++)if(t=e[i].offsetWidth!==d[a[i]]||e[i].offsetHeight!==c[a[i]])return t;return t},T=f();l.appendChild(h);for(var x=0,v=a.length;v>x;x++)d[a[x]]=T[x].offsetWidth,c[a[x]]=T[x].offsetHeight;var M=m();l.appendChild(u);for(var A=[],E=0,y=r.length;y>E;E++)S(M[r[E]])&&A.push(r[E]);l.removeChild(u),l.removeChild(h),e.push({key:"js_fonts",value:A}),t(e)},1)},pluginsKey:function(e){return this.options.excludePlugins||(this.isIE()?this.options.excludeIEPlugins||e.push({key:"ie_plugins",value:this.getIEPlugins()}):e.push({key:"regular_plugins",value:this.getRegularPlugins()})),e},getRegularPlugins:function(){for(var e=[],t=0,i=navigator.plugins.length;i>t;t++)e.push(navigator.plugins[t]);return this.pluginsShouldBeSorted()&&(e=e.sort(function(e,t){return e.name>t.name?1:e.name<t.name?-1:0})),this.map(e,function(e){var t=this.map(e,function(e){return[e.type,e.suffixes].join("~")}).join(",");return[e.name,e.description,t].join("::")},this)},getIEPlugins:function(){var e=[];if(Object.getOwnPropertyDescriptor&&Object.getOwnPropertyDescriptor(window,"ActiveXObject")||"ActiveXObject"in window){var t=["AcroPDF.PDF","Adodb.Stream","AgControl.AgControl","DevalVRXCtrl.DevalVRXCtrl.1","MacromediaFlashPaper.MacromediaFlashPaper","Msxml2.DOMDocument","Msxml2.XMLHTTP","PDF.PdfCtrl","QuickTime.QuickTime","QuickTimeCheckObject.QuickTimeCheck.1","RealPlayer","RealPlayer.RealPlayer(tm) ActiveX Control (32-bit)","RealVideo.RealVideo(tm) ActiveX Control (32-bit)","Scripting.Dictionary","SWCtl.SWCtl","Shell.UIHelper","ShockwaveFlash.ShockwaveFlash","Skype.Detection","TDCCtl.TDCCtl","WMPlayer.OCX","rmocx.RealPlayer G2 Control","rmocx.RealPlayer G2 Control.1"];e=this.map(t,function(e){try{return new ActiveXObject(e),e}catch(t){return null}})}return navigator.plugins&&(e=e.concat(this.getRegularPlugins())),e},pluginsShouldBeSorted:function(){for(var e=!1,t=0,i=this.options.sortPluginsFor.length;i>t;t++){var a=this.options.sortPluginsFor[t];if(navigator.userAgent.match(a)){e=!0;break}}return e},touchSupportKey:function(e){return this.options.excludeTouchSupport||e.push({key:"touch_support",value:this.getTouchSupport()}),e},hasSessionStorage:function(){try{return!!window.sessionStorage}catch(e){return!0}},hasLocalStorage:function(){try{return!!window.localStorage}catch(e){return!0}},hasIndexedDB:function(){return!!window.indexedDB},getNavigatorCpuClass:function(){return navigator.cpuClass?navigator.cpuClass:"unknown"},getNavigatorPlatform:function(){return navigator.platform?navigator.platform:"unknown"},getDoNotTrack:function(){return navigator.doNotTrack?navigator.doNotTrack:"unknown"},getTouchSupport:function(){var e=0,t=!1;"undefined"!=typeof navigator.maxTouchPoints?e=navigator.maxTouchPoints:"undefined"!=typeof navigator.msMaxTouchPoints&&(e=navigator.msMaxTouchPoints);try{document.createEvent("TouchEvent"),t=!0}catch(i){}var a="ontouchstart"in window;return[e,t,a]},getCanvasFp:function(){var e=[],t=document.createElement("canvas");t.width=2e3,t.height=200,t.style.display="inline";var i=t.getContext("2d");return i.rect(0,0,10,10),i.rect(2,2,6,6),e.push("canvas winding:"+(i.isPointInPath(5,5,"evenodd")===!1?"yes":"no")),i.textBaseline="alphabetic",i.fillStyle="#f60",i.fillRect(125,1,62,20),i.fillStyle="#069",this.options.dontUseFakeFontInCanvas?i.font="11pt Arial":i.font="11pt no-real-font-123",i.fillText("Cwm fjordbank glyphs vext quiz, 😃",2,15),i.fillStyle="rgba(102, 204, 0, 0.2)",i.font="18pt Arial",i.fillText("Cwm fjordbank glyphs vext quiz, 😃",4,45),i.globalCompositeOperation="multiply",i.fillStyle="rgb(255,0,255)",i.beginPath(),i.arc(50,50,50,0,2*Math.PI,!0),i.closePath(),i.fill(),i.fillStyle="rgb(0,255,255)",i.beginPath(),i.arc(100,50,50,0,2*Math.PI,!0),i.closePath(),i.fill(),i.fillStyle="rgb(255,255,0)",i.beginPath(),i.arc(75,100,50,0,2*Math.PI,!0),i.closePath(),i.fill(),i.fillStyle="rgb(255,0,255)",i.arc(75,75,75,0,2*Math.PI,!0),i.arc(75,75,25,0,2*Math.PI,!0),i.fill("evenodd"),e.push("canvas fp:"+t.toDataURL()),e.join("~")},getWebglFp:function(){var e,t=function(t){return e.clearColor(0,0,0,1),e.enable(e.DEPTH_TEST),e.depthFunc(e.LEQUAL),e.clear(e.COLOR_BUFFER_BIT|e.DEPTH_BUFFER_BIT),"["+t[0]+", "+t[1]+"]"},i=function(e){var t,i=e.getExtension("EXT_texture_filter_anisotropic")||e.getExtension("WEBKIT_EXT_texture_filter_anisotropic")||e.getExtension("MOZ_EXT_texture_filter_anisotropic");return i?(t=e.getParameter(i.MAX_TEXTURE_MAX_ANISOTROPY_EXT),0===t&&(t=2),t):null};if(e=this.getWebglCanvas(),!e)return null;var a=[],r="attribute vec2 attrVertex;varying vec2 varyinTexCoordinate;uniform vec2 uniformOffset;void main(){varyinTexCoordinate=attrVertex+uniformOffset;gl_Position=vec4(attrVertex,0,1);}",n="precision mediump float;varying vec2 varyinTexCoordinate;void main() {gl_FragColor=vec4(varyinTexCoordinate,0,1);}",o=e.createBuffer();e.bindBuffer(e.ARRAY_BUFFER,o);var s=new Float32Array([-.2,-.9,0,.4,-.26,0,0,.732134444,0]);e.bufferData(e.ARRAY_BUFFER,s,e.STATIC_DRAW),o.itemSize=3,o.numItems=3;var l=e.createProgram(),h=e.createShader(e.VERTEX_SHADER);e.shaderSource(h,r),e.compileShader(h);var u=e.createShader(e.FRAGMENT_SHADER);return e.shaderSource(u,n),e.compileShader(u),e.attachShader(l,h),e.attachShader(l,u),e.linkProgram(l),e.useProgram(l),l.vertexPosAttrib=e.getAttribLocation(l,"attrVertex"),l.offsetUniform=e.getUniformLocation(l,"uniformOffset"),e.enableVertexAttribArray(l.vertexPosArray),e.vertexAttribPointer(l.vertexPosAttrib,o.itemSize,e.FLOAT,!1,0,0),e.uniform2f(l.offsetUniform,1,1),e.drawArrays(e.TRIANGLE_STRIP,0,o.numItems),null!=e.canvas&&a.push(e.canvas.toDataURL()),a.push("extensions:"+e.getSupportedExtensions().join(";")),a.push("webgl aliased line width range:"+t(e.getParameter(e.ALIASED_LINE_WIDTH_RANGE))),a.push("webgl aliased point size range:"+t(e.getParameter(e.ALIASED_POINT_SIZE_RANGE))),a.push("webgl alpha bits:"+e.getParameter(e.ALPHA_BITS)),a.push("webgl antialiasing:"+(e.getContextAttributes().antialias?"yes":"no")),a.push("webgl blue bits:"+e.getParameter(e.BLUE_BITS)),a.push("webgl depth bits:"+e.getParameter(e.DEPTH_BITS)),a.push("webgl green bits:"+e.getParameter(e.GREEN_BITS)),a.push("webgl max anisotropy:"+i(e)),a.push("webgl max combined texture image units:"+e.getParameter(e.MAX_COMBINED_TEXTURE_IMAGE_UNITS)),a.push("webgl max cube map texture size:"+e.getParameter(e.MAX_CUBE_MAP_TEXTURE_SIZE)),a.push("webgl max fragment uniform vectors:"+e.getParameter(e.MAX_FRAGMENT_UNIFORM_VECTORS)),a.push("webgl max render buffer size:"+e.getParameter(e.MAX_RENDERBUFFER_SIZE)),a.push("webgl max texture image units:"+e.getParameter(e.MAX_TEXTURE_IMAGE_UNITS)),a.push("webgl max texture size:"+e.getParameter(e.MAX_TEXTURE_SIZE)),a.push("webgl max varying vectors:"+e.getParameter(e.MAX_VARYING_VECTORS)),a.push("webgl max vertex attribs:"+e.getParameter(e.MAX_VERTEX_ATTRIBS)),a.push("webgl max vertex texture image units:"+e.getParameter(e.MAX_VERTEX_TEXTURE_IMAGE_UNITS)),a.push("webgl max vertex uniform vectors:"+e.getParameter(e.MAX_VERTEX_UNIFORM_VECTORS)),a.push("webgl max viewport dims:"+t(e.getParameter(e.MAX_VIEWPORT_DIMS))),a.push("webgl red bits:"+e.getParameter(e.RED_BITS)),a.push("webgl renderer:"+e.getParameter(e.RENDERER)),a.push("webgl shading language version:"+e.getParameter(e.SHADING_LANGUAGE_VERSION)),a.push("webgl stencil bits:"+e.getParameter(e.STENCIL_BITS)),a.push("webgl vendor:"+e.getParameter(e.VENDOR)),a.push("webgl version:"+e.getParameter(e.VERSION)),e.getShaderPrecisionFormat?(a.push("webgl vertex shader high float precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_FLOAT).precision),a.push("webgl vertex shader high float precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_FLOAT).rangeMin),a.push("webgl vertex shader high float precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_FLOAT).rangeMax),a.push("webgl vertex shader medium float precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_FLOAT).precision),a.push("webgl vertex shader medium float precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_FLOAT).rangeMin),a.push("webgl vertex shader medium float precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_FLOAT).rangeMax),a.push("webgl vertex shader low float precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_FLOAT).precision),a.push("webgl vertex shader low float precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_FLOAT).rangeMin),a.push("webgl vertex shader low float precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_FLOAT).rangeMax),a.push("webgl fragment shader high float precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_FLOAT).precision),a.push("webgl fragment shader high float precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_FLOAT).rangeMin),a.push("webgl fragment shader high float precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_FLOAT).rangeMax),a.push("webgl fragment shader medium float precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_FLOAT).precision),a.push("webgl fragment shader medium float precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_FLOAT).rangeMin),a.push("webgl fragment shader medium float precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_FLOAT).rangeMax),a.push("webgl fragment shader low float precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_FLOAT).precision),a.push("webgl fragment shader low float precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_FLOAT).rangeMin),a.push("webgl fragment shader low float precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_FLOAT).rangeMax),a.push("webgl vertex shader high int precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_INT).precision),a.push("webgl vertex shader high int precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_INT).rangeMin),a.push("webgl vertex shader high int precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.HIGH_INT).rangeMax),a.push("webgl vertex shader medium int precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_INT).precision),a.push("webgl vertex shader medium int precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_INT).rangeMin),a.push("webgl vertex shader medium int precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.MEDIUM_INT).rangeMax),a.push("webgl vertex shader low int precision:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_INT).precision),a.push("webgl vertex shader low int precision rangeMin:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_INT).rangeMin),a.push("webgl vertex shader low int precision rangeMax:"+e.getShaderPrecisionFormat(e.VERTEX_SHADER,e.LOW_INT).rangeMax),a.push("webgl fragment shader high int precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_INT).precision),a.push("webgl fragment shader high int precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_INT).rangeMin),a.push("webgl fragment shader high int precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.HIGH_INT).rangeMax),a.push("webgl fragment shader medium int precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_INT).precision),a.push("webgl fragment shader medium int precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_INT).rangeMin),a.push("webgl fragment shader medium int precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.MEDIUM_INT).rangeMax),a.push("webgl fragment shader low int precision:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_INT).precision),a.push("webgl fragment shader low int precision rangeMin:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_INT).rangeMin),a.push("webgl fragment shader low int precision rangeMax:"+e.getShaderPrecisionFormat(e.FRAGMENT_SHADER,e.LOW_INT).rangeMax),a.join("~")):a.join("~")},getAdBlock:function(){var e=document.createElement("div");e.innerHTML="&nbsp;",e.className="adsbox";var t=!1;try{document.body.appendChild(e),t=0===document.getElementsByClassName("adsbox")[0].offsetHeight,document.body.removeChild(e)}catch(i){t=!1}return t},getHasLiedLanguages:function(){if("undefined"!=typeof navigator.languages)try{var e=navigator.languages[0].substr(0,2);if(e!==navigator.language.substr(0,2))return!0}catch(t){return!0}return!1},getHasLiedResolution:function(){return screen.width<screen.availWidth?!0:screen.height<screen.availHeight},getHasLiedOs:function(){var e,t=navigator.userAgent.toLowerCase(),i=navigator.oscpu,a=navigator.platform.toLowerCase();e=t.indexOf("windows phone")>=0?"Windows Phone":t.indexOf("win")>=0?"Windows":t.indexOf("android")>=0?"Android":t.indexOf("linux")>=0?"Linux":t.indexOf("iphone")>=0||t.indexOf("ipad")>=0?"iOS":t.indexOf("mac")>=0?"Mac":"Other";var r;if(r="ontouchstart"in window||navigator.maxTouchPoints>0||navigator.msMaxTouchPoints>0,r&&"Windows Phone"!==e&&"Android"!==e&&"iOS"!==e&&"Other"!==e)return!0;if("undefined"!=typeof i){if(i=i.toLowerCase(),i.indexOf("win")>=0&&"Windows"!==e&&"Windows Phone"!==e)return!0;if(i.indexOf("linux")>=0&&"Linux"!==e&&"Android"!==e)return!0;if(i.indexOf("mac")>=0&&"Mac"!==e&&"iOS"!==e)return!0;if(0===i.indexOf("win")&&0===i.indexOf("linux")&&i.indexOf("mac")>=0&&"other"!==e)return!0}return a.indexOf("win")>=0&&"Windows"!==e&&"Windows Phone"!==e?!0:(a.indexOf("linux")>=0||a.indexOf("android")>=0||a.indexOf("pike")>=0)&&"Linux"!==e&&"Android"!==e?!0:(a.indexOf("mac")>=0||a.indexOf("ipad")>=0||a.indexOf("ipod")>=0||a.indexOf("iphone")>=0)&&"Mac"!==e&&"iOS"!==e?!0:0===a.indexOf("win")&&0===a.indexOf("linux")&&a.indexOf("mac")>=0&&"other"!==e?!0:"undefined"==typeof navigator.plugins&&"Windows"!==e&&"Windows Phone"!==e},getHasLiedBrowser:function(){var e,t=navigator.userAgent.toLowerCase(),i=navigator.productSub;if(e=t.indexOf("firefox")>=0?"Firefox":t.indexOf("opera")>=0||t.indexOf("opr")>=0?"Opera":t.indexOf("chrome")>=0?"Chrome":t.indexOf("safari")>=0?"Safari":t.indexOf("trident")>=0?"Internet Explorer":"Other",("Chrome"===e||"Safari"===e||"Opera"===e)&&"20030107"!==i)return!0;var a=eval.toString().length;if(37===a&&"Safari"!==e&&"Firefox"!==e&&"Other"!==e)return!0;if(39===a&&"Internet Explorer"!==e&&"Other"!==e)return!0;if(33===a&&"Chrome"!==e&&"Opera"!==e&&"Other"!==e)return!0;var r;try{throw"a"}catch(n){try{n.toSource(),r=!0}catch(o){r=!1}}return!(!r||"Firefox"===e||"Other"===e)},isCanvasSupported:function(){var e=document.createElement("canvas");return!(!e.getContext||!e.getContext("2d"))},isWebGlSupported:function(){if(!this.isCanvasSupported())return!1;var e,t=document.createElement("canvas");try{e=t.getContext&&(t.getContext("webgl")||t.getContext("experimental-webgl"))}catch(i){e=!1}return!!window.WebGLRenderingContext&&!!e},isIE:function(){return"Microsoft Internet Explorer"===navigator.appName?!0:!("Netscape"!==navigator.appName||!/Trident/.test(navigator.userAgent))},hasSwfObjectLoaded:function(){return"undefined"!=typeof window.swfobject},hasMinFlashInstalled:function(){return swfobject.hasFlashPlayerVersion("9.0.0")},addFlashDivNode:function(){var e=document.createElement("div");e.setAttribute("id",this.options.swfContainerId),document.body.appendChild(e)},loadSwfAndDetectFonts:function(e){var t="___fp_swf_loaded";window[t]=function(t){e(t)};var i=this.options.swfContainerId;this.addFlashDivNode();var a={onReady:t},r={allowScriptAccess:"always",menu:"false"};swfobject.embedSWF(this.options.swfPath,i,"1","1","9.0.0",!1,a,r,{})},getWebglCanvas:function(){var e=document.createElement("canvas"),t=null;try{t=e.getContext("webgl")||e.getContext("experimental-webgl")}catch(i){}return t||(t=null),t},each:function(e,t,i){if(null!==e)if(this.nativeForEach&&e.forEach===this.nativeForEach)e.forEach(t,i);else if(e.length===+e.length){for(var a=0,r=e.length;r>a;a++)if(t.call(i,e[a],a,e)==={})return}else for(var n in e)if(e.hasOwnProperty(n)&&t.call(i,e[n],n,e)==={})return},map:function(e,t,i){var a=[];return null==e?a:this.nativeMap&&e.map===this.nativeMap?e.map(t,i):(this.each(e,function(e,r,n){a[a.length]=t.call(i,e,r,n)}),a)},x64Add:function(e,t){e=[e[0]>>>16,65535&e[0],e[1]>>>16,65535&e[1]],t=[t[0]>>>16,65535&t[0],t[1]>>>16,65535&t[1]];var i=[0,0,0,0];return i[3]+=e[3]+t[3],i[2]+=i[3]>>>16,i[3]&=65535,i[2]+=e[2]+t[2],i[1]+=i[2]>>>16,i[2]&=65535,i[1]+=e[1]+t[1],i[0]+=i[1]>>>16,i[1]&=65535,i[0]+=e[0]+t[0],i[0]&=65535,[i[0]<<16|i[1],i[2]<<16|i[3]]},x64Multiply:function(e,t){e=[e[0]>>>16,65535&e[0],e[1]>>>16,65535&e[1]],t=[t[0]>>>16,65535&t[0],t[1]>>>16,65535&t[1]];var i=[0,0,0,0];return i[3]+=e[3]*t[3],i[2]+=i[3]>>>16,i[3]&=65535,i[2]+=e[2]*t[3],i[1]+=i[2]>>>16,i[2]&=65535,i[2]+=e[3]*t[2],i[1]+=i[2]>>>16,i[2]&=65535,i[1]+=e[1]*t[3],i[0]+=i[1]>>>16,i[1]&=65535,i[1]+=e[2]*t[2],i[0]+=i[1]>>>16,i[1]&=65535,i[1]+=e[3]*t[1],i[0]+=i[1]>>>16,i[1]&=65535,i[0]+=e[0]*t[3]+e[1]*t[2]+e[2]*t[1]+e[3]*t[0],i[0]&=65535,[i[0]<<16|i[1],i[2]<<16|i[3]]},x64Rotl:function(e,t){return t%=64,32===t?[e[1],e[0]]:32>t?[e[0]<<t|e[1]>>>32-t,e[1]<<t|e[0]>>>32-t]:(t-=32,[e[1]<<t|e[0]>>>32-t,e[0]<<t|e[1]>>>32-t])},x64LeftShift:function(e,t){return t%=64,0===t?e:32>t?[e[0]<<t|e[1]>>>32-t,e[1]<<t]:[e[1]<<t-32,0]},x64Xor:function(e,t){return[e[0]^t[0],e[1]^t[1]]},x64Fmix:function(e){return e=this.x64Xor(e,[0,e[0]>>>1]),e=this.x64Multiply(e,[4283543511,3981806797]),e=this.x64Xor(e,[0,e[0]>>>1]),e=this.x64Multiply(e,[3301882366,444984403]),e=this.x64Xor(e,[0,e[0]>>>1])},x64hash128:function(e,t){e=e||"",t=t||0;for(var i=e.length%16,a=e.length-i,r=[0,t],n=[0,t],o=[0,0],s=[0,0],l=[2277735313,289559509],h=[1291169091,658871167],u=0;a>u;u+=16)o=[255&e.charCodeAt(u+4)|(255&e.charCodeAt(u+5))<<8|(255&e.charCodeAt(u+6))<<16|(255&e.charCodeAt(u+7))<<24,255&e.charCodeAt(u)|(255&e.charCodeAt(u+1))<<8|(255&e.charCodeAt(u+2))<<16|(255&e.charCodeAt(u+3))<<24],s=[255&e.charCodeAt(u+12)|(255&e.charCodeAt(u+13))<<8|(255&e.charCodeAt(u+14))<<16|(255&e.charCodeAt(u+15))<<24,255&e.charCodeAt(u+8)|(255&e.charCodeAt(u+9))<<8|(255&e.charCodeAt(u+10))<<16|(255&e.charCodeAt(u+11))<<24],o=this.x64Multiply(o,l),o=this.x64Rotl(o,31),o=this.x64Multiply(o,h),r=this.x64Xor(r,o),r=this.x64Rotl(r,27),r=this.x64Add(r,n),
 r=this.x64Add(this.x64Multiply(r,[0,5]),[0,1390208809]),s=this.x64Multiply(s,h),s=this.x64Rotl(s,33),s=this.x64Multiply(s,l),n=this.x64Xor(n,s),n=this.x64Rotl(n,31),n=this.x64Add(n,r),n=this.x64Add(this.x64Multiply(n,[0,5]),[0,944331445]);switch(o=[0,0],s=[0,0],i){case 15:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+14)],48));case 14:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+13)],40));case 13:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+12)],32));case 12:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+11)],24));case 11:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+10)],16));case 10:s=this.x64Xor(s,this.x64LeftShift([0,e.charCodeAt(u+9)],8));case 9:s=this.x64Xor(s,[0,e.charCodeAt(u+8)]),s=this.x64Multiply(s,h),s=this.x64Rotl(s,33),s=this.x64Multiply(s,l),n=this.x64Xor(n,s);case 8:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+7)],56));case 7:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+6)],48));case 6:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+5)],40));case 5:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+4)],32));case 4:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+3)],24));case 3:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+2)],16));case 2:o=this.x64Xor(o,this.x64LeftShift([0,e.charCodeAt(u+1)],8));case 1:o=this.x64Xor(o,[0,e.charCodeAt(u)]),o=this.x64Multiply(o,l),o=this.x64Rotl(o,31),o=this.x64Multiply(o,h),r=this.x64Xor(r,o)}return r=this.x64Xor(r,[0,e.length]),n=this.x64Xor(n,[0,e.length]),r=this.x64Add(r,n),n=this.x64Add(n,r),r=this.x64Fmix(r),n=this.x64Fmix(n),r=this.x64Add(r,n),n=this.x64Add(n,r),("00000000"+(r[0]>>>0).toString(16)).slice(-8)+("00000000"+(r[1]>>>0).toString(16)).slice(-8)+("00000000"+(n[0]>>>0).toString(16)).slice(-8)+("00000000"+(n[1]>>>0).toString(16)).slice(-8)}},e.VERSION="1.4.1",e});
-},{}],15:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (global){
 'use strict';
 var htmlEscape = require('escape-html');
@@ -2750,87 +3165,26 @@ module.exports.insertScript = function(documentOrHead, debug)
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"escape-html":16}],16:[function(require,module,exports){
-/*!
- * escape-html
- * Copyright(c) 2012-2013 TJ Holowaychuk
- * Copyright(c) 2015 Andreas Lubbe
- * Copyright(c) 2015 Tiancheng "Timothy" Gu
- * MIT Licensed
- */
-
-'use strict';
-
+},{"escape-html":17}],20:[function(require,module,exports){
 /**
- * Module variables.
- * @private
- */
-
-var matchHtmlRegExp = /["'&<>]/;
-
-/**
- * Module exports.
- * @public
- */
-
-module.exports = escapeHtml;
-
-/**
- * Escape special characters in the given string of html.
+ * Determine if an object is Buffer
  *
- * @param  {string} string The string to escape for inserting into HTML
- * @return {string}
- * @public
+ * Author:   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * License:  MIT
+ *
+ * `npm install is-buffer`
  */
 
-function escapeHtml(string) {
-  var str = '' + string;
-  var match = matchHtmlRegExp.exec(str);
-
-  if (!match) {
-    return str;
-  }
-
-  var escape;
-  var html = '';
-  var index = 0;
-  var lastIndex = 0;
-
-  for (index = match.index; index < str.length; index++) {
-    switch (str.charCodeAt(index)) {
-      case 34: // "
-        escape = '&quot;';
-        break;
-      case 38: // &
-        escape = '&amp;';
-        break;
-      case 39: // '
-        escape = '&#39;';
-        break;
-      case 60: // <
-        escape = '&lt;';
-        break;
-      case 62: // >
-        escape = '&gt;';
-        break;
-      default:
-        continue;
-    }
-
-    if (lastIndex !== index) {
-      html += str.substring(lastIndex, index);
-    }
-
-    lastIndex = index + 1;
-    html += escape;
-  }
-
-  return lastIndex !== index
-    ? html + str.substring(lastIndex, index)
-    : html;
+module.exports = function (obj) {
+  return !!(
+    obj != null &&
+    obj.constructor &&
+    typeof obj.constructor.isBuffer === 'function' &&
+    obj.constructor.isBuffer(obj)
+  )
 }
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * Jdenticon 1.3.2
  * http://jdenticon.com
@@ -3632,7 +3986,7 @@ function escapeHtml(string) {
     return jdenticon;
 
 });
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -12844,7 +13198,7 @@ return jQuery;
 
 }));
 
-},{}],19:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function(){
   var crypt = require('crypt'),
       utf8 = require('charenc').utf8,
@@ -13006,159 +13360,7 @@ return jQuery;
 
 })();
 
-},{"charenc":20,"crypt":21,"is-buffer":22}],20:[function(require,module,exports){
-var charenc = {
-  // UTF-8 encoding
-  utf8: {
-    // Convert a string to a byte array
-    stringToBytes: function(str) {
-      return charenc.bin.stringToBytes(unescape(encodeURIComponent(str)));
-    },
-
-    // Convert a byte array to a string
-    bytesToString: function(bytes) {
-      return decodeURIComponent(escape(charenc.bin.bytesToString(bytes)));
-    }
-  },
-
-  // Binary encoding
-  bin: {
-    // Convert a string to a byte array
-    stringToBytes: function(str) {
-      for (var bytes = [], i = 0; i < str.length; i++)
-        bytes.push(str.charCodeAt(i) & 0xFF);
-      return bytes;
-    },
-
-    // Convert a byte array to a string
-    bytesToString: function(bytes) {
-      for (var str = [], i = 0; i < bytes.length; i++)
-        str.push(String.fromCharCode(bytes[i]));
-      return str.join('');
-    }
-  }
-};
-
-module.exports = charenc;
-
-},{}],21:[function(require,module,exports){
-(function() {
-  var base64map
-      = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
-
-  crypt = {
-    // Bit-wise rotation left
-    rotl: function(n, b) {
-      return (n << b) | (n >>> (32 - b));
-    },
-
-    // Bit-wise rotation right
-    rotr: function(n, b) {
-      return (n << (32 - b)) | (n >>> b);
-    },
-
-    // Swap big-endian to little-endian and vice versa
-    endian: function(n) {
-      // If number given, swap endian
-      if (n.constructor == Number) {
-        return crypt.rotl(n, 8) & 0x00FF00FF | crypt.rotl(n, 24) & 0xFF00FF00;
-      }
-
-      // Else, assume array and swap all items
-      for (var i = 0; i < n.length; i++)
-        n[i] = crypt.endian(n[i]);
-      return n;
-    },
-
-    // Generate an array of any length of random bytes
-    randomBytes: function(n) {
-      for (var bytes = []; n > 0; n--)
-        bytes.push(Math.floor(Math.random() * 256));
-      return bytes;
-    },
-
-    // Convert a byte array to big-endian 32-bit words
-    bytesToWords: function(bytes) {
-      for (var words = [], i = 0, b = 0; i < bytes.length; i++, b += 8)
-        words[b >>> 5] |= bytes[i] << (24 - b % 32);
-      return words;
-    },
-
-    // Convert big-endian 32-bit words to a byte array
-    wordsToBytes: function(words) {
-      for (var bytes = [], b = 0; b < words.length * 32; b += 8)
-        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
-      return bytes;
-    },
-
-    // Convert a byte array to a hex string
-    bytesToHex: function(bytes) {
-      for (var hex = [], i = 0; i < bytes.length; i++) {
-        hex.push((bytes[i] >>> 4).toString(16));
-        hex.push((bytes[i] & 0xF).toString(16));
-      }
-      return hex.join('');
-    },
-
-    // Convert a hex string to a byte array
-    hexToBytes: function(hex) {
-      for (var bytes = [], c = 0; c < hex.length; c += 2)
-        bytes.push(parseInt(hex.substr(c, 2), 16));
-      return bytes;
-    },
-
-    // Convert a byte array to a base-64 string
-    bytesToBase64: function(bytes) {
-      for (var base64 = [], i = 0; i < bytes.length; i += 3) {
-        var triplet = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-        for (var j = 0; j < 4; j++)
-          if (i * 8 + j * 6 <= bytes.length * 8)
-            base64.push(base64map.charAt((triplet >>> 6 * (3 - j)) & 0x3F));
-          else
-            base64.push('=');
-      }
-      return base64.join('');
-    },
-
-    // Convert a base-64 string to a byte array
-    base64ToBytes: function(base64) {
-      // Remove non-base-64 characters
-      base64 = base64.replace(/[^A-Z0-9+\/]/ig, '');
-
-      for (var bytes = [], i = 0, imod4 = 0; i < base64.length;
-          imod4 = ++i % 4) {
-        if (imod4 == 0) continue;
-        bytes.push(((base64map.indexOf(base64.charAt(i - 1))
-            & (Math.pow(2, -2 * imod4 + 8) - 1)) << (imod4 * 2))
-            | (base64map.indexOf(base64.charAt(i)) >>> (6 - imod4 * 2)));
-      }
-      return bytes;
-    }
-  };
-
-  module.exports = crypt;
-})();
-
-},{}],22:[function(require,module,exports){
-/**
- * Determine if an object is Buffer
- *
- * Author:   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * License:  MIT
- *
- * `npm install is-buffer`
- */
-
-module.exports = function (obj) {
-  return !!(
-    obj != null &&
-    obj.constructor &&
-    typeof obj.constructor.isBuffer === 'function' &&
-    obj.constructor.isBuffer(obj)
-  )
-}
-
-},{}],23:[function(require,module,exports){
+},{"charenc":14,"crypt":15,"is-buffer":20}],24:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -16354,7 +16556,7 @@ module.exports = function (obj) {
     return _moment;
 
 }));
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * UAParser.js v0.7.11
  * Lightweight JavaScript-based User-Agent string parser
@@ -17251,7 +17453,7 @@ module.exports = function (obj) {
 
 })(typeof window === 'object' ? window : this);
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -18801,7 +19003,7 @@ module.exports = function (obj) {
   }
 }.call(this));
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*
  * DropKick
  *
@@ -20211,7 +20413,7 @@ return Dropkick;
 
 }));
 
-},{"jquery":18}],27:[function(require,module,exports){
+},{"jquery":22}],28:[function(require,module,exports){
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
 * Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-1-7.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
@@ -38918,4 +39120,1112 @@ var widgetsTooltip = $.ui.tooltip;
 
 
 }));
-},{}]},{},[12]);
+},{}],29:[function(require,module,exports){
+/*****
+* rateYo - v2.2.0
+* http://prrashi.github.io/rateyo/
+* Copyright (c) 2014 Prashanth Pamidi; Licensed MIT
+*****/
+
+;(function ($) {
+  "use strict";
+
+  // The basic svg string required to generate stars
+  var BASICSTAR = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
+                  "<svg version=\"1.1\""+
+                        "xmlns=\"http://www.w3.org/2000/svg\""+
+                        "viewBox=\"0 12.705 512 486.59\""+
+                        "x=\"0px\" y=\"0px\""+
+                        "xml:space=\"preserve\">"+
+                    "<polygon "+
+                              "points=\"256.814,12.705 317.205,198.566"+
+                                      " 512.631,198.566 354.529,313.435 "+
+                                      "414.918,499.295 256.814,384.427 "+
+                                      "98.713,499.295 159.102,313.435 "+
+                                      "1,198.566 196.426,198.566 \"/>"+
+                  "</svg>";
+
+  // The Default values of different options available in the Plugin
+  var DEFAULTS = {
+
+    starWidth : "32px",
+    normalFill: "gray",
+    ratedFill : "#f39c12",
+    numStars  : 5,
+    maxValue  : 5,
+    precision : 1,
+    rating    : 0,
+    fullStar  : false,
+    halfStar  : false,
+    readOnly  : false,
+    spacing   : "0px",
+    rtl       : false,
+    multiColor: null,
+    onInit    : null,
+    onChange  : null,
+    onSet     : null,
+    starSvg   : null
+  };
+
+  //Default colors for multi-color rating
+  var MULTICOLOR_OPTIONS = {
+
+    startColor: "#c0392b", //red
+    endColor  : "#f1c40f"  //yellow
+  };
+
+  // http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
+  function isMobileBrowser () {
+    var check = false;
+    /* jshint ignore:start */
+    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
+    /* jshint ignore:end */
+    return check;
+  }
+
+  function checkPrecision (value, minValue, maxValue) {
+
+    /*
+     * This function removes the unnecessary precision, at Min and Max Values
+     */
+
+    // Its like comparing 0.0 with 0, which is true
+    if (value === minValue) {
+
+      value = minValue;
+    }
+    else if(value === maxValue) {
+
+      value = maxValue;
+    }
+
+    return value;
+  }
+
+  function checkBounds (value, minValue, maxValue) {
+
+    /*
+     * Check if the value is between min and max values, if not, throw an error
+     */
+
+    var isValid = value >= minValue && value <= maxValue;
+
+    if(!isValid){
+
+        throw Error("Invalid Rating, expected value between "+ minValue +
+                    " and " + maxValue);
+    }
+
+    return value;
+  }
+
+  function isDefined(value) {
+
+    // Better way to check if a variable is defined or not
+    return typeof value !== "undefined";
+  }
+
+  // Regex to match Colors in Hex Format like #FF00FF
+  var hexRegex = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i;
+
+  var hexToRGB = function (hex) {
+
+    /*
+     * Extracts and returns the Red, Blue, Green Channel values,
+     * in the form of decimals
+     */
+
+    if (!hexRegex.test(hex)) {
+
+      return null;
+    }
+
+    var hexValues = hexRegex.exec(hex),
+	r = parseInt(hexValues[1], 16),
+	g = parseInt(hexValues[2], 16),
+	b = parseInt(hexValues[3], 16);
+
+    return {r:r, g:g, b:b};
+  };
+
+  function getChannelValue(startVal, endVal, percent) {
+
+    /*
+     * Returns a value between `startVal` and `endVal` based on the percent
+     */
+
+    var newVal = (endVal - startVal)*(percent/100);
+
+    newVal = Math.round(startVal + newVal).toString(16);
+
+    if (newVal.length === 1) {
+
+	newVal = "0" + newVal;
+    }
+
+    return newVal;
+  }
+
+  function getColor (startColor, endColor, percent) {
+
+    /*
+     * Given the percentage( `percent` ) of `endColor` to be mixed
+     * with the `startColor`, returns the mixed color.
+     * Colors should be only in Hex Format
+     */
+
+    if (!startColor || !endColor) {
+
+      return null;
+    }
+
+    percent = isDefined(percent)? percent : 0;
+
+    startColor = hexToRGB(startColor);
+    endColor = hexToRGB(endColor);
+
+    var r = getChannelValue(startColor.r, endColor.r, percent),
+        b = getChannelValue(startColor.b, endColor.b, percent),
+        g = getChannelValue(startColor.g, endColor.g, percent);
+
+    return "#" + r + g + b;
+  }
+
+   function RateYo ($node, options) {
+
+   /*
+    * The Contructor, whose instances are used by plugin itself
+    */
+
+    // Storing the HTML element as a property, for future access
+    this.node = $node.get(0);
+
+    var that = this;
+
+    // Remove any stuff that is present inside the container, and add the plugin class
+    $node.empty().addClass("jq-ry-container");
+
+    /*
+     * Basically the plugin displays the rating using two rows of stars lying one above
+     * the other, the row that is on the top represents the actual rating, and the one
+     * behind acts just like a background.
+     *
+     * `$groupWrapper`: is an element that wraps both the rows
+     * `$normalGroup`: is the container for row of stars thats behind and
+     *                 acts as background
+     * `$ratedGroup`: is the container for row of stars that display the actual rating.
+     *
+     * The rating is displayed by adjusting the width of `$ratedGroup`
+     */
+    var $groupWrapper = $("<div/>").addClass("jq-ry-group-wrapper")
+                                   .appendTo($node);
+
+    var $normalGroup = $("<div/>").addClass("jq-ry-normal-group")
+                                  .addClass("jq-ry-group")
+                                  .appendTo($groupWrapper);
+
+    var $ratedGroup = $("<div/>").addClass("jq-ry-rated-group")
+                                 .addClass("jq-ry-group")
+                                 .appendTo($groupWrapper);
+
+    /*
+     * Variable `step`: store the value of the rating for each star
+     *                  eg: if `maxValue` is 5 and `numStars` is 5, value of each star
+     *                      is 1.
+     * Variable `starWidth`: stores the decimal value of width of star in units of px
+     * Variable `percentOfStar`: stores the percentage of width each star takes w.r.t
+     *                           the container
+     * Variable `spacing`: stores the decimal value of the spacing between stars
+     *                     in the units of px
+     * Variable `percentOfSpacing`: stores the percentage of width of the spacing
+     *                              between stars w.r.t the container
+     */
+    var step, starWidth, percentOfStar, spacing,
+        percentOfSpacing, containerWidth, minValue = 0;
+
+    /*
+     * `currentRating` contains rating that is being displayed at the latest point of
+     * time.
+     *
+     * When ever you hover over the plugin UI, the rating value changes
+     * according to the place where you point the cursor, currentRating contains
+     * the current value of rating that is being shown in the UI
+     */
+    var currentRating = options.rating;
+
+    // A flag to store if the plugin is already being displayed in the UI
+    var isInitialized = false;
+
+    function showRating (ratingVal) {
+
+      /*
+       * The function is responsible for displaying the rating by changing
+       * the width of `$ratedGroup`
+       */
+
+      if (!isDefined(ratingVal)) {
+
+        ratingVal = options.rating;
+      }
+
+      // Storing the value that is being shown in `currentRating`.
+      currentRating = ratingVal;
+
+      var numStarsToShow = ratingVal/step;
+
+      // calculating the percentage of width of $ratedGroup with respect to its parent
+      var percent = numStarsToShow*percentOfStar;
+
+      if (numStarsToShow > 1) {
+
+        // adding the percentage of space that is taken by the gap the stars
+        percent += (Math.ceil(numStarsToShow) - 1)*percentOfSpacing;
+      }
+
+      setRatedFill(options.ratedFill);
+
+      percent = options.rtl ? 100 - percent : percent;
+
+      $ratedGroup.css("width", percent + "%");
+    }
+
+    function setContainerWidth () {
+
+      /*
+       * Set the width of the `this.node` based on the width of each star and
+       * the space between them
+       */
+
+      containerWidth = starWidth*options.numStars + spacing*(options.numStars - 1);
+
+      percentOfStar = (starWidth/containerWidth)*100;
+
+      percentOfSpacing = (spacing/containerWidth)*100;
+
+      $node.width(containerWidth);
+
+      showRating();
+    }
+
+    function setStarWidth (newWidth) {
+
+      /*
+       * Set the width and height of each SVG star, called whenever one changes the
+       * `starWidth` option
+       */
+
+      // The width and height of the star should be the same
+      var starHeight = options.starWidth = newWidth;
+
+      starWidth = window.parseFloat(options.starWidth.replace("px", ""));
+
+      $normalGroup.find("svg")
+                  .attr({width : options.starWidth,
+                         height: starHeight});
+
+      $ratedGroup.find("svg")
+                 .attr({width : options.starWidth,
+                        height: starHeight});
+
+      setContainerWidth();
+
+      return $node;
+    }
+
+    function setSpacing (newSpacing) {
+
+      /*
+       * Set spacing between the SVG stars, called whenever one changes
+       * the `spacing` option
+       */
+
+      options.spacing = newSpacing;
+
+      spacing = parseFloat(options.spacing.replace("px", ""));
+
+      $normalGroup.find("svg:not(:first-child)")
+                  .css({"margin-left": newSpacing});
+
+      $ratedGroup.find("svg:not(:first-child)")
+                 .css({"margin-left": newSpacing});
+
+      setContainerWidth();
+
+      return $node;
+    }
+
+    function setNormalFill (newFill) {
+
+      /*
+       * Set the background fill of the Stars, called whenever one changes the
+       * `normalFill` option
+       */
+
+      options.normalFill = newFill;
+
+      var $svgs = (options.rtl ? $ratedGroup : $normalGroup).find("svg");
+
+      $svgs.attr({fill: options.normalFill});
+
+      return $node;
+    }
+
+    /*
+     * Store the recent `ratedFill` option in a variable
+     * so that if multiColor is unset, we can use the perviously set `ratedFill`
+     * from this variable
+     */
+    var ratedFill = options.ratedFill;
+
+    function setRatedFill (newFill) {
+
+      /*
+       * Set ratedFill of the stars, called when one changes the `ratedFill` option
+       */
+
+      /*
+       * If `multiColor` option is set, `newFill` variable is dynamically set
+       * based on the rating, what ever set as parameter will be discarded
+       */
+      if (options.multiColor) {
+
+        var ratingDiff = currentRating - minValue,
+            percentCovered = (ratingDiff/options.maxValue)*100;
+
+        var colorOpts  = options.multiColor || {},
+            startColor = colorOpts.startColor || MULTICOLOR_OPTIONS.startColor,
+            endColor   = colorOpts.endColor || MULTICOLOR_OPTIONS.endColor;
+
+        newFill = getColor(startColor, endColor, percentCovered);
+      } else {
+
+        ratedFill = newFill;
+      }
+
+      options.ratedFill = newFill;
+
+      var $svgs = (options.rtl ? $normalGroup : $ratedGroup).find("svg");
+
+      $svgs.attr({fill: options.ratedFill});
+
+      return $node;
+    }
+
+    function setRtl (newValue) {
+
+      newValue = !!newValue;
+
+      options.rtl = newValue;
+
+      setNormalFill(options.normalFill);
+      showRating();
+    }
+
+    function setMultiColor (colorOptions) {
+
+      /*
+       * called whenever one changes the `multiColor` option
+       */
+
+      options.multiColor = colorOptions;
+
+      // set the recently set `ratedFill` option, if multiColor Options are unset
+      setRatedFill(colorOptions ? colorOptions : ratedFill);
+    }
+
+    function setNumStars (newValue) {
+
+      /*
+       * Set the number of stars to use to display the rating, called whenever one
+       * changes the `numStars` option
+       */
+
+      options.numStars = newValue;
+
+      step = options.maxValue/options.numStars;
+
+      $normalGroup.empty();
+      $ratedGroup.empty();
+
+      for (var i=0; i<options.numStars; i++) {
+
+        $normalGroup.append($(options.starSvg || BASICSTAR));
+        $ratedGroup.append($(options.starSvg || BASICSTAR));
+      }
+
+      setStarWidth(options.starWidth);
+      setNormalFill(options.normalFill);
+      setSpacing(options.spacing);
+
+      showRating();
+
+      return $node;
+    }
+
+    function setMaxValue (newValue) {
+
+      /*
+       * set the Maximum Value of rating to be allowed, called whenever
+       * one changes the `maxValue` option
+       */
+
+      options.maxValue = newValue;
+
+      step = options.maxValue/options.numStars;
+
+      if (options.rating > newValue) {
+
+        setRating(newValue);
+      }
+
+      showRating();
+
+      return $node;
+    }
+
+    function setPrecision (newValue) {
+
+      /*
+       * Set the precision of the rating value, called if one changes the
+       * `precision` option
+       */
+
+      options.precision = newValue;
+
+      setRating(options.rating);
+
+      return $node;
+    }
+
+    function setHalfStar (newValue) {
+
+      /*
+       * This function will be called if one changes the `halfStar` option
+       */
+
+      options.halfStar = newValue;
+
+      return $node;
+    }
+
+    function setFullStar (newValue) {
+
+      /*
+       * This function will be called if one changes the `fullStar` option
+       */
+
+      options.fullStar = newValue;
+
+      return $node;
+    }
+
+    function round (value) {
+
+      /*
+       * Rounds the value of rating if `halfStar` or `fullStar` options are chosen
+       */
+
+      var remainder = value%step,
+          halfStep = step/2,
+          isHalfStar = options.halfStar,
+          isFullStar = options.fullStar;
+
+      if (!isFullStar && !isHalfStar) {
+
+        return value;
+      }
+
+      if (isFullStar || (isHalfStar && remainder > halfStep)) {
+
+        value += step - remainder;
+      } else {
+
+        value = value - remainder;
+
+        if (remainder > 0) {
+
+          value += halfStep;
+        }
+      }
+
+      return value;
+    }
+
+    function calculateRating (e) {
+
+      /*
+       * Calculates and returns the rating based on the position of cursor w.r.t the
+       * plugin container
+       */
+
+      var position = $normalGroup.offset(),
+          nodeStartX = position.left,
+          nodeEndX = nodeStartX + $normalGroup.width();
+
+      var maxValue = options.maxValue;
+
+      // The x-coordinate(position) of the mouse pointer w.r.t page
+      var pageX = e.pageX;
+
+      var calculatedRating = 0;
+
+      // If the mouse pointer is to the left of the container
+      if(pageX < nodeStartX) {
+
+        calculatedRating = minValue;
+      }else if (pageX > nodeEndX) { // If the mouse pointer is right of the container
+
+        calculatedRating = maxValue;
+      }else { // If the mouse pointer is inside the continer
+
+        /*
+         * The fraction of width covered by the pointer w.r.t to the total width
+         * of the container.
+         */
+        var calcPrcnt = ((pageX - nodeStartX)/(nodeEndX - nodeStartX));
+
+        if (spacing > 0) {
+
+	  /*
+           * If there is spacing between stars, take the percentage of width covered
+           * and subtract the percentage of width covered by stars and spacing, to find
+           * how many stars are covered, the number of stars covered is the rating
+           *
+           * TODO: I strongly feel that this logic can be improved!, Please help!
+           */
+          calcPrcnt *= 100;
+
+          var remPrcnt = calcPrcnt;
+
+          while (remPrcnt > 0) {
+
+            if (remPrcnt > percentOfStar) {
+
+              calculatedRating += step;
+              remPrcnt -= (percentOfStar + percentOfSpacing);
+            } else {
+
+              calculatedRating += remPrcnt/percentOfStar*step;
+              remPrcnt = 0;
+            }
+          }
+        } else {
+
+          /*
+           * If there is not spacing between stars, the fraction of width covered per
+           * `maxValue` is the rating
+           */
+          calculatedRating = calcPrcnt * (options.maxValue);
+        }
+
+        // Round the rating if `halfStar` or `fullStar` options are chosen
+        calculatedRating = round(calculatedRating);
+      }
+
+      if (options.rtl) {
+
+        calculatedRating = maxValue - calculatedRating;
+      }
+
+      return calculatedRating;
+    }
+
+    function setReadOnly (newValue) {
+
+      /*
+       * UnBinds mouse event handlers, called when whenever one changes the
+       * `readOnly` option
+       */
+
+      options.readOnly = newValue;
+
+      $node.attr("readonly", true);
+
+      unbindEvents();
+
+      if (!newValue) {
+
+        $node.removeAttr("readonly");
+
+        bindEvents();
+      }
+
+      return $node;
+    }
+
+    function setRating (newValue) {
+
+      /*
+       * Sets the rating of the Plugin, Called when option `rating` is changed
+       * or, when `rating` method is called
+       */
+
+      var rating = newValue;
+
+      var maxValue = options.maxValue;
+
+      if (typeof rating === "string") {
+
+        // If rating is given in percentage, maxValue should be 100
+        if (rating[rating.length - 1] === "%") {
+
+          rating = rating.substr(0, rating.length - 1);
+          maxValue = 100;
+
+          setMaxValue(maxValue);
+        }
+
+        rating = parseFloat(rating);
+      }
+
+      checkBounds(rating, minValue, maxValue);
+
+      rating = parseFloat(rating.toFixed(options.precision));
+
+      checkPrecision(parseFloat(rating), minValue, maxValue);
+
+      options.rating = rating;
+
+      showRating();
+
+      if (isInitialized) {
+
+        $node.trigger("rateyo.set", {rating: rating});
+      }
+
+      return $node;
+    }
+
+    function setOnInit (method) {
+
+      /*
+       * set what method to be called on Initialization
+       */
+
+      options.onInit = method;
+
+      return $node;
+    }
+
+    function setOnSet (method) {
+
+      /*
+       * set what method to be called when rating is set
+       */
+
+      options.onSet = method;
+
+      return $node;
+    }
+
+    function setOnChange (method) {
+
+      /*
+       * set what method to be called rating in the UI is changed
+       */
+
+      options.onChange = method;
+
+      return $node;
+    }
+
+    this.rating = function (newValue) {
+
+      /*
+       * rating getter/setter
+       */
+
+      if (!isDefined(newValue)) {
+
+        return options.rating;
+      }
+
+      setRating(newValue);
+
+      return $node;
+    };
+
+    this.destroy = function () {
+
+      /*
+       * Removes the Rating UI by clearing the content, and removing the custom classes
+       */
+
+      if (!options.readOnly) {
+
+        unbindEvents();
+      }
+
+      RateYo.prototype.collection = deleteInstance($node.get(0),
+                                                   this.collection);
+
+      $node.removeClass("jq-ry-container").children().remove();
+
+      return $node;
+    };
+
+    this.method = function (methodName) {
+
+      /*
+       * Method to call the methods of RateYo Instance
+       */
+
+      if (!methodName) {
+
+        throw Error("Method name not specified!");
+      }
+
+      if (!isDefined(this[methodName])) {
+
+        throw Error("Method " + methodName + " doesn't exist!");
+      }
+
+      var args = Array.prototype.slice.apply(arguments, []),
+          params = args.slice(1),
+          method = this[methodName];
+
+      return method.apply(this, params);
+    };
+
+    this.option = function (optionName, param) {
+
+      /*
+       * Method to get/set Options
+       */
+
+      if (!isDefined(optionName)) {
+
+        return options;
+      }
+
+      var method;
+
+      switch (optionName) {
+
+        case "starWidth":
+
+          method = setStarWidth;
+          break;
+        case "numStars":
+
+          method = setNumStars;
+          break;
+        case "normalFill":
+
+          method = setNormalFill;
+          break;
+        case "ratedFill":
+
+          method = setRatedFill;
+          break;
+        case "multiColor":
+
+          method = setMultiColor;
+          break;
+        case "maxValue":
+
+          method = setMaxValue;
+          break;
+        case "precision":
+
+          method = setPrecision;
+          break;
+        case "rating":
+
+          method = setRating;
+          break;
+        case "halfStar":
+
+          method = setHalfStar;
+          break;
+        case "fullStar":
+
+          method = setFullStar;
+          break;
+        case "readOnly":
+
+          method = setReadOnly;
+          break;
+        case "spacing":
+
+          method = setSpacing;
+          break;
+	case "rtl":
+
+          method = setRtl;
+	  break;
+        case "onInit":
+
+          method = setOnInit;
+          break;
+        case "onSet":
+
+          method = setOnSet;
+          break;
+        case "onChange":
+
+          method = setOnChange;
+          break;
+        default:
+
+          throw Error("No such option as " + optionName);
+      }
+
+      return isDefined(param) ? method(param) : options[optionName];
+    };
+
+    function onMouseEnter (e) {
+
+      /*
+       * If the Mouse Pointer is inside the container, calculate and show the rating
+       * in UI
+       */
+
+      var rating = calculateRating(e).toFixed(options.precision);
+
+      var maxValue = options.maxValue;
+
+      rating = checkPrecision(parseFloat(rating), minValue, maxValue);
+
+      showRating(rating);
+
+      $node.trigger("rateyo.change", {rating: rating});
+    }
+
+    function onMouseLeave () {
+      if (isMobileBrowser()) {
+        return;
+      }
+
+      /*
+       * If mouse leaves, revert the rating in UI to previously set rating,
+       * when empty value is passed to showRating, it will take the previously set
+       * rating
+       */
+
+      showRating();
+
+      $node.trigger("rateyo.change", {rating: options.rating});
+    }
+
+    function onMouseClick (e) {
+
+      /*
+       * On clicking the mouse inside the container, calculate and set the rating
+       */
+
+      var resultantRating = calculateRating(e).toFixed(options.precision);
+      resultantRating = parseFloat(resultantRating);
+
+      that.rating(resultantRating);
+    }
+
+    function onInit(e, data) {
+
+      if(options.onInit && typeof options.onInit === "function") {
+
+        /* jshint validthis:true */
+        options.onInit.apply(this, [data.rating, that]);
+      }
+    }
+
+    function onChange (e, data) {
+
+      if(options.onChange && typeof options.onChange === "function") {
+
+        /* jshint validthis:true */
+        options.onChange.apply(this, [data.rating, that]);
+      }
+    }
+
+    function onSet (e, data) {
+
+      if(options.onSet && typeof options.onSet === "function") {
+
+        /* jshint validthis:true */
+        options.onSet.apply(this, [data.rating, that]);
+      }
+    }
+
+    function bindEvents () {
+
+      $node.on("mousemove", onMouseEnter)
+           .on("mouseenter", onMouseEnter)
+           .on("mouseleave", onMouseLeave)
+           .on("click", onMouseClick)
+           .on("rateyo.init", onInit)
+           .on("rateyo.change", onChange)
+           .on("rateyo.set", onSet);
+    }
+
+    function unbindEvents () {
+
+      $node.off("mousemove", onMouseEnter)
+           .off("mouseenter", onMouseEnter)
+           .off("mouseleave", onMouseLeave)
+           .off("click", onMouseClick)
+           .off("rateyo.init", onInit)
+           .off("rateyo.change", onChange)
+           .off("rateyo.set", onSet);
+    }
+
+    setNumStars(options.numStars);
+    setReadOnly(options.readOnly);
+
+    if (options.rtl) {
+
+      setRtl(options.rtl);
+    }
+
+    this.collection.push(this);
+    this.rating(options.rating, true);
+
+    isInitialized = true;
+    $node.trigger("rateyo.init", {rating: options.rating});
+  }
+
+  RateYo.prototype.collection = [];
+
+  function getInstance (node, collection) {
+
+    /*
+     * Given a HTML element (node) and a collection of RateYo instances,
+     * this function will search through the collection and return the matched
+     * instance having the node
+     */
+
+    var instance;
+
+    $.each(collection, function () {
+
+      if(node === this.node){
+
+        instance = this;
+        return false;
+      }
+    });
+
+    return instance;
+  }
+
+  function deleteInstance (node, collection) {
+
+    /*
+     * Given a HTML element (node) and a collection of RateYo instances,
+     * this function will search through the collection and delete the
+     * instance having the node, and return the modified collection
+     */
+
+    $.each(collection, function (index) {
+
+      if (node === this.node) {
+
+        var firstPart = collection.slice(0, index),
+            secondPart = collection.slice(index+1, collection.length);
+
+        collection = firstPart.concat(secondPart);
+
+        return false;
+      }
+    });
+
+    return collection;
+  }
+
+  function _rateYo (options) {
+
+    var rateYoInstances = RateYo.prototype.collection;
+
+    /* jshint validthis:true */
+    var $nodes = $(this);
+
+    if($nodes.length === 0) {
+
+      return $nodes;
+    }
+
+    var args = Array.prototype.slice.apply(arguments, []);
+
+    if (args.length === 0) {
+
+      //If args length is 0, Initialize the UI with default settings
+      options = args[0] = {};
+    }else if (args.length === 1 && typeof args[0] === "object") {
+
+      //If an Object is specified as first argument, it is considered as options
+      options = args[0];
+    }else if (args.length >= 1 && typeof args[0] === "string") {
+
+      /*
+       * if there is only one argument, and if its a string, it is supposed to be a
+       * method name, if more than one argument is specified, the remaining arguments
+       * except the first argument, will be passed as a params to the specified method
+       */
+
+      var methodName = args[0],
+          params = args.slice(1);
+
+      var result = [];
+
+      $.each($nodes, function (i, node) {
+
+        var existingInstance = getInstance(node, rateYoInstances);
+
+        if(!existingInstance) {
+
+          throw Error("Trying to set options before even initialization");
+        }
+
+        var method = existingInstance[methodName];
+
+        if (!method) {
+
+          throw Error("Method " + methodName + " does not exist!");
+        }
+
+        var returnVal = method.apply(existingInstance, params);
+
+        result.push(returnVal);
+      });
+
+      /*
+       * If the plugin in being called on only one jQuery Element, return only the
+       * first value, to support chaining.
+       */
+      result = result.length === 1? result[0]: result;
+
+      return result;
+    }else {
+
+      throw Error("Invalid Arguments");
+    }
+
+    /*
+     * if only options are passed, extend default options, and if the plugin is not
+     * initialized on a particular jQuery element, initalize RateYo on it
+     */
+    options = $.extend({}, DEFAULTS, options);
+
+    return $.each($nodes, function () {
+
+               var existingInstance = getInstance(this, rateYoInstances);
+
+               if (!existingInstance) {
+
+                 return new RateYo($(this), $.extend({}, options));
+               }
+           });
+  }
+
+  function rateYo () {
+
+    /* jshint validthis:true */
+    return _rateYo.apply(this, Array.prototype.slice.apply(arguments, []));
+  }
+
+  window.RateYo = RateYo;
+  $.fn.rateYo = rateYo;
+
+}(window.jQuery));
+
+},{}]},{},[13]);
