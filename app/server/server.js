@@ -28,7 +28,17 @@ var REDIS_PORT = process.env.REDIS_PORT || 6379;
 var REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
 
-let {getAllByIndexOrderBySkipLimit, getAllByIndexOrderByFilterSkipLimit, getOneBySecondaryIndex, getCommentator, getCommentatorByNick, getByID, getAllByIndexSkipLimit} = require('./comentarismo_api');
+let {
+    getAllByMultipleIndexOrderBySkipLimit,
+    getAllByMultipleIndexCount,
+    getAllByIndexOrderBySkipLimit,
+    getAllByIndexOrderByFilterSkipLimit,
+    getOneBySecondaryIndex,
+    getCommentator,
+    getCommentatorByNick,
+    getByID,
+    getAllByIndexSkipLimit
+} = require('./comentarismo_api');
 
 let server = new Express();
 let port = process.env.PORT || 3002;
@@ -244,85 +254,117 @@ function limiterhandler(req, res) {
     });
 }
 
+//
+// server.get('/api/comment/:id', limiter, (req, res) => {
+//     var id = req.params.id;
+//     logger.info(`/comment/${id}`)
+//     getByID("commentaries", id, conn, function (err, data) {
+//         if (err || !data) {
+//             console.error(err);
+//             return res.status(500).send('Something broke!');
+//         } else {
+//             res.send(data);
+//         }
+//     });
+// });
+//
+// server.get('/api/suggestcomment/:id', limiter, (req, res) => {
+//     var id = req.params.id;
+//     logger.info(`/comment/${id}`)
+//     getByID("commentaries", id, conn, function (err, data) {
+//         if (err || !data) {
+//             console.error(err);
+//             return res.status(500).send('Something broke!');
+//         } else {
+//             res.send(data);
+//         }
+//     });
+// });
 
-server.get('/api/comment/:id', limiter, (req, res) => {
-    var id = req.params.id;
-    logger.info(`/comment/${id}`)
-    getByID("commentaries", id, conn, function (err, data) {
-        if (err || !data) {
-            console.error(err);
-            return res.status(500).send('Something broke!');
-        } else {
-            res.send(data);
-        }
-    });
-});
+// server.get('/api/admin/r/:table/:id', limiter, (req, res) => {
+//     var table = req.params.table;
+//     var id = req.params.id;
+//     var targetUrl = `/api/admin/r/${table}/${id}`;
+//     logger.info("" + targetUrl);
+//     getByID(`${table}`, id, conn, function (err, data) {
+//         if (err || !data) {
+//             console.error(err);
+//             return res.status(500).send('Something broke!');
+//         } else {
+//             res.send(data);
+//         }
+//     });
+// });
+//
 
-server.get('/api/suggestcomment/:id', limiter, (req, res) => {
-    var id = req.params.id;
-    logger.info(`/comment/${id}`)
-    getByID("commentaries", id, conn, function (err, data) {
-        if (err || !data) {
-            console.error(err);
-            return res.status(500).send('Something broke!');
-        } else {
-            res.send(data);
-        }
-    });
-});
+function getParams(req) {
 
-server.get('/api/admin/r/:table/:id', limiter, (req, res) => {
-    var table = req.params.table;
-    var id = req.params.id;
-    var targetUrl = `/api/admin/r/${table}/${id}`;
-    logger.info("" + targetUrl);
-    getByID(`${table}`, id, conn, function (err, data) {
-        if (err || !data) {
-            console.error(err);
-            return res.status(500).send('Something broke!');
-        } else {
-            res.send(data);
-        }
-    });
-});
-
-
-//bind to action/commentators.js -> loadCommentators
-server.get('/fapi/commentators/:index/:value/:skip/:limit', limiter, (req, res)=> {
-    logger.info(req.params);
-    var index = req.params.index;
-    var value = req.params.value;
-    var skip = parseInt(req.params.skip);
-    var limit = parseInt(req.params.limit);
-
+    var table = req.query.table;
+    var index = req.query.key;
+    var value = req.query.value;
+    var operator = req.query.operator;
+    var skip = req.query.skip;
+    var limit = req.query.limit;
     var sort = req.query.sort;
+    var order = req.query.order || "desc";
 
-    var urlTag = `/fapi/commentators/${index}/${value}/${skip}/${limit}?sort=${sort}`;
-    logger.info(urlTag);
+    var returnObj = {
+        table: table,
+        index: index,
+        value: value,
+        operator: operator,
+        skip: skip,
+        limit: limit,
+        sort: sort,
+        order: order,
+    };
+
+    if (!table || !index || !value || !operator) {
+        returnObj.error = 'Invalid inputs --> '
+    } else {
+        console.log("Will parse skip, ", req.query.skip);
+        console.log("Will parse limit, ", req.query.limit);
+
+        returnObj.skip = parseInt(req.query.skip);
+        returnObj.limit = parseInt(req.query.limit);
+    }
+    return returnObj;
+}
+
+///v1/listbykeyskiplimit?key=operator_titleurlize&sort=date&skip=0&limit=50&table=commentaries&operator=g1&value=g1texas-comeca-2016-com-lei-que-permite-porte-aberto-de-armas
+server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
+    var params = getParams(req);
+    var urlTag = `/v1/listbykeyskiplimit?table=${params.table}&index=${params.index}&value=${params.value}&operator=${params.operator}&skip=${params.skip}&limit=${params.limit}&sort=${params.sort}&order=${params.order}`;
+    if (!req.query.skip || !req.query.limit || !params.sort) {
+        console.log('Error: Invalid inputs --> ', urlTag)
+        return res.sendStatus(500);
+    }
+    if (params.error) {
+        console.log(urlTag, params.error);
+        return res.sendStatus(500);
+    }
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (err || !js) {
             if (err) {
                 console.error(err.stack);
+                return res.sendStatus(500);
             }
         } else {
             logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
+            // if (EXPIRE_REDIS) {
+            client.expire(urlTag, 1);
+            // }
             res.type('application/json');
             return res.send(js);
         }
         //-------REDIS CACHE END ------//
-
-        getAllByIndexOrderBySkipLimit("commentator", index, value, skip, limit, sort, conn, function (err, data) {
+        getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
-                return res.status(500).send('Something broke!');
-            }
-
-            if (data) {
+                console.log("Error: getAllByMultipleIndexOrderBySkipLimit, ", err.stack);
+                return res.sendStatus(500);
+            } else {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
                 client.set(urlTag, JSON.stringify(data), redis.print);
@@ -330,17 +372,111 @@ server.get('/fapi/commentators/:index/:value/:skip/:limit', limiter, (req, res)=
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             }
+        });
 
+    });
+});
 
+///v1/listbykeycount?key=operator_titleurlize&table=commentaries&operator=g1&value=g1texas-comeca-2016-com-lei-que-permite-porte-aberto-de-armas
+server.get('/v1/listbykeycount', limiter, (req, res) => {
+    var params = getParams(req);
+    var urlTag = `/v1/listbykeycount?table=${params.table}&index=${params.index}&value=${params.value}&operator=${params.operator}`;
+
+    if (params.error) {
+        console.error(urlTag, params.error);
+        return res.send('Something broke!');
+    }
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (err || !js) {
+            if (err) {
+                console.error(err.stack);
+                return res.sendStatus(500);
+            }
+        } else {
+            logger.info(urlTag + " will return cached result ");
+            // if (EXPIRE_REDIS) {
+            client.expire(urlTag, 1);
+            // }
+            res.type('application/json');
+            return res.send(js);
+        }
+        //-------REDIS CACHE END ------//
+
+        getAllByMultipleIndexCount(params, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.sendStatus(500);
+            } else {
+                //-------REDIS CACHE SAVE START ------//
+                logger.info(urlTag + " will save cached");
+                client.set(urlTag, JSON.stringify({count: data}), redis.print);
+                client.expire(urlTag, 1800);
+                //-------REDIS CACHE SAVE END ------//
+                res.json({count: data});
+            }
         });
 
     });
 
-
 });
+//
+// //bind to action/commentators.js -> loadCommentators
+// server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
+//     logger.info(req.params);
+//     var index = req.params.index;
+//     var value = req.params.value;
+//     var skip = parseInt(req.params.skip);
+//     var limit = parseInt(req.params.limit);
+//
+//     var sort = req.query.sort;
+//
+//     var urlTag = `/fapi/commentators/${index}/${value}/${skip}/${limit}?sort=${sort}`;
+//     logger.info(urlTag);
+//
+//     //-------REDIS CACHE START ------//
+//     client.get(urlTag, function (err, js) {
+//         if (err || !js) {
+//             if (err) {
+//                 console.error(err.stack);
+//                 return res.sendStatus(500);
+//             }
+//         } else {
+//             logger.info(urlTag + " will return cached result ");
+//             if (EXPIRE_REDIS) {
+//                 client.expire(urlTag, 1);
+//             }
+//             res.type('application/json');
+//             return res.send(js);
+//         }
+//         //-------REDIS CACHE END ------//
+//
+//         getAllByMultipleIndexOrderBySkipLimit("commentator", index, value, "", skip, limit, sort, conn, function (err, data) {
+//             if (err) {
+//                 console.error(err.stack);
+//                 return res.status(500).send('Something broke!');
+//             }
+//
+//             if (data) {
+//                 //-------REDIS CACHE SAVE START ------//
+//                 logger.info(urlTag + " will save cached");
+//                 client.set(urlTag, JSON.stringify(data), redis.print);
+//                 client.expire(urlTag, 1800);
+//                 //-------REDIS CACHE SAVE END ------//
+//                 res.send(data);
+//             }
+//
+//
+//         });
+//
+//     });
+//
+//
+// });
 
 //bind to action/commentators.js -> loadCommentatorDetail
-server.get('/api/commentators/:id', limiter, (req, res)=> {
+server.get('/api/commentators/:id', limiter, (req, res) => {
     var id = req.params.id;
 
     if (!id) {
@@ -352,23 +488,22 @@ server.get('/api/commentators/:id', limiter, (req, res)=> {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err);
-            }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
-        }
+        // if (err || !js) {
+        //     if (err) {
+        //         console.error(err);
+        //     }
+        //     //return res.status(500).send('Cache is broken!');
+        // } else {
+        //     logger.info(urlTag + " will return cached result ");
+        //     if (EXPIRE_REDIS) {
+        //         client.expire(urlTag, 1);
+        //     }
+        //     res.type('application/json');
+        //     return res.send(js);
+        // }
         //-------REDIS CACHE END ------//
 
-
-        getCommentatorByNick(req.params.id, conn, function (err, data) {
+        getByID("commentator", req.params.id, conn, function (err, data) {
             if (err) {
                 logger.info("Error: " + err);
                 //console.error(err.stack);
@@ -431,7 +566,7 @@ server.get('/api/commentators/:id', limiter, (req, res)=> {
 /**
  * Get all from a table with a index and its value and optional pos filtering like /genre/politics with skip and limit
  */
-server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limiter, (req, res)=> {
+server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limiter, (req, res) => {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -491,7 +626,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
  * bind to app/sa.js -> used for listing all news and commentators infinitescroll
  *
  */
-server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
+server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -550,7 +685,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
  * bind to app/sa.js -> used for listing all news and commentators infinitescroll
  *
  */
-server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)=> {
+server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
@@ -598,7 +733,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
 });
 
 //bind to action/articles.js -> loadArticleDetail
-server.get('/api/news/:id', limiter, (req, res)=> {
+server.get('/api/news/:id', limiter, (req, res) => {
     var sort = req.query.sort;
 
     var urlTag = `/api/news/${req.params.id}`;
@@ -655,7 +790,7 @@ server.get('/api/news/:id', limiter, (req, res)=> {
 
 
 //bind to action/articles.js -> loadArticleDetail
-server.get('/api/product/:id', limiter, (req, res)=> {
+server.get('/api/product/:id', limiter, (req, res) => {
     var sort = req.query.sort;
 
     var urlTag = `/api/product/${req.params.id}`;
@@ -759,7 +894,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 });
 
 
-server.get("/random", limiter, (req, res)=> {
+server.get("/random", limiter, (req, res) => {
     conn.table("sentiment_report")
         .sample(1)
         .run().then(function (results) {
@@ -779,7 +914,7 @@ server.get("/random", limiter, (req, res)=> {
 
 //TODO: cache sitemap with redis
 
-server.get('*', limiter, (req, res, next)=> {
+server.get('*', limiter, (req, res, next) => {
     let history = useQueries(createMemoryHistory)();
     let location = history.createLocation(req.url);
     let reqUrl = location.pathname + location.search;
@@ -915,7 +1050,7 @@ server.get('*', limiter, (req, res, next)=> {
 
             let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
 
-            getReduxPromise().then(()=> {
+            getReduxPromise().then(() => {
                 let reduxState = escape(JSON.stringify(store.getState()));
                 let html = ReactDOMServer.renderToString(
                     <Provider store={store}>
@@ -955,7 +1090,7 @@ server.get('*', limiter, (req, res, next)=> {
 
                 unsubscribe();
             })
-                .catch((err)=> {
+                .catch((err) => {
                     unsubscribe();
                     next(err);
                 });
@@ -974,13 +1109,13 @@ server.get('*', limiter, (req, res, next)=> {
         });
         function subscribeUrl() {
             let currentUrl = location.pathname + location.search;
-            let unsubscribe = history.listen((newLoc)=> {
+            let unsubscribe = history.listen((newLoc) => {
                 if (newLoc.action === 'PUSH') {
                     currentUrl = newLoc.pathname + newLoc.search;
                 }
             });
             return [
-                ()=> currentUrl,
+                () => currentUrl,
                 unsubscribe
             ];
         }
@@ -991,7 +1126,7 @@ server.on('error', (err) => {
     console.error("server.on('error' --> ", err);
 });
 
-server.use((err, req, res, next)=> {
+server.use((err, req, res, next) => {
     if (err) {
         console.error("server.use((err, --> ", err);
         logger.info("err stack ", err.stack);

@@ -96,7 +96,7 @@ class Product extends Component {
                     <a id="comentarismo-operator" data-id={ article.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript index="titleurlize"/>
+                    <XScript index="operator_titleurlize"/>
                     <div className="row single-post-row">
                         <div className="article-body">
                             <div className="container">

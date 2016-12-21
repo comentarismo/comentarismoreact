@@ -35,12 +35,12 @@ var lovedit = "Loved It";
 var awesome = "Awesome!";
 var unknown = "Unknown";
 
-var $ = require('jquery')
+var $ = require('jquery');
 
 class Article extends Component {
     static fetchData({ store, params }) {
-        let { id } = params
-        return store.dispatch(loadArticleDetail({id}))
+        let { id } = params;
+        return store.dispatch(loadArticleDetail({id}));
     }
 
     render() {
@@ -219,7 +219,7 @@ class Article extends Component {
                     <a id="comentarismo-operator" data-id={ article.operator }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    <XScript index="titleurlize"/>
+                    <XScript index="operator_titleurlize"/>
                     <div className="row single-post-row">
                         <div className="article-body">
                             <div className="container">

@@ -464,29 +464,23 @@ var comentarismoContainerHtmlNoReply =
     "" +
     "<div id='comments-list'>" +
     "</div>" +
-    "<a id='inifiniteLoader' style='display:none;'><img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
-    "<a id='commentsloadmore' >Load more...</a>";
+    "<a id='inifiniteLoader' style='display:none;'><img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
 
 
 var initComentarismoContainer = function initComentarismoContainer(div, noreply, options) {
     var commenticon = (options && options.commenticon) ? options.commenticon : "http://api.comentarismo.com/static/images/comments.ico";
 
     var targetHtml;
-    if (noreply == "nick") {
-        targetHtml = comentarismoContainerHtmlNoReply.replace('#COMMENT_ICON', commenticon);
-    } else {
+    // if (noreply == "nick") {
+    //     targetHtml = comentarismoContainerHtmlNoReply.replace('#COMMENT_ICON', commenticon);
+    // } else {
         targetHtml = comentarismoContainerHtml.replace('#COMMENT_ICON', commenticon);
-    }
+    // }
     if (!div) {
         div = "#comentarismo-container";
     }
     var htmlElement = $(div);
     htmlElement.html(targetHtml);
-
-    //bind lang to buttons
-    //$('#submit-btn').val(i18n._('submit'));
-    //$('#new-todo').val(i18n._('new-todo'));
-    //$('#captchasolution').val(i18n._('inotrobot'));
 
 };
 
@@ -518,6 +512,28 @@ module.exports = {
 };
 
 },{"./dictionary":7}],3:[function(require,module,exports){
+var countArticleV1 = function countArticle(that, table, key, page, cb) {
+    var urlstr = "/v1/listbykeycount?operator=" + that.operator + "&table=" + table + "&key=" + key + "&value=" + page + "&db=" + (that.forum ? that.forum : '');
+    var url = that.host + urlstr;
+    ga('send', 'event', 'countArticle', urlstr, {}, 0);
+
+    if (window.debug) {
+        console.log("countArticle, ", url);
+    }
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {"COMENTARISMO-KEY": that.key},
+        success: function (json) {
+            $("#comments-count").text(json.count);   // This will be the div where our content will be loaded
+            cb(null, json.count);
+        },
+        error: function (err) {
+            return cb(err);
+        }
+    });
+};
+
 var countArticle = function countArticle(that, table, thekey, page, cb) {
     var url = that.host + "/listbykeycount/" + table + "/" + thekey + "/" + page + "/";
     ga('send', 'event', 'countArticle', "/listbykeycount/" + table + "/" + thekey + "/" + page + "/", {}, 0);
@@ -551,6 +567,7 @@ var afterCountArticle = function afterCountArticle(err, end) {
 }
 
 module.exports = {
+    countArticleV1: countArticleV1,
     afterCountArticle: afterCountArticle,
     countArticle: countArticle
 }
@@ -746,7 +763,7 @@ var deleteComment = function (param) {
         console.log("deleteComment, " + id);
     }
     var request = $.ajax({
-        url: that.host + '/auth/delete/' + id,
+        url: that.host + '/auth/delete/' + id + '?db=' + (that.forum ? that.forum : ''),
         type: 'post',
         xhrFields: {
             withCredentials: true
@@ -1003,29 +1020,31 @@ var dislikeComment = function (evt) {
     var that = this;
 
     var id = evt.currentTarget.attributes["data-id"].nodeValue;
-    ga('send', 'event', 'dislikeComment', '/auth/dislike/' + id, that.page, 0);
-
     if (id && id.indexOf("-dislike") !== -1) {
         id = id.split("-dislike")[0]
     }
 
-    if(window.debug) {
+    if (window.debug) {
         console.log("dislikeComment, " + id);
     }
+
+    var targetUrl = that.host + '/auth/dislike/' + id + '?db=' + (that.forum ? that.forum : '') + "&table=" + (that.table ? that.table : '');
+
+    ga('send', 'event', 'dislikeComment', targetUrl, that.page, 0);
 
     var domTarget = $("[data-id=" + id + "-dislike]");
 
     var imgsrc = $("[data-id=" + id + "-dislike] > img");
-    if(imgsrc){
+    if (imgsrc) {
         imgsrc = imgsrc.attr("src");
-    }else {
+    } else {
         imgsrc = "/static/img/thumbs-down.jpg";
     }
 
-    var itwas = like_.addCount(domTarget,imgsrc);
+    var itwas = like_.addCount(domTarget, imgsrc);
 
     var request = $.ajax({
-        url: that.host + '/auth/dislike/' + id,
+        url: targetUrl,
         type: 'post',
         headers: {"COMENTARISMO-KEY": that.key},
         xhrFields: {
@@ -1035,8 +1054,8 @@ var dislikeComment = function (evt) {
 
     var alertMsg = "";
     request.done(function (data, textStatus, jqXHR) {
-        if(window.debug) {
-            console.log("dislikeComment, ",jqXHR);
+        if (window.debug) {
+            console.log("dislikeComment, ", jqXHR);
         }
         $(".error").hide();
         $(".success").html(jqXHR.statusText);
@@ -1047,21 +1066,21 @@ var dislikeComment = function (evt) {
             $(".success").html(jqXHR.statusText);
             return;
         } else if (jqXHR.status == "406") {
-            like_.subtractCount(domTarget,itwas);
+            like_.subtractCount(domTarget, itwas);
             $(".success").hide();
 
-            if(that.mobile) {
-                alertMsg = $.i18n._('onlyvote1time')+' <br>'
+            if (that.mobile) {
+                alertMsg = $.i18n._('onlyvote1time') + ' <br>'
             } else {
                 alertMsg = $.i18n._('onlyvote1time');
             }
-            that.showAlertMessage(alertMsg,$(".error"));
+            that.showAlertMessage(alertMsg, $(".error"));
             return;
         } else if (jqXHR.status == "404") {
-            like_.subtractCount(domTarget,itwas);
+            like_.subtractCount(domTarget, itwas);
 
-            if(that.mobile) {
-                alertMsg = $.i18n._('commentwasdeleted')+' <br>'
+            if (that.mobile) {
+                alertMsg = $.i18n._('commentwasdeleted') + ' <br>'
             } else {
                 alertMsg = $.i18n._('commentwasdeleted');
             }
@@ -1070,21 +1089,20 @@ var dislikeComment = function (evt) {
             $(".success").hide();
             return;
         }
-        like_.subtractCount(domTarget,itwas);
+        like_.subtractCount(domTarget, itwas);
         $(".success").hide();
-        if(that.mobile) {
-              alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
-           } else {
-              alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
-          }
+        if (that.mobile) {
+            alertMsg = $.i18n._('seemslikeyounotlogged') + ' <br> ' + $.i18n._('pleaselog') + '<br><a href="#" class="log-in">LOG IN</a>'
+        } else {
+            alertMsg = $.i18n._('seemslikeyounotlogged') + " <br> " + $.i18n._('pleaselog') + "<br><a href='" + that.host + "/login'>Login</a>'"
+        }
         that.showAlertMessage(alertMsg, $(".error"));
     });
 };
 
 
-
 module.exports = {
-    dislikeComment:dislikeComment
+    dislikeComment: dislikeComment
 };
 },{"./like":10}],9:[function(require,module,exports){
 
@@ -1275,16 +1293,20 @@ var likeComment = function (evt) {
     evt.preventDefault();
 
     var id = evt.currentTarget.attributes["data-id"].nodeValue;
-
-    var that = this;
-    ga('send', 'event', 'likeComment', '/auth/like/' + id, that.page, 0)
     if (id && id.indexOf("-like") !== -1) {
         id = id.split("-like")[0]
     }
 
+    var that = this;
     if(window.debug) {
         console.log("likeComment, " + id);
     }
+
+    var urlTarget = that.host + '/auth/like/' + id + '?db=' +  (that.forum ? that.forum : '') + "&table=" + (that.table ? that.table : '');
+
+    ga('send', 'event', 'likeComment', urlTarget, that.page, 0);
+
+
     var domTarget = $("[data-id=" + id + "-like]");
 
     var imgsrc = $("[data-id=" + id + "-like] > img");
@@ -1297,7 +1319,7 @@ var likeComment = function (evt) {
     var itwas = addCount(domTarget,imgsrc);
 
     var request = $.ajax({
-        url: that.host + '/auth/like/' + id,
+        url: urlTarget,
         type: 'post',
         headers: {"COMENTARISMO-KEY": that.key},
         xhrFields: {
@@ -1387,33 +1409,85 @@ module.exports = {
 },{}],11:[function(require,module,exports){
 var container = require("./container");
 
-function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
-    ga('send', 'event', 'loadArticle', "/listbykeyskiplimit/"+table+"/" + thekey + "/" + page + "/" + skip + "/" + limit + "/", page, 0);
 
-    var url = that.host + "/listbykeyskiplimit/"+table+"/" + thekey + "/" + page + "/" + skip + "/" + limit + "/";
-    if(window.debug) {
-        console.log("loadArticle, ",url);
+function loadArticleV1(opts, cb) {
+    var that = opts.that,
+        table = opts.table,
+        key= opts.key,
+        list= opts.list,
+        page= opts.page,
+        skip= opts.skip,
+        limit= opts.limit,
+        user= opts.user;
+
+    var urlstr = that.host +  "/v1/listbykeyskiplimit?operator=" + that.operator + "&table=" + table + "&key=" + key + "&value=" + page + "&skip=" + skip + "&limit=" + limit + "&db=" + (that.forum ? that.forum : '');
+    ga('send', 'event', 'loadArticle', urlstr, page, 0);
+
+    if (window.debug) {
+        console.log("loadArticle, ", urlstr);
+    }
+
+    $.ajax({
+        url: urlstr,
+        headers: {"COMENTARISMO-KEY": that.key},
+        type: 'GET',
+        success: function (json) {
+            if (window.debug) {
+                console.log("loadArticle, ", json);
+            }
+
+            if (json.length <= 0) {
+                if (window.debug) {
+                    console.log("loadArticle, ", json.length);
+                }
+                return cb(0, "loadArticle, json.length is zero -> 0");
+            }
+            if (window.debug) {
+                console.log("loadArticle, user filled");
+            }
+            for (var i = 0; i < json.length; i++) {
+                that.addCommentHtmlNew(that, list, json[i], key, user, function () {
+                    if (i == json.length - 1) {
+                        return cb(json.length, null);
+                    }
+                });
+
+            }
+        },
+        error: function (err) {
+            return cb(0, err);
+        }
+    });
+};
+
+
+function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
+    ga('send', 'event', 'loadArticle', "/listbykeyskiplimit/" + table + "/" + thekey + "/" + page + "/" + skip + "/" + limit + "/" + '&db=' + (that.forum ? that.forum : ''), page, 0);
+
+    var url = that.host + "/listbykeyskiplimit/" + table + "/" + thekey + "/" + page + "/" + skip + "/" + limit + "/" + '&db=' + (that.forum ? that.forum : '');
+    if (window.debug) {
+        console.log("loadArticle, ", url);
     }
     $.ajax({
         url: url,
         headers: {"COMENTARISMO-KEY": that.key},
         type: 'GET',
         success: function (json) {
-            if(window.debug) {
-                console.log("loadArticle, ",json);
+            if (window.debug) {
+                console.log("loadArticle, ", json);
             }
 
             if (json.length <= 0) {
-                if(window.debug) {
-                    console.log("loadArticle, ",json.length);
+                if (window.debug) {
+                    console.log("loadArticle, ", json.length);
                 }
                 return cb(0, "json.length is zero -> 0");
             }
-            if(window.debug) {
+            if (window.debug) {
                 console.log("loadArticle, user filled");
             }
             for (var i = 0; i < json.length; i++) {
-                that.addCommentHtmlNew(that,list, json[i], thekey, user, function () {
+                that.addCommentHtmlNew(that, list, json[i], thekey, user, function () {
                     if (i == json.length - 1) {
                         return cb(json.length, null);
                     }
@@ -1430,7 +1504,7 @@ function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
 
 var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, cb) {
     if (length < limit - skip) {
-        if(window.debug) {
+        if (window.debug) {
             console.log("afterLoadArticle, scroll loader END <---");
         }
         end = true;
@@ -1439,7 +1513,7 @@ var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, 
     $('a#inifiniteLoader').hide('1000');
 
     if (err) {
-        if(window.debug) {
+        if (window.debug) {
             console.log(err);
             console.log("Error: afterLoadArticle, length: " + length + " ,limit:" + limit + " ,skip:" + skip);
         }
@@ -1449,44 +1523,10 @@ var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, 
     return cb(end);
 };
 
-
-
-var loadArticleNoAuth = function loadArticleNoAuth(operator, thekey, list, page, skip, limit, cb) {
-    ga('send', 'event', 'loadArticleNoAuth', "/listbykeyskiplimit/commentaries/" + thekey + "/" + page + "/" + skip + "/" + limit + "/", this.page, 0);
-
-    //var url = host + "/listbykeyskiplimit/commentaries/" + key + "/" + page + "/" + skip + "/" + limit + "/";
-    var url = host + "/listbykeyskiplimit/commentaries/" + thekey + "/" + page + "/" + skip + "/" + limit + "/";
-    ///rt/_search?q=new_val.titleurlize:%22witnesses-confirm-khodorkovskys-role-in-assassinations-attorney-rt-russian-politics%22&pretty=true&size=20&from=5
-    if(window.debug) {
-        console.log("loadArticleNoAuth, ",url);
-    }
-    var that = this;
-    $.ajax({
-        url: url,
-        type: 'GET',
-        headers: {"COMENTARISMO-KEY": that.key},
-        success: function (json) {
-            if(window.debug) {
-                console.log("loadArticleNoAuth, loadArticle user filled");
-            }
-            for (var i = 0; i < json.length; i++) {
-                if(window.debug) {
-                    console.log("loadArticleNoAuth, ",json[i]);
-                }
-                container.addCommentIndex(list, json[i], function () {
-                    return cb();
-                });
-            }
-        },
-        error: function (err) {
-            return cb(err);
-        }
-    });
-};
-
 module.exports = {
-    loadArticle:loadArticle,
-    afterLoadArticle:afterLoadArticle
+    loadArticle: loadArticle,
+    loadArticleV1:loadArticleV1,
+    afterLoadArticle: afterLoadArticle
 }
 
 
@@ -1494,7 +1534,7 @@ module.exports = {
 var container = require("./container");
 
 
-var elkLoadArticle = function elkLoadArticle(that, operator, thekey, list, page, skip, limit, user, cb) {
+var elkLoadArticle = function elkLoadArticle(that, operator, key, list, page, skip, limit, user, cb) {
     if (!page) {
         var error = "error, no page defined";
         if (window.debug) {
@@ -1505,7 +1545,7 @@ var elkLoadArticle = function elkLoadArticle(that, operator, thekey, list, page,
 
     var prefix = "/";
     prefix = prefix + operator;
-    prefix = prefix + "/_search?q=" + thekey + ":\"" + page + "\"&from=" + skip + "&size=" + limit;
+    prefix = prefix + "/_search?q=" + key + ":\"" + page + "\"&from=" + skip + "&size=" + limit;
     var url = that.elk + prefix;
 
     ga('send', 'event', 'loadArticle', prefix, page, 0);
@@ -1530,7 +1570,7 @@ var elkLoadArticle = function elkLoadArticle(that, operator, thekey, list, page,
 
             for (var i = 0; i < json.hits.hits.length; i++) {
                 var item = json.hits.hits[i];
-                that.addCommentHtmlNew(that, list, item._source, thekey, user, function () {
+                that.addCommentHtmlNew(that, list, item._source, key, user, function () {
                     if (i == json.hits.hits.length - 1) {
                         if (window.debug) {
                             console.log("elkLoadArticle, load ok ");
@@ -1586,6 +1626,7 @@ $ = require('jquery'),
     global.jQuery = $,
     Dropkick = require("./vendor/dropkick"),
     rateyo = require('./vendor/jquery.rateyo'),
+    urlize = require('urlize').urlize,
     require("./vendor/jquery-ui"),
     analytics = require('ga-browser')(),
     _ = require('underscore'),
@@ -1648,7 +1689,7 @@ var page;
 var operator = "";
 
 //Index is the index to be used to query anything
-var defaultIndex = "titleurlize";
+var defaultIndex = "uuid";
 
 var cached = false;
 
@@ -1659,6 +1700,7 @@ var limit = 50;
 var skip = 0;
 var sel;
 var table;
+var forum;
 
 Comentarismo = function (options) {
     var that = this;
@@ -1688,7 +1730,7 @@ Comentarismo = function (options) {
 
 
     //declare all vars
-    this.forum = options.forum;
+    forum = this.forum = options.forum;
     this.$el = $("#comments-list");
 
     if (document.location.hostname.indexOf("localhost") !== -1) {
@@ -1730,7 +1772,7 @@ Comentarismo = function (options) {
     new Dropkick('#filtersentiment', {mobile: this.mobile});
     $('#filtersentiment').on('change', _.bind(this.onClickFiltersentiment, that));
 
-    table = options.table || "commentaries";
+    this.table = table = options.table || "commentaries";
 
     if (options.css) {
         $('head').append('<link rel="stylesheet" href="' + options.css + '" type="text/css" />');
@@ -1758,7 +1800,7 @@ Comentarismo = function (options) {
         cached = options.cached.length > 0;
     }
 
-    if (this.forum === "comentarismo") {
+    // if (this.forum === "test") {
         if (window.debug) {
             console.log("Loading Comentarismo Social Plugin");
         }
@@ -1767,14 +1809,14 @@ Comentarismo = function (options) {
             //fallback to indexFromPath
             testpage = getIndexFromPath(3);
             if (!testpage) {
-                throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{page:'pageID'} ")
+                // throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{page:'pageID'} ")
             }
         }
         var testoperator = options.operator;
         if (!testoperator) {
             testoperator = getIndexFromPath(2);
             if (!testoperator) {
-                throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{operator:'operatorID'} ")
+                // throw Error("Could not initialize Come7ntarismo engine, make sure to provide eg: options:{operator:'operatorID'} ")
             }
         }
         var testdefaultIndex = options.index;
@@ -1783,12 +1825,14 @@ Comentarismo = function (options) {
         }
 
         page = testpage;
-        operator = testoperator;
+        this.operator = operator = testoperator;
 
-    } else {
+    // } else {
         //WTF ?
-        throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
-    }
+        // throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
+    // }
+
+    page = encodeURIComponent(page);
 
 
     var payload = analytichelper.run();
@@ -1818,7 +1862,7 @@ Comentarismo = function (options) {
         count_elk.elkCountArticle(this, defaultIndex, sel, page, operator, function (err, length) {
             if (err || length === 0) {
                 console.log("Will retry loading count from API");
-                count_api.countArticle(that, table, defaultIndex, page, function (err) {
+                count_api.countArticleV1(that, table, defaultIndex, page, function (err) {
                     count_api.afterCountArticle(err, end);
                 })
             } else {
@@ -1826,7 +1870,7 @@ Comentarismo = function (options) {
             }
         });
     } else {
-        count_api.countArticle(this, table, defaultIndex, page, function (err, length) {
+        count_api.countArticleV1(this, table, defaultIndex, page, function (err, length) {
             count_api.afterCountArticle(err, end);
         });
     }
@@ -1839,11 +1883,22 @@ Comentarismo = function (options) {
         load_elk.elkLoadArticle(this, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
 
             if (err || length === 0) {
-                console.log("Will retry loading comments it from API");
+                console.log("Will retry loading comments from API");
                 //we loaded but could not find it on elasticsearch
                 //should retry using regular loadArticle
-                load_api.loadArticle(that, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+                var opts = {
+                    that: that,
+                    table: table,
+                    key: defaultIndex,
+                    list: sel,
+                    page: page,
+                    skip: skip,
+                    limit: limit,
+                    user: user,
+                };
 
+                load_api.loadArticleV1(opts, function (length, err) {
+                    console.log("Total comments found --> ", length);
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         that.filterAllSentiment();
                         limit = limit + 50;
@@ -1865,7 +1920,17 @@ Comentarismo = function (options) {
     } else {
         running = true;
         $('a#inifiniteLoader').show();
-        load_api.loadArticle(this, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+        var opts = {
+            that: this,
+            table: table,
+            key: defaultIndex,
+            list: sel,
+            page: page,
+            skip: skip,
+            limit: limit,
+            user: user,
+        }
+        load_api.loadArticleV1(opts, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 that.filterAllSentiment();
                 limit = limit + 50;
@@ -1914,7 +1979,19 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
                 console.log("Will retry loading it from API");
                 //we loaded but could not find it on elasticsearch
                 //should retry using regular loadArticle
-                load_api.loadArticle(that, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+
+                var opts = {
+                    that: that,
+                    table: table,
+                    key: defaultIndex,
+                    list: sel,
+                    page: page,
+                    skip: skip,
+                    limit: limit,
+                    user: user,
+                };
+
+                load_api.loadArticleV1(opts, function (length, err) {
 
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         that.filterAllSentiment();
@@ -1943,7 +2020,18 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
         });
     } else {
 
-        load_api.loadArticle(that, table, defaultIndex, sel, page, skip, limit, user, function (length, err) {
+        var opts = {
+            that: that,
+            table: table,
+            key: defaultIndex,
+            list: sel,
+            page: page,
+            skip: skip,
+            limit: limit,
+            user: user,
+        };
+
+        load_api.loadArticleV1(opts, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 that.filterAllSentiment();
                 limit = limit + 50;
@@ -2092,11 +2180,14 @@ Comentarismo.prototype.showAlertMessage = function (msg, element) {
 };
 
 Comentarismo.prototype.onSubmitCommentForm = function (evt) {
-    ga('send', 'event', 'onSubmitCommentForm', '/auth/new', page, 0);
-
     evt.stopPropagation();
     evt.preventDefault();
+
     var that = this;
+
+    var urlTarget = that.host + '/auth/new' + '?db=' + (that.forum ? that.forum : '')+ "&table=" + (that.table ? that.table : '')
+
+    ga('send', 'event', 'onSubmitCommentForm', urlTarget, page, 0);
 
     var form = evt.currentTarget.form;
 
@@ -2104,13 +2195,16 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         form = this.commentForm[0];
     }
 
+    var targetPage = ( page ? page : location.protocol + '//' + location.host + location.pathname + (location.search ? location.search : "") )
     //TODO: bind the value here
     var rating = 0;
     var js = {
+        page: targetPage,
+        titleurlize: urlize(document.title),
+        title: document.title,
         captchasolution: form.captchasolution.value,
         captchaid: form.captchaid.value,
         comment: form.body.value,
-        page: page,
         operator: operator,
     };
 
@@ -2121,19 +2215,18 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
     var formid = form.formid;
 
     var successbox = $(".success");
-    var errorbox = $(".error");
 
     if (formid && formid.value) {
         js.inreplyto = formid.value;
         //successbox = $("#" + formid.value + "-success");
         // errorbox = $("#" + formid.value + "-error");
-    }else {
+    } else {
         rating = $("#comment-rating").rateYo("rating");
         js.rating = rating;
     }
 
     var request = $.ajax({
-        url: that.host + '/auth/new',
+        url: urlTarget,
         type: 'post',
         dataType: 'json',
         data: js,
@@ -2206,9 +2299,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         } else {
             successbox.hide();
             if (that.mobile) {
-                alertMsg = $.i18n._('seemslikeyounotlogged')+' <br> '+$.i18n._('pleaselog')+'<br><a href="#" class="log-in">LOG IN</a>'
+                alertMsg = $.i18n._('seemslikeyounotlogged') + ' <br> ' + $.i18n._('pleaselog') + '<br><a href="#" class="log-in">LOG IN</a>'
             } else {
-                alertMsg = $.i18n._('seemslikeyounotlogged')+" <br> "+$.i18n._('pleaselog')+"<br><a href='" + that.host + "/login'>Login</a>'"
+                alertMsg = $.i18n._('seemslikeyounotlogged') + " <br> " + $.i18n._('pleaselog') + "<br><a href='" + that.host + "/login'>Login</a>'"
             }
             that.showAlertMessage(alertMsg, $(".error"));
         }
@@ -2335,7 +2428,7 @@ Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie) {
     });
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./funcs/analytics-helper":1,"./funcs/container.js":2,"./funcs/count_api.js":3,"./funcs/count_elk.js":4,"./funcs/create.js":5,"./funcs/delete_.js":6,"./funcs/dislike.js":8,"./funcs/form_.js":9,"./funcs/like.js":10,"./funcs/load_api.js":11,"./funcs/load_elk.js":12,"./vendor/dropkick":27,"./vendor/jquery-ui":28,"./vendor/jquery.rateyo":29,"emojione":16,"ga-browser":19,"jdenticon":21,"jquery":22,"md5":23,"moment":24,"underscore":26}],14:[function(require,module,exports){
+},{"./funcs/analytics-helper":1,"./funcs/container.js":2,"./funcs/count_api.js":3,"./funcs/count_elk.js":4,"./funcs/create.js":5,"./funcs/delete_.js":6,"./funcs/dislike.js":8,"./funcs/form_.js":9,"./funcs/like.js":10,"./funcs/load_api.js":11,"./funcs/load_elk.js":12,"./vendor/dropkick":28,"./vendor/jquery-ui":29,"./vendor/jquery.rateyo":30,"emojione":16,"ga-browser":19,"jdenticon":21,"jquery":22,"md5":23,"moment":24,"underscore":26,"urlize":27}],14:[function(require,module,exports){
 var charenc = {
   // UTF-8 encoding
   utf8: {
@@ -19004,6 +19097,119 @@ return jQuery;
 }.call(this));
 
 },{}],27:[function(require,module,exports){
+exports.urlize = (function () {
+
+	/*
+	 * Borrowed from 
+	 *   http://lehelk.com/2011/05/06/script-to-remove-diacritics/
+	 *
+	 * map.b stands for map.base and map.l for map.letters
+	 */
+	var map = [
+	    {'b':'A', 'l':/[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g},
+	    {'b':'AA','l':/[\uA732]/g},
+	    {'b':'AE','l':/[\u00C6\u01FC\u01E2]/g},
+	    {'b':'AO','l':/[\uA734]/g},
+	    {'b':'AU','l':/[\uA736]/g},
+	    {'b':'AV','l':/[\uA738\uA73A]/g},
+	    {'b':'AY','l':/[\uA73C]/g},
+	    {'b':'B', 'l':/[\u0042\u24B7\uFF22\u1E02\u1E04\u1E06\u0243\u0182\u0181]/g},
+	    {'b':'C', 'l':/[\u0043\u24B8\uFF23\u0106\u0108\u010A\u010C\u00C7\u1E08\u0187\u023B\uA73E]/g},
+	    {'b':'D', 'l':/[\u0044\u24B9\uFF24\u1E0A\u010E\u1E0C\u1E10\u1E12\u1E0E\u0110\u018B\u018A\u0189\uA779]/g},
+	    {'b':'DZ','l':/[\u01F1\u01C4]/g},
+	    {'b':'Dz','l':/[\u01F2\u01C5]/g},
+	    {'b':'E', 'l':/[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g},
+	    {'b':'F', 'l':/[\u0046\u24BB\uFF26\u1E1E\u0191\uA77B]/g},
+	    {'b':'G', 'l':/[\u0047\u24BC\uFF27\u01F4\u011C\u1E20\u011E\u0120\u01E6\u0122\u01E4\u0193\uA7A0\uA77D\uA77E]/g},
+	    {'b':'H', 'l':/[\u0048\u24BD\uFF28\u0124\u1E22\u1E26\u021E\u1E24\u1E28\u1E2A\u0126\u2C67\u2C75\uA78D]/g},
+	    {'b':'I', 'l':/[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g},
+	    {'b':'J', 'l':/[\u004A\u24BF\uFF2A\u0134\u0248]/g},
+	    {'b':'K', 'l':/[\u004B\u24C0\uFF2B\u1E30\u01E8\u1E32\u0136\u1E34\u0198\u2C69\uA740\uA742\uA744\uA7A2]/g},
+	    {'b':'L', 'l':/[\u004C\u24C1\uFF2C\u013F\u0139\u013D\u1E36\u1E38\u013B\u1E3C\u1E3A\u0141\u023D\u2C62\u2C60\uA748\uA746\uA780]/g},
+	    {'b':'LJ','l':/[\u01C7]/g},
+	    {'b':'Lj','l':/[\u01C8]/g},
+	    {'b':'M', 'l':/[\u004D\u24C2\uFF2D\u1E3E\u1E40\u1E42\u2C6E\u019C]/g},
+	    {'b':'N', 'l':/[\u004E\u24C3\uFF2E\u01F8\u0143\u00D1\u1E44\u0147\u1E46\u0145\u1E4A\u1E48\u0220\u019D\uA790\uA7A4]/g},
+	    {'b':'NJ','l':/[\u01CA]/g},
+	    {'b':'Nj','l':/[\u01CB]/g},
+	    {'b':'O', 'l':/[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g},
+	    {'b':'OI','l':/[\u01A2]/g},
+	    {'b':'OO','l':/[\uA74E]/g},
+	    {'b':'OU','l':/[\u0222]/g},
+	    {'b':'P', 'l':/[\u0050\u24C5\uFF30\u1E54\u1E56\u01A4\u2C63\uA750\uA752\uA754]/g},
+	    {'b':'Q', 'l':/[\u0051\u24C6\uFF31\uA756\uA758\u024A]/g},
+	    {'b':'R', 'l':/[\u0052\u24C7\uFF32\u0154\u1E58\u0158\u0210\u0212\u1E5A\u1E5C\u0156\u1E5E\u024C\u2C64\uA75A\uA7A6\uA782]/g},
+	    {'b':'S', 'l':/[\u0053\u24C8\uFF33\u1E9E\u015A\u1E64\u015C\u1E60\u0160\u1E66\u1E62\u1E68\u0218\u015E\u2C7E\uA7A8\uA784]/g},
+	    {'b':'T', 'l':/[\u0054\u24C9\uFF34\u1E6A\u0164\u1E6C\u021A\u0162\u1E70\u1E6E\u0166\u01AC\u01AE\u023E\uA786]/g},
+	    {'b':'TZ','l':/[\uA728]/g},
+	    {'b':'U', 'l':/[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g},
+	    {'b':'V', 'l':/[\u0056\u24CB\uFF36\u1E7C\u1E7E\u01B2\uA75E\u0245]/g},
+	    {'b':'VY','l':/[\uA760]/g},
+	    {'b':'W', 'l':/[\u0057\u24CC\uFF37\u1E80\u1E82\u0174\u1E86\u1E84\u1E88\u2C72]/g},
+	    {'b':'X', 'l':/[\u0058\u24CD\uFF38\u1E8A\u1E8C]/g},
+	    {'b':'Y', 'l':/[\u0059\u24CE\uFF39\u1EF2\u00DD\u0176\u1EF8\u0232\u1E8E\u0178\u1EF6\u1EF4\u01B3\u024E\u1EFE]/g},
+	    {'b':'Z', 'l':/[\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762]/g},
+	    {'b':'a', 'l':/[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g},
+	    {'b':'aa','l':/[\uA733]/g},
+	    {'b':'ae','l':/[\u00E6\u01FD\u01E3]/g},
+	    {'b':'ao','l':/[\uA735]/g},
+	    {'b':'au','l':/[\uA737]/g},
+	    {'b':'av','l':/[\uA739\uA73B]/g},
+	    {'b':'ay','l':/[\uA73D]/g},
+	    {'b':'b', 'l':/[\u0062\u24D1\uFF42\u1E03\u1E05\u1E07\u0180\u0183\u0253]/g},
+	    {'b':'c', 'l':/[\u0063\u24D2\uFF43\u0107\u0109\u010B\u010D\u00E7\u1E09\u0188\u023C\uA73F\u2184]/g},
+	    {'b':'d', 'l':/[\u0064\u24D3\uFF44\u1E0B\u010F\u1E0D\u1E11\u1E13\u1E0F\u0111\u018C\u0256\u0257\uA77A]/g},
+	    {'b':'dz','l':/[\u01F3\u01C6]/g},
+	    {'b':'e', 'l':/[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g},
+	    {'b':'f', 'l':/[\u0066\u24D5\uFF46\u1E1F\u0192\uA77C]/g},
+	    {'b':'g', 'l':/[\u0067\u24D6\uFF47\u01F5\u011D\u1E21\u011F\u0121\u01E7\u0123\u01E5\u0260\uA7A1\u1D79\uA77F]/g},
+	    {'b':'h', 'l':/[\u0068\u24D7\uFF48\u0125\u1E23\u1E27\u021F\u1E25\u1E29\u1E2B\u1E96\u0127\u2C68\u2C76\u0265]/g},
+	    {'b':'hv','l':/[\u0195]/g},
+	    {'b':'i', 'l':/[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g},
+	    {'b':'j', 'l':/[\u006A\u24D9\uFF4A\u0135\u01F0\u0249]/g},
+	    {'b':'k', 'l':/[\u006B\u24DA\uFF4B\u1E31\u01E9\u1E33\u0137\u1E35\u0199\u2C6A\uA741\uA743\uA745\uA7A3]/g},
+	    {'b':'l', 'l':/[\u006C\u24DB\uFF4C\u0140\u013A\u013E\u1E37\u1E39\u013C\u1E3D\u1E3B\u017F\u0142\u019A\u026B\u2C61\uA749\uA781\uA747]/g},
+	    {'b':'lj','l':/[\u01C9]/g},
+	    {'b':'m', 'l':/[\u006D\u24DC\uFF4D\u1E3F\u1E41\u1E43\u0271\u026F]/g},
+	    {'b':'n', 'l':/[\u006E\u24DD\uFF4E\u01F9\u0144\u00F1\u1E45\u0148\u1E47\u0146\u1E4B\u1E49\u019E\u0272\u0149\uA791\uA7A5]/g},
+	    {'b':'nj','l':/[\u01CC]/g},
+	    {'b':'o', 'l':/[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g},
+	    {'b':'oi','l':/[\u01A3]/g},
+	    {'b':'ou','l':/[\u0223]/g},
+	    {'b':'oo','l':/[\uA74F]/g},
+	    {'b':'p','l':/[\u0070\u24DF\uFF50\u1E55\u1E57\u01A5\u1D7D\uA751\uA753\uA755]/g},
+	    {'b':'q','l':/[\u0071\u24E0\uFF51\u024B\uA757\uA759]/g},
+	    {'b':'r','l':/[\u0072\u24E1\uFF52\u0155\u1E59\u0159\u0211\u0213\u1E5B\u1E5D\u0157\u1E5F\u024D\u027D\uA75B\uA7A7\uA783]/g},
+	    {'b':'s','l':/[\u0073\u24E2\uFF53\u00DF\u015B\u1E65\u015D\u1E61\u0161\u1E67\u1E63\u1E69\u0219\u015F\u023F\uA7A9\uA785\u1E9B]/g},
+	    {'b':'t','l':/[\u0074\u24E3\uFF54\u1E6B\u1E97\u0165\u1E6D\u021B\u0163\u1E71\u1E6F\u0167\u01AD\u0288\u2C66\uA787]/g},
+	    {'b':'tz','l':/[\uA729]/g},
+	    {'b':'u','l':/[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g},
+	    {'b':'v','l':/[\u0076\u24E5\uFF56\u1E7D\u1E7F\u028B\uA75F\u028C]/g},
+	    {'b':'vy','l':/[\uA761]/g},
+	    {'b':'w','l':/[\u0077\u24E6\uFF57\u1E81\u1E83\u0175\u1E87\u1E85\u1E98\u1E89\u2C73]/g},
+	    {'b':'x','l':/[\u0078\u24E7\uFF58\u1E8B\u1E8D]/g},
+	    {'b':'y','l':/[\u0079\u24E8\uFF59\u1EF3\u00FD\u0177\u1EF9\u0233\u1E8F\u00FF\u1EF7\u1E99\u1EF5\u01B4\u024F\u1EFF]/g},
+	    {'b':'z','l':/[\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763]/g},
+    	{'b':'-','l':/\s+/g},
+    	{'b':'','l':/[^a-zA-Z0-9._\/\-\(\)]/g},
+    	{'b':'-','l':/\-+/g}
+	];
+
+	function urlize (str) {
+
+	    for(var i=0; i<map.length; i++) {
+	        str = str.replace(map[i].l, map[i].b);
+	    }
+
+		str = str.trim().replace(/[^-a-zA-Z0-9\s]/g, '');
+
+	    return str.toLowerCase();
+	}	
+
+	return urlize;
+
+})();
+},{}],28:[function(require,module,exports){
 /*
  * DropKick
  *
@@ -20413,7 +20619,7 @@ return Dropkick;
 
 }));
 
-},{"jquery":22}],28:[function(require,module,exports){
+},{"jquery":22}],29:[function(require,module,exports){
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
 * Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-1-7.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
@@ -39120,7 +39326,7 @@ var widgetsTooltip = $.ui.tooltip;
 
 
 }));
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*****
 * rateYo - v2.2.0
 * http://prrashi.github.io/rateyo/

@@ -167,6 +167,68 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     });
 }
 
+export function getAllByMultipleIndexCount(params, conn, cb){
+    var table = params.table;
+    var index = params.index;
+    var value = params.value;
+    var operator = params.operator;
+
+    if (!table || !index || !value || !operator) {
+        logger.warn(errMsg + "Invalid INPUT --> ", JSON.stringify(params));
+        logger.warn(errMsg + "getAllByMultipleIndexCount --> search query is not correct.");
+        return cb()
+    }
+
+    var query = conn.table(table)
+        .getAll([operator, value], {index: index}).count();
+    console.log("getAllByMultipleIndexCount -> ", query);
+
+    query.run().then(function (results) {
+        console.log("getAllByMultipleIndexCount, results", results);
+        cb(null, results);
+    }).catch(function (err) {
+        console.log("Error: getAllByMultipleIndexCount, ", err);
+        cb(err);
+    });
+}
+
+export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
+    var table = params.table;
+    var index = params.index;
+    var value = params.value;
+    var operator = params.operator;
+    var skip = params.skip;
+    var limit = params.limit;
+    var sort = params.sort;
+    var order = params.order || "desc";
+
+    if (!table || !index || !value || !operator || (!skip && skip!==0)  || !limit || !sort) {
+        logger.warn(errMsg + "Invalid INPUT --> ", JSON.stringify(params));
+        logger.warn(errMsg + "getAllByMultipleIndexOrderBySkipLimit --> search query is not correct.");
+        return cb()
+    }
+
+    var query = conn.table(table)
+        .getAll([operator, value], {index: index});
+    if (order == "desc") {
+        query = query.orderBy(conn.desc(sort));
+    } else {
+        query = query.orderBy(conn.asc(sort));
+    }
+    query = query.skip(skip).limit(limit);
+
+    console.log("getAllByMultipleIndexOrderBySkipLimit -> ", query);
+
+    query.run().then(function (results) {
+        console.log("getAllByMultipleIndexOrderBySkipLimit", results);
+        cb(null, results);
+    }).catch(function (err) {
+        console.log("Error: getAllByMultipleIndexOrderBySkipLimit, ", err);
+        cb(err);
+    });
+}
+
+
 export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);

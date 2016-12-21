@@ -28,7 +28,7 @@ class Commentator extends Component {
         }
         let { id } = this.props.params;
 
-        var commentContainer = <XScript index="nick"/>;
+        var commentContainer = <XScript index="operator_nick"/>;
 
         var commentsavgperday = 0.0;
 
