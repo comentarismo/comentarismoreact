@@ -27,6 +27,7 @@ var REDIS_HOST = process.env.REDIS_HOST || "g7-box";
 var REDIS_PORT = process.env.REDIS_PORT || 6379;
 var REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 var EXPIRE_REDIS = process.env.EXPIRE_REDIS;
+var DISABLE_CACHE = process.env.DISABLE_CACHE;
 
 let {
     getAllByMultipleIndexOrderBySkipLimit,
@@ -346,18 +347,20 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
-                return res.sendStatus(500);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                    return res.sendStatus(500);
+                }
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                // if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
+                // }
+                res.type('application/json');
+                return res.send(js);
             }
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            // if (EXPIRE_REDIS) {
-            client.expire(urlTag, 1);
-            // }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
         getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, data) {
@@ -366,9 +369,11 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
                 return res.sendStatus(500);
             } else {
                 //-------REDIS CACHE SAVE START ------//
-                logger.info(urlTag + " will save cached");
-                client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, 1800);
+                if(!DISABLE_CACHE) {
+                    logger.info(urlTag + " will save cached");
+                    client.set(urlTag, JSON.stringify(data), redis.print);
+                    client.expire(urlTag, 1800);
+                }
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             }
@@ -389,18 +394,20 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
-                return res.sendStatus(500);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                    return res.sendStatus(500);
+                }
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                // if (EXPIRE_REDIS) {
+                client.expire(urlTag, 1);
+                // }
+                res.type('application/json');
+                return res.send(js);
             }
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            // if (EXPIRE_REDIS) {
-            client.expire(urlTag, 1);
-            // }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
@@ -411,8 +418,10 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
             } else {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
-                client.set(urlTag, JSON.stringify({count: data}), redis.print);
-                client.expire(urlTag, 1800);
+                if(!DISABLE_CACHE) {
+                    client.set(urlTag, JSON.stringify({count: data}), redis.print);
+                    client.expire(urlTag, 1800);
+                }
                 //-------REDIS CACHE SAVE END ------//
                 res.json({count: data});
             }
@@ -488,19 +497,21 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        // if (err || !js) {
-        //     if (err) {
-        //         console.error(err);
-        //     }
-        //     //return res.status(500).send('Cache is broken!');
-        // } else {
-        //     logger.info(urlTag + " will return cached result ");
-        //     if (EXPIRE_REDIS) {
-        //         client.expire(urlTag, 1);
-        //     }
-        //     res.type('application/json');
-        //     return res.send(js);
-        // }
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
+            }
+        }
         //-------REDIS CACHE END ------//
 
         getByID("commentator", req.params.id, conn, function (err, data) {
@@ -515,8 +526,10 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                 logger.info(urlTag + " will save cached");
                 var js = JSON.stringify(data);
                 //logger.info(js);
-                client.set(urlTag, js, redis.print);
-                client.expire(urlTag, REDIS_EXPIRE);
+                if(!DISABLE_CACHE) {
+                    client.set(urlTag, js, redis.print);
+                    client.expire(urlTag, REDIS_EXPIRE);
+                }
                 //-------REDIS CACHE SAVE END ------//
                 res.send(data);
             } else {
@@ -545,8 +558,10 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                     if (data) {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
-                        client.set(urlTag, JSON.stringify(data), redis.print);
-                        client.expire(urlTag, REDIS_EXPIRE);
+                        if(!DISABLE_CACHE) {
+                            client.set(urlTag, JSON.stringify(data), redis.print);
+                            client.expire(urlTag, REDIS_EXPIRE);
+                        }
                         //-------REDIS CACHE SAVE END ------//
                     } else {
 
@@ -586,18 +601,20 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
@@ -611,8 +628,10 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
-                client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, REDIS_EXPIRE);
+                if(!DISABLE_CACHE) {
+                    client.set(urlTag, JSON.stringify(data), redis.print);
+                    client.expire(urlTag, REDIS_EXPIRE);
+                }
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -642,18 +661,20 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
@@ -668,8 +689,10 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
                 res.type('application/json');
-                client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, REDIS_EXPIRE);
+                if(!DISABLE_CACHE) {
+                    client.set(urlTag, JSON.stringify(data), redis.print);
+                    client.expire(urlTag, REDIS_EXPIRE);
+                }
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -697,18 +720,20 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                console.log(urlTag + " will return cached result");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            console.log(urlTag + " will return cached result");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
@@ -722,8 +747,10 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached fdp");
                 res.type('application/json');
-                client.set(urlTag, JSON.stringify(data), redis.print);
-                client.expire(urlTag, REDIS_EXPIRE);
+                if(!DISABLE_CACHE) {
+                    client.set(urlTag, JSON.stringify(data), redis.print);
+                    client.expire(urlTag, REDIS_EXPIRE);
+                }
                 //-------REDIS CACHE SAVE END ------//
             }
             res.send(data);
@@ -741,22 +768,24 @@ server.get('/api/news/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
-
+        var uuid = conn.uuid(req.params.id);
         getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
                 console.error(err.stack);
@@ -765,7 +794,29 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 logger.info("News not found --> " + req.params.id);
                 return res.status(404).send("News not found --> " + req.params.id);
             }
-            getAllByIndexSkipLimit("commentaries", "titleurlize", req.params.id, 0, 50, conn, function (err, comments) {
+
+            "", "", uuid, 0, 50
+            var table = "commentaries";
+            var index = "operator_uuid";
+            var value = uuid;
+            var operator = news.operator;
+            var skip = 0;
+            var limit = 50;
+            var sort = "date";
+            var order = req.query.order || "desc";
+
+            var params = {
+                table: table,
+                index: index,
+                value: value,
+                operator: operator,
+                skip: skip,
+                limit: limit,
+                sort: sort,
+                order: order,
+            };
+
+            getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, comments) {
                 if (err) {
                     console.error(err.stack);
                     return res.status(500).send('Something broke!');
@@ -776,8 +827,10 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    client.set(urlTag, JSON.stringify(news), redis.print);
-                    client.expire(urlTag, REDIS_EXPIRE);
+                    if(!DISABLE_CACHE) {
+                        client.set(urlTag, JSON.stringify(news), redis.print);
+                        client.expire(urlTag, REDIS_EXPIRE);
+                    }
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.send(news);
@@ -798,18 +851,20 @@ server.get('/api/product/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.error(err.stack);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        } else {
-            logger.info(urlTag + " will return cached result ");
-            if (EXPIRE_REDIS) {
-                client.expire(urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
@@ -833,8 +888,10 @@ server.get('/api/product/:id', limiter, (req, res) => {
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    client.set(urlTag, JSON.stringify(news), redis.print);
-                    client.expire(urlTag, REDIS_EXPIRE);
+                    if(!DISABLE_CACHE) {
+                        client.set(urlTag, JSON.stringify(news), redis.print);
+                        client.expire(urlTag, REDIS_EXPIRE);
+                    }
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.send(news);
@@ -859,31 +916,34 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 
     //-------REDIS CACHE START ------//
     client.get("intropage" + urlTag, function (err, js) {
-        if (err || !js) {
-            if (err) {
-                console.log("intropage err ", err);
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.log("intropage err ", err);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                console.log("intropage" + urlTag + " will return cached result");
+                if (EXPIRE_REDIS) {
+                    console.log("Will expire REDIS")
+                    client.expire("intropage" + urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
             }
-            //return res.status(500).send('Cache is broken!');
-        }
-        else {
-            console.log("intropage" + urlTag + " will return cached result");
-            if (EXPIRE_REDIS) {
-                console.log("Will expire REDIS")
-                client.expire("intropage" + urlTag, 1);
-            }
-            res.type('application/json');
-            return res.send(js);
         }
         //-------REDIS CACHE END ------//
 
         let {getAlexaRank} = require('./alexa_api');
 
-        getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", conn, function (err, alexarank) {
+        getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", 50, conn, function (err, alexarank) {
             if (err) {
                 return res.status(500).send({});
             } else {
-                client.set("intropage" + urlTag, JSON.stringify(alexarank), redis.print);
-                client.expire("intropage" + urlTag, REDIS_EXPIRE);
+                if(!DISABLE_CACHE) {
+                    client.set("intropage" + urlTag, JSON.stringify(alexarank), redis.print);
+                    client.expire("intropage" + urlTag, REDIS_EXPIRE);
+                }
                 res.type('application/json');
                 //-------REDIS CACHE SAVE END ------//
                 //get comments
@@ -929,20 +989,22 @@ server.get('*', limiter, (req, res, next) => {
         var urlTag = "sitemap.xml";
         //-------REDIS CACHE START ------//
         client.get(urlTag, function (err, js) {
-            if (err || !js) {
-                if (err) {
-                    logger.info("Error: Redis client " + location);
-                    console.error(err.stack);
-                    res.status(500).send("Server unavailable");
+            if(!DISABLE_CACHE) {
+                if (err || !js) {
+                    if (err) {
+                        logger.info("Error: Redis client " + location);
+                        console.error(err.stack);
+                        return res.status(500).send("Server unavailable");
+                    }
+                    //return res.status(500).send('Cache is broken!');
+                } else {
+                    logger.info(urlTag + " will return cached result ");
+                    if (EXPIRE_REDIS) {
+                        client.expire(urlTag, 1);
+                    }
+                    res.header('Content-Type', 'application/xml');
+                    return res.send(js);
                 }
-                //return res.status(500).send('Cache is broken!');
-            } else {
-                logger.info(urlTag + " will return cached result ");
-                if (EXPIRE_REDIS) {
-                    client.expire(urlTag, 1);
-                }
-                res.header('Content-Type', 'application/xml');
-                return res.send(js);
             }
             //-------REDIS CACHE END ------//
 
@@ -958,8 +1020,10 @@ server.get('*', limiter, (req, res, next) => {
                 if (xml) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    client.set(urlTag, xml, redis.print);
-                    client.expire(urlTag, REDIS_EXPIRE);
+                    if(!DISABLE_CACHE) {
+                        client.set(urlTag, xml, redis.print);
+                        client.expire(urlTag, REDIS_EXPIRE);
+                    }
                     //-------REDIS CACHE SAVE END ------//
                 }
                 res.header('Content-Type', 'application/xml');
@@ -991,18 +1055,20 @@ server.get('*', limiter, (req, res, next) => {
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//
             client.get(urlTag, function (err, js) {
-                if (err || !js) {
-                    if (err) {
-                        console.error(err.stack);
+                if(!DISABLE_CACHE) {
+                    if (err || !js) {
+                        if (err) {
+                            console.error(err.stack);
+                        }
+                        //return res.status(500).send('Cache is broken!');
+                    } else {
+                        logger.info(urlTag + " will return cached result ");
+                        if (EXPIRE_REDIS) {
+                            client.expire(urlTag, 1);
+                        }
+                        res.header('Content-Type', 'application/xml');
+                        return res.send(js);
                     }
-                    //return res.status(500).send('Cache is broken!');
-                } else {
-                    logger.info(urlTag + " will return cached result ");
-                    if (EXPIRE_REDIS) {
-                        client.expire(urlTag, 1);
-                    }
-                    res.header('Content-Type', 'application/xml');
-                    return res.send(js);
                 }
                 //-------REDIS CACHE END ------//
 
@@ -1018,8 +1084,12 @@ server.get('*', limiter, (req, res, next) => {
                     if (xml) {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
-                        client.set(urlTag, xml, redis.print);
-                        client.expire(urlTag, REDIS_EXPIRE);
+                        if(!DISABLE_CACHE) {
+                            if(!DISABLE_CACHE) {
+                                client.set(urlTag, xml, redis.print);
+                                client.expire(urlTag, REDIS_EXPIRE);
+                            }
+                        }
                         //-------REDIS CACHE SAVE END ------//
                     }
                     res.header('Content-Type', 'application/xml');

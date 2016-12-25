@@ -13,7 +13,7 @@ var log = require("./logger");
 var logger = log.getLogger();
 /** LOGGER **/
 
-export function getAlexaRank(url, table, index, value, skip, limit, sort, conn, cb) {
+export function getAlexaRank(url, table, index, value, skip, limit, sort,sample, conn, cb) {
 
     superAgent.get('http://data.alexa.com/data?cli=10&url=' + url).end(function (err, r) {
         //console.log(r);
@@ -54,7 +54,7 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort, conn, 
 
                     //var target = `${host}/${urlTag}`;
                     //table, index, value, skip, limit, sort, conn, cb
-                    getSample(table, index, value, skip, limit, sort, conn, function (err, r) {
+                    getSample(table, index, value, skip, limit, sort,sample, conn, function (err, r) {
                         if (err) {
                             cb("error when running --> " + target);
                         } else {

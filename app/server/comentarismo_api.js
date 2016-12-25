@@ -20,13 +20,18 @@ export function getAllPluckDistinct(conn, table, pluck, cb) {
         return cb(errMsg + "getAllPluckDistinct --> search query is not correct.")
     }
 
-    conn.table(table)
-        .pluck(pluck)
-        .distinct()
+    var query = conn.table(table)
+        .distinct({index: pluck});
+
+
+    console.log("getAllPluckDistinct -> ", query)
+
+    query
         .run().then(function (results) {
         if (!results) {
             cb("Could not get getAllPluckDistinct");
         } else {
+            console.log("getAllPluckDistinct result -> ", results)
             cb(null, results);
         }
     }).catch(function (err) {
@@ -42,8 +47,8 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
     }
     logger.log('debug', "getAllByIndexPluckDistinct --> table: " + table + " index: " + index + " value: " + value + " pluck: " + pluck);
     conn.table(table)
-        .getAll(value, {index: index}).limit(50000)
-        .pluck(pluck)
+        .getAll(value, {index: index}).limit(100)
+        .pluck("titleurlize", "title", "languages","tags","date")
         .distinct()
         .run().then(function (results) {
         if (!results) {
@@ -107,7 +112,7 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
 }
 
 
-export function getSample(table, index, value, skip, limit, sort, conn, cb) {
+export function getSample(table, index, value, skip, limit, sort, sample, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
         logger.warn(errMsg + "getAllByIndexOrderBySkipLimit --> search query is not correct.");
@@ -119,11 +124,14 @@ export function getSample(table, index, value, skip, limit, sort, conn, cb) {
     }
     // console.log("getSample, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
 
-    conn.table(table)
+    var query = conn.table(table)
         .orderBy({"index": conn.desc(indexSort)})
         .filter(conn.row(index).eq(value))
-        .skip(0).limit(5000).sample(100)
-        .run().then(function (results) {
+        .skip(skip).limit(limit).sample(sample);
+
+    console.log("getSample", query);
+
+    query.run().then(function (results) {
         if (!results) {
             logger.info('');
             cb('');
@@ -167,7 +175,7 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     });
 }
 
-export function getAllByMultipleIndexCount(params, conn, cb){
+export function getAllByMultipleIndexCount(params, conn, cb) {
     var table = params.table;
     var index = params.index;
     var value = params.value;
@@ -202,7 +210,7 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
     var sort = params.sort;
     var order = params.order || "desc";
 
-    if (!table || !index || !value || !operator || (!skip && skip!==0)  || !limit || !sort) {
+    if (!table || !index || !value || !operator || (!skip && skip !== 0) || !limit || !sort) {
         logger.warn(errMsg + "Invalid INPUT --> ", JSON.stringify(params));
         logger.warn(errMsg + "getAllByMultipleIndexOrderBySkipLimit --> search query is not correct.");
         return cb()
@@ -220,7 +228,6 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
     console.log("getAllByMultipleIndexOrderBySkipLimit -> ", query);
 
     query.run().then(function (results) {
-        console.log("getAllByMultipleIndexOrderBySkipLimit", results);
         cb(null, results);
     }).catch(function (err) {
         console.log("Error: getAllByMultipleIndexOrderBySkipLimit, ", err);
@@ -247,11 +254,14 @@ export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, l
         console.log("getAllByIndexOrderByFilterSkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
     }
 
-    conn.table(table)
+    var query = conn.table(table)
         .orderBy({"index": order})
         .filter(conn.row(index).eq(value))
-        .skip(skip).limit(limit)
-        .run().then(function (results) {
+        .skip(skip).limit(limit);
+
+    console.log("getAllByIndexOrderByFilterSkipLimit", query);
+
+    query.run().then(function (results) {
         if (!results) {
             logger.info('');
             cb('');

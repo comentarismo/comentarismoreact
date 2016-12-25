@@ -19,10 +19,10 @@ function generateSitemap(conn, cb) {
             logger.error(err);
         }
         for (var i = 0; i < operators.length; i++) {
-            sitemap.add({url: '/news/operator/' + operators[i].operator});
-            sitemap.add({url: '/commentators/operator/' + operators[i].operator});
-            sitemap.add({url: '/news/operator/' + operators[i].operator + '/index.xml'});
-            sitemap.add({url: '/commentators/operator/' + operators[i].operator + '/index.xml'});
+            sitemap.add({url: '/news/operator/' + operators[i], changefreq: 'daily'});
+            sitemap.add({url: '/commentators/operator/' + operators[i], changefreq: 'daily'});
+            sitemap.add({url: '/news/operator/' + operators[i] + '/index.xml', changefreq: 'daily'});
+            sitemap.add({url: '/commentators/operator/' + operators[i] + '/index.xml', changefreq: 'daily'});
         }
 
         getAllPluckDistinct(conn, "news", "languages", function (err, langs) {
@@ -30,10 +30,10 @@ function generateSitemap(conn, cb) {
                 logger.error(err);
             }
             for (var i = 0; i < langs.length; i++) {
-                sitemap.add({url: '/news/languages/' + langs[i].languages});
-                sitemap.add({url: '/commentators/languages/' + langs[i].languages});
-                sitemap.add({url: '/news/languages/' + langs[i].languages + '/index.xml'});
-                sitemap.add({url: '/commentators/languages/' + langs[i].languages + '/index.xml'});
+                sitemap.add({url: '/news/languages/' + langs[i], changefreq: 'daily'});
+                sitemap.add({url: '/commentators/languages/' + langs[i], changefreq: 'daily'});
+                sitemap.add({url: '/news/languages/' + langs[i] + '/index.xml', changefreq: 'daily'});
+                sitemap.add({url: '/commentators/languages/' + langs[i] + '/index.xml', changefreq: 'daily'});
             }
 
             getAllPluckDistinct(conn, "news", "genre", function (err, genres) {
@@ -41,9 +41,9 @@ function generateSitemap(conn, cb) {
                     logger.error(err);
                 }
                 for (var i = 0; i < genres.length; i++) {
-                    sitemap.add({url: '/news/genre/' + genres[i].genre});
+                    sitemap.add({url: '/news/genre/' + genres[i], changefreq: 'daily'});
                     //sitemap.add({url: '/commentators/genre/' + genres[i].genre});
-                    sitemap.add({url: '/news/genre/' + genres[i].genre + '/index.xml'});
+                    sitemap.add({url: '/news/genre/' + genres[i] + '/index.xml', changefreq: 'daily'});
                     //sitemap.add({url: '/commentators/genre/' + genres[i].genre + '/index.xml'});
                 }
 
@@ -52,10 +52,13 @@ function generateSitemap(conn, cb) {
                         logger.error(err);
                     }
                     for (var i = 0; i < countries.length; i++) {
-                        sitemap.add({url: '/news/countries/' + countries[i].countries});
-                        sitemap.add({url: '/commentators/countries/' + countries[i].countries});
-                        sitemap.add({url: '/news/countries/' + countries[i].countries + '/index.xml'});
-                        sitemap.add({url: '/commentators/countries/' + countries[i].countries + '/index.xml'});
+                        sitemap.add({url: '/news/countries/' + countries[i], changefreq: 'daily'});
+                        sitemap.add({url: '/commentators/countries/' + countries[i], changefreq: 'daily'});
+                        sitemap.add({url: '/news/countries/' + countries[i] + '/index.xml', changefreq: 'daily'});
+                        sitemap.add({
+                            url: '/commentators/countries/' + countries[i] + '/index.xml',
+                            changefreq: 'daily'
+                        });
                     }
 
                     cb(null, sitemap.toString())
@@ -81,35 +84,35 @@ function generateIndexXml(table, index, value, conn, cb) {
     }
 
     if (!table || !index || !value) {
-        console.log("search query is not correct ", table, index, value)
+        console.log("Error: generateIndexXml, search query is not correct ", table, index, value);
         return ("search query is not correct.")
     }
 
     getAllByIndexPluckDistinct(table, index, value, pluck, conn, function (err, values) {
         if (err || !values) {
-            logger.error(values)
-            logger.error(err);
+            logger.error("Error: getAllByIndexPluckDistinct -> ", err, values);
             return cb(err || "503 - not valid query");
         }
         //console.log(values)
         if (table == "news") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/news/' + values[i].titleurlize});
+                sitemap.add({url:'/news/' + values[i].titleurlize, news: {publication:{name:values[i].title,
+                    language:values[i].languages}, title:values[i].title, publication_date:new Date(values[i].date).toISOString(),keywords:""}, changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         } else if (table == "commentator") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/commentators/' + value + "-" + values[i].slug});
+                sitemap.add({url: '/commentators/' + value + "-" + values[i].slug, changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         } else if (table == "sentiment_report") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/sentiment/' + encodeURIComponent(values[i].url)});
+                sitemap.add({url: '/sentiment/' + encodeURIComponent(values[i].url), changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         } else if (table == "product") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/product/' + encodeURIComponent(values[i].titleurlize)});
+                sitemap.add({url: '/product/' + encodeURIComponent(values[i].titleurlize), changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         }
