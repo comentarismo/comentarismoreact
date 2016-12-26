@@ -1689,7 +1689,7 @@ var page;
 var operator = "";
 
 //Index is the index to be used to query anything
-var defaultIndex = "uuid";
+var defaultIndex = "operator_uuid";
 
 var cached = false;
 
