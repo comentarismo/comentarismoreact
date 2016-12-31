@@ -255,19 +255,19 @@ function limiterhandler(req, res) {
     });
 }
 
-//
-// server.get('/api/comment/:id', limiter, (req, res) => {
-//     var id = req.params.id;
-//     logger.info(`/comment/${id}`)
-//     getByID("commentaries", id, conn, function (err, data) {
-//         if (err || !data) {
-//             console.error(err);
-//             return res.status(500).send('Something broke!');
-//         } else {
-//             res.send(data);
-//         }
-//     });
-// });
+
+server.get('/api/comment/:id', limiter, (req, res) => {
+    var id = req.params.id;
+    logger.info(`/comment/${id}`)
+    getByID("commentaries", id, conn, function (err, data) {
+        if (err || !data) {
+            console.error(err);
+            return res.status(500).send('Something broke!');
+        } else {
+            res.send(data);
+        }
+    });
+});
 //
 // server.get('/api/suggestcomment/:id', limiter, (req, res) => {
 //     var id = req.params.id;
