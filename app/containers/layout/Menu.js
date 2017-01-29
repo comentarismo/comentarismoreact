@@ -22,9 +22,10 @@ const Menu = ({resources}) => (
     }}>
         <List>
 
-            <ListItem key="home" containerElement={<Link to={`/`}/>} primaryText="Home"
-                      leftIcon={<DashboardIcon/>}/>
-
+            <a href={`/`}>
+                <ListItem key="home" primaryText="Home"
+                          leftIcon={<DashboardIcon/>}/>
+            </a>
 
             <ListItem key="search" containerElement={<Link target="_blank" to={`/search`}/>}
                       primaryText="Search"
