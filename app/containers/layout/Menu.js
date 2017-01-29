@@ -54,73 +54,113 @@ const Menu = ({resources}) => (
             </div>
 
 
-            <ListItem containerElement={<Link to={`/topvideos/type/YouTubeVideo`}/>} primaryText="Youtube"
-                      leftIcon={<img src="/static/img/sources/youtube.png"/>}/>
+            <a href={`/topvideos/type/YouTubeVideo`}>
+                <ListItem primaryText="Youtube"
+                          leftIcon={<img src="/static/img/sources/youtube.png"/>}/>
+            </a>
 
 
-            <ListItem containerElement={<Link to={`/product/genre/bestseller`}/>}
-                      primaryText="Amazon"
-                      leftIcon={<img src="/static/img/sources/amazon.png"/>}/>
+            <a href={`/product/genre/bestseller`}>
+                <ListItem primaryText="Amazon"
+                          leftIcon={<img src="/static/img/sources/amazon.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/bbcuk`}/>} primaryText="BBC"
-                      leftIcon={<img src="/static/img/sources/bbcuk.png"/>}/>
+            <a href={`/news/operator/bbcuk`}>
+                <ListItem primaryText="BBC"
+                          leftIcon={<img src="/static/img/sources/bbcuk.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/telegraph`}/>} primaryText="Telegraph"
-                      leftIcon={<img src="/static/img/sources/telegraph.png"/>}/>
+            <a href={`/news/operator/telegraph`}>
+                <ListItem primaryText="Telegraph"
+                          leftIcon={<img src="/static/img/sources/telegraph.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/theguardian`}/>} primaryText="Theguardian"
-                      leftIcon={<img src="/static/img/sources/theguardian.png"/>}/>
+            <a href={`/news/operator/theguardian`}>
+                <ListItem primaryText="Theguardian"
+                          leftIcon={<img src="/static/img/sources/theguardian.png"/>}/>
+            </a>
+            <a href={`/news/operator/independentuk`}>
+                <ListItem primaryText="Independent UK"
+                          leftIcon={<img src="/static/img/sources/independentuk.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/independentuk`}/>}
-                      primaryText="Independent UK"
-                      leftIcon={<img src="/static/img/sources/independentuk.png"/>}/>
+            <a href={`/news/operator/washingtonpost`}>
+                <ListItem primaryText="Washingtonpost"
+                          leftIcon={<img src="/static/img/sources/washingtonpost.png"/>}/>
+            </a>
 
-            <ListItem
-                containerElement={<Link to={`/news/operator/washingtonpost`}/>} primaryText="Washingtonpost"
-                leftIcon={<img src="/static/img/sources/washingtonpost.png"/>}/>
+            <a href={`/news/operator/cnn`}>
+                <ListItem primaryText="CNN"
+                          leftIcon={<img src="/static/img/sources/cnn.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/cnn`}/>} primaryText="CNN"
-                      leftIcon={<img src="/static/img/sources/cnn.png"/>}/>
+            <a href={`/news/operator/nytimes`}>
+                <ListItem primaryText="NY Times"
+                          leftIcon={<img src="/static/img/sources/nytimes.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/nytimes`}/>} primaryText="NY Times"
-                      leftIcon={<img src="/static/img/sources/nytimes.png"/>}/>
+            <a href={`/news/operator/rt`}>
+                <ListItem primaryText="RT"
+                          leftIcon={<img src="/static/img/sources/rt.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/rt`}/>} primaryText="RT"
-                      leftIcon={<img src="/static/img/sources/rt.png"/>}/>
+            <a href={`/news/operator/lemonde`}>
+                <ListItem primaryText="Lemonde"
+                          leftIcon={<img src="/static/img/sources/lemonde.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/lemonde`}/>} primaryText="Lemonde"
-                      leftIcon={<img src="/static/img/sources/lemonde.png"/>}/>
+            <a href={`/news/operator/lefigaro`}>
+                <ListItem primaryText="Lefigaro"
+                          leftIcon={<img src="/static/img/sources/lefigaro.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/lefigaro`}/>} primaryText="Lefigaro"
-                      leftIcon={<img src="/static/img/sources/lefigaro.png"/>}/>
+            <a href={`/news/operator/elpais`}>
+                <ListItem primaryText="Elpais"
+                          leftIcon={<img src="/static/img/sources/elpais.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/elpais`}/>} primaryText="Elpais"
-                      leftIcon={<img src="/static/img/sources/elpais.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/marca`}/>} primaryText="Marca"
-                      leftIcon={<img src="/static/img/sources/marca.png"/>}/>
+            <a href={`/news/operator/marca`}>
+                <ListItem primaryText="Marca"
+                          leftIcon={<img src="/static/img/sources/marca.png"/>}/>
+            </a>
 
-            <ListItem containerElement={<Link to={`/news/operator/repubblica`}/>} primaryText="La Repubblica"
-                      leftIcon={<img src="/static/img/sources/repubblica.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/g1`}/>} primaryText="G1"
-                      leftIcon={<img src="/static/img/sources/g1.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/uol`}/>} primaryText="UOL"
-                      leftIcon={<img src="/static/img/sources/uol.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/ultimosegundo`}/>} primaryText="IG"
-                      leftIcon={<img src="/static/img/sources/ultimosegundo.png"/>}/>
-            <ListItem
-                containerElement={<Link to={`/news/operator/folhapolitica`}/>} primaryText="FolhaPolitica"
-                leftIcon={<img src="/static/img/sources/folhapolitica.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/cartacapital`}/>} primaryText="CartaCapital"
-                      leftIcon={<img src="/static/img/sources/cartacapital.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/jornalggn`}/>} primaryText="JornalGGN"
-                      leftIcon={<img src="/static/img/sources/jornalggn.png"/>}/>
-            <ListItem containerElement={<Link to={`/news/operator/indexhr`}/>} primaryText="Index.HR"
-                      leftIcon={<img src="/static/img/sources/indexhr.png"/>}/>
+            <a href={`/news/operator/repubblica`}>
+                <ListItem primaryText="La Repubblica"
+                          leftIcon={<img src="/static/img/sources/repubblica.png"/>}/>
+            </a>
+            <a href={`/news/operator/g1`}>
+                <ListItem primaryText="G1"
+                          leftIcon={<img src="/static/img/sources/g1.png"/>}/>
+            </a>
+            <a href={`/news/operator/uol`}>
+                <ListItem primaryText="UOL"
+                          leftIcon={<img src="/static/img/sources/uol.png"/>}/>
+            </a>
+            <a href={`/news/operator/ultimosegundo`}>
+                <ListItem primaryText="IG"
+                          leftIcon={<img src="/static/img/sources/ultimosegundo.png"/>}/>
+            </a>
 
-            <ListItem
-                containerElement={<Link to={`/news/operator/novayagazeta_ru`}/>} primaryText="Novayagazeta"
-                leftIcon={<img src="/static/img/sources/novayagazeta_ru.png"/>}/>
-
+            <a href={`/news/operator/folhapolitica`}>
+                <ListItem primaryText="FolhaPolitica"
+                          leftIcon={<img src="/static/img/sources/folhapolitica.png"/>}/>
+            </a>
+            <a href={`/news/operator/cartacapital`}>
+                <ListItem primaryText="CartaCapital"
+                          leftIcon={<img src="/static/img/sources/cartacapital.png"/>}/>
+            </a>
+            <a href={`/news/operator/jornalggn`}>
+                <ListItem primaryText="JornalGGN"
+                          leftIcon={<img src="/static/img/sources/jornalggn.png"/>}/>
+            </a>
+            <a href={`/news/operator/indexhr`}>
+                <ListItem primaryText="Index.HR"
+                          leftIcon={<img src="/static/img/sources/indexhr.png"/>}/>
+            </a>
+            <a href={`/news/operator/novayagazeta_ru`}>
+                <ListItem primaryText="Novayagazeta"
+                          leftIcon={<img src="/static/img/sources/novayagazeta_ru.png"/>}/>
+            </a>
             <ListItem containerElement={<Link to={`https://comentarismo.on.spiceworks.com/portal`} target="_blank"/>}
                       primaryText="Support" leftIcon={<DashboardIcon/>}/>
 
