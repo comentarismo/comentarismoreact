@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { loadArticleLegacy } from 'actions/articles'
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
-var MainNavbar = require('components/MainNavbar');
 
 import Icon from "components/Icon"
 import Date from "components/Date"
@@ -42,7 +41,6 @@ class ArticleLegacy extends Component {
         if (!article.comments) {
             return (
                 <div>
-                    <MainNavbar/>
                     <div>
                         <div className="col-xs-6">
                             <h3>The page you are looking for might have been removed, had its name
@@ -97,7 +95,6 @@ class ArticleLegacy extends Component {
                 ]}
                     onChangeClientState={(newState) => console.log(newState)}
                 />
-                <MainNavbar/>
                 <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
                     <a id="comentarismo-page" data-id={ article.titleurlize }/>
                     <a id="comentarismo-operator" data-id={ article.operator }/>
@@ -177,7 +174,7 @@ class ArticleLegacy extends Component {
 
                                 </div>
 
-                                <div id="comentarismo-container" className="comentarismo-comment"
+                                <div id="comentarismo-container"
                                      className="col-md-12">
                                     {
                                         article.comments.map((q)=> {

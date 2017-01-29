@@ -2,9 +2,8 @@ import Express from 'express';
 import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {RoutingContext, match} from 'react-router';
+import {RouterContext, match} from 'react-router';
 import {GoogleSearchScript} from "components/GoogleSearchScript"
-import {MainNavbar} from "components/MainNavbar"
 import favicon from 'serve-favicon';
 import redis from "redis";
 import {createMemoryHistory, useQueries} from 'history';
@@ -706,6 +705,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
  * Get all from a table with a index and its value with skip and limit
  * bind to action/articles.js -> loadArticles
  * bind to app/sa.js -> used for listing all news and commentators infinitescroll
+ * commentators.js ->  loadSuggestCommentDetail()
  *
  */
 server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
@@ -903,6 +903,48 @@ server.get('/api/product/:id', limiter, (req, res) => {
 });
 
 var comentarismosite = "http://www.comentarismo.com";
+var {getLatestNewsGroupDay} = require("./comentarismo_api");
+server.get('/apihomepage/', limiter, (req, res) => {
+
+    //-------REDIS CACHE START ------//
+    client.get("apihomepage", function (err, js) {
+        if(!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.log("apihomepage err ", err);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                console.log("apihomepage will return cached result");
+                if (EXPIRE_REDIS) {
+                    console.log("Will expire REDIS")
+                    client.expire("apihomepage", 1);
+                }
+                res.type('application/json');
+                return res.send(js);
+            }
+        }
+        //-------REDIS CACHE END ------//
+
+        getLatestNewsGroupDay(conn, function (err, result) {
+            if (err) {
+                return res.status(500).send({});
+            } else {
+                if(!DISABLE_CACHE) {
+                    client.set("apihomepage", JSON.stringify(result), redis.print);
+                    client.expire("apihomepage", REDIS_EXPIRE);
+                }
+                res.type('application/json');
+                //-------REDIS CACHE SAVE END ------//
+                //get comments
+                return res.send(result);
+            }
+        });
+    });
+});
+
+
+
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
     var table = req.params.table;
@@ -1124,7 +1166,7 @@ server.get('*', limiter, (req, res, next) => {
                 let reduxState = escape(JSON.stringify(store.getState()));
                 let html = ReactDOMServer.renderToString(
                     <Provider store={store}>
-                        { <RoutingContext {...renderProps}/> }
+                        { <RouterContext {...renderProps}/> }
                     </Provider>
                 );
 

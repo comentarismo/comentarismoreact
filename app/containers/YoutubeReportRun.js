@@ -5,9 +5,10 @@ import {State, Navigation} from 'react-router';
 import {FormControl} from 'react-bootstrap';
 
 var emojione = require("emojione");
-var MainNavbar = require('components/MainNavbar');
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+
 
 var YoutubeReportRun = React.createClass({
     displayName: 'Sentiment',
@@ -48,35 +49,24 @@ var YoutubeReportRun = React.createClass({
     },
 
     render: function () {
-
+        const style = {
+            width: '85%',
+            margin: 20,
+            textAlign: 'center',
+            display: 'inline-block',
+        };
         return (
-            <div className="container">
-                <div className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header navbar-brand">
-                            <b>** HOT FREE DEAL ** Paste a Youtube URL below And Get a Free Sentiment Analysis Right Now!</b>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <Card style={style}>
+                    <CardHeader
+                        title="** HOT FREE DEAL ** "
+                        subtitle="Paste a Youtube URL below And Get a Free Sentiment Analysis Right Now!"
+                        avatar="https://avatars1.githubusercontent.com/u/2600966?v=3&s=460"
+                    />
 
-
-                <nav className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header">
-                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
-                                    data-target="#navbar"
-                                    aria-expanded="false" aria-controls="navbar">
-                                <span className="sr-only">Toggle navigation</span>
-                                <span className="icon-bar"></span>
-                                <span className="icon-bar"></span>
-                                <span className="icon-bar"></span>
-                            </button>
-                            <span
-                                className="navbar-brand">Insert a Youtube URL, Select the language and press Run.</span>
-                        </div>
-                        <div id="navbar" className="navbar-collapse collapse col-xs-12 col-md-12 col-lg-12">
+                    <CardText>
+                        <div id="navbar" className="navbar-collapse collapse">
                             <div className="navbar-form navbar-left form-horizontal">
-                                <div>
                                     <input type="text" className="form-control" placeholder="Post URL" name="vid"
                                            value={this.state.vid} onChange={this.handleChange}
                                            style={{width: "350px"}}/>
@@ -93,13 +83,23 @@ var YoutubeReportRun = React.createClass({
 
                                     <a className="btn btn-primary" onClick={this.runReport}>Run
                                     </a>
-                                </div>
                             </div>
-                            <ul className="nav navbar-nav">
-                            </ul>
                         </div>
-                    </div>
-                </nav>
+                    </CardText>
+                    <CardActions>
+                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#navbar"
+                                aria-expanded="false" aria-controls="navbar">
+                            <span className="sr-only">Toggle navigation</span>
+                            <span className="icon-bar"/>
+                            <span className="icon-bar"/>
+                            <span className="icon-bar"/>
+                        </button>
+                    </CardActions>
+
+
+
+                </Card>
 
             </div>
         );

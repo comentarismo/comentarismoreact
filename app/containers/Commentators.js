@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { loadCommentators } from 'actions/commentators'
 import { Link } from 'react-router'
 import _ from 'lodash'
-var MainNavbar = require('components/MainNavbar');
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import {getAllByIndexFilterSkipLimit} from '../middleware/sa';
@@ -80,7 +79,6 @@ class CommentatorContainer extends Component {
                 ]}
                     onChangeClientState={(newState) => console.log(newState)}
                 />
-                <MainNavbar/>
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
                         <div className="col-xs-12">

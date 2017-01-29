@@ -2,7 +2,6 @@ import React, {Component, ReactClass, PropTypes} from 'react';
 
 import {connect} from 'react-redux';
 
-var MainNavbar = require('components/MainNavbar');
 
 import {loadIntroDetail} from 'actions/intro'
 

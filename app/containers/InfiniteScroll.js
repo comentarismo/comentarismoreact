@@ -18,6 +18,8 @@ module.exports = function (React) {
             this.skip = this.props.skip;
             this.limit = this.props.limit;
             this.attachScrollListener();
+            this.props.loadMore(this.skip,this.limit);
+            this.skip = this.skip + this.limit;
         },
         componentDidUpdate: function () {
             this.attachScrollListener();

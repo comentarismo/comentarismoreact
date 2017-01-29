@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react'
 import {XDiv} from 'components/XDiv';
 
-import { Popover,Image } from 'react-bootstrap';
+import {Popover, Image} from 'react-bootstrap';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 var Drift;
 
@@ -10,26 +11,26 @@ import $ from "jquery";
 
 var ImageSlide = React.createClass({
     render: function () {
-        let { image } = this.props;
+        let {image} = this.props;
 
         return (
-            <div>
-
-                <div className="row col-xs-12 col-md-12" style={{ height: 50 }}>
+            <Card>
+                <div className="row col-xs-12 col-md-12" style={{height: 50}}>
                     <Popover
                         id="popover-basic"
                         placement="top"
                     >
-                        <div dangerouslySetInnerHTML={{__html:image.title}}></div>
+                        <div dangerouslySetInnerHTML={{__html: image.title}}></div>
                     </Popover>
                 </div>
 
-                <div className="row col-xs-12 col-md-12">
+                <CardMedia
+
+                >
                     <MyImgZoom img={image.gimage} imgzoom={image.image} width="400" height="250" zoomWidth="500"/>
-                </div>
+                </CardMedia>
 
-
-            </div>
+            </Card>
         )
     }
 });
@@ -54,11 +55,11 @@ class MyImgZoom extends Component {
                 });
             });
         }
-        return <div>
+        return <Card>
             <img id="imgZoom" className="imgZoom img-responsive" src={this.props.img} data-zoom={this.props.imgzoom}/>
             <div id="mycontainer" className="mycontainer"></div>
-        </div>
+        </Card>
     }
 }
 
-export { ImageSlide }
+export {ImageSlide}

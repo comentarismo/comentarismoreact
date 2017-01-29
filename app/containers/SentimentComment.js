@@ -18,7 +18,6 @@ var emojione = require("emojione");
 import Date from "components/Date"
 
 // var SentimentNavBar = require('components/SentimentNavbar');
-var MainNavbar = require('components/MainNavbar');
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -348,7 +347,6 @@ var Sentiment = React.createClass({
 
         return (
             <div className="container">
-                <MainNavbar />
 
                 <div className="navbar navbar-default">
                     <div className="container-fluid">

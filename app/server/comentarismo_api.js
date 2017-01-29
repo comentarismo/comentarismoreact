@@ -14,6 +14,31 @@ var logger = log.getLogger();
 var elk_api = require("./elk_api");
 
 var errMsg = "Error: ";
+
+
+export function getLatestNewsGroupDay(conn, cb) {
+
+    var query = conn.table('news').between(conn.now().sub(2 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).group([conn.row('date').day(), conn.row('operator')]);
+
+    console.log("getLatestNewsGroupDay, query, ", query);
+
+    query
+        .run().then(function (results) {
+        if (!results) {
+            cb("Could not get getLatestNewsGroupDay");
+        } else {
+            console.log("getLatestNewsGroupDay result -> ", results.length)
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getLatestNewsGroupDay, ", err);
+        cb(err);
+    })
+
+}
+
+
 export function getAllPluckDistinct(conn, table, pluck, cb) {
     if (!table || !pluck) {
         logger.warn(errMsg + "table --> " + table + " pluck --> " + pluck);
@@ -48,7 +73,7 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
     logger.log('debug', "getAllByIndexPluckDistinct --> table: " + table + " index: " + index + " value: " + value + " pluck: " + pluck);
     conn.table(table)
         .getAll(value, {index: index}).limit(100)
-        .pluck("titleurlize", "title", "languages","tags","date")
+        .pluck("titleurlize", "title", "languages", "tags", "date")
         .distinct()
         .run().then(function (results) {
         if (!results) {

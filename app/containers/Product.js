@@ -4,7 +4,6 @@ import { loadProductDetail } from 'actions/products'
 
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
-var MainNavbar = require('components/MainNavbar');
 
 import Icon from "components/Icon"
 import Date from "components/Date"
@@ -42,7 +41,6 @@ class Product extends Component {
         if (!article || !article.operator) {
             return (
                 <div>
-                    <MainNavbar/>
                     <div className="col-xs-6">
                         <h3>The page you are looking for might have been removed, had its name changed, or is
                             temporarily unavailable.</h3>
@@ -90,7 +88,6 @@ class Product extends Component {
                     {"property": "og:image", "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`}
                 ]}
                 />
-                <MainNavbar/>
                 <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
                     <a id="comentarismo-page" data-id={ article.titleurlize }/>
                     <a id="comentarismo-operator" data-id={ article.operator }/>
@@ -238,7 +235,7 @@ class Product extends Component {
                                 <div className="col-xs-12" style={{height: '25px'}}></div>
 
 
-                                <div id="comentarismo-container" className="comentarismo-comment"
+                                <div id="comentarismo-container"
                                      className="col-md-12">
                                     {
                                         article.comments.map((q)=> {

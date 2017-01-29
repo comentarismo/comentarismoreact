@@ -3,7 +3,6 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { loadCommentatorDetail } from 'actions/commentators'
 import {XScript} from 'components/XScript'
-var MainNavbar = require('components/MainNavbar');
 import Icon from "components/Icon"
 
 import Date from "components/Date"
@@ -69,7 +68,6 @@ class Commentator extends Component {
                 ]}
                     onChangeClientState={(newState) => console.log(newState)}
                 />
-                <MainNavbar/>
                 <div className="container-fluid single-post-wrapper">
                     <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>
                     <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>

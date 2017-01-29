@@ -3,9 +3,10 @@
 var React = require('react');
 
 var base64Encode = require("../util/imgresizer").base64Encode;
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
-var width = "388";
-var height = "395";
+var width = "240";
+var height = "245";
 var quality = "50";
 
 var $ = require('jquery');
@@ -96,13 +97,20 @@ module.exports = React.createClass({
     },
 
     render: function () {
+        const style = {
+            height: 250,
+            width: 250,
+            margin: 20,
+            textAlign: 'center',
+            display: 'inline-block',
+        };
         return (
-            <div className="col-lg-4 col-md-3 col-sm-5 col-xs-10">
+            <Card style={style}>
                 <a href={this.getArticleLink()} className='thumbnail article'>
                     <div id={"fb-"+this.props.article.id} style={{"display": "none"}}>
                         <Icon nick={this.props.article.titleurlize} size={125}/>
                     </div>
-                    <div id={"img-"+this.props.article.id} className="col-xs-12 image">
+                    <div id={"img-"+this.props.article.id} className="">
                         <img id={this.props.article.id} />
                         {this.getImageElement()}
                     </div>
@@ -114,7 +122,7 @@ module.exports = React.createClass({
                         {this.getTotalComments()}
                     </div>
                 </a>
-            </div>
+            </Card>
         );
     }
 });

@@ -16,7 +16,7 @@ var buildProperties = {
         'app/css/all.css',
         './vendor/comentarismo-client.css',
         './bower_components/bootstrap/dist/css/bootstrap.css',
-        './bower_components/bootstrap/dist/css/bootstrap.css.map',
+        './bower_components/bootstrap/dist/maps/bootstrap.css.map',
         './bower_components/components-font-awesome/css/font-awesome.css'
     ],
     comentarismoApi: [
@@ -40,7 +40,7 @@ gulp.task('sourcemaps', function () {
 
 gulp.task('css', ["sourcemaps"], function () {
     return gulp.src(buildProperties.cssFiles)
-        .pipe($.sourcemaps.init())
+        // .pipe($.sourcemaps.init())
         .pipe(concat('all.css'))
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('error', function (error) {

@@ -1,7 +1,10 @@
-import React, { Component,ReactClass,PropTypes } from 'react';
+import React, {Component, ReactClass, PropTypes} from 'react';
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
 import {ImageSlide} from 'components/ImageSlide';
+
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
 var Empty = React.createClass({
     render: function () {
@@ -14,9 +17,9 @@ var Empty = React.createClass({
 var PlayButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-4 col-md-1 btn btn-custom" onClick={this.props.onClick}>
+            <FlatButton  onClick={this.props.onClick}>
                 <span className="fa fa-play" data-text="play"/>
-            </div>
+            </FlatButton>
         )
     }
 });
@@ -24,9 +27,9 @@ var PlayButton = React.createClass({
 var PauseButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-4 col-md-1 btn btn-custom" onClick={this.props.onClick}>
+            <FlatButton onClick={this.props.onClick}>
                 <span className="fa fa-pause" data-text="play"/>
-            </div>
+            </FlatButton>
         )
     }
 });
@@ -34,9 +37,9 @@ var PauseButton = React.createClass({
 var PreviousButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-4 col-md-1 btn btn-custom" onClick={this.props.onClick}>
+            <FlatButton onClick={this.props.onClick}>
                 <span className="fa fa-step-backward" data-text="left-open-mini"/>
-            </div>
+            </FlatButton>
         )
     }
 });
@@ -44,9 +47,9 @@ var PreviousButton = React.createClass({
 var NextButton = React.createClass({
     render: function () {
         return (
-            <div className="col-xs-4 col-md-1 next btn btn-custom" onClick={this.props.onClick}>
+            <FlatButton onClick={this.props.onClick}>
                 <span className="fa fa-step-forward" data-text="right-open-mini"/>
-            </div>
+            </FlatButton>
         )
     }
 });
@@ -55,7 +58,7 @@ var NextButton = React.createClass({
 var PlayImages = React.createClass({
 
     getInitialState: function () {
-        let { images } = this.props;
+        let {images} = this.props;
         if (!images) {
             return {
                 images: {},
@@ -160,11 +163,13 @@ var PlayImages = React.createClass({
                                 image={this.state.currentSlide}/>;
 
         return (
-            <div className="col-xs-12">
-                <div className="row col-xs-12">
 
+            <Card>
+                <CardActions>
                     {previousButton} {this.state.playing ? pauseButton : playButton} {nextButton}
-                </div>
+                </CardActions>
+
+
                 <a id="inifiniteLoaderPlay"><img src="/static/img/ajax-loader.gif"/></a>
                 <div className="row">
                     <div className="">
@@ -174,12 +179,11 @@ var PlayImages = React.createClass({
                         </div>
                     </div>
                 </div>
+            </Card>
 
-
-            </div>
         );
     }
 
 });
 
-export { PlayImages }
+export {PlayImages}

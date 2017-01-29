@@ -3,7 +3,6 @@ import React, { Component,ReactClass,PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-var MainNavbar = require('components/MainNavbar');
 import Helmet from "react-helmet";
 
 

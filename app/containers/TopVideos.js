@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react'
-import { connect } from 'react-redux'
-import { loadArticles } from 'actions/articles'
-import { Link } from 'react-router'
+import React, {Component, PropTypes} from 'react'
+import {connect} from 'react-redux'
+import {loadArticles} from 'actions/articles'
 import _ from 'lodash'
-var MainNavbar = require('components/MainNavbar');
+
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+
 
 import {getAllByIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
@@ -14,17 +15,17 @@ import Helmet from "react-helmet";
 import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 class ArticleContainer extends Component {
-    //static fetchData({ store, params }) {
-    //    let { index,value } = params;
-    //    return store.dispatch(loadArticles({index, value}))
-    //}
+    static fetchData({store, params}) {
+        let {index, value} = params;
+        return store.dispatch(loadArticles({index, value}))
+    }
 
     constructor(props) {
         super();
         this.state = {
             skip: 0,
             limit: 5,
-            articles: [],
+            articles: props.articles,
             hasMore: true
         };
     }
@@ -58,7 +59,7 @@ class ArticleContainer extends Component {
     }
 
     render() {
-        if (!this.state.articles){
+        if (!this.state.articles) {
             this.state.articles = [];
         }
         return (
@@ -68,42 +69,40 @@ class ArticleContainer extends Component {
                     title={`Latest news - Category - ${this.props.params.value ? this.props.params.value.toUpperCase() : ""} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`},
-                    {"property": "og:type", "content": "article"},
-                    {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
-                ]}
+                        {
+                            "name": "description",
+                            "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`
+                        },
+                        {"property": "og:type", "content": "article"},
+                        {
+                            "property": "og:image",
+                            "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
+                        }
+                    ]}
                     onChangeClientState={(newState) => console.log(newState)}
                 />
-                <MainNavbar/>
-                <YoutubeReportRun/>
-                <div className="row single-post-row">
-                    <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
-                        <div className="col-xs-12">
-                            <div className="content">
-                                <div className="posts">
-                                    <InfiniteScroll
-                                        ref='masonryContainer'
-                                        skip={0}
-                                        limit={50}
-                                        loader={this.getLoaderElement()}
-                                        loadMore={this.handlePageChange.bind(this)}
-                                        hasMore={this.state.hasMore}>
-                                        {
-                                            this.state.articles.map(function (article) {
-                                                return (
-                                                    <Video
-                                                        key={article.id}
-                                                        video={article}
-                                                    />
-                                                );
-                                            })
-                                        }
-                                    </InfiniteScroll>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                <Card>
+                    <YoutubeReportRun/>
+                    <InfiniteScroll
+                        ref='masonryContainer'
+                        skip={0}
+                        limit={50}
+                        loader={this.getLoaderElement()}
+                        loadMore={this.handlePageChange.bind(this)}
+                        hasMore={this.state.hasMore}>
+                        {
+                            this.state.articles.map(function (article) {
+                                return (
+                                    <Video
+                                        key={article.id}
+                                        video={article}
+                                    />
+                                );
+                            })
+                        }
+                    </InfiniteScroll>
+                </Card>
             </div>
         )
     }
@@ -120,5 +119,9 @@ function mapStateToProps(state) {
     }
 }
 
-export { ArticleContainer }
+ArticleContainer.propTypes = {
+    articles: PropTypes.any.isRequired,
+};
+
+export {ArticleContainer}
 export default connect(mapStateToProps, {loadArticles})(ArticleContainer)

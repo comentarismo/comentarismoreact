@@ -2,7 +2,6 @@ import React, { Component,ReactClass } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-var MainNavbar = require('components/MainNavbar');
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -10,7 +9,6 @@ class Notfound extends Component {
     render() {
         return (
             <div>
-                <MainNavbar/>
                 <div>
                     <div className="col-xs-6">
                         <h3>The page you are looking for might have been removed, had its name

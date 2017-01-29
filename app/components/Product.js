@@ -3,6 +3,7 @@
 var React = require('react');
 
 var base64Encode = require("../util/imgresizer").base64Encode;
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 var width = "388";
 var height = "395";
@@ -35,7 +36,7 @@ module.exports = React.createClass({
         var id = this.props.article.id;
 
         var host = "http://img.comentarismo.com/r";
-        console.log("IMGRESIZER ",src)
+        console.log("IMGRESIZER ", src)
         //do img resize
         var request = $.ajax({
             url: host + '/img/',
@@ -53,26 +54,26 @@ module.exports = React.createClass({
                 //console.log("imgresizer DONE OK");
                 var base64Data = base64Encode(binaryData);
                 src = "data:image/jpeg;base64," + base64Data;
-                $("#"+id).attr("src", "data:image/jpeg;base64," + base64Data);
+                $("#" + id).attr("src", "data:image/jpeg;base64," + base64Data);
             } else {
-                $("#fb-"+id).show();
-                $("#img-"+id).hide();
+                $("#fb-" + id).show();
+                $("#img-" + id).hide();
 
-            //
+                //
             }
         });
 
         request.fail(function (e) {
             //    console.log(e);
-            $("#fb-"+id).show();
-            $("#img-"+id).hide();
+            $("#fb-" + id).show();
+            $("#img-" + id).hide();
         });
 
     },
 
     getTitle: function () {
         return (
-            <h3 className='article-header'>{this.props.article.title && this.props.article.title.length > 45 ? this.props.article.title.substring(0,45)+"..."  :  this.props.article.title }</h3>
+            <h3 className='article-header'>{this.props.article.title && this.props.article.title.length > 45 ? this.props.article.title.substring(0, 45) + "..." : this.props.article.title }</h3>
         );
     },
 
@@ -88,7 +89,8 @@ module.exports = React.createClass({
 
     getTotalComments: function () {
         var totalComments = this.props.article.totalComments;
-        return totalComments ? <p className='source'>Comments {totalComments} </p> :  <p className='source'>Comments 0 </p> ;
+        return totalComments ? <p className='source'>Comments {totalComments} </p> :
+            <p className='source'>Comments 0 </p>;
     },
 
     getArticleLink: function () {
@@ -96,14 +98,23 @@ module.exports = React.createClass({
     },
 
     render: function () {
+        const style = {
+            height: 400,
+            width: 400,
+            margin: 20,
+            textAlign: 'center',
+            display: 'inline-block',
+        };
         return (
-            <div className="col-lg-4 col-md-3 col-sm-5 col-xs-10">
+            <Card style={style}>
                 <a href={this.getArticleLink()} className='thumbnail article'>
-                    <div id={"fb-"+this.props.article.id} style={{"display": "none"}}>
+
+                    <div id={"fb-" + this.props.article.id} style={{"display": "none"}}>
                         <Icon nick={this.props.article.titleurlize} size={125}/>
                     </div>
-                    <div id={"img-"+this.props.article.id} className="col-xs-12 image profile-bg-products">
-                        <img id={this.props.article.id} />
+
+                    <div id={"img-" + this.props.article.id} className="profile-bg-products">
+                        <img id={this.props.article.id}/>
                         {this.getImageElement()}
                     </div>
 
@@ -113,8 +124,9 @@ module.exports = React.createClass({
                         {this.getDescription()}
                         {this.getTotalComments()}
                     </div>
+
                 </a>
-            </div>
+            </Card>
         );
     }
 });

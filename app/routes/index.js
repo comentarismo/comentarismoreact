@@ -2,8 +2,11 @@ import React from 'react';
 import {Provider} from 'react-redux';
 import {Router, Route, IndexRoute} from 'react-router';
 
-import App from 'containers/App';
-import IntroOld from 'containers/Intro_old';
+// import App from 'containers/App';
+
+import Layout from 'containers/layout/Layout';
+
+import Intro from 'containers/Intro';
 
 import Commentators from 'containers/Commentators';
 import Commentator from 'containers/Commentator';
@@ -32,7 +35,9 @@ import SearchComponentJCP from 'containers/SearchComponentJCP';
 export default function (history) {
     return (
         <Router history={history}>
-            <Route path="/" component={App}>
+            <Route path="search" component={Search}/>
+
+            <Route path="/" component={Layout}>
                 <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
@@ -49,11 +54,9 @@ export default function (history) {
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
-
-                <Route path="search" component={Search}/>
                 <Route path="jcp" component={SearchComponentJCP}/>
 
-                <IndexRoute component={IntroOld}/>
+                <IndexRoute component={Intro}/>
                 <Route path="*" component={Notfound}/>
             </Route>
         </Router>
