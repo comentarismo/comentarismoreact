@@ -4,7 +4,8 @@ import {Router, Route, IndexRoute} from 'react-router';
 
 // import App from 'containers/App';
 
-import Layout from 'containers/layout/Layout';
+// import Layout from 'containers/layout/Layout';
+import Layout from 'containers/layout/Master';
 
 import Intro from 'containers/Intro';
 
@@ -31,6 +32,11 @@ import TopVideos from 'containers/TopVideos';
 
 import Search from 'containers/SearchComponent';
 import SearchComponentJCP from 'containers/SearchComponentJCP';
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 export default function (history) {
     return (

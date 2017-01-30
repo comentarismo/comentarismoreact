@@ -255,6 +255,12 @@ function limiterhandler(req, res) {
 }
 
 
+server.get('/versions.json', limiter, (req, res) => {
+    res.send([
+        "v0.16.7",
+        "v0.16.6"]);
+})
+
 server.get('/api/comment/:id', limiter, (req, res) => {
     var id = req.params.id;
     logger.info(`/comment/${id}`)
@@ -346,7 +352,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -368,7 +374,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
                 return res.sendStatus(500);
             } else {
                 //-------REDIS CACHE SAVE START ------//
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     logger.info(urlTag + " will save cached");
                     client.set(urlTag, JSON.stringify(data), redis.print);
                     client.expire(urlTag, 1800);
@@ -393,7 +399,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -417,7 +423,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
             } else {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set(urlTag, JSON.stringify({count: data}), redis.print);
                     client.expire(urlTag, 1800);
                 }
@@ -496,7 +502,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err);
@@ -525,7 +531,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                 logger.info(urlTag + " will save cached");
                 var js = JSON.stringify(data);
                 //logger.info(js);
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set(urlTag, js, redis.print);
                     client.expire(urlTag, REDIS_EXPIRE);
                 }
@@ -557,7 +563,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                     if (data) {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
-                        if(!DISABLE_CACHE) {
+                        if (!DISABLE_CACHE) {
                             client.set(urlTag, JSON.stringify(data), redis.print);
                             client.expire(urlTag, REDIS_EXPIRE);
                         }
@@ -600,7 +606,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -627,7 +633,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set(urlTag, JSON.stringify(data), redis.print);
                     client.expire(urlTag, REDIS_EXPIRE);
                 }
@@ -660,7 +666,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -688,7 +694,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
                 res.type('application/json');
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set(urlTag, JSON.stringify(data), redis.print);
                     client.expire(urlTag, REDIS_EXPIRE);
                 }
@@ -720,7 +726,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -747,7 +753,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached fdp");
                 res.type('application/json');
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set(urlTag, JSON.stringify(data), redis.print);
                     client.expire(urlTag, REDIS_EXPIRE);
                 }
@@ -768,7 +774,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -827,7 +833,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    if(!DISABLE_CACHE) {
+                    if (!DISABLE_CACHE) {
                         client.set(urlTag, JSON.stringify(news), redis.print);
                         client.expire(urlTag, REDIS_EXPIRE);
                     }
@@ -851,7 +857,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.error(err.stack);
@@ -888,7 +894,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    if(!DISABLE_CACHE) {
+                    if (!DISABLE_CACHE) {
                         client.set(urlTag, JSON.stringify(news), redis.print);
                         client.expire(urlTag, REDIS_EXPIRE);
                     }
@@ -908,7 +914,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
 
     //-------REDIS CACHE START ------//
     client.get("apihomepage", function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.log("apihomepage err ", err);
@@ -930,7 +936,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
             if (err) {
                 return res.status(500).send({});
             } else {
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set("apihomepage", JSON.stringify(result), redis.print);
                     client.expire("apihomepage", REDIS_EXPIRE);
                 }
@@ -942,7 +948,6 @@ server.get('/apihomepage/', limiter, (req, res) => {
         });
     });
 });
-
 
 
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
@@ -958,7 +963,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 
     //-------REDIS CACHE START ------//
     client.get("intropage" + urlTag, function (err, js) {
-        if(!DISABLE_CACHE) {
+        if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
                     console.log("intropage err ", err);
@@ -982,7 +987,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
             if (err) {
                 return res.status(500).send({});
             } else {
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     client.set("intropage" + urlTag, JSON.stringify(alexarank), redis.print);
                     client.expire("intropage" + urlTag, REDIS_EXPIRE);
                 }
@@ -1031,7 +1036,7 @@ server.get('*', limiter, (req, res, next) => {
         var urlTag = "sitemap.xml";
         //-------REDIS CACHE START ------//
         client.get(urlTag, function (err, js) {
-            if(!DISABLE_CACHE) {
+            if (!DISABLE_CACHE) {
                 if (err || !js) {
                     if (err) {
                         logger.info("Error: Redis client " + location);
@@ -1062,7 +1067,7 @@ server.get('*', limiter, (req, res, next) => {
                 if (xml) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
-                    if(!DISABLE_CACHE) {
+                    if (!DISABLE_CACHE) {
                         client.set(urlTag, xml, redis.print);
                         client.expire(urlTag, REDIS_EXPIRE);
                     }
@@ -1097,7 +1102,7 @@ server.get('*', limiter, (req, res, next) => {
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//
             client.get(urlTag, function (err, js) {
-                if(!DISABLE_CACHE) {
+                if (!DISABLE_CACHE) {
                     if (err || !js) {
                         if (err) {
                             console.error(err.stack);
@@ -1126,8 +1131,8 @@ server.get('*', limiter, (req, res, next) => {
                     if (xml) {
                         //-------REDIS CACHE SAVE START ------//
                         logger.info(urlTag + " will save cached");
-                        if(!DISABLE_CACHE) {
-                            if(!DISABLE_CACHE) {
+                        if (!DISABLE_CACHE) {
+                            if (!DISABLE_CACHE) {
                                 client.set(urlTag, xml, redis.print);
                                 client.expire(urlTag, REDIS_EXPIRE);
                             }
