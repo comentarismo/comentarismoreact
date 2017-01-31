@@ -13,6 +13,7 @@ import config from 'config'
 var host = config.API_URL;
 import FlatButton from 'material-ui/FlatButton';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Link} from 'react-router';
 
 import {
     cyan500, cyan700,
@@ -199,7 +200,9 @@ class Master extends Component {
             <div>
                 <AppBar
                     onLeftIconButtonTouchTap={this.handleTouchTapLeftIconButton}
-                    title={title}
+                    title={<Link to="/"
+                                 style={{color: '#fff', textDecoration: 'none', float: 'left', fontSize: '16px'}}> C
+                        O M E N T A R I S M O </Link>}
                     zDepth={0}
                     iconElementRight={ LoginStore.isLoggedIn() ?
                         <a href={`${host}/logout`} style={{color: '#fff'}}> Welcome back { LoginStore.user.username}!
@@ -214,8 +217,8 @@ class Master extends Component {
                 <Card style={{
                     flex: 1,
                     border: 0,
-                    paddingTop: '4%',
-                    paddingLeft: '20%',
+                    paddingTop: '10%',
+                    paddingLeft: '10%',
                 }}>{children}</Card>
                 <AppNavDrawer
                     style={styles.navDrawer}
@@ -225,20 +228,25 @@ class Master extends Component {
                     onChangeList={this.handleChangeList}
                     open={navDrawerOpen}
                 />
-                <FullWidthSection style={styles.footer}>
-                    <p style={prepareStyles(styles.p)}>
-                        {'Hand crafted with love by  '}
-                        <a style={styles.a} href="http://api.comentarismo.com">
-                            Comentarismo Team
-                        </a>
-                        {' and our awesome '}
-                        contributors.
-                    </p>
 
-                </FullWidthSection>
             </div>
         );
     }
 }
 
-export default withWidth()(Master);
+
+Master.propTypes = {
+    children: PropTypes.node,
+    route: PropTypes.object.isRequired,
+};
+
+function mapStateToProps(state) {
+    return {};
+}
+
+import {connect} from 'react-redux';
+
+
+export default connect(
+    mapStateToProps,
+)(Master);

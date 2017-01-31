@@ -40,69 +40,14 @@ class AppNavDrawer extends Component {
     };
 
     static contextTypes = {
-        muiTheme: PropTypes.object.isRequired,
         router: PropTypes.object.isRequired,
     };
-
-    state = {
-        muiVersions: [],
-    };
-
-    componentDidMount() {
-        const self = this;
-        const url = '/versions.json';
-        const request = new XMLHttpRequest();
-
-        request.onreadystatechange = function () {
-            if (request.readyState === 4 && request.status === 200) {
-                self.setState({
-                    muiVersions: JSON.parse(request.responseText),
-                    version: JSON.parse(request.responseText)[0],
-                });
-            }
-        };
-
-        request.open('GET', url, true);
-        request.send();
-    }
-
-    firstNonPreReleaseVersion() {
-        let version;
-        for (let i = 0; i < this.state.muiVersions.length; i++) {
-            version = this.state.muiVersions[i];
-            // If the version doesn't contain '-' and isn't 'HEAD'
-            if (!/-/.test(version) && version !== 'HEAD') {
-                break;
-            }
-        }
-        return version;
-    }
-
-    handleVersionChange = (event, index, value) => {
-        if (value === this.firstNonPreReleaseVersion()) {
-            window.location = 'http://www.material-ui.com/';
-        } else {
-            window.location = `http://www.material-ui.com/${value}`;
-        }
-    };
-
-    currentVersion() {
-        if (window.location.hostname === 'localhost') return this.state.muiVersions[0];
-        if (window.location.pathname === '/') {
-            return this.firstNonPreReleaseVersion();
-        } else {
-            return window.location.pathname.replace(/\//g, '');
-        }
-    }
-
-    handleRequestChangeLink = (event, value) => {
-        window.location = value;
-    };
-
-    handleTouchTapHeader = () => {
-        this.context.router.push('/');
-        this.props.onRequestChangeNavDrawer(false);
-    };
+    //
+    //
+    // handleTouchTapHeader = () => {
+    //     // this.context.router.push('/');
+    //     this.props.onRequestChangeNavDrawer(false);
+    // };
 
     render() {
         const {
@@ -123,7 +68,7 @@ class AppNavDrawer extends Component {
                 onRequestChange={onRequestChangeNavDrawer}
                 containerStyle={{zIndex: zIndex.drawer - 100}}
             >
-                <div style={styles.logo} onTouchTap={this.handleTouchTapHeader}>
+                <div style={styles.logo}>
                     C O M E N T A R I S M O
                 </div>
                 <Menu/>

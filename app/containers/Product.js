@@ -114,7 +114,7 @@ class Product extends Component {
 
                                     <div className="row">
 
-                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                        <Tabs  animation={false} id="noanim-tab-example">
                                             <Tab eventKey={1} title="Images">
                                                 <PlayImages images={searchlist} playing={true}
                                                             playingtimeout={10000}/>
@@ -149,7 +149,7 @@ class Product extends Component {
                                         </div>
 
                                         <div className="row">
-                                            <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                            <Tabs  animation={false} id="noanim-tab-example">
                                                 <Tab eventKey={1} title="Resume">
                                                     <div className="profile-divStats">
                                                         <ul className="profile-commentsfollowfollowers">
@@ -187,7 +187,7 @@ class Product extends Component {
                                             </ul>
                                         </div>
 
-                                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                                        <Tabs  animation={false} id="noanim-tab-example">
                                             <Tab eventKey={1} title="Categories">
                                                 <div className="profile-divStats">
                                                     <ul className="profile-commentsfollowfollowers">

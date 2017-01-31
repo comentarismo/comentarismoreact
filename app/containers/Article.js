@@ -195,7 +195,7 @@ class Article extends Component {
         }
 
         return (
-            <Card>
+            <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
                     title={`Latest news - Source - ${article.operator ? article.operator.toUpperCase() : ""} - Genre: ${article.genre ? article.genre.toUpperCase() : ""}`}
@@ -222,175 +222,166 @@ class Article extends Component {
                 </div>
                 <XScript index="operator_titleurlize"/>
 
-                <Card style={{
-                    paddingTop: '1%',
-                    paddingLeft: '3%',
-                    width: '95%'
-                }}>
-
-
-                    <div id="header" className="stroke"
-                         style={{"backgroundImage": "url('" + article.image + "')"}}>
-                        <h1 id="video_title">{article.title}</h1>
-                        <h4>
+                <div id="header" className="stroke"
+                     style={{"backgroundImage": "url('" + article.image + "')"}}>
+                    <h1 id="video_title">{article.title}</h1>
+                    <h4>
                                                 <span
                                                     id="channel_title">{article.operator ? article.operator : ""}</span>
-                            on <span id="network_title">Comment & Sentiment Analysis Project</span>
-                        </h4>
+                        on <span id="network_title">Comment & Sentiment Analysis Project</span>
+                    </h4>
 
-                        <hr/>
+                    <hr/>
 
-                        <div className="row bignums">
-                            <div className="col-xs-4 col-xs-offset-4">
+                    <div className="row bignums">
+                        <div className="col-xs-4 col-xs-offset-4">
                                                 <span
                                                     id="total_comments">{article.totalComments ? article.totalComments : ""}</span>
-                                <span className="desc">Total Comments</span>
-                            </div>
-                            <div className="col-xs-4">
+                            <span className="desc">Total Comments</span>
+                        </div>
+                        <div className="col-xs-4">
                                                 <span
                                                     id="comments_per_day">{commentsavgperday ? commentsavgperday.toFixed(2) : "0" }</span>
-                                <span className="desc">By Day</span>
-                            </div>
+                            <span className="desc">By Day</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div className="row">
+                    <div className="progress">
+                        <div className="progress-bar progress-bar-success" role="progressbar"
+                             aria-valuenow="0"
+                             aria-valuemin="0"
+                             aria-valuemax="100" style={{width: "0%"}}>
+                            Comments Analyzed: 0%
+                        </div>
+                    </div>
+                </div>
+
+                {sentimentReport}
+
+                <Tabs  id="noanim-tab-example">
+                    <Tab  label="Images">
+                        <PlayImages images={searchlist} playing={true}
+                                    playingtimeout={5000}/>
+                    </Tab>
+                    <Tab label="Videos" disabled>
+                        More Videos soon ...
+                    </Tab>
+                </Tabs>
+
+                <div className="col-xs-12" style={{height: '25px'}}></div>
+                <div>
+                    <div className="profile-button">
+
+                    </div>
+                    <div className="profile-nick">
+                        <div className="profile-nickName">
+
                         </div>
                     </div>
 
+                    <XSoundcloud permalink_url={article.permalink_url}/>
 
-                    <div className="row">
-                        <div className="progress">
-                            <div className="progress-bar progress-bar-success" role="progressbar"
-                                 aria-valuenow="0"
-                                 aria-valuemin="0"
-                                 aria-valuemax="100" style={{width: "0%"}}>
-                                Comments Analyzed: 0%
+
+                    <Tabs id="noanim-tab-example">
+                        <Tab  label="Resume">
+                            <div className="profile-divStats">
+                                <ul className="profile-commentsfollowfollowers">
+                                    <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block"></span>
+                                        <span
+                                            className="profile-StatValue">{ getContentBody() }</span>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                    </div>
-
-                    {sentimentReport}
-
-                    <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
-                        <Tab eventKey={1} label="Images">
-                            <PlayImages images={searchlist} playing={true}
-                                        playingtimeout={5000}/>
-                        </Tab>
-                        <Tab eventKey={2} label="Videos" disabled>
-                            More Videos soon ...
                         </Tab>
                     </Tabs>
 
-                    <div className="col-xs-12" style={{height: '25px'}}></div>
-                    <div>
-                        <div className="profile-button">
 
-                        </div>
-                        <div className="profile-nick">
-                            <div className="profile-nickName">
-
+                    <Tabs id="noanim-tab-example">
+                        <Tab label="Publish Date">
+                            <div className="profile-divStats">
+                                <ul className="profile-commentsfollowfollowers">
+                                    <li className="profile-commentsfollowfollowersLi">
+                                                        <span
+                                                            className="profile-StatLabel profile-block"></span>
+                                        <span className="profile-StatValue"><Date
+                                            date={this.props.article.date}/></span>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
+                        </Tab>
+                    </Tabs>
 
-                        <XSoundcloud permalink_url={article.permalink_url}/>
-
-
-                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
-                            <Tab eventKey={1} label="Resume">
-                                <div className="profile-divStats">
-                                    <ul className="profile-commentsfollowfollowers">
-                                        <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block"></span>
-                                            <span
-                                                className="profile-StatValue">{ getContentBody() }</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </Tab>
-                        </Tabs>
-
-
-                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
-                            <Tab eventKey={1} label="Publish Date">
-                                <div className="profile-divStats">
-                                    <ul className="profile-commentsfollowfollowers">
-                                        <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block"></span>
-                                            <span className="profile-StatValue"><Date
-                                                date={this.props.article.date}/></span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </Tab>
-                        </Tabs>
-
-                        <div className="profile-divStats">
-                            <ul className="profile-commentsfollowfollowers">
-                                <li className="profile-commentsfollowfollowersLi">
+                    <div className="profile-divStats">
+                        <ul className="profile-commentsfollowfollowers">
+                            <li className="profile-commentsfollowfollowersLi">
                                                 <span
                                                     className="profile-StatLabel profile-block">Tags</span>
-                                    <span
-                                        className="profile-StatValue">{this.props.article.tags.join(", ")}</span>
-                                </li>
-                            </ul>
-                        </div>
+                                <span
+                                    className="profile-StatValue">{this.props.article.tags.join(", ")}</span>
+                            </li>
+                        </ul>
+                    </div>
 
 
-                        <div className="profile-divStats">
-                            <ul className="profile-commentsfollowfollowers">
-                                <li className="profile-commentsfollowfollowersLi">
+                    <div className="profile-divStats">
+                        <ul className="profile-commentsfollowfollowers">
+                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Country</span>
-                                    <span
-                                        className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
-                                </li>
-                                <li className="profile-commentsfollowfollowersLi">
+                                <span
+                                    className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
+                            </li>
+                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Language</span>
-                                    <span
-                                        className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
-                                </li>
-                                <li className="profile-commentsfollowfollowersLi">
+                                <span
+                                    className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
+                            </li>
+                            <li className="profile-commentsfollowfollowersLi">
                                                         <span
                                                             className="profile-StatLabel profile-block">Genre</span>
-                                    <span
-                                        className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
-                                </li>
+                                <span
+                                    className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
+                            </li>
 
-                            </ul>
-                        </div>
-
-
+                        </ul>
                     </div>
-                    <div className="col-xs-12" style={{height: '25px'}}></div>
 
-                    <div id="comentarismo-container" className="comentarismo-comment col-md-12">
-                        {
-                            article.comments.map((q) => {
-                                return (
-                                    <div key={q.id}>
-                                        <div className="col-sm-1 hidden-xs">
-                                            <a className="avatar- img-responsive user-photo"/>
-                                            <Icon nick={q.nick} size={50}/>
-                                        </div>
-                                        <div className="text-wrapper">
-                                            <b>{q.date }</b>
-                                            <div role="meta" className="comentarismo-comment-header">
+
+                </div>
+                <div className="col-xs-12" style={{height: '25px'}}></div>
+
+                <div id="comentarismo-container" className="comentarismo-comment col-md-12">
+                    {
+                        article.comments.map((q) => {
+                            return (
+                                <div key={q.id}>
+                                    <div className="col-sm-1 hidden-xs">
+                                        <a className="avatar- img-responsive user-photo"/>
+                                        <Icon nick={q.nick} size={50}/>
+                                    </div>
+                                    <div className="text-wrapper">
+                                        <b>{q.date }</b>
+                                        <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b>{ q.nick }</b>
                                                         </span>
-                                            </div>
-                                            <div className="text">
-                                                <p>{ q.comment }</p>
-                                            </div>
+                                        </div>
+                                        <div className="text">
+                                            <p>{ q.comment }</p>
                                         </div>
                                     </div>
-                                )
-                            })
-                        }
-                    </div>
-                </Card>
-
-            </Card>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
         )
 
 
