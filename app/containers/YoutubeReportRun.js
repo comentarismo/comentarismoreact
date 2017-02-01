@@ -61,7 +61,7 @@ var YoutubeReportRun = React.createClass({
                     <CardHeader
                         title="** HOT FREE DEAL ** "
                         subtitle="Paste a Youtube URL below And Get a Free Sentiment Analysis Right Now!"
-                        avatar="https://avatars1.githubusercontent.com/u/2600966?v=3&s=460"
+                        avatar="/static/img/sources/avatar_offer.png"
                     />
 
                     <CardText>

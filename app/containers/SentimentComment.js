@@ -9,7 +9,7 @@ import Helmet from "react-helmet";
 import Icon from "components/Icon"
 
 import {FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
-
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 import {loadSentimentCommentDetail} from 'actions/commentators'
 
@@ -84,7 +84,7 @@ class SentimentComment extends Component {
                 <div className="clearfix"></div>
                 <footer className="footer bg-dark">
                     <div className="container">
-                        <div className="row">
+                        <div className="">
                             <div className="col-sm-12 text-center">
                                 <p className="copyright">© 2016 Comentarismo.com</p>
                             </div>
@@ -243,18 +243,18 @@ var Sentiment = React.createClass({
                     {
                         label: "Percent",
                         backgroundColor: [
-                            "#FF0000",
-                            "#E80957",
-                            "#E809BF",
-                            "#BB09E8",
-                            "#2709E8",
-                            "#0957E8",
-                            "#0980E8",
-                            "#09E8BF",
-                            "#09E85B",
-                            "#23E809",
-                            "#B8E809",
-                            "#E8E409",
+                            "#040D45",
+                            "#0A0D57",
+                            "#0C0F63",
+                            "#111585",
+                            "#12168C",
+                            "#151AAD",
+                            "#2D32C4",
+                            "#3A3EC7",
+                            "#4D51C9",
+                            "#5F62C9",
+                            "#7679CC",
+                            "#8F91CC",
                         ],
                         borderColor: "rgba(255,99,132,1)",
                         borderWidth: 1,
@@ -269,7 +269,7 @@ var Sentiment = React.createClass({
             new Chart(ctx, {
                 type: 'bar',
                 data: data,
-                options: {showLines: false, responsive: true, maintainAspectRatio: false}
+                options: {showLines: false, responsive: false, maintainAspectRatio: true}
             });
 
 
@@ -282,18 +282,18 @@ var Sentiment = React.createClass({
                     {
                         label: "Percent",
                         backgroundColor: [
-                            "#FF0000",
-                            "#E80957",
-                            "#E809BF",
-                            "#BB09E8",
-                            "#2709E8",
-                            "#0957E8",
-                            "#0980E8",
-                            "#09E8BF",
-                            "#09E85B",
-                            "#23E809",
-                            "#B8E809",
-                            "#E8E409",
+                            "#040D45",
+                            "#0A0D57",
+                            "#0C0F63",
+                            "#111585",
+                            "#12168C",
+                            "#151AAD",
+                            "#2D32C4",
+                            "#3A3EC7",
+                            "#4D51C9",
+                            "#5F62C9",
+                            "#7679CC",
+                            "#8F91CC",
                         ],
                         borderColor: "rgba(255,99,132,1)",
                         borderWidth: 1,
@@ -316,7 +316,10 @@ var Sentiment = React.createClass({
                 autoplay: 1
             }
         };
-
+        const style = {
+            height: '690',
+            width: '640',
+        };
         if (this.state.comment.sentimentlist) {
             var that = this;
             Object.keys(this.state.comment.sentimentlist).forEach(function (key) {
@@ -346,7 +349,7 @@ var Sentiment = React.createClass({
         }
 
         return (
-            <div className="container">
+            <div className="">
 
                 <div className="navbar navbar-default">
                     <div className="container-fluid">
@@ -439,7 +442,6 @@ var Sentiment = React.createClass({
                                 Comments Analyzed: 0%
                             </div>
                         </div>
-
                     </div>
                     <div className="row">
                         <YouTube
@@ -448,24 +450,20 @@ var Sentiment = React.createClass({
                             onReady={this._onReady}
                         />
                     </div>
-                    <div className="row">
+                </div>
 
-                        <div className="col-md-5">
+                        <div className="col-md-8">
                             <h5>Sentiment Statistics: </h5>
-                            <canvas id="myChart" width="100%" height="300"></canvas>
+                            <canvas id="myChart" width="600" height="300"></canvas>
                         </div>
                         <div className="col-md-2">
                             <h5>Scale of values </h5>
-                            <canvas id="scaleChart" width="100%" height="300"></canvas>
+                            <canvas id="scaleChart" width="100" height="300"></canvas>
                         </div>
-                        <div className="col-md-5">
-
-                        </div>
-                    </div>
 
 
                     <BubbleChart data={bubblechart}/>
-                    <div className="">
+                    <div className="col-md-12">
                         <div className="">{numBubbles + (numBubbles === 1 ? " Circle" : " Circles")}</div>
                         <input
                             className=""
@@ -473,14 +471,12 @@ var Sentiment = React.createClass({
                             min="1"
                             max="250"
                             value={numBubbles}
-                            steps="250"
                             onChange={this.onChange}/>
                     </div>
 
                     <CommentsView comment={this.state.comment.topcomments} emojis={emojis}
                                   sentimentlist={this.state.comment.sentimentlist}/>
 
-                </div>
             </div>
         );
     },
@@ -616,7 +612,7 @@ var CommentsView = React.createClass({
 
                 <div className="col-md-12">
                     {
-                        comment.map((q)=> {
+                        comment.map((q) => {
                             return (
                                 <div key={q.id}>
                                     <div className="col-xs-1 hidden-xs">

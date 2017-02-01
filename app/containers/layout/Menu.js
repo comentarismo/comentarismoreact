@@ -47,7 +47,6 @@ const Menu = ({resources}) => (
                 boxSizing: 'border-box',
                 color: 'rgb(145, 147, 152)',
                 fontSize: '14px',
-                lineHeight: 500,
                 lineHeight: '48px',
                 paddingLeft: '16px',
                 width: '100%'
