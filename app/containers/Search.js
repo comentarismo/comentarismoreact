@@ -90,6 +90,7 @@ class Search extends Component {
         if (typeof window !== 'undefined') {
             var searchOnLoad = false;
             var q = gup("q");
+            // console.log("Arguments -> ", q);
             if (q) {
                 searchOnLoad = true;
             }
@@ -101,15 +102,13 @@ class Search extends Component {
                     "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
                 },
             });
+
+            const style = {
+                background: 'hsl(0, 0%, 96%) !important',
+            };
+
             searcbox = <SearchkitProvider searchkit={searchkit}>
                 <Layout>
-                    <TopBar>
-                        <SearchBox
-                            autofocus={false}
-                            searchThrottleTime={1500}
-                            searchOnChange={true}
-                            prefixQueryFields={["nick", "genre", "operator", "title", "language"]}/>
-                    </TopBar>
                     <LayoutBody>
                         <SideBar>
                             <RefinementListFilter
@@ -132,7 +131,11 @@ class Search extends Component {
 
                         </SideBar>
                         <LayoutResults>
-
+                            <SearchBox style={style}
+                                       autofocus={true}
+                                       searchThrottleTime={1500}
+                                       searchOnChange={true}
+                                       prefixQueryFields={["nick", "genre", "operator", "title", "language"]}/>
                             <ActionBar>
 
                                 <ActionBarRow>

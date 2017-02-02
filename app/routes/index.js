@@ -41,9 +41,11 @@ injectTapEventPlugin();
 export default function (history) {
     return (
         <Router history={history}>
-            <Route path="search" component={Search}/>
+
 
             <Route path="/" component={Layout}>
+                <Route path="search" component={Search}/>
+
                 <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
