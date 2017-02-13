@@ -2,7 +2,7 @@ var xml2js = require("xml2js");
 //var config = require('config')
 //var ELK_URL = config.ELK_URL;
 // var ELK_URL = "http://188.166.57.236:8080";
-var ELK_URL = process.env.ELASTICSEARCH_HOST || "http://188.166.57.236:8080";
+var ELK_URL = process.env.ELASTICSEARCH_HOST || "http://147.75.100.173:8080";
 
 /** LOGGER **/
 var log = require("./logger");

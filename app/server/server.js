@@ -33,6 +33,7 @@ let {
     getAllByMultipleIndexCount,
     getAllByIndexOrderBySkipLimit,
     getAllByIndexOrderByFilterSkipLimit,
+    getAllByDateRangeIndexOrderByFilterSkipLimit,
     getOneBySecondaryIndex,
     getCommentator,
     getCommentatorByNick,
@@ -66,6 +67,7 @@ var logger = log.getLogger();
 /** LOGGER **/
 
 logger.info("Will set expire time for redis/cache as --> " + REDIS_EXPIRE);
+var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
@@ -80,9 +82,9 @@ if (process.env.NODE_ENV === 'production') {
     ];
 } else {
     scriptSrcs = [
-        'http://localhost:3001/static/vendor.js',
-        'http://localhost:3001/static/dev.js',
-        'http://localhost:3001/static/app.js',
+        `http://localhost:${WEBPACK_PORT}/static/vendor.js`,
+        `http://localhost:${WEBPACK_PORT}/static/dev.js`,
+        `http://localhost:${WEBPACK_PORT}/static/app.js`,
         '/static/all.js',
     ];
     styleSrc = [
@@ -173,7 +175,7 @@ var uri = `http://${INFLUX_USERNAME}:${INFLUX_PASSWORD}@${INFLUX_HOST}:${INFLUX_
 // create a stats collector
 var mem_stats = Stats('test', uri);
 
-var ENABLE_INFLUX = process.env.ENABLE_INFLUX || true;
+var ENABLE_INFLUX = process.env.ENABLE_INFLUX || false;
 
 // example stat collection of process memory usage
 console.log("stat influxdb collection of process memory usage for this app");
@@ -643,6 +645,76 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
         });
     });
 });
+
+
+/**
+ * Get all from a table with a index and its value with skip and limit
+ * bind to action/articles.js -> loadArticles
+ * bind to app/sa.js -> used for listing all news and commentators infinitescroll
+ *
+ */
+server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
+    var table = req.params.table;
+    var index = req.params.index;
+    var value = req.params.value;
+    var skip = parseInt(req.params.skip);
+    var limit = parseInt(req.params.limit);
+    var start = parseInt(req.params.start);
+    var end = parseInt(req.params.end);
+    var range = parseInt(req.params.range);
+    if (!range){
+        //default 6 months
+        range = 12
+    }
+    var sort = req.query.sort;
+    var order = req.query.order || "desc";
+
+
+    var urlTag = `/gapi_range/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}&order=${order}&range=${range}`;
+    // logger.info(urlTag);
+
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.error(err.stack);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                logger.info(urlTag + " will return cached result ");
+                if (EXPIRE_REDIS) {
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
+            }
+        }
+        //-------REDIS CACHE END ------//
+
+        getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, function (err, data) {
+            if (err) {
+                console.error(err.stack);
+                return res.status(500).send('Something broke!');
+            }
+
+            if (data) {
+                //-------REDIS CACHE SAVE START ------//
+                logger.info(urlTag + " will save cached");
+                res.type('application/json');
+                if (!DISABLE_CACHE) {
+                    client.set(urlTag, JSON.stringify(data), redis.print);
+                    client.expire(urlTag, REDIS_EXPIRE);
+                }
+                //-------REDIS CACHE SAVE END ------//
+            }
+            res.send(data);
+        });
+
+    });
+});
+
+
 
 /**
  * Get all from a table with a index and its value with skip and limit

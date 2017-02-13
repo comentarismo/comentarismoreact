@@ -6,7 +6,7 @@ export function loadProducts({index,value}) {
   return {
     [CALL_API]: {
       method: 'get',
-      path: `${config.BASE_URL}/gapi/product/${index}/${value}/0/50/`,
+      path: `${config.BASE_URL}/gapi_range/product/${index}/${value}/0/50/?range=12`,
       successType: LOADED_ARTICLES
     }
   }

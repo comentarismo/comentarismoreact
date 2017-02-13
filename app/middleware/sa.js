@@ -10,6 +10,16 @@ export function getAllByIndexFilterSkipLimit(table,index,value,skip,limit,sort,c
     });
 }
 
+export function getAllByRangeIndexOrderByFilterSkipLimit(table,index,value,skip,limit,sort,orderby,range,cb){
+    var target = "/gapi_range/"+table+"/"+index+"/"+value+"/"+skip+"/"+limit+"?sort="+sort+"&order="+orderby+"&range="+range;
+    console.log(target);
+    superAgent
+        .get(target).end(function(err, res){
+        cb(err,res)
+    });
+}
+
+
 export function getAllByIndexOrderByFilterSkipLimit(table,index,value,skip,limit,sort,orderby,cb){
     console.log("/gapi/"+table+"/"+index+"/"+value+"/"+skip+"/"+limit+"?sort="+sort+"&order="+orderby);
     superAgent

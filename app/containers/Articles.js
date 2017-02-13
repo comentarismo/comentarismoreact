@@ -4,7 +4,7 @@ import {loadArticles} from 'actions/articles'
 import {Link} from 'react-router'
 import _ from 'lodash'
 
-import {getAllByIndexOrderByFilterSkipLimit} from '../middleware/sa'
+import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
 var Article = require('components/Article');
 
@@ -32,7 +32,7 @@ class ArticleContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByIndexOrderByFilterSkipLimit("news", index, value, skip, limit, "date", "desc", function (err, res) {
+        getAllByRangeIndexOrderByFilterSkipLimit("news", index, value, skip, limit, "date", "desc",10, function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;

@@ -4,7 +4,7 @@ import {loadProducts} from 'actions/products'
 import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
-import {getAllByIndexOrderByFilterSkipLimit} from '../middleware/sa'
+import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
 var Product = require('components/Product');
 
@@ -31,7 +31,7 @@ class ProductContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByIndexOrderByFilterSkipLimit("product", index, value, skip, limit, "date", "desc", function (err, res) {
+        getAllByRangeIndexOrderByFilterSkipLimit("product", index, value, skip, limit, "date", "desc", 10,function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;

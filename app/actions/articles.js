@@ -6,7 +6,7 @@ export function loadArticles({index,value}) {
   return {
     [CALL_API]: {
       method: 'get',
-      path: `${config.BASE_URL}/gapi/news/${index}/${value}/0/50/`,
+      path: `${config.BASE_URL}/gapi_range/news/${index}/${value}/0/50/?range=12`,
       successType: LOADED_ARTICLES
     }
   }

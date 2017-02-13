@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var config = require('./webpack.config');
-var port = 3001;
+var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
@@ -14,10 +14,12 @@ new WebpackDevServer(webpack(config), {
     timings: true,
     chunks: false
   }
-}).listen(port, 'localhost', function (err) {
+}).listen(WEBPACK_PORT, 'localhost', function (err) {
   if (err) {
     console.log(err);
-  }
+    process.exit(1)
+  }else {
 
-  console.log('Webpack dev server is listening at localhost:' + port);
+      console.log(`Webpack dev server is listening at localhost: ${WEBPACK_PORT}`);
+  }
 });

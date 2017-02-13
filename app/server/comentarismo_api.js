@@ -14,7 +14,7 @@ var logger = log.getLogger();
 var elk_api = require("./elk_api");
 
 var errMsg = "Error: ";
-
+var moment = require("moment");
 
 export function getLatestNewsGroupDay(conn, cb) {
 
@@ -260,6 +260,42 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
     });
 }
 
+
+
+
+export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, cb) {
+    if (!table || !index || !value) {
+        logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
+        logger.warn(errMsg + "getAllByRangeIndexOrderByFilterSkipLimit --> search query is not correct.");
+        return cb()
+    }
+
+    if (!range){
+        range = 10
+    }
+
+    var dt = moment().add(-range,'month');
+
+    var query = conn.table(table)
+        .between(conn.time(dt.year(), dt.month(), dt.day(), '+00:00'), conn.now(), {index: 'date'})
+        .orderBy({index: conn.desc('date')})
+        .filter(conn.row(index).eq(value))
+        .skip(skip).limit(limit);
+
+
+    query.run().then(function (results) {
+        if (!results) {
+            logger.info('');
+            cb('');
+        } else {
+            console.log("getAllByRangeIndexOrderByFilterSkipLimit", results.length);
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getAllByRangeIndexOrderByFilterSkipLimit, ", err);
+        cb(err);
+    });
+}
 
 export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, cb) {
     if (!table || !index || !value) {

@@ -86,7 +86,7 @@ class SentimentComment extends Component {
                     <div className="container">
                         <div className="">
                             <div className="col-sm-12 text-center">
-                                <p className="copyright">© 2016 Comentarismo.com</p>
+                                <p className="copyright">© 2017 Comentarismo.com</p>
                             </div>
                         </div>
                     </div>
