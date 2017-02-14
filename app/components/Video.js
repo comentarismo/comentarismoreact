@@ -26,9 +26,8 @@ module.exports = React.createClass({
 
     getSource: function () {
         return (<h4>
-            <span id="channel_title">{this.props.video.metadata ? this.props.video.metadata.channeltitle : ""} </span>
-            on <span
-            id="network_title">{this.props.video.type}</span>
+            <span id="channel_title">{ this.props.video.metadata ? this.props.video.metadata.channeltitle + " ": " "} </span>
+            on <span id="network_title">{this.props.video.type}</span>
         </h4>)
     },
 
@@ -55,8 +54,8 @@ module.exports = React.createClass({
             <Card style={style}>
                 <div>
                     <a href={this.getVideoLink()} className='thumbnail video'>
-                        <div id={"fb-" + this.props.video.id} style={{"display": "none"}}>
-                            <Icon nick={this.props.video.id} size={125}/>
+                        <div id={"fb-" + this.props.video.metadata.id} style={{"display": "none"}}>
+                            <Icon nick={this.props.video.metadata.id} size={125}/>
                         </div>
                         <div id={"img-" + this.props.video.id} className="image-video">
                             <img src={this.props.video.metadata.thumbnail}/>
