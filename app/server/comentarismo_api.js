@@ -261,8 +261,6 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
 }
 
 
-
-
 export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
@@ -270,22 +268,37 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
         return cb()
     }
 
-    if (!range){
+    if (!range) {
         range = 10
     }
 
-    var dt = moment().add(-range,'month');
+    var date = new Date();
+    var dateObj = new Date(
+        date.getFullYear(),
+        date.getMonth() - range,
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+        date.getMilliseconds()
+    );
+
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
 
     var query = conn.table(table)
-        .between(conn.time(dt.year(), dt.month(), dt.day(), '+00:00'), conn.now(), {index: 'date'})
+        .between(conn.time(year, month, day, '+00:00'), date, {index: 'date'})
         .orderBy({index: conn.desc('date')})
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit);
 
 
+    // console.log("getAllByDateRangeIndexOrderByFilterSkipLimit, ",query);
+
     query.run().then(function (results) {
         if (!results) {
-            logger.info('');
+            logger.info('Error: getAllByRangeIndexOrderByFilterSkipLimit could not find anyting  -> ', query);
             cb('');
         } else {
             console.log("getAllByRangeIndexOrderByFilterSkipLimit", results.length);
