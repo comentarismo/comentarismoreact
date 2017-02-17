@@ -60,7 +60,6 @@ class AdminRead extends Component {
                     {"property": "og:type", "content": "comments"},
                     {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}
                 ]}
-            onChangeClientState={(newState) => console.log(newState)}
         />;
 
         if (this.props.params.table == "news") {

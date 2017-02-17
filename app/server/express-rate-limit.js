@@ -114,7 +114,7 @@ function RateLimit(options) {
                 console.log("WARN: RateLimit -> ", req.rateLimit.remaining, ip, pathname);
                 limit = 1;
             } else {
-                console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
+                // console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
             }
 
             var v = {
@@ -134,7 +134,7 @@ function RateLimit(options) {
             });
 
             analyticsQueue.addJob(job).catch((err) => {
-                console.error(err);
+                console.error("analyticsQueue.addJob -> ",err);
             });
 
             if (options.max && current > options.max) {

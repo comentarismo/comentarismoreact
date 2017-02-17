@@ -37,7 +37,6 @@ class SuggestComment extends Component {
                     {"name": "description", "content": "Welcome to Comentarismo"},
                     {"property": "og:type", "content": "article"}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <PlayNavbar/>
 

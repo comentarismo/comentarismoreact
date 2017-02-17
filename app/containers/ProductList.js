@@ -76,7 +76,6 @@ class ProductContainer extends Component {
                             "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
                         }
                     ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <Card>
                     <InfiniteScroll

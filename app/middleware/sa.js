@@ -30,7 +30,7 @@ export function getAllByIndexOrderByFilterSkipLimit(table,index,value,skip,limit
 
 export function getAPIAllByIndexFilterSkipLimit(table,index,value,skip,limit,sort,cb){
     var target = `${host}/listallbyindexorderby/${table}/${index}/${value}/${skip}/${limit}/${sort}/`;
-    console.log(target);
+    console.log("getAPIAllByIndexFilterSkipLimit->",target);
     superAgent
         .get(target)
         .withCredentials()
@@ -41,7 +41,7 @@ export function getAPIAllByIndexFilterSkipLimit(table,index,value,skip,limit,sor
 
 export function loadByID(table,index,cb){
     var target = `${host}/read/${table}/${index}/`;;
-    console.log(target);
+    console.log("loadByID->",target);
     superAgent
         .get(target)
         .withCredentials()
@@ -68,7 +68,7 @@ export function saSentimentCommentDetail(url,lang,refresh,cb){
     if(refresh){
         target =  target+`&refresh=${refresh}`;
     }
-    console.log(target);
+    console.log("saSentimentCommentDetail -> ",target);
     superAgent.get(target).end(function(err, res){
         // console.log(res.body)
         cb(err,res)

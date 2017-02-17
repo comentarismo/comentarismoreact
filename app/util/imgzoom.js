@@ -67,7 +67,7 @@
 
         function setup() {
 
-            console.log("container, ",container)
+            // console.log("container, ",container)
             var img;
             if (options.img) {
                 img = document.createElement('img');
@@ -80,7 +80,7 @@
                 image = container.children[0];
             }
             options = options || {};
-            console.log("Will setup with options, ",options)
+            // console.log("Will setup with options, ",options)
             //container.style.position = 'absolute';
             //image.style.width = options.width + 'px' || 'auto';
             //image.style.height = options.height + 'px' || 'auto';

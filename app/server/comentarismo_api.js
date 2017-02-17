@@ -26,9 +26,9 @@ export function getLatestNewsGroupDay(conn, cb) {
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Could not get getLatestNewsGroupDay");
+            cb("Error: Could not get getLatestNewsGroupDay");
         } else {
-            console.log("getLatestNewsGroupDay result -> ", results.length)
+            // console.log("getLatestNewsGroupDay result -> ", results.length)
             cb(null, results);
         }
     }).catch(function (err) {
@@ -49,12 +49,12 @@ export function getAllPluckDistinct(conn, table, pluck, cb) {
         .distinct({index: pluck});
 
 
-    console.log("getAllPluckDistinct -> ", query)
+    // console.log("getAllPluckDistinct -> ", query)
 
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Could not get getAllPluckDistinct");
+            cb("Error: Could not get getAllPluckDistinct");
         } else {
             // console.log("getAllPluckDistinct result -> ", results)
             cb(null, results);

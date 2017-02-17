@@ -107,12 +107,12 @@ export function getAllByIndexOrderByFilterDateSkipLimit(table, index, value, ski
         .skip(skip).limit(limit)
         .run(conn, function (err, cursor) {
             if (err || !cursor) {
-                console.log(err);
+                console.log("Error: getAllByIndexOrderByFilterDateSkipLimit ->",err);
                 cb(err);
             } else {
                 cursor.toArray(function (err, results) {
                     if (err) return cb(err);
-                    console.log(results.length);
+                    // console.log(results.length);
                     cb(null, results);
                 });
             }

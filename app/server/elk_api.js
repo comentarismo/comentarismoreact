@@ -50,7 +50,7 @@ function filterArray(hits, i, target, cb) {
             var r = row["_source"];
             target.push(r);
         }catch(e){
-            console.log("filterArray err: ",err);
+            console.log("Error: filterArray err: ",e);
         }
         i = i + 1;
         filterArray(hits, i, target, cb);

@@ -66,7 +66,6 @@ class Commentator extends Component {
                     {"property": "og:type", "content": "comments"},
                     {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <div className="container-fluid single-post-wrapper">
                     <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>

@@ -205,7 +205,7 @@ mem_stats.on("error", function (err) {
 // make sure to handle errors to avoid uncaughtException
 // would be annoying if stats crashed your app :)
 mem_stats.on('error', function (err) {
-    console.error(err); // or whatever you want
+    console.error("Error: mem_stats -> ",err); // or whatever you want
 });
 
 
@@ -268,7 +268,7 @@ server.get('/api/comment/:id', limiter, (req, res) => {
     logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
         if (err || !data) {
-            console.error(err);
+            console.error("Error: ",`/comment/${id}`,err);
             return res.status(500).send('Something broke!');
         } else {
             res.send(data);
@@ -348,7 +348,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
         return res.sendStatus(500);
     }
     if (params.error) {
-        console.log(urlTag, params.error);
+        console.log("Error: ", urlTag, params.error);
         return res.sendStatus(500);
     }
 
@@ -357,7 +357,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                     return res.sendStatus(500);
                 }
             } else {
@@ -395,7 +395,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
     var urlTag = `/v1/listbykeycount?table=${params.table}&index=${params.index}&value=${params.value}&operator=${params.operator}`;
 
     if (params.error) {
-        console.error(urlTag, params.error);
+        console.error("Error: ",urlTag, params.error);
         return res.send('Something broke!');
     }
 
@@ -404,7 +404,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                     return res.sendStatus(500);
                 }
             } else {
@@ -420,7 +420,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 
         getAllByMultipleIndexCount(params, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag,err.stack);
                 return res.sendStatus(500);
             } else {
                 //-------REDIS CACHE SAVE START ------//
@@ -507,7 +507,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err);
+                    console.error("Error: ",urlTag,err);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -551,7 +551,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
 
                 if (!idAux) {
                     logger.info("Error: " + err);
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                     return res.status(404).send();
                 }
 
@@ -611,7 +611,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -628,7 +628,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
 
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag,err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -740,7 +740,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -757,7 +757,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
         getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag,err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -800,7 +800,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -816,7 +816,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
 
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, "date", conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag,err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -848,7 +848,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -865,7 +865,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
         var uuid = conn.uuid(req.params.id);
         getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag,err.stack);
                 return res.status(500).send('Something broke!');
             } else if (!news) {
                 logger.info("News not found --> " + req.params.id);
@@ -895,7 +895,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
 
             getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, comments) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                     return res.status(500).send('Something broke!');
                 }
                 //logger.info(comments.length)
@@ -931,7 +931,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -948,7 +948,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
 
         getOneBySecondaryIndex("product", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
-                console.error(err.stack);
+                console.error("Error: ",urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             } else if (!news) {
                 logger.info("Product not found --> " + req.params.id);
@@ -956,7 +956,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
             }
             getAllByIndexOrderBySkipLimit("commentaries_product", "titleurlize", req.params.id, 0, 50, sort, conn, function (err, comments) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag, err.stack);
                     return res.status(500).send('Something broke!');
                 }
                 //logger.info(comments.length)
@@ -988,7 +988,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.log("apihomepage err ", err);
+                    console.log("Error: apihomepage err ", err);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -1005,6 +1005,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
 
         getLatestNewsGroupDay(conn, function (err, result) {
             if (err) {
+                console.log("Error: getLatestNewsGroupDay -> ", err);
                 return res.status(500).send({});
             } else {
                 if (!DISABLE_CACHE) {
@@ -1037,7 +1038,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.log("intropage err ", err);
+                    console.log("Error: intropage err ", err);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -1056,6 +1057,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 
         getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", 50, conn, function (err, alexarank) {
             if (err) {
+                console.log("Error: getAlexaRank, ", urlTag)
                 return res.status(500).send({});
             } else {
                 if (!DISABLE_CACHE) {
@@ -1110,8 +1112,7 @@ server.get('*', limiter, (req, res, next) => {
             if (!DISABLE_CACHE) {
                 if (err || !js) {
                     if (err) {
-                        logger.info("Error: Redis client " + location);
-                        console.error(err.stack);
+                        logger.info("Error: Redis client " + location, err.stack);
                         return res.status(500).send("Server unavailable");
                     }
                     //return res.status(500).send('Cache is broken!');
@@ -1130,7 +1131,7 @@ server.get('*', limiter, (req, res, next) => {
                 if (!xml) {
                     logger.info("Error: generateSitemap " + location);
                     logger.info("Error generateSitemap sitemap.xml --> ");
-                    console.error(err.stack);
+                    console.error("Error: ",urlTag,err.stack);
                     res.status(500).send("Server unavailable");
                     return;
                 }
@@ -1176,7 +1177,7 @@ server.get('*', limiter, (req, res, next) => {
                 if (!DISABLE_CACHE) {
                     if (err || !js) {
                         if (err) {
-                            console.error(err.stack);
+                            console.error("Error: section sitemap -> ", urlTag,err.stack);
                         }
                         //return res.status(500).send('Cache is broken!');
                     } else {
@@ -1192,16 +1193,16 @@ server.get('*', limiter, (req, res, next) => {
 
                 generateIndexXml(table, index, value, conn, function (err, xml) {
                     if (err || !xml) {
-                        logger.info("Error generateSitemap sitemap.xml --> ");
+                        logger.info("Error: generateSitemap sitemap.xml, will return 500 server unavailable --> ");
                         if (err) {
-                            console.error(err.stack);
+                            console.log("Error: ",urlTag,err.stack);
                         }
                         return res.status(500).send("Server unavailable");
                     }
 
                     if (xml) {
                         //-------REDIS CACHE SAVE START ------//
-                        logger.info(urlTag + " will save cached");
+                        // logger.info(urlTag + " will save cached");
                         if (!DISABLE_CACHE) {
                             if (!DISABLE_CACHE) {
                                 client.set(urlTag, xml, redis.print);
@@ -1218,7 +1219,7 @@ server.get('*', limiter, (req, res, next) => {
 
         } else {
             //not alllowed
-            logger.info("Error generateSitemap index.xml --> ");
+            logger.info("Error generateSitemap index.xml --> not alllowed --> Server unavailable");
             return res.status(500).send("Server unavailable");
         }
 
@@ -1230,9 +1231,7 @@ server.get('*', limiter, (req, res, next) => {
             if (redirectLocation) {
                 return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
             } else if (error) {
-                logger.info("Error: 500 " + location);
-                console.error(err.stack);
-                logger.info("500 internal error")
+                logger.info("Error: 500 internal error " + location, error.stack);
                 return res.status(500).send(error.message);
             }
 
@@ -1311,13 +1310,16 @@ server.get('*', limiter, (req, res, next) => {
 });
 
 server.on('error', (err) => {
-    console.error("server.on('error' --> ", err);
+    // console.error("server.on('error' --> ", err);
+    console.log("Got error on server level, something may be really wrong!!! ")
 });
 
 server.use((err, req, res, next) => {
     if (err) {
-        console.error("server.use((err, --> ", err);
-        logger.info("err stack ", err.stack);
+        // console.error("server.use((err, --> ", err);
+        // logger.info("err stack ", err.stack);
+        // console.log("Error: server.use((err, req, res, next) => ", err);
+        console.log("Got error on server.use, something may be really wrong!!! ")
     }
     // TODO report error here or do some further handlings
 

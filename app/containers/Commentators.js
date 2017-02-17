@@ -77,7 +77,6 @@ class CommentatorContainer extends Component {
                     {"property": "og:type", "content": "comments"},
                     {"property": "og:image", "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <div className="row single-post-row">
                     <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">

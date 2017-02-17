@@ -34,7 +34,8 @@ export default ({dispatch, getState}) => next => action => {
     overall.finally((err)=> {
         deferred.resolve(err)
     }).catch((err)=> {
-        console.log("createRequestPromise catch((err)", err);
+        console.log("createRequestPromise catch((err)) ");
+        deferred.resolve(err)
     });
 
     return deferred.promise

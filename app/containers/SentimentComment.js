@@ -75,7 +75,6 @@ class SentimentComment extends Component {
                         {"name": "description", "content": "Welcome to Comentarismo"},
                         {"property": "og:type", "content": "article"}
                     ]}
-                    onChangeClientState={(newState) => console.log("Helmet state -> ", newState)}
                 />
 
 

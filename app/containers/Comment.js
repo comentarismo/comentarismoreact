@@ -98,7 +98,7 @@ var Slideshow = React.createClass({
 class Comment extends Component {
     static fetchData({ store, params }) {
         let { id } = params;
-        console.log(id);
+        // console.log(id);
         return store.dispatch(loadCommentDetail({id}))
     }
 
@@ -122,7 +122,6 @@ class Comment extends Component {
                     {"name": "description", "content": "Welcome to Comentarismo"},
                     {"property": "og:type", "content": "article"}
                 ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
 
                 <Slideshow comment={comment}/>

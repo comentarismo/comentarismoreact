@@ -135,14 +135,14 @@ class Article extends Component {
                 var labels = [terrible, sucks, bad, notgood, eh, neutral, ok, good, likeit, lovedit, awesome, unknown];
                 var dp = {};
 
-                console.log("article.sentiment, ", article.sentiment)
+                // console.log("article.sentiment, ", article.sentiment)
                 for (var x in article.sentiment) {
                     var n = article.sentiment[x]["name"];
                     if (n == "") {
                         n = unknown;
                     }
                     var p = article.sentiment[x]["percent"];
-                    console.log(p);
+                    // console.log(p);
                     dp[n] = p;
                 }
                 var element = document.getElementById("myChart");
@@ -214,7 +214,6 @@ class Article extends Component {
                             "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
                         }
                     ]}
-                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 <a id="comentarismo-page" data-id={ article.titleurlize }/>
                 <a id="comentarismo-operator" data-id={ article.operator }/>
