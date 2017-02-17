@@ -16,7 +16,7 @@ var client = new elasticsearch.Client({
     log: 'info'
 });
 export function getElkByQuery(index, type, query, cb) {
-    console.log("getElkByQuery, ",index, type, query)
+    // console.log("getElkByQuery, ",index, type, query)
 
     client.search({
         index: index,

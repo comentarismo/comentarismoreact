@@ -56,7 +56,7 @@ export function getAllPluckDistinct(conn, table, pluck, cb) {
         if (!results) {
             cb("Could not get getAllPluckDistinct");
         } else {
-            console.log("getAllPluckDistinct result -> ", results)
+            // console.log("getAllPluckDistinct result -> ", results)
             cb(null, results);
         }
     }).catch(function (err) {
@@ -217,7 +217,7 @@ export function getAllByMultipleIndexCount(params, conn, cb) {
     console.log("getAllByMultipleIndexCount -> ", query);
 
     query.run().then(function (results) {
-        console.log("getAllByMultipleIndexCount, results", results);
+        // console.log("getAllByMultipleIndexCount, results", results);
         cb(null, results);
     }).catch(function (err) {
         console.log("Error: getAllByMultipleIndexCount, ", err);
@@ -270,6 +270,8 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
 
     if (!range) {
         range = 10
+    } else if (range > 6){
+        range = 6
     }
 
     var date = new Date();

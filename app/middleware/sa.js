@@ -12,7 +12,7 @@ export function getAllByIndexFilterSkipLimit(table,index,value,skip,limit,sort,c
 
 export function getAllByRangeIndexOrderByFilterSkipLimit(table,index,value,skip,limit,sort,orderby,range,cb){
     var target = "/gapi_range/"+table+"/"+index+"/"+value+"/"+skip+"/"+limit+"?sort="+sort+"&order="+orderby+"&range="+range;
-    console.log(target);
+    console.log("getAllByRangeIndexOrderByFilterSkipLimit -> ",target);
     superAgent
         .get(target).end(function(err, res){
         cb(err,res)
@@ -70,7 +70,7 @@ export function saSentimentCommentDetail(url,lang,refresh,cb){
     }
     console.log(target);
     superAgent.get(target).end(function(err, res){
-        console.log(res.body)
+        // console.log(res.body)
         cb(err,res)
     });
 }

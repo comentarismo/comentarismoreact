@@ -662,7 +662,7 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
     var start = parseInt(req.params.start);
     var end = parseInt(req.params.end);
     var range = parseInt(req.params.range);
-    if (!range){
+    if (!range) {
         //default 6 months
         range = 12
     }
@@ -678,7 +678,7 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error(err.stack);
+                    console.error("Error -> ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -694,7 +694,7 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
 
         getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, function (err, data) {
             if (err) {
-                console.error(err.stack);
+                console.error("getAllByDateRangeIndexOrderByFilterSkipLimit -> ", err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -713,7 +713,6 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
 
     });
 });
-
 
 
 /**
@@ -1237,7 +1236,7 @@ server.get('*', limiter, (req, res, next) => {
                 return res.status(500).send(error.message);
             }
 
-            let [ getCurrentUrl, unsubscribe ] = subscribeUrl();
+            let [getCurrentUrl, unsubscribe] = subscribeUrl();
 
             getReduxPromise().then(() => {
                 let reduxState = escape(JSON.stringify(store.getState()));
