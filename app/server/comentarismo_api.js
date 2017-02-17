@@ -16,9 +16,18 @@ var elk_api = require("./elk_api");
 var errMsg = "Error: ";
 var moment = require("moment");
 
+var LATEST_NEWS_DAYS_STR = process.env.LATEST_NEWS_DAYS;
+var LATEST_NEWS_DAYS = 180;
+
+if (LATEST_NEWS_DAYS_STR) {
+    LATEST_NEWS_DAYS = parseInt(LATEST_NEWS_DAYS_STR)
+} else {
+    LATEST_NEWS_DAYS = 180
+}
+
 export function getLatestNewsGroupDay(conn, cb) {
 
-    var query = conn.table('news').between(conn.now().sub(30 * 86400), conn.now(),
+    var query = conn.table('news').between(conn.now().sub(180 * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(100).group([conn.row('date').day(), conn.row('operator')]);
 
     console.log("getLatestNewsGroupDay, query, ", query);
@@ -270,8 +279,6 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
 
     if (!range) {
         range = 10
-    } else if (range > 6){
-        range = 6
     }
 
     var date = new Date();
