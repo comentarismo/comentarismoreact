@@ -992,9 +992,9 @@ server.get('/apihomepage/', limiter, (req, res) => {
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
-                console.log("apihomepage will return cached result");
+                // console.log("apihomepage will return cached result");
                 if (EXPIRE_REDIS) {
-                    console.log("Will expire REDIS")
+                    console.log("apihomepage, Will expire REDIS")
                     client.expire("apihomepage", 1);
                 }
                 res.type('application/json');

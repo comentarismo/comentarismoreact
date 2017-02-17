@@ -30,7 +30,7 @@ import BubbleChart from 'components/BubbleChart';
 class SentimentComment extends Component {
     static fetchData({store, params}) {
         let {url, lang, refresh} = params;
-        console.log("fetchData -> ", url, lang, refresh);
+        console.log("SentimentComment, fetchData -> ", url, lang, refresh);
         return store.dispatch(loadSentimentCommentDetail({url, lang, refresh}))
     }
 
@@ -346,6 +346,25 @@ var Sentiment = React.createClass({
 
             })
         }
+        //
+        // if (!comment || !comment.metadata) {
+        //     return (
+        //         <div>
+        //             <div className="col-xs-6">
+        //                 <h3>The Youtube report you are looking for might have been removed, had its name changed, or is
+        //                     temporarily unavailable. Please try again in few minutes. </h3>
+        //                 <div className="image">
+        //                     <img className="img img-responsive" src="/static/img/404notfound.jpeg"/>
+        //                 </div>
+        //                 <div className="text-404">
+        //
+        //                     <p>Please Use the Google Search box below and optimize your search </p>
+        //                 </div>
+        //             </div>
+        //             <GoogleSearchScript search={this.props.params}/>
+        //         </div>)
+        // }
+
 
         return (
             <div className="">
@@ -444,7 +463,7 @@ var Sentiment = React.createClass({
                     </div>
                     <div className="row">
                         <YouTube
-                            videoId={comment.id}
+                            videoId={comment.metadata ? comment.metadata.id : comment.id}
                             opts={opts}
                             onReady={this._onReady}
                         />

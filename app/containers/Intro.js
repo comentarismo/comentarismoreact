@@ -83,11 +83,9 @@ class Intro extends Component {
 
     render() {//languages/english/0/5/
         let {comment} = this.props;
-        comment && Object.keys(comment).map(article => {
-            return (
-                console.log(comment[article])
-            );
-        });
+        // comment && Object.keys(comment).map(article => {
+        //     return (comment[article]);
+        // });
 
         var targetLang = "english";
 

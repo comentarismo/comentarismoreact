@@ -16,7 +16,7 @@ var PlayNavbar = require('components/PlayNavbar');
 class SuggestComment extends Component {
     static fetchData({ store, params }) {
         let { index,value,skip,limit } = params;
-        console.log(value);
+        // console.log(value);
         return store.dispatch(loadSuggestCommentDetail({index, value, skip, limit}))
     }
 

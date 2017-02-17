@@ -79,7 +79,7 @@ export function loadSentimentCommentDetail({ url, lang, refresh }) {
         target =  target+`&refresh=${refresh}`;
     }
 
-    // console.log("loadSentimentCommentDetail -> ",target);
+    console.log("loadSentimentCommentDetail -> ",target);
     return {
         [CHAIN_API]: [
             ()=> {

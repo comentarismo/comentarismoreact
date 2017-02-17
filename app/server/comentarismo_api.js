@@ -18,8 +18,8 @@ var moment = require("moment");
 
 export function getLatestNewsGroupDay(conn, cb) {
 
-    var query = conn.table('news').between(conn.now().sub(2 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).group([conn.row('date').day(), conn.row('operator')]);
+    var query = conn.table('news').between(conn.now().sub(30 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(100).group([conn.row('date').day(), conn.row('operator')]);
 
     console.log("getLatestNewsGroupDay, query, ", query);
 
