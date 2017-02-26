@@ -28,16 +28,35 @@ if (LATEST_NEWS_DAYS_STR) {
 export function getLatestNewsGroupDay(conn, cb) {
 
     var query = conn.table('news').between(conn.now().sub(180 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(100).group([conn.row('date').day(), conn.row('operator')]);
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(500).group([conn.row('date').day(), conn.row('operator')])
+        .ungroup().map(function (row) {
+            return {
+                group: row("group"),
+                reduction: row("reduction").map(function (r) {
+                    return {
+                        id: r('id'),
+                        titleurlize: r('titleurlize'),
+                        title: r('title'),
+                        author: r('author'),
+                        summary: r('summary'),
+                        image: r('image'),
+                        totalComments: r('totalComments'),
+                        languages: r('languages'),
+                        date: r('date')
+                    }
+                })
+            }
+        })
 
-    console.log("getLatestNewsGroupDay, query, ", query);
+
+    // console.log("getLatestNewsGroupDay, query, ", query);
 
     query
         .run().then(function (results) {
         if (!results) {
             cb("Error: Could not get getLatestNewsGroupDay");
         } else {
-            // console.log("getLatestNewsGroupDay result -> ", results.length)
+            console.log("getLatestNewsGroupDay result -> ", results.length)
             cb(null, results);
         }
     }).catch(function (err) {

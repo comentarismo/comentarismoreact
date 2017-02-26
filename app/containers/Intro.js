@@ -17,6 +17,8 @@ import Subheader from 'material-ui/Subheader';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
 
+import moment from 'moment';
+
 
 const styles = {
     root: {
@@ -149,7 +151,7 @@ class Intro extends Component {
                                                             <a href={this.getArticleLink(news)}
                                                                className=''>
 
-                                                                <Card style={{
+                                                                <Card key={news.id} style={{
                                                                     width: '60%',
                                                                     display: 'inline-flex',
                                                                     padding: 30,
@@ -157,9 +159,7 @@ class Intro extends Component {
 
                                                                     <CardHeader title={comment[article].group[1]}
                                                                                 subtitle={
-                                                                                    <span>by <b>{news.author}</b>
-
-                                                                                </span>}
+                                                                                    <span>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
 
                                                                                 avatar={<img
                                                                                     style={{
