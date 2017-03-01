@@ -643,6 +643,12 @@ export function allcommentators(conn, cb) {
 
 }
 
+//eg table=news, index=operator_genre, value=bbcuk
+export function getAllDistinctByIndex(conn, table, index,value){
+    var query = conn.table(table).between([value,conn.minval],[value,conn.maxval],{index:index}).distinct({index:index})
+    return query.run()
+}
+
 export function getUser(id) {
     return {
         id,

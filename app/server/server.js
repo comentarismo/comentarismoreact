@@ -36,7 +36,8 @@ let {
     getCommentator,
     getCommentatorByNick,
     getByID,
-    getAllByIndexSkipLimit
+    getAllByIndexSkipLimit,
+    getAllDistinctByIndex
 } = require('./comentarismo_api');
 
 let server = new Express();
@@ -204,7 +205,7 @@ mem_stats.on("error", function (err) {
 // make sure to handle errors to avoid uncaughtException
 // would be annoying if stats crashed your app :)
 mem_stats.on('error', function (err) {
-    console.error("Error: mem_stats -> ",err); // or whatever you want
+    console.error("Error: mem_stats -> ", err); // or whatever you want
 });
 
 
@@ -267,7 +268,7 @@ server.get('/api/comment/:id', limiter, (req, res) => {
     logger.info(`/comment/${id}`)
     getByID("commentaries", id, conn, function (err, data) {
         if (err || !data) {
-            console.error("Error: ",`/comment/${id}`,err);
+            console.error("Error: ", `/comment/${id}`, err);
             return res.status(500).send('Something broke!');
         } else {
             res.send(data);
@@ -356,7 +357,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     return res.sendStatus(500);
                 }
             } else {
@@ -394,7 +395,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
     var urlTag = `/v1/listbykeycount?table=${params.table}&index=${params.index}&value=${params.value}&operator=${params.operator}`;
 
     if (params.error) {
-        console.error("Error: ",urlTag, params.error);
+        console.error("Error: ", urlTag, params.error);
         return res.send('Something broke!');
     }
 
@@ -403,7 +404,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     return res.sendStatus(500);
                 }
             } else {
@@ -419,7 +420,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 
         getAllByMultipleIndexCount(params, conn, function (err, data) {
             if (err) {
-                console.error("Error: ",urlTag,err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.sendStatus(500);
             } else {
                 //-------REDIS CACHE SAVE START ------//
@@ -506,7 +507,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err);
+                    console.error("Error: ", urlTag, err);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -550,7 +551,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
 
                 if (!idAux) {
                     logger.info("Error: " + err);
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     return res.status(404).send();
                 }
 
@@ -610,7 +611,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -627,7 +628,7 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
 
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
-                console.error("Error: ",urlTag,err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -739,7 +740,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -756,7 +757,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
 
         getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, function (err, data) {
             if (err) {
-                console.error("Error: ",urlTag,err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -799,7 +800,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -815,7 +816,7 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
 
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, "date", conn, function (err, data) {
             if (err) {
-                console.error("Error: ",urlTag,err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
 
@@ -847,7 +848,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -864,7 +865,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
         var uuid = conn.uuid(req.params.id);
         getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
-                console.error("Error: ",urlTag,err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             } else if (!news) {
                 logger.info("News not found --> " + req.params.id);
@@ -894,7 +895,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
 
             getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, comments) {
                 if (err) {
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     return res.status(500).send('Something broke!');
                 }
                 //logger.info(comments.length)
@@ -930,7 +931,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
-                    console.error("Error: ",urlTag, err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                 }
                 //return res.status(500).send('Cache is broken!');
             } else {
@@ -947,7 +948,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
 
         getOneBySecondaryIndex("product", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
-                console.error("Error: ",urlTag, err.stack);
+                console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             } else if (!news) {
                 logger.info("Product not found --> " + req.params.id);
@@ -955,7 +956,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
             }
             getAllByIndexOrderBySkipLimit("commentaries_product", "titleurlize", req.params.id, 0, 50, sort, conn, function (err, comments) {
                 if (err) {
-                    console.error("Error: ",urlTag, err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     return res.status(500).send('Something broke!');
                 }
                 //logger.info(comments.length)
@@ -1019,6 +1020,43 @@ server.get('/apihomepage/', limiter, (req, res) => {
         });
     });
 });
+
+server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, res) => {
+
+    var urlTag = `/api/getalldistinctybyindex/${req.params.table}/${req.params.index}/${req.params.value}`;
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.log("Error: " + urlTag + " err ", err);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                // console.log(urlTag+" will return cached result");
+                if (EXPIRE_REDIS) {
+                    console.log(urlTag + ", Will expire REDIS")
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
+            }
+        }
+        //-------REDIS CACHE END ------//
+
+        getAllDistinctByIndex(conn, req.params.table, req.params.index, req.params.value).then((result) => {
+            if (!DISABLE_CACHE) {
+                client.set(urlTag, JSON.stringify(result), redis.print);
+                client.expire(urlTag, REDIS_EXPIRE);
+            }
+            res.type('application/json');
+            return res.send(result);
+        }).catch((err) => {
+            console.log("Error: getAllDistinctByIndex -> ", err);
+            return res.status(500).send([])
+        })
+    })
+})
 
 
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
@@ -1130,7 +1168,7 @@ server.get('*', limiter, (req, res, next) => {
                 if (!xml) {
                     logger.info("Error: generateSitemap " + location);
                     logger.info("Error generateSitemap sitemap.xml --> ");
-                    console.error("Error: ",urlTag,err.stack);
+                    console.error("Error: ", urlTag, err.stack);
                     res.status(500).send("Server unavailable");
                     return;
                 }
@@ -1176,7 +1214,7 @@ server.get('*', limiter, (req, res, next) => {
                 if (!DISABLE_CACHE) {
                     if (err || !js) {
                         if (err) {
-                            console.error("Error: section sitemap -> ", urlTag,err.stack);
+                            console.error("Error: section sitemap -> ", urlTag, err.stack);
                         }
                         //return res.status(500).send('Cache is broken!');
                     } else {
@@ -1194,7 +1232,7 @@ server.get('*', limiter, (req, res, next) => {
                     if (err || !xml) {
                         logger.info("Error: generateSitemap sitemap.xml, will return 500 server unavailable --> ");
                         if (err) {
-                            console.log("Error: ",urlTag,err.stack);
+                            console.log("Error: ", urlTag, err.stack);
                         }
                         return res.status(500).send("Server unavailable");
                     }

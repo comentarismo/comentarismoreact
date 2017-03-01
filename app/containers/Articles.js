@@ -1,8 +1,10 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {loadArticles} from 'actions/articles'
+import {loadGenres} from 'actions/genres'
 import {Link} from 'react-router'
 import _ from 'lodash'
+import RaisedButton from 'material-ui/RaisedButton';
+import MobileTearSheet from 'components/MobileTearSheet';
 
 import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
@@ -12,11 +14,15 @@ var InfiniteScroll = require('./InfiniteScroll')(React);
 import Helmet from "react-helmet";
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
+const style = {
+    margin: 12,
+};
+
 class ArticleContainer extends Component {
-    //static fetchData({ store, params }) {
-    //    let { index,value } = params;
-    //    return store.dispatch(loadArticles({index, value}))
-    //}
+    static fetchData({store, params}) {
+        let {index, value} = params;
+        return store.dispatch(loadGenres({table: "news", index: "operator_genre", value: value}))
+    }
 
     constructor(props) {
         super();
@@ -24,6 +30,7 @@ class ArticleContainer extends Component {
             skip: 0,
             limit: 5,
             articles: [],
+            genres: [],
             hasMore: true
         };
     }
@@ -32,7 +39,7 @@ class ArticleContainer extends Component {
         var index = this.props.params.index;
         var value = this.props.params.value;
         //console.log(index,value);
-        getAllByRangeIndexOrderByFilterSkipLimit("news", index, value, skip, limit, "date", "desc",10, function (err, res) {
+        getAllByRangeIndexOrderByFilterSkipLimit("news", index, value, skip, limit, "date", "desc", 10, function (err, res) {
             // Do something
             if (err || !res || res.body.length == 0) {
                 //this.props.params.hasMore = false;
@@ -79,6 +86,14 @@ class ArticleContainer extends Component {
                     ]}
                 />
                 <Card>
+                    { this.props.genres && this.props.genres.length > 0 &&
+                    <MobileTearSheet >
+                        {this.props.genres.map(function (a) {
+                            return <RaisedButton key={a[1]} href={"/news/genre/" + a[1]} label={a[1]} style={style}/>
+                        })}
+                    </MobileTearSheet>
+                    }
+
                     <InfiniteScroll
                         ref='masonryContainer'
                         skip={0}
@@ -110,9 +125,10 @@ function mapStateToProps(state) {
         hasMore: true,
         perPage: 50,
         index_: state.index_,
-        value_: state.value_
+        value_: state.value_,
+        genres: state.genres,
     }
 }
 
 export {ArticleContainer}
-export default connect(mapStateToProps, {loadArticles})(ArticleContainer)
+export default connect(mapStateToProps, {loadGenres})(ArticleContainer)
