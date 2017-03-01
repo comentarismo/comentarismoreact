@@ -1769,7 +1769,7 @@ function loadRecsForUser(that, curr_userId, cb) {
             }
             // add them to ui
             var recs = data.recommendations;
-            // console.log(urlTarget, JSON.stringify(recs));
+            console.log(urlTarget, JSON.stringify(recs));
             if (window.debug) {
                 $('.error').hide();
                 $('.success').html("OK: recommend " + curr_userId);
@@ -1786,7 +1786,8 @@ function loadRecsForUser(that, curr_userId, cb) {
                     var thing = t.thing;
                     var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
 
-                    list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
+                    if(!_.contains(t.people, curr_userId))
+                        list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
                 }
             }
             html = html + list + "</ul>";
