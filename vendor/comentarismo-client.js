@@ -1645,7 +1645,7 @@ function decodeBuffer(target) {
 
 function createItem(that, namespace, thing, image, link, cb) {
 
-    var urlTarget = that.host + "/reco/items/add";
+    var urlTarget = that.reco + "/items/add";
 
     console.log("createItem, ", urlTarget)
     $.ajax({
@@ -1682,7 +1682,7 @@ function createItem(that, namespace, thing, image, link, cb) {
 
 function createUser(that, namespace, curr_userId, cb) {
 
-    var urlTarget = that.host + "/reco/users/add";
+    var urlTarget = that.reco + "/users/add";
 
     console.log("createUser, ", urlTarget)
     $.ajax({
@@ -1719,7 +1719,7 @@ function likeItem(that, itemID, userID, cb) {
     // send off the like request
     // var encodedString = encodeBuffer(itemID)
 
-    var urlTarget = that.host + "/reco/users/" + userID + "/like/" + itemID;
+    var urlTarget = that.reco + "/users/" + userID + "/like/" + itemID;
 
     console.log("likeItem, ", urlTarget)
     $.ajax({
@@ -1749,7 +1749,7 @@ function likeItem(that, itemID, userID, cb) {
 
 function loadRecsForUser(that, curr_userId, cb) {
 
-    var urlTarget = that.host + "/reco/users/" + curr_userId + "/recommend";
+    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend";
     console.log("loadRecsForUser, ", urlTarget);
     // request recommendations
     $.ajax({
@@ -1815,8 +1815,8 @@ function loadRecsForUser(that, curr_userId, cb) {
 
 function loadRecsWithLikes(that, curr_userId, cb) {
 
-    var urlTarget = that.host + "/reco/users/" + curr_userId + "/recommend";
-    var urlTarget2 = that.host + "/reco/users/" + curr_userId + "/likes";
+    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend";
+    var urlTarget2 = that.reco + "/reco/users/" + curr_userId + "/likes";
 
     // request recommendations
     $.ajax({
@@ -1827,7 +1827,7 @@ function loadRecsWithLikes(that, curr_userId, cb) {
         success: function (data) {
             // add them to ui
             var recs = data.recommendations;
-            console.log("/reco/users/" + curr_userId + "/recommend", JSON.stringify(recs));
+            console.log("/users/" + curr_userId + "/recommend", JSON.stringify(recs));
             if (window.debug) {
                 $('.error').hide();
                 $('.success').html("OK: loadRecs " + curr_userId);
@@ -1887,7 +1887,7 @@ function loadRecsWithLikes(that, curr_userId, cb) {
 
 function getLikes(that, curr_userId, cb) {
 
-    var urlTarget = that.host + "/reco/users/" + curr_userId + "/likes"
+    var urlTarget = that.reco + "/users/" + curr_userId + "/likes"
 
     $.ajax({
         url: urlTarget,
@@ -2046,6 +2046,7 @@ Comentarismo = function (options) {
         this.wshost = "ws://" + "localhost:3000";
         this.elk = "http://localhost:3000/elk";
         this.analytics = "http://localhost:3013";
+        this.reco = "http://localhost:3456";
     } else {
         //if there is no https defined ? we use http
         if (options.host && options.host.indexOf("https://") !== -1) {
@@ -2063,6 +2064,12 @@ Comentarismo = function (options) {
         } else {
             this.analytics = "http://analytics.comentarismo.com";
         }
+        if (options.reco && options.reco.indexOf("https") !== -1) {
+            this.reco = options.reco;
+        } else {
+            this.reco = "http://reco.comentarismo.com";
+        }
+
 
         this.wshost = "ws://" + options.host;
     }
