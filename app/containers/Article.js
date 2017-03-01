@@ -208,6 +208,7 @@ class Article extends Component {
                         {"property": "og:type", "content": "article"},
 
                         {"property": "og:audio", "content": `${article.permalink_url ? article.permalink_url : ''}`},
+                        {"property": "og:title", "content": `${article.title ? article.title : ''}`},
 
                         {
                             "property": "og:image",

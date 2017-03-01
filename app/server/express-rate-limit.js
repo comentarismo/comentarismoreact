@@ -6,22 +6,23 @@ var url = require("url");
 
 const Queue = require('rethinkdb-job-queue');
 
-var rethinkdbHost = process.env.RETHINKDB_HOST || 'g7-box';
-var rethinkdbPort = process.env.RETHINKDB_PORT || 28015;
-var rethinkdbKey = process.env.RETHINKDB_KEY || '';
+var RETHINKDB_HOST = process.env.RETHINKDB_HOST || 'g7-box';
+var RETHINKDB_PORT = process.env.RETHINKDB_PORT || 28015;
+var RETHINKDB_KEY = process.env.RETHINKDB_KEY || '';
 
 var RETHINKDB_QUEUE_TABLE = process.env.RETHINKDB_QUEUE_TABLE || "comentarismosync";
 var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
 
 var r = require('rethinkdbdash');
 const connection = r({
+    discovery: false,
     db: RETHINKDB_QUEUE_TABLE,
     timeout: targetTimeout,
 
     servers: [
         {
-            host: rethinkdbHost,
-            port: rethinkdbPort
+            host: RETHINKDB_HOST,
+            port: RETHINKDB_PORT
         }
     ]
 });

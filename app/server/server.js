@@ -15,8 +15,6 @@ import createRoutes from 'routes/index';
 
 import {Provider} from 'react-redux';
 
-// import r from 'rethinkdb';
-
 import {generateSitemap, generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
 
@@ -94,6 +92,7 @@ if (process.env.NODE_ENV === 'production') {
 
 var r = require('rethinkdbdash');
 var conn = r({
+    discovery: false,
     db: RETHINKDB_TABLE,
     timeout: RETHINKDB_TIMEOUT,
     servers: [

@@ -34,6 +34,7 @@ class XScript extends React.Component {
                             'cached: "api.comentarismo.com/elk",'+
                             'table:"commentaries",' +
                             'forum: "test",' +
+                            'reco: "myid",' +
                             'key: key,' +
                             'page: encodeURIComponent(page),' +
                             'operator: operator,' +
