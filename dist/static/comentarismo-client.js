@@ -1647,7 +1647,9 @@ function createItem(that, namespace, thing, image, link, cb) {
 
     var urlTarget = that.reco + "/items/add";
 
-    console.log("createItem, ", urlTarget)
+    if (window.debug) {
+        console.log("createItem, ", urlTarget)
+    }
     $.ajax({
         url: urlTarget,
         type: "POST",
@@ -1661,8 +1663,8 @@ function createItem(that, namespace, thing, image, link, cb) {
         headers: {"COMENTARISMO-KEY": that.key},
         dataType: "json",
         success: function (data) {
-            // console.log("OK: createItem, ");
             if (window.debug) {
+                console.log("OK: createItem, ");
                 $('.error').hide();
                 $('.success').html("OK: createItem, " + JSON.stringify(data));
                 $('.success').show();
@@ -1684,7 +1686,9 @@ function createUser(that, namespace, curr_userId, cb) {
 
     var urlTarget = that.reco + "/users/add";
 
-    console.log("createUser, ", urlTarget)
+    if (window.debug) {
+        console.log("createUser, ", urlTarget)
+    }
     $.ajax({
         url: urlTarget,
         type: "POST",
@@ -1696,8 +1700,8 @@ function createUser(that, namespace, curr_userId, cb) {
         headers: {"COMENTARISMO-KEY": that.key},
         dataType: "json",
         success: function (data) {
-            // console.log("OK: likeItem, ");
             if (window.debug) {
+                console.log("OK: likeItem, ");
                 $('.error').hide();
                 $('.success').html("OK: createUser, " + JSON.stringify(data));
                 $('.success').show();
@@ -1721,14 +1725,16 @@ function likeItem(that, itemID, userID, cb) {
 
     var urlTarget = that.reco + "/users/" + userID + "/like/" + itemID;
 
-    console.log("likeItem, ", urlTarget)
+    if (window.debug) {
+        console.log("likeItem, ", urlTarget)
+    }
     $.ajax({
         url: urlTarget,
         type: "GET",
         headers: {"COMENTARISMO-KEY": that.key},
         success: function (data) {
-            // console.log("OK: likeItem, ");
             if (window.debug) {
+                console.log("OK: likeItem, ");
                 $('.error').hide();
                 $('.success').html("OK: likeItem, " + JSON.stringify(data));
                 $('.success').show();
@@ -1759,7 +1765,7 @@ function loadRecsForUser(that, curr_userId, cb) {
         success: function (data) {
             if (!data) {
                 var error = "Error: !data, after " + urlTarget;
-                console.log(error);
+                console.log("Error: loadRecsForUser ->", error);
                 if (window.debug) {
                     $('.success').hide();
                     $('.error').html("Error:, loadRecs, " + JSON.stringify(error));
@@ -1769,7 +1775,6 @@ function loadRecsForUser(that, curr_userId, cb) {
             }
             // add them to ui
             var recs = data.recommendations;
-            console.log(urlTarget, JSON.stringify(recs));
             if (window.debug) {
                 $('.error').hide();
                 $('.success').html("OK: recommend " + curr_userId);
@@ -1786,7 +1791,7 @@ function loadRecsForUser(that, curr_userId, cb) {
                     var thing = t.thing;
                     var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
 
-                    if(!_.contains(t.people, curr_userId))
+                    if (!_.contains(t.people, curr_userId))
                         list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
                 }
             }
@@ -1828,8 +1833,8 @@ function loadRecsWithLikes(that, curr_userId, cb) {
         success: function (data) {
             // add them to ui
             var recs = data.recommendations;
-            console.log("/users/" + curr_userId + "/recommend", JSON.stringify(recs));
             if (window.debug) {
+                console.log("loadRecsWithLikes, ", "/users/" + curr_userId + "/recommend", JSON.stringify(recs));
                 $('.error').hide();
                 $('.success').html("OK: loadRecs " + curr_userId);
                 $('.success').show();
@@ -1849,7 +1854,6 @@ function loadRecsWithLikes(that, curr_userId, cb) {
                     var list = "";
                     for (var i = 0; i < recs.length; i++) {
                         var t = recs[i];
-                        // console.log(t);
                         if (t)
                             list = list + "<li id='r_" + t.id + "' class='item'>" + t.thing + "<a href='#' class='btn' onclick=likeItem('" + t.id + "')> like</a></li>"
                     }
@@ -2210,7 +2214,7 @@ Comentarismo = function (options) {
 
             //create item
             //namespace, thing, image, link, thingId
-            recohelper.createItem(that, operator, options.title, options.image, options.page, function (itemID) {
+            recohelper.createItem(that, operator, options.title, options.image, document.location.href, function (itemID) {
                 //create user
                 recohelper.createUser(that, operator, user, function (userID) {
                     //create view/like
