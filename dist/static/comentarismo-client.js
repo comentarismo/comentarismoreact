@@ -2047,32 +2047,32 @@ Comentarismo = function (options) {
     sentimentFilter = '';
 
     if (document.location.hostname.indexOf("localhost") !== -1) {
-        this.host = "http://localhost:3000";
+        this.host = "//localhost:3000";
         this.wshost = "ws://" + "localhost:3000";
-        this.elk = "http://localhost:3000/elk";
-        this.analytics = "http://localhost:3013";
-        this.reco = "http://localhost:3456";
+        this.elk = "//localhost:3000/elk";
+        this.analytics = "//localhost:3013";
+        this.reco = "//localhost:3456";
     } else {
         //if there is no https defined ? we use http
         if (options.host && options.host.indexOf("https://") !== -1) {
             this.host = host = options.host;
         } else {
-            this.host = host = "http://" + options.host;
+            this.host = host = "//" + options.host;
         }
         if (options.cached && options.cached.indexOf("https") !== -1) {
             this.elk = elk = options.cached;
         } else {
-            this.elk = elk = "http://" + options.cached;
+            this.elk = elk = "//" + options.cached;
         }
         if (options.analytics && options.analytics.indexOf("https") !== -1) {
             this.analytics = options.analytics;
         } else {
-            this.analytics = "http://analytics.comentarismo.com";
+            this.analytics = "//analytics.comentarismo.com";
         }
         if (options.reco && options.reco.indexOf("https") !== -1) {
             this.reco = options.reco;
         } else {
-            this.reco = "http://reco.comentarismo.com";
+            this.reco = "//reco.comentarismo.com";
         }
 
 

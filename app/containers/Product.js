@@ -91,7 +91,7 @@ class Product extends Component {
 
                         {
                             "property": "og:image",
-                            "content": `${article.image ? article.image : "http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
+                            "content": `${article.image ? article.image : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
                         }
                     ]}
                 />

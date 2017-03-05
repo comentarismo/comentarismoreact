@@ -81,17 +81,17 @@ class ArticleContainer extends Component {
                         {"property": "og:type", "content": "article"},
                         {
                             "property": "og:image",
-                            "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
+                            "content": '//comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
                         }
                     ]}
                 />
                 <Card>
                     { this.props.genres && this.props.genres.length > 0 &&
-                    <MobileTearSheet >
+                    <div >
                         {this.props.genres.map(function (a) {
                             return <RaisedButton key={a[1]} href={"/news/genre/" + a[1]} label={a[1]} style={style}/>
                         })}
-                    </MobileTearSheet>
+                    </div>
                     }
 
                     <InfiniteScroll

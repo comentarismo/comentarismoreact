@@ -73,7 +73,7 @@ class ProductContainer extends Component {
                         {"property": "og:type", "content": "article"},
                         {
                             "property": "og:image",
-                            "content": 'http://comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
+                            "content": '//comentarismo.com/static/img/comentarismo-extra-mini-logo.png'
                         }
                     ]}
                 />

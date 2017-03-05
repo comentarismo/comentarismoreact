@@ -96,7 +96,7 @@ class SearchJCP extends Component {
             }
 
             // var url2 = "http://localhost:3000/jcp/_all";
-            var targetAPI = "http://api.comentarismo.com/jcp/_all";
+            var targetAPI = "//api.comentarismo.com/jcp/_all";
 
             const searchkit = new SearchkitManager(targetAPI, {
                 searchOnLoad: searchOnLoad,
