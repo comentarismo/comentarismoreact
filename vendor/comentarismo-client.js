@@ -486,7 +486,10 @@ var initComentarismoContainer = function initComentarismoContainer(div, noreply,
 
 };
 
-var recoHTML = "<p>Recommended for you: </p><div class='comentarismo-recommendations'  id='comentarismo-recommendations'>" + "</div>";
+
+var recoThingsHTML = "<p class='p-comentarismo-recommendations-thing'  id='p-comentarismo-recommendations-thing'><b>People who viewed this page could be interested in: </b></p><div class='comentarismo-recommendations-thing'  id='comentarismo-recommendations-thing'>" + "</div>";
+
+var recoHTML = "<p class='p-comentarismo-recommendations'  id='p-comentarismo-recommendations'><b>What other people are visiting after viewing this page: </b></p><div class='comentarismo-recommendations'  id='comentarismo-recommendations'>" + "</div>";
 
 var initRecoContainer = function initRecoContainer(div, noreply, options){
     var commenticon = (options && options.commenticon) ? options.commenticon : "http://api.comentarismo.com/static/images/comments.ico";
@@ -501,6 +504,9 @@ var initRecoContainer = function initRecoContainer(div, noreply, options){
         div = "#comentarismo-container";
     }
     var htmlElement = $(div);
+
+    htmlElement.prepend(recoThingsHTML);
+
     htmlElement.prepend(targetHtml);
 }
 
@@ -1753,10 +1759,9 @@ function likeItem(that, itemID, userID, cb) {
     });
 }
 
-function loadRecsForUser(that, curr_userId, cb) {
-
-    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend";
-    console.log("loadRecsForUser, ", urlTarget);
+function loadRecsForThing(that, curr_thingId, cb) {
+    var urlTarget = that.reco + "/thing/" + curr_thingId + "/recommend";
+    console.log("loadRecsForThing, ", urlTarget);
     // request recommendations
     $.ajax({
         url: urlTarget,
@@ -1765,7 +1770,9 @@ function loadRecsForUser(that, curr_userId, cb) {
         success: function (data) {
             if (!data) {
                 var error = "Error: !data, after " + urlTarget;
-                console.log("Error: loadRecsForUser ->", error);
+                console.log("Error: loadRecsForThing ->", error);
+                $('#comentarismo-recommendations-thing').hide();
+                $('#p-comentarismo-recommendations-thing').hide();
                 if (window.debug) {
                     $('.success').hide();
                     $('.error').html("Error:, loadRecs, " + JSON.stringify(error));
@@ -1779,6 +1786,91 @@ function loadRecsForUser(that, curr_userId, cb) {
                 $('.error').hide();
                 $('.success').html("OK: recommend " + curr_userId);
                 $('.success').show();
+            }
+
+            if (!recs || recs.length == 0) {
+                if (window.debug) {
+                    console.log("Could not find any recommendation for this thing, will hide #comentarismo-recommendations-thing")
+                }
+                $('#comentarismo-recommendations-thing').hide();
+                $('#p-comentarismo-recommendations-thing').hide();
+                return cb();
+            }
+
+            var html = "<ul>";
+            var list = "";
+            for (var i = 0; i < 10 && i < recs.length; i++) {
+                var t = recs[i];
+                if (t) {
+                    // var thing = decodeBuffer(t.thing);
+                    var thing = t.thing;
+                    var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
+
+                    if (!_.contains(t.people, curr_userId))
+                        list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
+                }
+            }
+            html = html + list + "</ul>";
+
+            $("#comentarismo-recommendations-thing").prepend(html);
+
+            for (i in data) {
+                $(".item#r_" + data[i].itemId).addClass("hidden");
+            }
+            cb();
+
+        }, error: function (error) {
+            console.log("Error:, loadRecsForThing, ", urlTarget, error);
+            $('#comentarismo-recommendations-thing').hide();
+            $('#p-comentarismo-recommendations-thing').hide();
+            if (window.debug) {
+                $('.success').hide();
+                $('.error').html("Error:, loadRecsForThing, " + JSON.stringify(error));
+                $('.error').show();
+            }
+            cb();
+        },
+        dataType: "json",
+    });
+}
+
+function loadRecsForUser(that, curr_userId, cb) {
+
+    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend";
+    console.log("loadRecsForUser, ", urlTarget);
+    // request recommendations
+    $.ajax({
+        url: urlTarget,
+        type: "GET",
+        headers: {"COMENTARISMO-KEY": that.key},
+        success: function (data) {
+            if (!data) {
+                var error = "Error: !data, after " + urlTarget;
+                console.log("Error: loadRecsForUser ->", error);
+                $('#comentarismo-recommendations').hide();
+                $('#p-comentarismo-recommendations').hide();
+                if (window.debug) {
+                    $('.success').hide();
+                    $('.error').html("Error:, loadRecsForUser, " + JSON.stringify(error));
+                    $('.error').show();
+                }
+                return cb();
+            }
+            // add them to ui
+            var recs = data.recommendations;
+            if (window.debug) {
+                $('.error').hide();
+                $('.success').html("OK: recommend " + curr_userId);
+                $('.success').show();
+            }
+
+            if (!recs || recs.length == 0) {
+                if (window.debug) {
+                    console.log("Could not find any recommendation for this thing, will hide #comentarismo-recommendations-thing")
+                }
+                $('#comentarismo-recommendations').hide();
+                $('#p-comentarismo-recommendations').hide();
+                return cb();
             }
 
 
@@ -1805,10 +1897,12 @@ function loadRecsForUser(that, curr_userId, cb) {
             cb();
 
         }, error: function (error) {
-            console.log("Error:, loadRecs, ", urlTarget, error);
+            console.log("Error:, loadRecsForUser, ", urlTarget, error);
+            $('#comentarismo-recommendations').hide();
+            $('#p-comentarismo-recommendations').hide();
             if (window.debug) {
                 $('.success').hide();
-                $('.error').html("Error:, loadRecs, " + JSON.stringify(error));
+                $('.error').html("Error:, loadRecsForUser, " + JSON.stringify(error));
                 $('.error').show();
             }
             cb();
@@ -1927,6 +2021,7 @@ function getLikes(that, curr_userId, cb) {
 module.exports = {
     getLikes: getLikes,
     loadRecsForUser: loadRecsForUser,
+    loadRecsForThing: loadRecsForThing,
     likeItem: likeItem,
     selectUser: selectUser,
     loadRecsWithLikes: loadRecsWithLikes,
@@ -2226,6 +2321,9 @@ Comentarismo = function (options) {
                         //load recommentations for user
                         recohelper.loadRecsForUser(that, userID, function () {
 
+                            recohelper.loadRecsForThing(that, itemID, function () {
+
+                            });
                         });
                     });
                 })

@@ -26,6 +26,36 @@
     border: 1px solid orange;
 }
 
+.comentarismo-recommendations-thing img {
+    width:100px;
+    height:100px;
+}
+
+.comentarismo-recommendations-thing ul {
+    display: table-row;
+    width: 100px;
+    height: 190px;
+}
+
+.comentarismo-recommendations-thing ul li {
+    float:left;
+    width:116px;
+    padding:3px;
+    background-repeat: no-repeat;
+    background-position: center 30px;
+    list-style-type: none;
+
+}
+
+.comentarismo-recommendations-thing {
+    margin-top:5px;
+    margin-left:5px;
+}
+
+.comentarismo-recommendations-thing ul li:hover {
+    border: 1px solid orange;
+}
+
 .comentarismo-comment-footer {
     padding: 10px 0px;
 }
