@@ -1,6 +1,3 @@
-@import '//fonts.googleapis.com/css?family=Reem+Kufi';
-@import '//fonts.googleapis.com/css?family=Lusitana';
-@import '//fonts.googleapis.com/css?family=Raleway:300';
 /** override bootstrap defaults **/
 * {
     font-family: 'Reem Kufi', sans-serif;
