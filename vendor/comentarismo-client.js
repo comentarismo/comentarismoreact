@@ -1799,15 +1799,18 @@ function loadRecsForThing(that, curr_thingId, cb) {
 
             var html = "<ul>";
             var list = "";
-            for (var i = 0; i < 10 && i < recs.length; i++) {
+            var count = 0;
+            for (var i = 0; i < recs.length; i++) {
                 var t = recs[i];
                 if (t) {
                     // var thing = decodeBuffer(t.thing);
                     var thing = t.thing;
-                    var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
+                    var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) );
 
-                    if (!_.contains(t.people, curr_userId))
-                        list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
+                    if (!_.contains(t.people, curr_userId) && count < 7) {
+                        count = count + 1;
+                        list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>";
+                    }
                 }
             }
             html = html + list + "</ul>";
@@ -1876,15 +1879,18 @@ function loadRecsForUser(that, curr_userId, cb) {
 
             var html = "<ul>";
             var list = "";
-            for (var i = 0; i < 10 && i < recs.length; i++) {
+            var count = 0;
+            for (var i = 0; i < recs.length; i++) {
                 var t = recs[i];
                 if (t) {
                     // var thing = decodeBuffer(t.thing);
                     var thing = t.thing;
                     var img = (t.image ? "<img  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
 
-                    if (!_.contains(t.people, curr_userId))
+                    if (!_.contains(t.people, curr_userId) && count < 7) {
+                        count = count + 1;
                         list = list + "<a href='" + decodeURI(t.link) + "' target='_blank'><li id='r_" + t.id + "' class='reco-item'>" + img + thing + "</li></a>"
+                    }
                 }
             }
             html = html + list + "</ul>";
