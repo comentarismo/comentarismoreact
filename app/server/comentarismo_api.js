@@ -28,7 +28,7 @@ if (LATEST_NEWS_DAYS_STR) {
 export function getLatestNewsGroupDay(conn, cb) {
 
     var query = conn.table('news').between(conn.now().sub(180 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(500).group([conn.row('date').day(), conn.row('operator')])
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group([conn.row('date').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
                 group: row("group"),

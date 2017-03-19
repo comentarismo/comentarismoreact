@@ -21,6 +21,7 @@ var width = "240";
 var height = "245";
 
 var base64Encode = require("../util/imgresizer").base64Encode;
+import Autocomplete from 'components/Autocomplete'
 
 class Intro extends Component {
     static fetchData({store, params}) {
@@ -84,7 +85,7 @@ class Intro extends Component {
         if (typeof window !== 'undefined') {
 
             var host = "//img.comentarismo.com/r";
-            console.log("IMGRESIZER ",src)
+            // console.log("IMGRESIZER ",src)
             //do img resize
             var request = $.ajax({
                 url: host + '/img/',
@@ -117,7 +118,7 @@ class Intro extends Component {
         }
 
     }
-
+	
     render() {//languages/english/0/5/
         let {comment} = this.props;
         // comment && Object.keys(comment).map(article => {
@@ -171,34 +172,40 @@ class Intro extends Component {
                         {"property": "og:type", "content": "article"}
                     ]}
                 />
-                <span style={{paddingLeft: '30px', textTransform: 'uppercase', fontSize: '16px', textDecoration: 'underline'}}>
-                    Latest news from around the web</span>
+                <Autocomplete />
+                <span style={{paddingLeft: '30px', paddingTop: '30px', textTransform: 'uppercase', fontSize: '16px', textDecoration: 'underline'}}>
+                    Latest news </span>
                 {
                     comment && Object.keys(comment).map(article => {
+                        var count = 0;
                         return (
                             comment[article].group && comment[article].reduction &&
                             <div>
-                                {comment[article].reduction.map((news, i) => (
-                                    news.languages == targetLang && i < 3 ? (
-                                        <a href={this.getArticleLink(news)}>
-                                            <Card key={news.id} style={style}>
-                                                <CardHeader title={comment[article].group[1]}
-                                                            subtitle={<span style={{ fontSize: '12 !important' }} >by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
-                                                            avatar={<img  style={{height: '24px', width: '24' }}  src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
-                                                <CardMedia
-                                                    overlay={<CardTitle style={{ height: '45px', padding: '0 10px' }} title={<span style={{ fontSize: '14px !important', lineHeight: '1.5'}}>{news.title}</span>}/>}>
-                                                    <div style={{width: '100%', height: '100%', left: '0px', top: '0px', zIndex: -1  }} id={"img-"+news.id}>
-                                                        <img style={{width: '100%', height: '100%'}} id={news.id}/>
-                                                        {this.getImageElement(news.image, news.id)}
-                                                    </div>
-                                                </CardMedia>
-                                                <CardTitle
-                                                    title={<span style={{ fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
-                                                    subtitle={<span style={{ fontSize: '12px !important' }}>{this.getTitle(news.summary)}</span>}/>
-                                            </Card>
-                                        </a>
-                                    ) : ''
-                                ))}
+                                {comment[article].reduction.map((news) =>
+                                {
+                                
+                                let content = "";
+	                             if (news.languages == targetLang && count < 3){
+	                                 count = count + 1;
+                                     content =   <a href={this.getArticleLink(news)}>
+                                          <Card key={news.id} style={style}>
+                                              <CardHeader title={comment[article].group[1]}
+                                                          subtitle={<span style={{ fontSize: '12 !important' }} >by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
+                                                          avatar={<img  style={{height: '24px', width: '24px' }}  src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
+                                              <CardMedia
+                                                  overlay={<CardTitle style={{ height: '45px', padding: '0 10px' }} title={<span style={{ fontSize: '14px !important', lineHeight: '1.5'}}>{news.title}</span>}/>}>
+                                                  <div style={{width: '100%', height: '100%', left: '0px', top: '0px', zIndex: -1  }} id={"img-"+news.id}>
+                                                      <img style={{width: '100%', height: '100%'}} id={news.id}/>
+					                                  {this.getImageElement(news.image, news.id)}
+                                                  </div>
+                                              </CardMedia>
+                                              <CardTitle
+                                                  title={<span style={{ fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
+                                                  subtitle={<span style={{ fontSize: '12px !important' }}>{this.getTitle(news.summary)}</span>}/>
+                                          </Card>
+                                      </a>
+                                 }
+                                return  content })}
                             </div>
                         );
                     })
