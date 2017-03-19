@@ -205,7 +205,7 @@ class Master extends Component {
                         O M E N T A R I S M O </Link>}
                     zDepth={0}
                     iconElementRight={ LoginStore.isLoggedIn() ?
-                        <a href={`${host}/logout`}  > Welcome back { LoginStore.user.username}!
+                        <a href={`${host}/logout`} style={{color: '#fff !important', visited: '#fff !important'}} > Welcome back { LoginStore.user.username}! &#160;
                             <FlatButton backgroundColor='#fff' className="logout-button" label="Log out"/> </a> :
                         <a href={`${host}/login`} style={{color: '#fff !important', visited: '#fff !important'}}>
                             <FlatButton backgroundColor='#fff' rippleColor='#fff' className="login-button" label="Log In"/> </a> }
