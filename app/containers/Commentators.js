@@ -86,7 +86,7 @@ class CommentatorContainer extends Component {
                                     <InfiniteScroll
                                         ref='masonryContainer'
                                         skip={0}
-                                        limit={50}
+                                        limit={30}
                                         loader={this.getLoaderElement()}
                                         loadMore={this.handlePageChange.bind(this)}
                                         hasMore={this.state.hasMore}>

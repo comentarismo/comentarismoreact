@@ -205,21 +205,19 @@ class Master extends Component {
                         O M E N T A R I S M O </Link>}
                     zDepth={0}
                     iconElementRight={ LoginStore.isLoggedIn() ?
-                        <a href={`${host}/logout`} style={{color: '#fff'}}> Welcome back { LoginStore.user.username}!
-                            <FlatButton className="logout-button" label="Log out"/> </a> :
-                        <a href={`${host}/login`} style={{color: '#fff'}}>
-                            <FlatButton className="login-button" label="Log In"/> </a> }
+                        <a href={`${host}/logout`}  > Welcome back { LoginStore.user.username}!
+                            <FlatButton backgroundColor='#fff' className="logout-button" label="Log out"/> </a> :
+                        <a href={`${host}/login`} style={{color: '#fff !important', visited: '#fff !important'}}>
+                            <FlatButton backgroundColor='#fff' rippleColor='#fff' className="login-button" label="Log In"/> </a> }
 
                     style={styles.appBar}
                     showMenuIconButton={showMenuIconButton}
                 />
+                <div style={{
+                paddingTop: '90px',
+                display: 'inline-block',
 
-                <Card style={{
-                    flex: 1,
-                    border: 0,
-                    paddingTop: '10%',
-                    paddingLeft: '10%',
-                }}>{children}</Card>
+                }}>{children}</div>
                 <AppNavDrawer
                     style={styles.navDrawer}
                     location={location}
@@ -228,7 +226,6 @@ class Master extends Component {
                     onChangeList={this.handleChangeList}
                     open={navDrawerOpen}
                 />
-
             </div>
         );
     }

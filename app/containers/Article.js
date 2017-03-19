@@ -66,7 +66,7 @@ class Article extends Component {
         if (!article || !article.operator) {
             return (
                 <div>
-                    <div className="col-xs-6">
+                    <div>
                         <h3>The page you are looking for might have been removed, had its name changed, or is
                             temporarily unavailable.</h3>
                         <div className="image">
