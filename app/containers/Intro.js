@@ -17,6 +17,8 @@ var $ = require('jquery');
 
 
 var quality = "50";
+var width = "240";
+var height = "245";
 
 var base64Encode = require("../util/imgresizer").base64Encode;
 
@@ -89,7 +91,9 @@ class Intro extends Component {
                 type: 'post',
                 data: {
                     url: src,
-                    quality: quality
+                    quality: quality,
+                    width: width,
+                    height: height
                 },
                 mimeType: "text/plain; charset=x-user-defined"
             });
