@@ -64,7 +64,12 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="Amazon"
                           leftIcon={<img src="/static/img/sources/amazon.png"/>}/>
             </a>
-
+    
+            <a href={`/news/operator/dailymail`}>
+                <ListItem primaryText="DailyMail"
+                          leftIcon={<img src="/static/img/sources/dailymail.png"/>}/>
+            </a>
+            
             <a href={`/news/operator/bbcuk`}>
                 <ListItem primaryText="BBC"
                           leftIcon={<img src="/static/img/sources/bbcuk.png"/>}/>
