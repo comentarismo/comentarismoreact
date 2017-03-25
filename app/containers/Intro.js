@@ -9,6 +9,7 @@ import {loadIntroDetail} from 'actions/intro'
 import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
+import {Tabs, Tab} from 'material-ui/Tabs';
 
 import moment from 'moment';
 
@@ -118,7 +119,7 @@ class Intro extends Component {
         }
 
     }
-	
+
     render() {//languages/english/0/5/
         let {comment} = this.props;
         // comment && Object.keys(comment).map(article => {
@@ -172,8 +173,20 @@ class Intro extends Component {
                         {"property": "og:type", "content": "article"}
                     ]}
                 />
-                <Autocomplete />
-                <span style={{paddingLeft: '30px', paddingTop: '30px', textTransform: 'uppercase', fontSize: '16px', textDecoration: 'underline'}}>
+                <Tabs style={{height: '135', paddingBottom: '75px'}}>
+                    <Tab label="News" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                        <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"} />
+                    </Tab>
+
+                    <Tab label="Products" style={{background: '#f5f5f5', color: '#333',  height: '84px'}}>
+                        <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
+                    </Tab>
+                    <Tab label="YouTube" style={{background: '#f5f5f5', color: '#333',  height: '84px'}}>
+                        <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
+                    </Tab>
+                </Tabs>
+                <span
+                    style={{paddingLeft: '30px', paddingTop: '30px', textTransform: 'uppercase', fontSize: '16px', textDecoration: 'underline'}}>
                     Latest news </span>
                 {
                     comment && Object.keys(comment).map(article => {
@@ -181,31 +194,33 @@ class Intro extends Component {
                         return (
                             comment[article].group && comment[article].reduction &&
                             <div>
-                                {comment[article].reduction.map((news) =>
-                                {
-                                
-                                let content = "";
-	                             if (news.languages == targetLang && count < 3){
-	                                 count = count + 1;
-                                     content =   <a href={this.getArticleLink(news)}>
-                                          <Card key={news.id} style={style}>
-                                              <CardHeader title={comment[article].group[1]}
-                                                          subtitle={<span style={{ fontSize: '12 !important' }} >by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
-                                                          avatar={<img  style={{height: '24px', width: '24px' }}  src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
-                                              <CardMedia
-                                                  overlay={<CardTitle style={{ height: '45px', padding: '0 10px' }} title={<span style={{ fontSize: '14px !important', lineHeight: '1.5'}}>{news.title}</span>}/>}>
-                                                  <div style={{width: '100%', height: '100%', left: '0px', top: '0px', zIndex: -1  }} id={"img-"+news.id}>
-                                                      <img style={{width: '100%', height: '100%'}} id={news.id}/>
-					                                  {this.getImageElement(news.image, news.id)}
-                                                  </div>
-                                              </CardMedia>
-                                              <CardTitle
-                                                  title={<span style={{ fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
-                                                  subtitle={<span style={{ fontSize: '12px !important' }}>{this.getTitle(news.summary)}</span>}/>
-                                          </Card>
-                                      </a>
-                                 }
-                                return  content })}
+                                {comment[article].reduction.map((news) => {
+
+                                    let content = "";
+                                    if (news.languages == targetLang && count < 3) {
+                                        count = count + 1;
+                                        content = <a href={this.getArticleLink(news)}>
+                                            <Card key={news.id} style={style}>
+                                                <CardHeader title={comment[article].group[1]}
+                                                            subtitle={<span style={{ fontSize: '12 !important' }} >by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
+                                                            avatar={<img  style={{height: '24px', width: '24px' }}  src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
+                                                <CardMedia
+                                                    overlay={<CardTitle style={{ height: '45px', padding: '0 10px' }} title={<span style={{ fontSize: '14px !important', lineHeight: '1.5'}}>{news.title}</span>}/>}>
+                                                    <div
+                                                        style={{width: '100%', height: '100%', left: '0px', top: '0px', zIndex: -1  }}
+                                                        id={"img-"+news.id}>
+                                                        <img style={{width: '100%', height: '100%'}} id={news.id}/>
+                                                        {this.getImageElement(news.image, news.id)}
+                                                    </div>
+                                                </CardMedia>
+                                                <CardTitle
+                                                    title={<span style={{ fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
+                                                    subtitle={<span style={{ fontSize: '12px !important' }}>{this.getTitle(news.summary)}</span>}/>
+                                            </Card>
+                                        </a>
+                                    }
+                                    return content
+                                })}
                             </div>
                         );
                     })

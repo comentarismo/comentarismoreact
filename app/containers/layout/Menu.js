@@ -13,7 +13,7 @@ const Menu = ({resources}) => (
         position: 'fixed',
         zIndex: '1000',
         left: '0px',
-        top: '50px',
+        top: '64px',
         transform: 'translate(0px,0px)',
         overflow: 'auto',
         width: '256px',

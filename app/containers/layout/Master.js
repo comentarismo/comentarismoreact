@@ -214,8 +214,7 @@ class Master extends Component {
                     showMenuIconButton={showMenuIconButton}
                 />
                 <div style={{
-                paddingTop: '90px',
-                display: 'inline-block',
+                paddingTop: '64px',
 
                 }}>{children}</div>
                 <AppNavDrawer

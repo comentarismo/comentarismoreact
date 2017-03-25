@@ -64,18 +64,19 @@ class Autocomplete extends Component {
 	}
 	
 	render() {
-		return <Card>
-			<CardTitle title={<SearchIcon/>} subtitle={<AutoComplete hintText="Search for products, news, youtube videos, commentators, and more …"     fullWidth
+		return <div  style={{ display: 'inline-flex', width: '100%'}}>
+			<AutoComplete textFieldStyle={{ height: '84px'}}
+				hintText={this.props.hintText}   fullWidth
 			searchText={this.state.inputValue}
 			floatingLabelText={this.props.placeHolder}
 			filter={AutoComplete.noFilter}
 			openOnFocus={true}
 			dataSource={this.state.dataSource}
 			onUpdateInput={this.onUpdateInput}
-			onNewRequest={this.onNewRequest}/> } />
-			
-		</Card>
-		
+			onNewRequest={this.onNewRequest}/>
+			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#9B4240'}}>RECOMMEND</button>
+		</div>
+
 	}
 }
 
