@@ -71,7 +71,7 @@ export function getLatestNewsGroupDay(conn, cb) {
 export function getLatestCommentatorsGroupDay(conn, cb) {
     
     var query = conn.table('commentator').between(conn.now().sub(180 * 86400), conn.now(),
-        {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(1000).group([conn.row('maxDate').month(), conn.row('operator')])
+        {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(10000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
                 group: row("group"),
@@ -99,8 +99,8 @@ export function getLatestCommentatorsGroupDay(conn, cb) {
 
 export function getLatestCommentsGroupDay(conn, cb) {
     
-    var query = conn.table('commentaries').between(conn.now().sub(30 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group([conn.row('date').month(), conn.row('operator')])
+    var query = conn.table('commentaries').between(conn.now().sub(180 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(10000).group([conn.row('date').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
                 group: row("group"),
