@@ -40,8 +40,7 @@ class SuggestComment extends Component {
                 />
                 <PlayNavbar/>
 
-                <PlayComment comment={comment} index={index} value={value} skip={skip} limit={limit}
-                           loadSuggestCommentDetail={loadSuggestCommentDetail}/>
+                <PlayComment comment={comment} index={index} value={value} skip={skip} limit={limit} />
 
                 <div className="clearfix"></div>
                 <footer className="footer bg-dark">

@@ -5,6 +5,9 @@ import _ from 'lodash'
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
+import {Tabs, Tab} from 'material-ui/Tabs';
+import Autocomplete from 'components/Autocomplete'
+
 
 import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
@@ -80,8 +83,20 @@ class ArticleContainer extends Component {
                         }
                     ]}
                 />
+                
+                <Tabs style={{height: '135', paddingBottom: '75px'}}>
+                    <Tab label="News" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                        <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"} />
+                    </Tab>
 
-                <Card>
+                    <Tab label="Products" style={{background: '#f5f5f5', color: '#333',  height: '84px'}}>
+                        <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
+                    </Tab>
+                    <Tab label="YouTube" style={{background: '#f5f5f5', color: '#333',  height: '84px'}}>
+                        <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
+                    </Tab>
+                </Tabs>
+
                     <YoutubeReportRun/>
                     <InfiniteScroll
                         ref='masonryContainer'
@@ -101,7 +116,6 @@ class ArticleContainer extends Component {
                             })
                         }
                     </InfiniteScroll>
-                </Card>
             </div>
         )
     }

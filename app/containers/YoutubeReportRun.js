@@ -57,7 +57,6 @@ var YoutubeReportRun = React.createClass({
         };
         return (
             <div>
-                <Card style={style}>
                     <CardHeader
                         title="** HOT FREE DEAL ** "
                         subtitle="Paste a Youtube URL below And Get a Free Sentiment Analysis Right Now!"
@@ -96,11 +95,6 @@ var YoutubeReportRun = React.createClass({
                             <span className="icon-bar"/>
                         </button>
                     </CardActions>
-
-
-
-                </Card>
-
             </div>
         );
     },

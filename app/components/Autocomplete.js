@@ -74,7 +74,7 @@ class Autocomplete extends Component {
 			dataSource={this.state.dataSource}
 			onUpdateInput={this.onUpdateInput}
 			onNewRequest={this.onNewRequest}/>
-			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#9B4240'}}>RECOMMEND</button>
+			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#9B4240', borderRadius: '2px'}}>RECOMMEND</button>
 		</div>
 
 	}
