@@ -130,7 +130,7 @@ class Intro extends Component {
     render() {//languages/english/0/5/
         let comment = this.props.news;
         let commentators = this.props.commentators;
-        let commentaries = this.props.commentaries;
+        // let commentaries = this.props.commentaries;
         
         // comment && Object.keys(comment).map(article => {
         //     return (comment[article]);
@@ -278,19 +278,19 @@ class Intro extends Component {
                 <Grid fluid={true}>
                     <Row center="lg">
                         {
-                            commentaries && Object.keys(commentaries).map(article => {
+                            comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
-                                    commentaries[article].group && commentaries[article].reduction &&
+                                    comment[article].group && comment[article].reduction &&
                                     <div>
-                                        {commentaries[article].reduction.map((news) => {
+                                        {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
-                                                content =  <ExpandableComment comment={news}/>;
+                                                content =  <ExpandableComment comment={news.comment}/>;
                                                 
-                                                return <Col xs md lg key={news.id}>{content}</Col>
+                                                return <Col xs md lg key={`${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}

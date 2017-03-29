@@ -27,8 +27,8 @@ if (LATEST_NEWS_DAYS_STR) {
 
 export function getLatestNewsGroupDay(conn, cb) {
 
-    var query = conn.table('news').between(conn.now().sub(30 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group([conn.row('date').month(), conn.row('operator')])
+    var query = conn.table('news').between(conn.now().sub(20 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).group([conn.row('date').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
                 group: row("group"),
@@ -70,8 +70,8 @@ export function getLatestNewsGroupDay(conn, cb) {
 
 export function getLatestCommentatorsGroupDay(conn, cb) {
     
-    var query = conn.table('commentator').between(conn.now().sub(180 * 86400), conn.now(),
-        {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(10000).group([conn.row('maxDate').month(), conn.row('operator')])
+    var query = conn.table('commentator').between(conn.now().sub(20 * 86400), conn.now(),
+        {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(5000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
                 group: row("group"),
@@ -99,8 +99,8 @@ export function getLatestCommentatorsGroupDay(conn, cb) {
 
 export function getLatestCommentsGroupDay(conn, cb) {
     
-    var query = conn.table('commentaries').between(conn.now().sub(180 * 86400), conn.now(),
-        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(10000).group([conn.row('date').month(), conn.row('operator')])
+    var query = conn.table('commentaries').between(conn.now().sub(20 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group(conn.row('operator'))
         .ungroup().map(function (row) {
             return {
                 group: row("group"),
@@ -124,6 +124,51 @@ export function getLatestCommentsGroupDay(conn, cb) {
         console.log("Error: getLatestCommentsGroupDay, ", err);
         cb(err);
     })
+}
+
+export function getLatestNewsWithCommentGroupDay(conn, cb) {
+    var query = conn.table('news').between(conn.now().sub(20 * 86400), conn.now(),
+        {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000)
+        .concatMap(function(row) {
+            return conn.table("commentaries").getAll([row("operator"),row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
+                return row.merge({comment: comment});
+            })
+        }).group([conn.row('date').month(), conn.row('operator')])
+        .ungroup().map(function (row) {
+            return {
+                group: row("group"),
+                reduction: row("reduction").map(function (r) {
+                    return {
+                        id: r('id'),
+                        titleurlize: r('titleurlize'),
+                        title: r('title'),
+                        author: r('author'),
+                        summary: r('summary'),
+                        image: r('image'),
+                        totalComments: r('totalComments'),
+                        languages: r('languages'),
+                        date: r('date'),
+                        comment: r('comment')
+                    }
+                }).limit(1)
+            }
+        })
+    
+    console.log("getLatestNewsGroupDay query -> ", query);
+    
+    query
+        .run().then(function (results) {
+        if (!results) {
+            cb("Error: Could not get getLatestNewsGroupDay");
+        } else {
+            console.log("getLatestNewsGroupDay result -> ", results.length)
+            cb(null, results);
+        }
+    }).catch(function (err) {
+        console.log("Error: getLatestNewsGroupDay, ", err);
+        cb(err);
+    })
+    
 }
 
 export function getAllPluckDistinct(conn, table, pluck, cb) {

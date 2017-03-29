@@ -984,7 +984,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
 });
 
 var comentarismosite = "http://www.comentarismo.com";
-var {getLatestNewsGroupDay, getLatestCommentatorsGroupDay, getLatestCommentsGroupDay} = require("./comentarismo_api");
+var {getLatestNewsGroupDay, getLatestCommentatorsGroupDay, getLatestCommentsGroupDay, getLatestNewsWithCommentGroupDay} = require("./comentarismo_api");
 server.get('/apihomepage/', limiter, (req, res) => {
     
     //-------REDIS CACHE START ------//
@@ -1007,7 +1007,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
         }
         //-------REDIS CACHE END ------//
         
-        getLatestNewsGroupDay(conn, function (err, news) {
+        getLatestNewsWithCommentGroupDay(conn, function (err, news) {
             
             if (err) {
                 console.log("Error: getLatestCommentatorsGroupDay -> ", err);
@@ -1026,25 +1026,14 @@ server.get('/apihomepage/', limiter, (req, res) => {
                         return res.send(result);
                     } else {
                         
-                        getLatestCommentsGroupDay(conn, function (err, commentaries) {
-                            result.commentaries = commentaries;
-                            
-                            if (err) {
-                                console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay, getLatestCommentsGroupDay -> ", err);
-                                return res.send(result);
-                            } else {
-                                
-                                if (!DISABLE_CACHE) {
-                                    client.set("apihomepage", JSON.stringify(result), redis.print);
-                                    client.expire("apihomepage", REDIS_EXPIRE);
-                                }
-                                res.type('application/json');
-                                //-------REDIS CACHE SAVE END ------//
-                                //get comments
-                                return res.send(result);
-                            }
-                        })
-                        
+                        if (!DISABLE_CACHE) {
+                            client.set("apihomepage", JSON.stringify(result), redis.print);
+                            client.expire("apihomepage", REDIS_EXPIRE);
+                        }
+                        res.type('application/json');
+                        //-------REDIS CACHE SAVE END ------//
+                        //get comments
+                        return res.send(result);
                     }
                     
                 });
