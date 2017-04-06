@@ -36,6 +36,7 @@ let {
     getCommentator,
     getCommentatorByNick,
     getByID,
+    getCommentariesByCommentariesIds,
     getAllByIndexSkipLimit,
     getAllDistinctByIndex
 } = require('./comentarismo_api');
@@ -533,16 +534,27 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
             }
             
             if (data) {
-                //-------REDIS CACHE SAVE START ------//
-                logger.info(urlTag + " will save cached");
-                var js = JSON.stringify(data);
-                //logger.info(js);
-                if (!DISABLE_CACHE) {
-                    client.set(urlTag, js, redis.print);
-                    client.expire(urlTag, REDIS_EXPIRE);
-                }
-                //-------REDIS CACHE SAVE END ------//
-                res.send(data);
+    
+                getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
+                    if (err) {
+                        logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
+                        //console.error(err.stack);
+                        return res.status(404).send();
+                    }
+                    data.comments = commentaries;
+                    
+                    //-------REDIS CACHE SAVE START ------//
+                    logger.info(urlTag + " will save cached");
+                    var js = JSON.stringify(data);
+                    //logger.info(js);
+                    if (!DISABLE_CACHE) {
+                        client.set(urlTag, js, redis.print);
+                        client.expire(urlTag, REDIS_EXPIRE);
+                    }
+                    //-------REDIS CACHE SAVE END ------//
+                    res.send(data);
+    
+                })
             } else {
                 
                 
@@ -561,19 +573,33 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                 
                 getCommentatorByNick((idAux ? idAux : req.params.id), conn, function (err, data) {
                     if (err) {
-                        logger.info("Error: " + err);
+                        logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
                         //console.error(err.stack);
                         return res.status(404).send();
                     }
                     
                     if (data) {
-                        //-------REDIS CACHE SAVE START ------//
-                        logger.info(urlTag + " will save cached");
-                        if (!DISABLE_CACHE) {
-                            client.set(urlTag, JSON.stringify(data), redis.print);
-                            client.expire(urlTag, REDIS_EXPIRE);
-                        }
-                        //-------REDIS CACHE SAVE END ------//
+    
+                        getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
+                            if (err) {
+                                logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
+                                //console.error(err.stack);
+                                return res.status(404).send();
+                            }
+                            
+                            data.comments = commentaries;
+    
+    
+                            //-------REDIS CACHE SAVE START ------//
+                            logger.info(urlTag + " will save cached");
+                            if (!DISABLE_CACHE) {
+                                client.set(urlTag, JSON.stringify(data), redis.print);
+                                client.expire(urlTag, REDIS_EXPIRE);
+                            }
+                            //-------REDIS CACHE SAVE END ------//
+    
+                        })
+                        
                     } else {
                         
                         logger.info("nothing found ? how did we got here ?  getCommentatorByNick --> " + urlTag)

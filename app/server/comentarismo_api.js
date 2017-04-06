@@ -233,10 +233,34 @@ export function getByID(table, id, conn, cb) {
         .get(id)
         .run().then(function (result) {
         if (!result) {
-            logger.info('');
-            cb('');
+            logger.info('Error: getByID returns nothing :( ');
+            cb('Error: getByID returns nothing :( ');
         } else {
             //logger.info(result);
+            cb(null, result);
+        }
+    }).catch(function (err) {
+        console.log("Error: getByID, ", err);
+        cb(err);
+    });
+}
+
+export function getCommentariesByCommentariesIds(commentariesIds, conn, cb){
+    if (!commentariesIds || commentariesIds.length === 0) {
+        logger.info("getCommentariesByCommentariesIds EOF ");
+        return cb();
+    }
+    var query = conn.table("commentaries")
+        .getAll(commentariesIds[0])
+    
+    console.log("getCommentariesByCommentariesIds, query -> ",query);
+    
+        query.run().then(function (result) {
+        if (!result) {
+            logger.info('Error: getCommentariesByCommentariesIds returns no results :( ');
+            cb('Error: getCommentariesByCommentariesIds returns no results :( ');
+        } else {
+            console.log("getCommentariesByCommentariesIds, ",result);
             cb(null, result);
         }
     }).catch(function (err) {
