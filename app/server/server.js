@@ -231,7 +231,7 @@ function limiterhandler(req, res) {
     console.log("Too many requests -> ", ip);
     
     //save possible abuser to ratelimit table
-    conn.table('ratelimit').get(ip).update({
+    conn.table('ratelimit', {readMode: "outdated"}).get(ip).update({
         blocks: conn.row('blocks').add(1),
         pathname: conn.branch(conn.row('pathname').default([]).contains(pathname),
             conn.row('pathname'),
@@ -1160,7 +1160,7 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
 
 
 server.get("/random", limiter, (req, res) => {
-    conn.table("sentiment_report")
+    conn.table("sentiment_report", {readMode: "outdated"})
         .sample(1)
         .run().then(function (results) {
         if (!results) {
