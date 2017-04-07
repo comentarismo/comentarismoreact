@@ -130,7 +130,7 @@ export function getLatestNewsWithCommentGroupDay(conn, cb) {
     var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000)
         .concatMap(function (row) {
-            return conn.table("commentaries").getAll([row("operator"), row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
+            return conn.table("commentaries", {readMode: "outdated"}).getAll([row("operator"), row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
                 return row.merge({comment: comment});
             })
         }).group([conn.row('date').month(), conn.row('operator')])
