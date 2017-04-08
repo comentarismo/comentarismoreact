@@ -12,7 +12,31 @@ const style = {
     display: 'block !important',
 };
 
-
+class ModalBody extends React.Component {
+    fixhtml(html) {
+        if (typeof window !== 'undefined') {
+            var div = document.createElement('div');
+            div.innerHTML = html
+            return (div.innerHTML);
+        }else {
+            return html
+        }
+    }
+    
+    rawMarkup() {
+        var rawMarkup = this.props.content
+        return {__html: this.fixhtml(rawMarkup)};
+    }
+    
+    render() {
+        return (
+            <div className="modal-body">
+                <span dangerouslySetInnerHTML={this.rawMarkup()}/>
+            
+            </div>
+        )
+    }
+}
 export default class ExpandableComment extends React.Component {
     
     constructor(props) {
@@ -41,7 +65,7 @@ export default class ExpandableComment extends React.Component {
     getShortComment(title) {
         const t = title && title.length > 40 ? title.substring(0, 40) + "..." : title
         return (
-            <span dangerouslySetInnerHTML={{__html: t}}/>
+            <ModalBody content={t}/>
         );
     }
     
@@ -51,7 +75,7 @@ export default class ExpandableComment extends React.Component {
         );
     }
     
-    getAvatar(nick){
+    getAvatar(nick) {
         const n = nick && nick.length >= 1 ? nick.substring(0, 1) : "A"
         return (
             <Avatar>{n}</Avatar>
@@ -59,10 +83,10 @@ export default class ExpandableComment extends React.Component {
     }
     
     
-    
     render() {
         return (
-            <Card style={style} class="col-xs-12" expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
+            <Card style={style} class="col-xs-12" expanded={this.state.expanded}
+                  onExpandChange={this.handleExpandChange}>
                 <CardHeader
                     title={<span>{this.props.comment.nick}</span>}
                     subtitle={this.getShortComment(this.props.comment.comment)}
@@ -70,8 +94,8 @@ export default class ExpandableComment extends React.Component {
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
-
-                <CardText  expandable={true}>
+                
+                <CardText expandable={true}>
                     {this.getComment(this.props.comment.comment)}
                 </CardText>
             </Card>
