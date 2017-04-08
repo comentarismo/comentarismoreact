@@ -26,8 +26,8 @@ if (LATEST_NEWS_DAYS_STR) {
 }
 
 export function getLatestNewsGroupDay(conn, cb) {
-
-    var query = conn.table('news').between(conn.now().sub(20 * 86400), conn.now(),
+    
+    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).group([conn.row('date').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -49,9 +49,9 @@ export function getLatestNewsGroupDay(conn, cb) {
         })
     
     console.log("getLatestNewsGroupDay query -> ", query);
-
+    
     // console.log("getLatestNewsGroupDay, query, ", query);
-
+    
     query
         .run().then(function (results) {
         if (!results) {
@@ -64,13 +64,13 @@ export function getLatestNewsGroupDay(conn, cb) {
         console.log("Error: getLatestNewsGroupDay, ", err);
         cb(err);
     })
-
+    
 }
 
 
 export function getLatestCommentatorsGroupDay(conn, cb) {
     
-    var query = conn.table('commentator').between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentator', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
         {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(5000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -99,7 +99,7 @@ export function getLatestCommentatorsGroupDay(conn, cb) {
 
 export function getLatestCommentsGroupDay(conn, cb) {
     
-    var query = conn.table('commentaries').between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentaries', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group(conn.row('operator'))
         .ungroup().map(function (row) {
             return {
@@ -127,10 +127,10 @@ export function getLatestCommentsGroupDay(conn, cb) {
 }
 
 export function getLatestNewsWithCommentGroupDay(conn, cb) {
-    var query = conn.table('news').between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000)
-        .concatMap(function(row) {
-            return conn.table("commentaries").getAll([row("operator"),row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
+        .concatMap(function (row) {
+            return conn.table("commentaries", {readMode: "outdated"}).getAll([row("operator"), row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
                 return row.merge({comment: comment});
             })
         }).group([conn.row('date').month(), conn.row('operator')])
@@ -176,13 +176,13 @@ export function getAllPluckDistinct(conn, table, pluck, cb) {
         logger.warn(errMsg + "table --> " + table + " pluck --> " + pluck);
         return cb(errMsg + "getAllPluckDistinct --> search query is not correct.")
     }
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .distinct({index: pluck});
-
-
+    
+    
     // console.log("getAllPluckDistinct -> ", query)
-
+    
     query
         .run().then(function (results) {
         if (!results) {
@@ -203,7 +203,7 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
         return cb(errMsg + "getAllByIndexPluckDistinct --> search query is not correct.")
     }
     logger.log('debug', "getAllByIndexPluckDistinct --> table: " + table + " index: " + index + " value: " + value + " pluck: " + pluck);
-    conn.table(table)
+    conn.table(table, {readMode: "outdated"})
         .getAll(value, {index: index}).limit(100)
         .pluck("titleurlize", "title", "languages", "tags", "date")
         .distinct()
@@ -229,14 +229,38 @@ export function getByID(table, id, conn, cb) {
         //logger.info("getComments EOF ");
         return cb();
     }
-    conn.table(table)
+    conn.table(table, {readMode: "outdated"})
         .get(id)
         .run().then(function (result) {
         if (!result) {
-            logger.info('');
-            cb('');
+            logger.info('Error: getByID returns nothing :( ');
+            cb('Error: getByID returns nothing :( ');
         } else {
             //logger.info(result);
+            cb(null, result);
+        }
+    }).catch(function (err) {
+        console.log("Error: getByID, ", err);
+        cb(err);
+    });
+}
+
+export function getCommentariesByCommentariesIds(commentariesIds, conn, cb) {
+    if (!commentariesIds || commentariesIds.length === 0) {
+        logger.info("getCommentariesByCommentariesIds EOF ");
+        return cb();
+    }
+    var query = conn.table("commentaries", {readMode: "outdated"})
+        .getAll(commentariesIds[0])
+    
+    console.log("getCommentariesByCommentariesIds, query -> ", query);
+    
+    query.run().then(function (result) {
+        if (!result) {
+            logger.info('Error: getCommentariesByCommentariesIds returns no results :( ');
+            cb('Error: getCommentariesByCommentariesIds returns no results :( ');
+        } else {
+            console.log("getCommentariesByCommentariesIds, ", result);
             cb(null, result);
         }
     }).catch(function (err) {
@@ -251,8 +275,8 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
         logger.warn(errMsg + "getOneBySecondaryIndex --> search query is not correct.")
         return cb()
     }
-    logger.log('debug', "table --> " + table + ", index -> " + index + ", value --> " + value);
-    conn.table(table)
+    logger.log('getOneBySecondaryIndex', "table --> " + table + ", index -> " + index + ", value --> " + value);
+    conn.table(table, {readMode: "outdated"})
         .getAll(value, {index: index}).limit(1)
         .run().then(function (results) {
         if (!results) {
@@ -280,14 +304,14 @@ export function getSample(table, index, value, skip, limit, sort, sample, conn, 
         indexSort = sort;
     }
     // console.log("getSample, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .orderBy({"index": conn.desc(indexSort)})
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit).sample(sample);
-
+    
     console.log("getSample", query);
-
+    
     query.run().then(function (results) {
         if (!results) {
             logger.info('');
@@ -312,13 +336,15 @@ export function getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, 
     if (sort) {
         indexSort = sort;
     }
-    console.log("getAllByIndexOrderBySkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
-
-    conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .orderBy({"index": conn.desc(indexSort)})
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit)
-        .run().then(function (results) {
+    
+    console.log("getAllByIndexOrderBySkipLimit, ", query);
+    
+    query.run().then(function (results) {
         if (!results) {
             logger.info('');
             cb('');
@@ -337,17 +363,17 @@ export function getAllByMultipleIndexCount(params, conn, cb) {
     var index = params.index;
     var value = params.value;
     var operator = params.operator;
-
+    
     if (!table || !index || !value || !operator) {
         logger.warn(errMsg + "Invalid INPUT --> ", JSON.stringify(params));
         logger.warn(errMsg + "getAllByMultipleIndexCount --> search query is not correct.");
         return cb()
     }
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .getAll([operator, value], {index: index}).count();
     console.log("getAllByMultipleIndexCount -> ", query);
-
+    
     query.run().then(function (results) {
         // console.log("getAllByMultipleIndexCount, results", results);
         cb(null, results);
@@ -366,14 +392,14 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
     var limit = params.limit;
     var sort = params.sort;
     var order = params.order || "desc";
-
+    
     if (!table || !index || !value || !operator || (!skip && skip !== 0) || !limit || !sort) {
         logger.warn(errMsg + "Invalid INPUT --> ", JSON.stringify(params));
         logger.warn(errMsg + "getAllByMultipleIndexOrderBySkipLimit --> search query is not correct.");
         return cb()
     }
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .getAll([operator, value], {index: index});
     if (order == "desc") {
         query = query.orderBy(conn.desc(sort));
@@ -381,9 +407,9 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
         query = query.orderBy(conn.asc(sort));
     }
     query = query.skip(skip).limit(limit);
-
+    
     console.log("getAllByMultipleIndexOrderBySkipLimit -> ", query);
-
+    
     query.run().then(function (results) {
         cb(null, results);
     }).catch(function (err) {
@@ -399,11 +425,11 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
         logger.warn(errMsg + "getAllByRangeIndexOrderByFilterSkipLimit --> search query is not correct.");
         return cb()
     }
-
+    
     if (!range) {
         range = 10
     }
-
+    
     var date = new Date();
     var dateObj = new Date(
         date.getFullYear(),
@@ -414,20 +440,20 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
         date.getSeconds(),
         date.getMilliseconds()
     );
-
+    
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
     var year = dateObj.getUTCFullYear();
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .between(conn.time(year, month, day, '+00:00'), date, {index: 'date'})
         .orderBy({index: conn.desc('date')})
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit);
-
-
+    
+    
     // console.log("getAllByDateRangeIndexOrderByFilterSkipLimit, ",query);
-
+    
     query.run().then(function (results) {
         if (!results) {
             logger.info('Error: getAllByRangeIndexOrderByFilterSkipLimit could not find anyting  -> ', query);
@@ -459,14 +485,14 @@ export function getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, l
         order = conn.desc(indexSort)
         console.log("getAllByIndexOrderByFilterSkipLimit, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
     }
-
-    var query = conn.table(table)
+    
+    var query = conn.table(table, {readMode: "outdated"})
         .orderBy({"index": order})
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit);
-
+    
     console.log("getAllByIndexOrderByFilterSkipLimit", query);
-
+    
     query.run().then(function (results) {
         if (!results) {
             logger.info('');
@@ -489,8 +515,8 @@ export function getAllByIndexSkipLimit(table, index, value, skip, limit, conn, c
         return cb()
     }
     console.log("getAllByIndexSkipLimit, ", " conn.table('" + table + "').getAll('" + value + "', {index: '" + index + "'}).skip(" + skip + ").limit(" + limit + ")");
-
-    conn.table(table)
+    
+    conn.table(table, {readMode: "outdated"})
         .getAll(value, {index: index})
         .skip(skip).limit(limit)
         .run().then(function (results) {
@@ -531,15 +557,15 @@ export function getCommentator(id, conn, cb) {
         //table, index, value, skip, limit, sort, conn, cb
         //
         var nick = commentator ? commentator.nick : id;
-
+        
         getAllByIndexSkipLimit("commentaries", "nick", nick, 0, 50, conn, function (err, comments) {
             if (err || !commentator) {
                 if (err) {
                     logger.warn(err);
                 }
-
+                
                 //TODO: create commentator if comments are returned from elk
-
+                
                 var commentator = {
                     "categories": comments[0].categories,
                     "countries": comments[0].countries,
@@ -551,7 +577,7 @@ export function getCommentator(id, conn, cb) {
                     "slug": comments[0].nick,
                     "totalComments": comments.length
                 };
-
+                
                 cb(null, commentator);
                 //cb(`getAllByIndexOrderBySkipLimit commentator nick ${commentator.nick} not found`);
             } else {
@@ -577,7 +603,7 @@ export function getCommentatorByNick(id, conn, cb) {
             logger.warn("Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ", nick, err);
         }
         //get all comments by index nick
-
+        
         elk_api.getElkByQuery(index, 'commentaries', {
             "query": {
                 "bool": {
@@ -611,11 +637,11 @@ export function getCommentatorByNick(id, conn, cb) {
                     };
                 }
                 commentator.comments = [];
-
+                
                 console.log("Got no comments :(");
                 cb(null, commentator);
             } else {
-
+                
                 if (!commentator) {
                     commentator = {
                         "categories": resp[0].categories,
@@ -629,13 +655,13 @@ export function getCommentatorByNick(id, conn, cb) {
                         "totalComments": resp.length
                     };
                 }
-
+                
                 commentator.comments = resp;
                 console.log("Got comments :D ", resp.length);
                 cb(null, commentator);
             }
         });
-
+        
         //getAllByIndexSkipLimit("commentaries", "nick", commentator.nick,
         //    0, 50, conn, function (err, comments) {
         //        if (err || !commentator) {
@@ -668,15 +694,15 @@ export function allcommentators(conn, cb) {
         //"indexhr",
         //"novayagazeta_ru", "chinanews"
     ];
-
+    
     iterate(0, operators, conn, "commentator", [], function (commentatorList) {
         logger.info("iterate commentator finished");
-
+        
         _.uniq(commentatorList, 'nick');
-
+        
         return cb(commentatorList);
     });
-
+    
     function iterate(count, operators, conn, table, commentatorList, cb) {
         var operator = operators[count];
         if (!operator) {
@@ -684,9 +710,9 @@ export function allcommentators(conn, cb) {
             return cb(commentatorList);
         }
         count = count + 1;
-
+        
         logger.info("going to get more comments for operator " + operator);
-        conn.table(table)
+        conn.table(table, {readMode: "outdated"})
             .getAll(operator, {index: 'operator'})
             .run()
             .then(function (cursor) {
@@ -703,17 +729,17 @@ export function allcommentators(conn, cb) {
                                 if (commentator) {
                                     commentatorList.push(commentator);
                                 }
-
+                                
                                 if (hasNextRow) {
                                     consoleRow(row);
                                 } else {
                                     logger.info('hasNextRow :(');
                                     return iterate(count, operators, conn, table, commentatorList, cb);
                                 }
-
+                                
                             })
-
-
+                            
+                            
                         } else {
                             if (hasNextRow) {
                                 consoleRow(row);
@@ -727,7 +753,7 @@ export function allcommentators(conn, cb) {
                 consoleRow();
             });
     }
-
+    
     function geCommentator(count, result, operator, cb) {
         var n = result[count];
         if (!n) {
@@ -743,13 +769,13 @@ export function allcommentators(conn, cb) {
             return cb(nick);
         }
     }
-
-
+    
+    
 }
 
 //eg table=news, index=operator_genre, value=bbcuk
-export function getAllDistinctByIndex(conn, table, index,value){
-    var query = conn.table(table).between([value,conn.minval],[value,conn.maxval],{index:index}).distinct({index:index})
+export function getAllDistinctByIndex(conn, table, index, value) {
+    var query = conn.table(table, {readMode: "outdated"}).between([value, conn.minval], [value, conn.maxval], {index: index}).distinct({index: index})
     return query.run()
 }
 

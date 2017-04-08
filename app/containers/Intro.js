@@ -78,7 +78,7 @@ class Intro extends Component {
     }
     
     getCommentatorLink(commentator){
-        return `/commentators/${commentator.slug}`
+        return `/commentators/${commentator.id}`
     }
     
     getTitle(title) {
