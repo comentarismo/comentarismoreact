@@ -165,14 +165,23 @@ class Intro extends Component {
             
         }
         const style = {
-            height: 'auto',
-            margin: '20px',
+            height: '500px',
             width: '300px',
             textAlign: 'left',
-            display: 'inline-block',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            margin: '20px 20px 20px 0'
         };
+
+        const commentatorStyle = {
+            height: '150px',
+            width: '300px',
+            textAlign: 'left',
+            boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
+            borderRadius: '2px',
+            margin: '20px 20px 20px 0'
+        };
+
         // <div>Day:{comment[article].group[0] } Source:</div>
         return (
             <div>
@@ -197,18 +206,23 @@ class Intro extends Component {
                         <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
-                <span
+                <Grid fluid={true} class="col-md-offset-3">
+                <span class="row start-sm"
                     style={{
-                        paddingLeft: '95px',
+                        color: '#656972',
                         paddingTop: '30px',
                         textTransform: 'uppercase',
                         fontSize: '14px',
                         fontWeight: 'bold',
                     }}>
                     Trending  News</span>
-                
-                <Grid fluid={true}>
-                    <Row center="md">
+                    <Row class="row
+                                between-xs
+                                start-sm
+                                col-xs-12
+                                col-sm-8
+                                col-md-6
+                                col-lg-4">
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
@@ -221,9 +235,9 @@ class Intro extends Component {
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style}>
+                                                    <Card key={news.id} style={style} class="box">
                                                         <CardHeader title={comment[article].group[1]}
-                                                                    subtitle={<span style={{fontSize: '12 !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
+                                                                    subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
                                                                                  src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
                                                         <CardMedia
@@ -249,13 +263,13 @@ class Intro extends Component {
                                                         </CardMedia>
                                                         <CardTitle
                                                             title={<span
-                                                                style={{fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
+                                                                style={{padding: '3px', background: '#656972', color: '#fff', fontSize: '12px !important', textTransform: 'uppercase'}}>{`${news.totalComments} Comments`}</span>}
                                                             subtitle={<span
                                                                 style={{fontSize: '12px !important'}}>{this.getTitle(news.summary)}</span>}/>
                                                     </Card>
                                                 </a>
                                                 
-                                                return <Col key={news.id} xs={12} md={6}>{content}</Col>
+                                                return <Col key={news.id}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -264,25 +278,31 @@ class Intro extends Component {
                             })
                         }
                     </Row>
-                </Grid>
+
                 
-                <span
+                <span class="row start-sm"
                     style={{
-                        paddingLeft: '95px',
-                        paddingTop: '30px',
+                       color: '#656972',
+                        lineHeight: '60px !important',
                         textTransform: 'uppercase',
                         fontSize: '14px',
                         fontWeight: 'bold',
                     }}>
                     Trending  comments</span>
-                <Grid fluid={true}>
-                    <Row center="lg">
+
+                    <Row class="row
+                                between-xs
+                                start-sm
+                                col-xs-12
+                                col-sm-8
+                                col-md-6
+                                col-lg-4">
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div>
+                                    <div class="col-xs-12">
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
@@ -290,7 +310,7 @@ class Intro extends Component {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 
-                                                return <Col xs md lg key={`${news.id}`}>{content}</Col>
+                                                return <Col class="box" key={`${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -299,21 +319,24 @@ class Intro extends Component {
                             })
                         }
                     </Row>
-                
-                </Grid>
-                
-                
-                <span
+
+                <span class="row start-sm"
                     style={{
-                        paddingLeft: '95px',
-                        paddingTop: '30px',
+                        color: '#656972',
+                        lineHeight: '66px !important',
                         textTransform: 'uppercase',
                         fontSize: '14px',
                         fontWeight: 'bold',
                     }}>
-                    Trending  commentators</span>
-                <Grid fluid={true}>
-                    <Row center="md">
+                    Active commentators</span>
+
+                    <Row class="row
+                                between-xs
+                                start-sm
+                                col-xs-12
+                                col-sm-8
+                                col-md-6
+                                col-lg-4">
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
@@ -326,21 +349,20 @@ class Intro extends Component {
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
-                                                    <Card key={news.id} style={style}>
-                                                        <CardHeader title={commentators[article].group[1]}
-                                                                    subtitle={<span style={{fontSize: '12 !important'}}>by <b>{news.nick}</b> {moment(news.maxDate).format('MMMM Do YYYY, h:mm')}</span>}
-                                                                    avatar={<img style={{height: '24px', width: '24px'}}
-                                                                                 src={`/static/img/sources/${commentators[article].group[1]}.png`}/>}/>
-                                                        
-                                                        <CardTitle
+                                                    <Card key={news.id} style={commentatorStyle} class="box">
+                                                        <CardHeader title={news.nick}
+                                                                    subtitle={<span style={{fontSize: '12px !important'}}> on <b> {commentators[article].group[1]}</b> at {moment(news.maxDate).format('MMMM Do YYYY, h:mm')}</span>}
+                                                                    avatar={<img style={{height: '42px', width: '42px', borderRadius: '50%'}}
+                                                                                 src={`/static/img/avatar/avatar1.svg`}/>}/>
+
+                                                        <CardTitle style={{ padding: '0 20px'}}
                                                             title={<span
-                                                                style={{fontSize: '14px !important'}}>{`Total Comments: ${news.totalComments}`}</span>}
-                                                            subtitle={<span
-                                                                style={{fontSize: '12px !important'}}>{this.getTitle(news.slug)}</span>}/>
+                                                                style={{ padding: '3px', background: '#656972', color: '#fff', fontSize: '14px !important'}}>{` ${news.totalComments} Comments`}</span>}
+                                                           />
                                                     </Card>
                                                 </a>
                                                 
-                                                return <Col key={news.id} xs={12} md={6}>{content}</Col>
+                                                return <Col key={news.id} >{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -349,9 +371,40 @@ class Intro extends Component {
                             })
                         }
                     </Row>
+
+                    <Row class="row
+                                between-xs
+                                start-sm
+                                col-xs-12
+                                col-sm-8
+                                col-md-6
+                                col-lg-4"
+                        style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
+                        <img
+                             style={{
+                                     width: '30%',
+                                     height: '300px',
+                                     margin: '30px 30px 0px 0px' }}
+                             src={`/static/img/avatar/comentarismo-bot.svg`}/>
+                        <Tabs style={{height: '135px', paddingBottom: '75px', width: '55%'}}>
+                            <Tab label="WHO AM I?" style={{background: '#656972', color: '#fff', height: '84px'}}>
+                                <h3 style={{ paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >I'm Linda!</h3>
+                                    <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>I provide recommendations and help you discover news, products, videos and associated comments based on what you like.</p>
+                            </Tab>
+                            <Tab label="WHY SIGN IN?" style={{background: '#656972', color: '#fff', height: '84px'}}>
+                                <h3 style={{paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >Get more from comments around the web</h3>
+                                <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>Once signed in, you'll receive better, personalized recommendations. Navigate through comments and likes, comment or share them. Filter through comments and users's profiles.
+                                    Interact with all users from one place. Find other people with shared interests and keep up with their discoveries.
+                                </p>                            </Tab>
+                            <Tab label="AM I IMPROVING?" style={{background: '#656972', color: '#fff', height: '84px'}}>
+                                <h3 style={{paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >I am always improving</h3>
+                                <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>My knowledge is constantly growing. I'm learning from you, the people who use my service.
+                                    If you want to help, sign up now!</p>
+                            </Tab>
+                        </Tabs>
+
+                    </Row>
                 </Grid>
-            
-            
             </div>
         
         );

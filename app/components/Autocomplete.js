@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {AutoComplete}     from 'material-ui';
 import JSONP                from 'jsonp';
 const googleAutoSuggestURL = '//suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=';
-import SearchIcon from 'material-ui/svg-icons/action/search';
-import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
 var analytics = require('ga-browser')();
 
 class Autocomplete extends Component {
@@ -74,7 +72,7 @@ class Autocomplete extends Component {
 			dataSource={this.state.dataSource}
 			onUpdateInput={this.onUpdateInput}
 			onNewRequest={this.onNewRequest}/>
-			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#9B4240', borderRadius: '2px'}}>RECOMMEND</button>
+			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#656972', borderRadius: '0px'}}>RECOMMEND</button>
 		</div>
 
 	}

@@ -3,14 +3,15 @@ import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'mat
 import Avatar from 'material-ui/Avatar';
 
 const style = {
-    height: 'auto',
-    margin: '20px',
-    width: '100%',
-    textAlign: 'left',
-    display: 'block',
+    margin: '20px 20px 20px 0',
     boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
-    borderRadius: '2px'
+    borderRadius: '2px',
+    maxHeight: 'auto',
+    width: '300px',
+    float: 'left !important',
+    display: 'block !important',
 };
+
 
 export default class ExpandableComment extends React.Component {
     
@@ -61,20 +62,18 @@ export default class ExpandableComment extends React.Component {
     
     render() {
         return (
-            <Card style={style} expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
+            <Card style={style} class="col-xs-12" expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
                 <CardHeader
-                    title={this.props.comment.nick}
+                    title={<span>{this.props.comment.nick}</span>}
                     subtitle={this.getShortComment(this.props.comment.comment)}
                     avatar={this.getAvatar(this.props.comment.nick)}
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
-                
 
-                <CardText expandable={true}>
+                <CardText  expandable={true}>
                     {this.getComment(this.props.comment.comment)}
                 </CardText>
-                
             </Card>
         );
     }
