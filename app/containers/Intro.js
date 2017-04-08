@@ -28,7 +28,7 @@ import ExpandableComment from 'containers/ExpandableComment';
 
 class Intro extends Component {
     static fetchData({store, params}) {
-        var index = params.index || "languages";
+        var index = params.index || "news";
         var value = params.value || "english";
         var skip = params.skip || "0";
         var limit = params.limit || "50";
@@ -44,32 +44,26 @@ class Intro extends Component {
             //console.log("navigator.browserLanguage: "+navigator.browserLanguage);
             //console.log("navigator.userAgent: "+navigator.userAgent);
             
+            var path = window.location.pathname.split('/');
+            var index = path[2];
+            
             var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
             console.log('detected user language --> ' + userLang);
-            var targetLang = "";
             if (userLang.indexOf("pt") !== -1) {
-                targetLang = "portuguese";
+                document.location.href = document.location.href + "/home/ " + index + "/portuguese";
             } else if (userLang.indexOf("es") !== -1) {
-                targetLang = "spanish";
+                document.location.href = document.location.href + "/home/ " + index + "/spanish";
             } else if (userLang.indexOf("it") !== -1) {
-                targetLang = "italian";
+                document.location.href = document.location.href + "/home/ " + index + "/italian";
             } else if (userLang.indexOf("fr") !== -1) {
-                targetLang = "french";
+                document.location.href = document.location.href + "/home/ " + index + "/french";
             } else if (userLang.indexOf("russian") !== -1) {
-                targetLang = "russian";
+                document.location.href = document.location.href + "/home/ " + index + "/russian";
             } else if (userLang.indexOf("croatian") !== -1) {
-                targetLang = "croatian";
+                document.location.href = document.location.href + "/home/ " + index + "/croatian";
             } else {
                 console.log("default lang will be used");
-                return;
             }
-            
-            var index = "languages";
-            var value = targetLang;
-            var skip = "0";
-            var limit = "50";
-            console.log("will re-load comments on the user lang. ");
-            this.props.loadIntroDetail({index, value, skip, limit});
         }
     }
     
@@ -77,7 +71,7 @@ class Intro extends Component {
         return '/news/' + news.titleurlize;
     }
     
-    getCommentatorLink(commentator){
+    getCommentatorLink(commentator) {
         return `/commentators/${commentator.id}`
     }
     
@@ -88,7 +82,7 @@ class Intro extends Component {
         );
     }
     
-   
+    
     getImageElement(src, id) {
         if (typeof window !== 'undefined') {
             
@@ -194,15 +188,21 @@ class Intro extends Component {
                         {"property": "og:type", "content": "article"}
                     ]}
                 />
-                <Tabs style={{height: '135px', paddingBottom: '75px'}}>
-                    <Tab label="News" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                <Tabs style={{height: '135px', paddingBottom: '75px'}} initialSelectedIndex={0}>
+                    <Tab label="News" onActive={function () {
+                        document.location.href = "/";
+                    }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
                         <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"}/>
                     </Tab>
                     
-                    <Tab label="Products" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                    <Tab onActive={function () {
+                        document.location.href = "/home/product/"+targetLang;
+                    }} label="Products" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
                         <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
                     </Tab>
-                    <Tab label="YouTube" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                    <Tab label="YouTube" onActive={function () {
+                        document.location.href = "/home/youtube/"+targetLang;
+                    }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
                         <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>

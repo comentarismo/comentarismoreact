@@ -2,7 +2,7 @@ import { CALL_API, CHAIN_API } from 'middleware/api'
 import config from 'config'
 
 export const LOADED_INTRO = Symbol('LOADED_INTRO')
-export function loadIntroDetail({  }) {
+export function loadIntroDetail({ index,value }) {
     //console.log("loading Intro data");
     return {
         [CHAIN_API]: [
@@ -10,7 +10,7 @@ export function loadIntroDetail({  }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `${config.BASE_URL}/apihomepage/`,
+                        path: `${config.BASE_URL}/apihomepage?index=${index}&value=${value}`,
                         successType: LOADED_INTRO
                     }
                 }

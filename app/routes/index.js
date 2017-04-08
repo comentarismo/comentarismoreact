@@ -8,6 +8,8 @@ import {Router, Route, IndexRoute} from 'react-router';
 import Layout from 'containers/layout/Master';
 
 import Intro from 'containers/Intro';
+import IntroProduct from 'containers/IntroProduct';
+import IntroYoutube from 'containers/IntroYoutube';
 
 import Commentators from 'containers/Commentators';
 import Commentator from 'containers/Commentator';
@@ -63,8 +65,12 @@ export default function (history) {
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
                 <Route path="jcp" component={SearchComponentJCP}/>
-
+    
+                <Route path="home/product/:value" component={IntroProduct} />
+                <Route path="home/youtube/:value" component={IntroYoutube} />
+                <Route path="home/news/:value" component={Intro} />
                 <IndexRoute component={Intro}/>
+                
                 <Route path="*" component={Notfound}/>
             </Route>
         </Router>

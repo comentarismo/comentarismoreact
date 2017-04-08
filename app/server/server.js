@@ -534,7 +534,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
             }
             
             if (data) {
-    
+                
                 getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
                     if (err) {
                         logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
@@ -553,7 +553,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                     }
                     //-------REDIS CACHE SAVE END ------//
                     res.send(data);
-    
+                    
                 })
             } else {
                 
@@ -579,7 +579,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                     }
                     
                     if (data) {
-    
+                        
                         getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
                             if (err) {
                                 logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
@@ -588,8 +588,8 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                             }
                             
                             data.comments = commentaries;
-    
-    
+                            
+                            
                             //-------REDIS CACHE SAVE START ------//
                             logger.info(urlTag + " will save cached");
                             if (!DISABLE_CACHE) {
@@ -597,7 +597,7 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                                 client.expire(urlTag, REDIS_EXPIRE);
                             }
                             //-------REDIS CACHE SAVE END ------//
-    
+                            
                         })
                         
                     } else {
@@ -1010,11 +1010,22 @@ server.get('/api/product/:id', limiter, (req, res) => {
 });
 
 var comentarismosite = "http://www.comentarismo.com";
-var {getLatestNewsGroupDay, getLatestCommentatorsGroupDay, getLatestCommentsGroupDay, getLatestNewsWithCommentGroupDay} = require("./comentarismo_api");
+var {
+    getLatestNewsGroupDay, getLatestNewsCommentatorsGroupDay, getLatestNewsWithCommentGroupDay,
+    getLatestProductsWithCommentGroupDay, getLatestProductsCommentatorsGroupDay,
+    getLatestYoutubeWithCommentGroupDay, getLatestYoutubeCommentatorsGroupDay
+} = require("./comentarismo_api");
 server.get('/apihomepage/', limiter, (req, res) => {
     
+    
+    var index = req.query.index;
+    var value = req.query.value;
+    
+    
+    var urlTag = `apihomepage?index=${index}&value=${value}`;
+    
     //-------REDIS CACHE START ------//
-    client.get("apihomepage", function (err, js) {
+    client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
             if (err || !js) {
                 if (err) {
@@ -1023,65 +1034,6 @@ server.get('/apihomepage/', limiter, (req, res) => {
                 //return res.status(500).send('Cache is broken!');
             } else {
                 // console.log("apihomepage will return cached result");
-                if (EXPIRE_REDIS) {
-                    console.log("apihomepage, Will expire REDIS")
-                    client.expire("apihomepage", 1);
-                }
-                res.type('application/json');
-                return res.send(js);
-            }
-        }
-        //-------REDIS CACHE END ------//
-        
-        getLatestNewsWithCommentGroupDay(conn, function (err, news) {
-            
-            if (err) {
-                console.log("Error: getLatestCommentatorsGroupDay -> ", err);
-                return res.status(500).send({});
-            } else {
-                //get commentators reduced
-                getLatestCommentatorsGroupDay(conn, function (err, commentators) {
-                    
-                    var result = {
-                        news: news,
-                        commentators: commentators
-                    };
-                    
-                    if (err) {
-                        console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
-                        return res.send(result);
-                    } else {
-                        
-                        if (!DISABLE_CACHE) {
-                            client.set("apihomepage", JSON.stringify(result), redis.print);
-                            client.expire("apihomepage", REDIS_EXPIRE);
-                        }
-                        res.type('application/json');
-                        //-------REDIS CACHE SAVE END ------//
-                        //get comments
-                        return res.send(result);
-                    }
-                    
-                });
-            }
-            
-        });
-    });
-});
-
-server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, res) => {
-    
-    var urlTag = `/api/getalldistinctybyindex/${req.params.table}/${req.params.index}/${req.params.value}`;
-    //-------REDIS CACHE START ------//
-    client.get(urlTag, function (err, js) {
-        if (!DISABLE_CACHE) {
-            if (err || !js) {
-                if (err) {
-                    console.log("Error: " + urlTag + " err ", err);
-                }
-                //return res.status(500).send('Cache is broken!');
-            } else {
-                // console.log(urlTag+" will return cached result");
                 if (EXPIRE_REDIS) {
                     console.log(urlTag + ", Will expire REDIS")
                     client.expire(urlTag, 1);
@@ -1092,19 +1044,95 @@ server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, re
         }
         //-------REDIS CACHE END ------//
         
-        getAllDistinctByIndex(conn, req.params.table, req.params.index, req.params.value).then((result) => {
-            if (!DISABLE_CACHE) {
-                client.set(urlTag, JSON.stringify(result), redis.print);
-                client.expire(urlTag, REDIS_EXPIRE);
-            }
-            res.type('application/json');
-            return res.send(result);
-        }).catch((err) => {
-            console.log("Error: getAllDistinctByIndex -> ", err);
-            return res.status(500).send([])
-        })
+        if (index === "product") {
+            getLatestProductsWithCommentGroupDay(index, value, conn, function (err, news) {
+                
+                if (err) {
+                    console.log("Error: getLatestCommentatorsGroupDay -> ", err);
+                    return res.status(500).send({});
+                } else {
+                    //get commentators reduced
+                    getLatestProductsCommentatorsGroupDay(index, value, conn, function (err, commentators) {
+                        
+                        var result = {
+                            news: news,
+                            commentators: commentators
+                        };
+                        
+                        if (err) {
+                            console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
+                            return res.send(result);
+                        } else {
+                            
+                            if (!DISABLE_CACHE) {
+                                client.set(urlTag, JSON.stringify(result), redis.print);
+                            }
+                            return res.send(result);
+                        }
+                    })
+                }
+            })
+        } else if (index === "youtube") {
+            getLatestYoutubeWithCommentGroupDay(index, value, conn, function (err, news) {
+                
+                if (err) {
+                    console.log("Error: getLatestCommentatorsGroupDay -> ", err);
+                    return res.status(500).send({});
+                } else {
+                    //get commentators reduced
+                    getLatestYoutubeCommentatorsGroupDay(index, value, conn, function (err, commentators) {
+                        
+                        var result = {
+                            news: news,
+                            commentators: commentators
+                        };
+                        
+                        if (err) {
+                            console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
+                            return res.send(result);
+                        } else {
+                            
+                            if (!DISABLE_CACHE) {
+                                client.set(urlTag, JSON.stringify(result), redis.print);
+                            }
+                            return res.send(result);
+                        }
+                    })
+                }
+            })
+        } else {
+            
+            getLatestNewsWithCommentGroupDay(index, value, conn, function (err, news) {
+                
+                if (err) {
+                    console.log("Error: getLatestCommentatorsGroupDay -> ", err);
+                    return res.status(500).send({});
+                } else {
+                    //get commentators reduced
+                    getLatestNewsCommentatorsGroupDay(index, value, conn, function (err, commentators) {
+                        
+                        var result = {
+                            news: news,
+                            commentators: commentators
+                        };
+                        
+                        if (err) {
+                            console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
+                            return res.send(result);
+                        } else {
+                            
+                            if (!DISABLE_CACHE) {
+                                client.set(urlTag, JSON.stringify(result), redis.print);
+                            }
+                            return res.send(result);
+                        }
+                    })
+                }
+            })
+        }
     })
-})
+    
+});
 
 
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
