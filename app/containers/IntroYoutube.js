@@ -198,8 +198,8 @@ class Intro extends Component {
                         <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
-                <Grid fluid={true} class="col-md-offset-3">
-                <span class="row start-sm"
+                <Grid fluid={true}>
+                <span className="col-xs-offset-1"
                       style={{
                           color: '#656972',
                           paddingTop: '30px',
@@ -208,25 +208,19 @@ class Intro extends Component {
                           fontWeight: 'bold',
                       }}>
                     Trending Videos</span>
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    <Row style={{ marginLeft: '7rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div>
+                                    <div className="col-xs box">
                                         {comment[article].reduction.map((news) => {
                                         
                                             let content = "";
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style} class="box">
+                                                    <Card key={news.id} style={style} className="box">
                                                         <CardHeader title={comment[article].group[1]}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.metadata.channeltitle}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
@@ -267,9 +261,9 @@ class Intro extends Component {
                             })
                         }
                     </Row>
-                
-                
-                    <span class="row start-sm"
+
+
+                    <div className="col-xs-offset-1"
                           style={{
                               color: '#656972',
                               lineHeight: '60px !important',
@@ -277,21 +271,15 @@ class Intro extends Component {
                               fontSize: '14px',
                               fontWeight: 'bold',
                           }}>
-                    Trending  comments</span>
+                    Trending  comments</div>
                 
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    <Row style={{ marginLeft: '8rem', marginRight: '8rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div class="col-xs-12">
+                                    <div className="col-xs-12 box">
                                         {comment[article].reduction.map((news) => {
                                             let c = {
                                                 nick: news.topcomments[0].authorname,
@@ -299,7 +287,7 @@ class Intro extends Component {
                                             }
                                             let content =  <ExpandableComment comment={c}/>;
                                             
-                                                return <Col class="box" key={`${news.id}`}>{content}</Col>
+                                                return <Col className="box" key={`${news.id}`}>{content}</Col>
                                         })}
                                     </div>
                                 );
@@ -307,36 +295,32 @@ class Intro extends Component {
                         }
                     </Row>
                 
-                    <span class="row start-sm"
+                    <div className="col-xs-offset-1"
                           style={{
                               color: '#656972',
                               lineHeight: '66px !important',
                               textTransform: 'uppercase',
                               fontSize: '14px',
                               fontWeight: 'bold',
+                              paddingTop: '30px',
+                              paddingBottom: '10px',
                           }}>
-                    Active commentators</span>
+                    Active commentators</div>
                 
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    <Row>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div>
+                                    <div className="col-xs box">
                                         {commentators[article].reduction.map((news) => {
                                         
                                             let content = "";
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
-                                                    <Card key={news.id} style={commentatorStyle} class="box">
+                                                    <Card key={news.id} style={commentatorStyle} className="box">
                                                         <CardHeader title={news.nick}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}> on <b> {commentators[article].group[1]}</b> at {moment(news.maxDate).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '42px', width: '42px', borderRadius: '50%'}}
@@ -359,14 +343,7 @@ class Intro extends Component {
                         }
                     </Row>
                 
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4"
-                         style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
+                    <Row style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
                         <img
                             style={{
                                 width: '30%',
