@@ -3,11 +3,11 @@ import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'mat
 import Avatar from 'material-ui/Avatar';
 
 const style = {
-    margin: '20px 20px 20px 0',
+    margin: '20px 20px 0px 0',
     boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
     borderRadius: '2px',
     maxHeight: 'auto',
-    width: '300px',
+    width: '100%',
     float: 'left !important',
     display: 'block !important',
 };

@@ -228,7 +228,7 @@ class Article extends Component {
                     <h4>
                                                 <span
                                                     id="channel_title">{article.operator ? article.operator + " " : " "}</span>
-                        on <span id="network_title"> Comment & Sentiment Analysis Project</span>
+                        on <span id="network_title"></span>
                     </h4>
 
                     <hr/>

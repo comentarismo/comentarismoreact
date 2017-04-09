@@ -170,6 +170,9 @@ class IntroProduct extends Component {
         const commentatorStyle = {
             height: '150px',
             width: '300px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             textAlign: 'left',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
             borderRadius: '2px',
@@ -206,8 +209,8 @@ class IntroProduct extends Component {
                         <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
-                <Grid fluid={true} class="col-md-offset-3">
-                <span class="row start-sm"
+                <Grid fluid={true}>
+                <div className="col-xs-offset-1"
                       style={{
                           color: '#656972',
                           paddingTop: '30px',
@@ -215,27 +218,21 @@ class IntroProduct extends Component {
                           fontSize: '14px',
                           fontWeight: 'bold',
                       }}>
-                    Trending  Products</span>
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    Trending  Products</div>
+                    <Row style={{ marginLeft: '9rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div>
+                                    <div className="col-xs box">
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
                                             if (news.languages == targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style} class="box">
+                                                    <Card key={news.id} style={style} className="box">
                                                         <CardHeader title={comment[article].group[1]}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
@@ -278,9 +275,7 @@ class IntroProduct extends Component {
                             })
                         }
                     </Row>
-                    
-                    
-                    <span class="row start-sm"
+                    <div className="col-xs-offset-1"
                           style={{
                               color: '#656972',
                               lineHeight: '60px !important',
@@ -288,21 +283,15 @@ class IntroProduct extends Component {
                               fontSize: '14px',
                               fontWeight: 'bold',
                           }}>
-                    Trending  comments</span>
+                    Trending  comments</div>
                     
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    <Row style={{ marginLeft: '8rem', marginRight: '8rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div class="col-xs-12">
+                                    <div className="col-xs-12 box">
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
@@ -310,7 +299,7 @@ class IntroProduct extends Component {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 
-                                                return <Col class="box" key={`${news.id}`}>{content}</Col>
+                                                return <Col className="box" key={`${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -320,36 +309,32 @@ class IntroProduct extends Component {
                         }
                     </Row>
                     
-                    <span class="row start-sm"
+                    <div className="col-xs-offset-1"
                           style={{
                               color: '#656972',
                               lineHeight: '66px !important',
                               textTransform: 'uppercase',
                               fontSize: '14px',
                               fontWeight: 'bold',
+                              paddingTop: '30px',
+                              paddingBottom: '10px',
                           }}>
-                    Active commentators</span>
+                    Active commentators</div>
                     
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4">
+                    <Row style={{ marginLeft: '9rem'}}>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div>
+                                    <div className="col-xs box">
                                         {commentators[article].reduction.map((news) => {
                                             
                                             let content = "";
                                             if (news.languages == targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
-                                                    <Card key={news.id} style={commentatorStyle} class="box">
+                                                    <Card key={news.id} style={commentatorStyle} className="box">
                                                         <CardHeader title={news.nick}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}> on <b> {commentators[article].group[1]}</b> at {moment(news.maxDate).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '42px', width: '42px', borderRadius: '50%'}}
@@ -372,13 +357,7 @@ class IntroProduct extends Component {
                         }
                     </Row>
                     
-                    <Row class="row
-                                between-xs
-                                start-sm
-                                col-xs-12
-                                col-sm-8
-                                col-md-6
-                                col-lg-4"
+                    <Row
                          style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
                         <img
                             style={{
