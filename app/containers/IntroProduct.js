@@ -164,7 +164,11 @@ class IntroProduct extends Component {
             textAlign: 'left',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
             borderRadius: '2px',
-            margin: '20px 20px 20px 0'
+            margin: '20px 20px 20px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'left',
         };
         
         const commentatorStyle = {
@@ -225,14 +229,14 @@ class IntroProduct extends Component {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs box">
+                                    <Row>
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
                                             if (news.languages == targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style} className="box">
+                                                    <Card key={news.id} style={style}>
                                                         <CardHeader title={comment[article].group[1]}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
@@ -270,7 +274,7 @@ class IntroProduct extends Component {
                                             }
                                             return ""
                                         })}
-                                    </div>
+                                    </Row>
                                 );
                             })
                         }
@@ -321,13 +325,13 @@ class IntroProduct extends Component {
                           }}>
                     Active commentators</div>
                     
-                    <Row style={{ marginLeft: '9rem'}}>
+                    <Row style={{ marginLeft: '9rem'}} className="col-xs box">
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div className="col-xs box">
+                                    <div className="col-xs">
                                         {commentators[article].reduction.map((news) => {
                                             
                                             let content = "";

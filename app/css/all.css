@@ -2798,3 +2798,7 @@ textarea.form-control {
         background-size: 70%;
     }
 }
+
+.modal-body {
+    padding: 0px !important;
+}
