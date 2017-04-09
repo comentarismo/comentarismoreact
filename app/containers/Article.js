@@ -236,7 +236,7 @@ class Article extends Component {
                     <div className="row bignums">
                         <div className="col-xs-4 col-xs-offset-4">
                                                 <span
-                                                    id="total_comments">{article.totalComments ? article.totalComments : ""}</span>
+                                                    id="total_comments" dangerouslySetInnerHTML={{__html: article.totalComments ? article.totalComments : ""}} ></span>
                             <span className="desc">Total Comments</span>
                         </div>
                         <div className="col-xs-4">

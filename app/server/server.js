@@ -1135,6 +1135,44 @@ server.get('/apihomepage/', limiter, (req, res) => {
 });
 
 
+server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, res) => {
+
+    var urlTag = `/api/getalldistinctybyindex/${req.params.table}/${req.params.index}/${req.params.value}`;
+    //-------REDIS CACHE START ------//
+    client.get(urlTag, function (err, js) {
+        if (!DISABLE_CACHE) {
+            if (err || !js) {
+                if (err) {
+                    console.log("Error: " + urlTag + " err ", err);
+                }
+                //return res.status(500).send('Cache is broken!');
+            } else {
+                // console.log(urlTag+" will return cached result");
+                if (EXPIRE_REDIS) {
+                    console.log(urlTag + ", Will expire REDIS")
+                    client.expire(urlTag, 1);
+                }
+                res.type('application/json');
+                return res.send(js);
+            }
+        }
+        //-------REDIS CACHE END ------//
+
+        getAllDistinctByIndex(conn, req.params.table, req.params.index, req.params.value).then((result) => {
+            if (!DISABLE_CACHE) {
+                client.set(urlTag, JSON.stringify(result), redis.print);
+                client.expire(urlTag, REDIS_EXPIRE);
+            }
+            res.type('application/json');
+            return res.send(result);
+        }).catch((err) => {
+            console.log("Error: getAllDistinctByIndex -> ", err);
+            return res.status(500).send([])
+        })
+    })
+});
+
+
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
     
     var table = req.params.table;

@@ -89,7 +89,7 @@ module.exports = React.createClass({
 
     getTotalComments: function () {
         var totalComments = this.props.article.totalComments;
-        return totalComments ? <p className='source'>Comments {totalComments} </p> :  <p className='source'>Comments 0 </p> ;
+        return totalComments ? <p className='source'>Comments <span  dangerouslySetInnerHTML={{__html: totalComments}}/> </p> :  <p className='source'>Comments 0 </p> ;
     },
 
     getArticleLink: function () {
