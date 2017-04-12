@@ -17,17 +17,29 @@ var errMsg = "Error: ";
 var moment = require("moment");
 
 var LATEST_NEWS_DAYS_STR = process.env.LATEST_NEWS_DAYS;
-var LATEST_NEWS_DAYS = 180;
+var LATEST_NEWS_DAYS = 30;
 
 if (LATEST_NEWS_DAYS_STR) {
     LATEST_NEWS_DAYS = parseInt(LATEST_NEWS_DAYS_STR)
-} else {
-    LATEST_NEWS_DAYS = 180
+}
+
+var LATEST_PRODUCT_DAYS_STR = process.env.LATEST_PRODUCT_DAYS;
+var LATEST_PRODUCT_DAYS = 60;
+
+if (LATEST_PRODUCT_DAYS_STR) {
+    LATEST_PRODUCT_DAYS = parseInt(LATEST_PRODUCT_DAYS_STR)
+}
+
+var LATEST_YOUTUBE_DAYS_STR = process.env.LATEST_YOUTUBE_DAYS;
+var LATEST_YOUTUBE_DAYS = 180;
+
+if (LATEST_YOUTUBE_DAYS_STR) {
+    LATEST_YOUTUBE_DAYS = parseInt(LATEST_YOUTUBE_DAYS_STR)
 }
 
 export function getLatestNewsGroupDay(conn, cb) {
     
-    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(LATEST_NEWS_DAYS * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).group([conn.row('date').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -70,7 +82,7 @@ export function getLatestNewsGroupDay(conn, cb) {
 
 export function getLatestNewsCommentatorsGroupDay(index, value, conn, cb) {
     
-    var query = conn.table('commentator', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentator', {readMode: "outdated"}).between(conn.now().sub(LATEST_NEWS_DAYS * 86400), conn.now(),
         {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(5000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -80,24 +92,24 @@ export function getLatestNewsCommentatorsGroupDay(index, value, conn, cb) {
                 }).limit(5)
             }
         });
-    console.log("getLatestCommentatorsGroupDay query -> ", query);
+    console.log("getLatestNewsCommentatorsGroupDay query -> ", query);
     
     
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Error: Could not get getLatestCommentatorsGroupDay");
+            cb("Error: Could not get getLatestNewsCommentatorsGroupDay");
         } else {
-            console.log("getLatestCommentatorsGroupDay result -> ", results.length)
+            console.log("getLatestNewsCommentatorsGroupDay result -> ", results.length)
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getLatestCommentatorsGroupDay, ", err);
+        console.log("Error: getLatestNewsCommentatorsGroupDay, ", err);
         cb(err);
     })
 }
 export function getLatestNewsWithCommentGroupDay(index, value, conn, cb) {
-    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(LATEST_NEWS_DAYS * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000)
         .concatMap(function (row) {
             return conn.table("commentaries", {readMode: "outdated"}).getAll([row("operator"), row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
@@ -124,18 +136,18 @@ export function getLatestNewsWithCommentGroupDay(index, value, conn, cb) {
             }
         });
     
-    console.log("getLatestNewsGroupDay query -> ", query);
+    console.log("getLatestNewsWithCommentGroupDay query -> ", query);
     
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Error: Could not get getLatestNewsGroupDay");
+            cb("Error: Could not get getLatestNewsWithCommentGroupDay");
         } else {
-            console.log("getLatestNewsGroupDay result -> ", results.length)
+            console.log("getLatestNewsWithCommentGroupDay result -> ", results.length)
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getLatestNewsGroupDay, ", err);
+        console.log("Error: getLatestNewsWithCommentGroupDay, ", err);
         cb(err);
     })
     
@@ -144,7 +156,7 @@ export function getLatestNewsWithCommentGroupDay(index, value, conn, cb) {
 
 export function getLatestYoutubeCommentatorsGroupDay(index, value, conn, cb) {
     
-    var query = conn.table('commentator_sentiment_report', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentator_sentiment_report', {readMode: "outdated"}).between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
         {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(5000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -154,25 +166,25 @@ export function getLatestYoutubeCommentatorsGroupDay(index, value, conn, cb) {
                 }).limit(5)
             }
         });
-    console.log("getLatestCommentatorsGroupDay query -> ", query);
+    console.log("getLatestYoutubeCommentatorsGroupDay query -> ", query);
     
     
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Error: Could not get getLatestCommentatorsGroupDay");
+            cb("Error: Could not get getLatestYoutubeCommentatorsGroupDay");
         } else {
-            console.log("getLatestCommentatorsGroupDay result -> ", results.length);
+            console.log("getLatestYoutubeCommentatorsGroupDay result -> ", results.length);
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getLatestCommentatorsGroupDay, ", err);
+        console.log("Error: getLatestYoutubeCommentatorsGroupDay, ", err);
         cb(err);
     });
 }
 
 export function getLatestYoutubeWithCommentGroupDay(index, value, conn, cb) {
-    var query = conn.table('sentiment_report', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('sentiment_report', {readMode: "outdated"}).between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(100)
         .eqJoin("id", conn.table("sentiment", {readMode: "outdated"}))
         .without({right: 'sentimentlist'})
@@ -206,7 +218,7 @@ export function getLatestYoutubeWithCommentGroupDay(index, value, conn, cb) {
 
 export function getLatestProductsCommentatorsGroupDay(index, value, conn, cb) {
     
-    var query = conn.table('commentator_product', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentator_product', {readMode: "outdated"}).between(conn.now().sub(LATEST_PRODUCT_DAYS * 86400), conn.now(),
         {index: 'maxDate'}).orderBy({index: conn.desc('maxDate')}).limit(5000).group([conn.row('maxDate').month(), conn.row('operator')])
         .ungroup().map(function (row) {
             return {
@@ -216,25 +228,25 @@ export function getLatestProductsCommentatorsGroupDay(index, value, conn, cb) {
                 }).limit(5)
             }
         });
-    console.log("getLatestCommentatorsGroupDay query -> ", query);
+    console.log("getLatestProductsCommentatorsGroupDay query -> ", query);
     
     
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Error: Could not get getLatestCommentatorsGroupDay");
+            cb("Error: Could not get getLatestProductsCommentatorsGroupDay");
         } else {
-            console.log("getLatestCommentatorsGroupDay result -> ", results.length);
+            console.log("getLatestProductsCommentatorsGroupDay result -> ", results.length);
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getLatestCommentatorsGroupDay, ", err);
+        console.log("Error: getLatestProductsCommentatorsGroupDay, ", err);
         cb(err);
     })
 }
 
 export function getLatestProductsWithCommentGroupDay(index, value, conn, cb) {
-    var query = conn.table('product', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('product', {readMode: "outdated"}).between(conn.now().sub(LATEST_PRODUCT_DAYS * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000)
         .concatMap(function (row) {
             return conn.table("commentaries_product", {readMode: "outdated"}).getAll([row("operator"), row("titleurlize")], {index: 'operator_titleurlize'}).limit(1).map(function (comment) {
@@ -250,18 +262,18 @@ export function getLatestProductsWithCommentGroupDay(index, value, conn, cb) {
             }
         })
     
-    console.log("getLatestNewsGroupDay query -> ", query);
+    console.log("getLatestProductsWithCommentGroupDay query -> ", query);
     
     query
         .run().then(function (results) {
         if (!results) {
-            cb("Error: Could not get getLatestNewsGroupDay");
+            cb("Error: Could not get getLatestProductsWithCommentGroupDay");
         } else {
-            console.log("getLatestNewsGroupDay result -> ", results.length)
+            console.log("getLatestProductsWithCommentGroupDay result -> ", results.length)
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getLatestNewsGroupDay, ", err);
+        console.log("Error: getLatestProductsWithCommentGroupDay, ", err);
         cb(err);
     })
     
@@ -270,7 +282,7 @@ export function getLatestProductsWithCommentGroupDay(index, value, conn, cb) {
 
 export function getLatestCommentsGroupDay(conn, cb) {
     
-    var query = conn.table('commentaries', {readMode: "outdated"}).between(conn.now().sub(20 * 86400), conn.now(),
+    var query = conn.table('commentaries', {readMode: "outdated"}).between(conn.now().sub(LATEST_NEWS_DAYS_STR * 86400), conn.now(),
         {index: 'date'}).orderBy({index: conn.desc('date')}).limit(1000).group(conn.row('operator'))
         .ungroup().map(function (row) {
             return {
@@ -422,7 +434,7 @@ export function getOneBySecondaryIndex(table, index, value, conn, cb) {
 export function getSample(table, index, value, skip, limit, sort, sample, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
-        logger.warn(errMsg + "getAllByIndexOrderBySkipLimit --> search query is not correct.");
+        logger.warn(errMsg + "getSample --> search query is not correct.");
         return cb()
     }
     var indexSort = "date";
@@ -436,7 +448,7 @@ export function getSample(table, index, value, skip, limit, sort, sample, conn, 
         .filter(conn.row(index).eq(value))
         .skip(skip).limit(limit).sample(sample);
     
-    console.log("getSample", query);
+    console.log("getSample -> ", query);
     
     query.run().then(function (results) {
         if (!results) {
@@ -548,7 +560,7 @@ export function getAllByMultipleIndexOrderBySkipLimit(params, conn, cb) {
 export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, cb) {
     if (!table || !index || !value) {
         logger.warn(errMsg + "table --> " + table + " index -> " + index + " value --> " + value);
-        logger.warn(errMsg + "getAllByRangeIndexOrderByFilterSkipLimit --> search query is not correct.");
+        logger.warn(errMsg + "getAllByDateRangeIndexOrderByFilterSkipLimit --> search query is not correct.");
         return cb()
     }
     
@@ -578,18 +590,18 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
         .skip(skip).limit(limit);
     
     
-    // console.log("getAllByDateRangeIndexOrderByFilterSkipLimit, ",query);
+    console.log("getAllByDateRangeIndexOrderByFilterSkipLimit, ",query);
     
     query.run().then(function (results) {
         if (!results) {
-            logger.info('Error: getAllByRangeIndexOrderByFilterSkipLimit could not find anyting  -> ', query);
+            logger.info('Error: getAllByDateRangeIndexOrderByFilterSkipLimit could not find anyting  -> ', query);
             cb('');
         } else {
-            console.log("getAllByRangeIndexOrderByFilterSkipLimit", results.length);
+            console.log("getAllByDateRangeIndexOrderByFilterSkipLimit", results.length);
             cb(null, results);
         }
     }).catch(function (err) {
-        console.log("Error: getAllByRangeIndexOrderByFilterSkipLimit, ", err);
+        console.log("Error: getAllByDateRangeIndexOrderByFilterSkipLimit, ", err);
         cb(err);
     });
 }
