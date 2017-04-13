@@ -2802,3 +2802,7 @@ textarea.form-control {
 .modal-body {
     padding: 0px !important;
 }
+
+b {
+    font-weight: 500 !important;
+}

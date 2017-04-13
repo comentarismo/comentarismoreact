@@ -12,12 +12,18 @@ import {PlayImages} from './PlayImages';
 import {Tabs, Tab} from 'material-ui/Tabs';
 var emojione = require("emojione");
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-
+import Avatar from 'material-ui/Avatar';
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {XScript} from 'components/XScript';
 import {XSoundcloud} from 'components/XSoundcloud'
+import {Grid, Row, Col} from 'react-styled-flexboxgrid';
+import Chip from 'material-ui/Chip';
+import FlatButton from 'material-ui/FlatButton';
+
+var ImageComponent = require('components/Image');
+
 
 var moment = require("moment");
 
@@ -41,6 +47,21 @@ class Article extends Component {
     static fetchData({store, params}) {
         let {id} = params;
         return store.dispatch(loadArticleDetail({id}));
+    }
+
+
+    getImageElement() {
+        let {article} = this.props;
+        var src;
+        // use meta:og image if available
+        if (article && article.image) {
+            src = article.image;
+        }
+        // use default image if meta:og is missing
+        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
+
+        return src ?
+            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
     }
 
     render() {
@@ -194,6 +215,19 @@ class Article extends Component {
             </Card>
         }
 
+        var totalComments = article.totalComments ? `${article.totalComments} Comments` : "No Comments";
+        // var totalComments = article.totalComments ? article.totalComments + "Comments" : "No Comments";
+
+        const stylesTag = {
+            chip: {
+                margin: 4,
+                display: 'inline-flex',
+            },
+            wrapper: {
+                display: 'flex',
+                flexWrap: 'wrap',
+            },
+        };
         return (
             <div>
                 <Helmet
@@ -221,140 +255,49 @@ class Article extends Component {
                 <div className="tm-embed-container" id="scriptContainer">
                 </div>
                 <XScript index="operator_titleurlize"/>
+                <Grid fluid={true}>
+                    <FlatButton label={ article.genre ? article.genre.toUpperCase() : article.genre }/>
+                    <Row className="col-xs-offset-1"
+                         style={{background: '#fff', height: 'auto', fontFamily: 'Open Sans, sans-serif', color: '#656972'}}>
+                        <Row className="col-lg-6 col-xs-offset-2" style={{ marginTop: '30px', height: '350px', }}>
+                            <CardHeader
+                                title={<span style={{fontSize: '14px', textTransform: 'uppercase'}}>{ article.operator ? article.operator + " " : " " }</span>}
+                                avatar={<img style={{height: '24px', width: '24px', marginTop: '8px'}}
+                                        src={`/static/img/sources/${article.operator}.png`}/>}
+                                subtitle={<Date style={{ fontSize: '14px'}} date={this.props.article.date}/>}
+                            />
 
-                <div id="header" className="stroke"
-                     style={{"backgroundImage": "url('" + article.image + "')"}}>
-                    <h1 id="video_title">{article.title}</h1>
-                    <h4>
-                                                <span
-                                                    id="channel_title">{article.operator ? article.operator + " " : " "}</span>
-                        on <span id="network_title"></span>
-                    </h4>
+                            <CardTitle
+                                title={<span style={{fontSize: '18px', color: '#35373C !important', lineHeight: '0.8 !important'}}> {article.title} </span>}
+                                subtitle={<span dangerouslySetInnerHTML={{__html:totalComments}}/>}/>
 
-                    <hr/>
+                            <CardText>{ getContentBody() }</CardText>
+                            <CardActions>
 
-                    <div className="row bignums">
-                        <div className="col-xs-4 col-xs-offset-4">
-                                                <span
-                                                    id="total_comments" dangerouslySetInnerHTML={{__html: article.totalComments ? article.totalComments : ""}} ></span>
-                            <span className="desc">Total Comments</span>
-                        </div>
-                        <div className="col-xs-4">
-                                                <span
-                                                    id="comments_per_day">{commentsavgperday ? commentsavgperday.toFixed(2) : "0" }</span>
-                            <span className="desc">By Day</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div className="row">
-                    <div className="progress">
-                        <div className="progress-bar progress-bar-success" role="progressbar"
-                             aria-valuenow="0"
-                             aria-valuemin="0"
-                             aria-valuemax="100" style={{width: "0%"}}>
-                            Comments Analyzed: 0%
-                        </div>
-                    </div>
-                </div>
+                                {
+                                    this.props.article.tags && this.props.article.tags.map((tag,i) => {
+                                        return i < 4 && (
+                                            <Chip  style={stylesTag.chip}>
+                                                <Avatar size={32}>{tag.slice(0,1).toUpperCase()}</Avatar>
+                                                {tag}
+                                            </Chip>
+                                        )
+                                    })
+                                }
+                            </CardActions>
+                        </Row>
+                        <Row className="col-lg-6 col-xs-offset-8" style={{ marginTop: '30px' }}>
+                            {this.getImageElement()}
+                        </Row>
+                    </Row>
+                </Grid>
 
                 {sentimentReport}
 
-                <Tabs  id="noanim-tab-example">
-                    <Tab  label="Images">
-                        <PlayImages images={searchlist} playing={true}
-                                    playingtimeout={5000}/>
-                    </Tab>
-                    <Tab label="Videos" disabled>
-                        More Videos soon ...
-                    </Tab>
-                </Tabs>
-
-                <div className="col-xs-12" style={{height: '25px'}}></div>
                 <div>
-                    <div className="profile-button">
-
-                    </div>
-                    <div className="profile-nick">
-                        <div className="profile-nickName">
-
-                        </div>
-                    </div>
-
                     <XSoundcloud permalink_url={article.permalink_url}/>
-
-
-                    <Tabs id="noanim-tab-example">
-                        <Tab  label="Resume">
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block"></span>
-                                        <span
-                                            className="profile-StatValue">{ getContentBody() }</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </Tab>
-                    </Tabs>
-
-
-                    <Tabs id="noanim-tab-example">
-                        <Tab label="Publish Date">
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block"></span>
-                                        <span className="profile-StatValue"><Date
-                                            date={this.props.article.date}/></span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </Tab>
-                    </Tabs>
-
-                    <div className="profile-divStats">
-                        <ul className="profile-commentsfollowfollowers">
-                            <li className="profile-commentsfollowfollowersLi">
-                                                <span
-                                                    className="profile-StatLabel profile-block">Tags</span>
-                                <span
-                                    className="profile-StatValue">{this.props.article.tags.join(", ")}</span>
-                            </li>
-                        </ul>
-                    </div>
-
-
-                    <div className="profile-divStats">
-                        <ul className="profile-commentsfollowfollowers">
-                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Country</span>
-                                <span
-                                    className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
-                            </li>
-                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Language</span>
-                                <span
-                                    className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
-                            </li>
-                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Genre</span>
-                                <span
-                                    className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
-                            </li>
-
-                        </ul>
-                    </div>
-
-
                 </div>
-                <div className="col-xs-12" style={{height: '25px'}}></div>
+
 
                 <div id="comentarismo-container" className="comentarismo-comment col-md-12">
                     {
