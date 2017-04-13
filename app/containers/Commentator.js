@@ -8,6 +8,7 @@ import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
 var moment = require("moment");
+var table = "commentator";
 
 class Commentator extends Component {
     static fetchData({ store, params }) {
