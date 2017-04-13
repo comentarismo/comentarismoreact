@@ -498,7 +498,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 // });
 
 //bind to action/commentators.js -> loadCommentatorDetail
-server.get('/api/:table/:id', limiter, (req, res) => {
+server.get('/api_v2/:table/:id', limiter, (req, res) => {
     var id = req.params.id;
     var table = req.params.table || "commentator";
 

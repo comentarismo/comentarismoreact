@@ -23,7 +23,7 @@ export function loadCommentatorDetail({ id, table }) {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `${config.BASE_URL}/api/${table}/${id}`,
+                        path: `${config.BASE_URL}/api_v2/${table}/${id}`,
                         successType: LOADED_COMMENTATOR_DETAIL
                     }
                 }
