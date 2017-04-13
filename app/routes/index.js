@@ -13,6 +13,7 @@ import IntroYoutube from 'containers/IntroYoutube';
 
 import Commentators from 'containers/Commentators';
 import Commentator from 'containers/Commentator';
+import CommentatorProduct from 'containers/CommentatorProduct';
 
 import Articles from 'containers/Articles';
 import Article from 'containers/Article';
@@ -51,6 +52,8 @@ export default function (history) {
                 <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
+                <Route path="commentators_product/:id" component={CommentatorProduct}/>
+
                 <Route path="commentators/:index/:value" component={Commentators}/>
                 <Route path="news/:id" component={Article}/>
                 <Route path="news/:index/:value" component={Articles}/>

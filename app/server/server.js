@@ -36,6 +36,7 @@ let {
     getCommentator,
     getCommentatorByNick,
     getByID,
+    getByUID,
     getCommentariesByCommentariesIds,
     getAllByIndexSkipLimit,
     getAllDistinctByIndex
@@ -114,7 +115,7 @@ console.log(`REDIS_HOST -> ${REDIS_HOST}, REDIS_PORT -> ${REDIS_PORT}, REDIS_PAS
 var client = redis.createClient({
     host: REDIS_HOST, port: REDIS_PORT, password: REDIS_PASSWORD,
     retry_strategy: function (options) {
-        
+
         if (options.error && options.error.code === 'ECONNREFUSED') {
             // End reconnecting on a specific error and flush all commands with a individual error
             return new Error('The server refused the connection');
@@ -187,7 +188,7 @@ console.log("stat influxdb collection of process memory usage for this app");
 
 setInterval(function () {
     var mem = process.memoryUsage();
-    
+
     // collect this stat into the 'process-memory-usage' series
     // first argument is the data points
     // second (optional) argument are the tags
@@ -229,7 +230,7 @@ function limiterhandler(req, res) {
     var pathname = url.parse(req.url).pathname;
     var ip = req.clientIp;
     console.log("Too many requests -> ", ip);
-    
+
     //save possible abuser to ratelimit table
     conn.table('ratelimit', {readMode: "outdated"}).get(ip).update({
         blocks: conn.row('blocks').add(1),
@@ -250,7 +251,7 @@ function limiterhandler(req, res) {
         console.log("Error: limiterhandler, ", err);
         cb(err);
     });
-    
+
     res.format({
         html: function () {
             res.status(429).end(limithtml);
@@ -311,7 +312,7 @@ server.get('/api/comment/:id', limiter, (req, res) => {
 //
 
 function getParams(req) {
-    
+
     var table = req.query.table;
     var index = req.query.key;
     var value = req.query.value;
@@ -320,7 +321,7 @@ function getParams(req) {
     var limit = req.query.limit;
     var sort = req.query.sort;
     var order = req.query.order || "desc";
-    
+
     var returnObj = {
         table: table,
         index: index,
@@ -331,13 +332,13 @@ function getParams(req) {
         sort: sort,
         order: order,
     };
-    
+
     if (!table || !index || !value || !operator) {
         returnObj.error = 'Invalid inputs --> '
     } else {
         console.log("Will parse skip, ", req.query.skip);
         console.log("Will parse limit, ", req.query.limit);
-        
+
         returnObj.skip = parseInt(req.query.skip);
         returnObj.limit = parseInt(req.query.limit);
     }
@@ -356,7 +357,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
         console.log("Error: ", urlTag, params.error);
         return res.sendStatus(500);
     }
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -390,7 +391,7 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
                 res.send(data);
             }
         });
-        
+
     });
 });
 
@@ -398,12 +399,12 @@ server.get('/v1/listbykeyskiplimit', limiter, (req, res) => {
 server.get('/v1/listbykeycount', limiter, (req, res) => {
     var params = getParams(req);
     var urlTag = `/v1/listbykeycount?table=${params.table}&index=${params.index}&value=${params.value}&operator=${params.operator}`;
-    
+
     if (params.error) {
         console.error("Error: ", urlTag, params.error);
         return res.send('Something broke!');
     }
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -422,7 +423,7 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         getAllByMultipleIndexCount(params, conn, function (err, data) {
             if (err) {
                 console.error("Error: ", urlTag, err.stack);
@@ -438,9 +439,9 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
                 res.json({count: data});
             }
         });
-        
+
     });
-    
+
 });
 //
 // //bind to action/commentators.js -> loadCommentators
@@ -497,16 +498,24 @@ server.get('/v1/listbykeycount', limiter, (req, res) => {
 // });
 
 //bind to action/commentators.js -> loadCommentatorDetail
-server.get('/api/commentators/:id', limiter, (req, res) => {
+server.get('/api/:table/:id', limiter, (req, res) => {
     var id = req.params.id;
-    
+    var table = req.params.table || "commentator";
+
+    var commentsTable = "";
+    if (table === "commentator_product") {
+        commentsTable = "commentaries_product";
+    } else {
+        commentsTable = "commentaries";
+    }
+
     if (!id) {
         return res.status(404).send('Not found');
     }
-    
-    var urlTag = `/api/commentators/${id}`;
+
+    var urlTag = `/api/${table}/${id}`;
     logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -525,24 +534,24 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
-        getByID("commentator", req.params.id, conn, function (err, data) {
+
+        getByID(table, req.params.id, conn, function (err, data) {
             if (err) {
                 logger.info("Error: " + err);
                 //console.error(err.stack);
                 //return res.status(500).send('Something broke!');
             }
-            
+
             if (data) {
-                
-                getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
+
+                getCommentariesByCommentariesIds(commentsTable, data.commentariesIds, conn, function (err, commentaries) {
                     if (err) {
                         logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
                         //console.error(err.stack);
                         return res.status(404).send();
                     }
                     data.comments = commentaries;
-                    
+
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
                     var js = JSON.stringify(data);
@@ -553,43 +562,43 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                     }
                     //-------REDIS CACHE SAVE END ------//
                     res.send(data);
-                    
+
                 })
             } else {
-                
-                
+
+
                 //retry
                 var idAux = "";
                 if (req.params.id.indexOf("-") !== -1) {
                     idAux = req.params.id.split("-")[1];
                 }
                 logger.info("commentator not found, will retry with nick, ", idAux, "original: ", req.params.id);
-                
+
                 if (!idAux) {
                     logger.info("Error: " + err);
                     console.error("Error: ", urlTag, err.stack);
                     return res.status(404).send();
                 }
-                
+
                 getCommentatorByNick((idAux ? idAux : req.params.id), conn, function (err, data) {
                     if (err) {
                         logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
                         //console.error(err.stack);
                         return res.status(404).send();
                     }
-                    
+
                     if (data) {
-                        
-                        getCommentariesByCommentariesIds(data.commentariesIds, conn, function (err, commentaries) {
+
+                        getCommentariesByCommentariesIds(commentsTable, data.commentariesIds, conn, function (err, commentaries) {
                             if (err) {
                                 logger.info("Error: after getCommentariesByCommentariesIds ->  " + err);
                                 //console.error(err.stack);
                                 return res.status(404).send();
                             }
-                            
+
                             data.comments = commentaries;
-                            
-                            
+
+
                             //-------REDIS CACHE SAVE START ------//
                             logger.info(urlTag + " will save cached");
                             if (!DISABLE_CACHE) {
@@ -597,21 +606,21 @@ server.get('/api/commentators/:id', limiter, (req, res) => {
                                 client.expire(urlTag, REDIS_EXPIRE);
                             }
                             //-------REDIS CACHE SAVE END ------//
-                            
+
                         })
-                        
+
                     } else {
-                        
+
                         logger.info("nothing found ? how did we got here ?  getCommentatorByNick --> " + urlTag)
                     }
-                    
+
                     res.send(data);
                 });
             }
-            
-            
+
+
         });
-        
+
     });
 });
 
@@ -626,16 +635,16 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
     var filtervalue = req.params.filtervalue;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
-    
+
     var filt = {};
     if (filter && filtervalue) {
         filt = {filter: filtervalue}
     }
     var sort = req.query.sort;
-    
+
     var urlTag = `/fapi/${table}/${index}/${value}/${filter}/${filtervalue}/${skip}/${limit}?sort=${sort}`;
     logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -654,14 +663,14 @@ server.get('/fapi/:table/:index/:value/:filter/:filtervalue/:skip/:limit', limit
             }
         }
         //-------REDIS CACHE END ------//
-        
-        
+
+
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, sort, conn, function (err, data) {
             if (err) {
                 console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
-            
+
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
@@ -698,11 +707,11 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
     }
     var sort = req.query.sort;
     var order = req.query.order || "desc";
-    
-    
+
+
     var urlTag = `/gapi_range/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}&order=${order}&range=${range}`;
     // logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -721,13 +730,13 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, range, conn, function (err, data) {
             if (err) {
                 console.error("getAllByDateRangeIndexOrderByFilterSkipLimit -> ", err.stack);
                 return res.status(500).send('Something broke!');
             }
-            
+
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
@@ -740,7 +749,7 @@ server.get('/gapi_range/:table/:index/:value/:skip/:limit', limiter, (req, res) 
             }
             res.send(data);
         });
-        
+
     });
 });
 
@@ -757,14 +766,14 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
-    
+
     var sort = req.query.sort;
     var order = req.query.order || "desc";
-    
-    
+
+
     var urlTag = `/gapi/${table}/${index}/${value}/${skip}/${limit}?sort=${sort}&order=${order}`;
     // logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -783,14 +792,14 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
-        
+
+
         getAllByIndexOrderByFilterSkipLimit(table, index, value, skip, limit, sort, order, conn, function (err, data) {
             if (err) {
                 console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
-            
+
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 logger.info(urlTag + " will save cached");
@@ -803,7 +812,7 @@ server.get('/gapi/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
             }
             res.send(data);
         });
-        
+
     });
 });
 
@@ -821,10 +830,10 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
-    
+
     var urlTag = `/commentsapi/${table}/${index}/${value}/${skip}/${limit}`;
     //logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -843,13 +852,13 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         getAllByIndexOrderBySkipLimit(table, index, value, skip, limit, "date", conn, function (err, data) {
             if (err) {
                 console.error("Error: ", urlTag, err.stack);
                 return res.status(500).send('Something broke!');
             }
-            
+
             if (data) {
                 //-------REDIS CACHE SAVE START ------//
                 console.log(urlTag + " will save cached fdp");
@@ -862,17 +871,17 @@ server.get('/commentsapi/:table/:index/:value/:skip/:limit', limiter, (req, res)
             }
             res.send(data);
         });
-        
+
     });
 });
 
 //bind to action/articles.js -> loadArticleDetail
 server.get('/api/news/:id', limiter, (req, res) => {
     var sort = req.query.sort;
-    
+
     var urlTag = `/api/news/${req.params.id}`;
     //logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -891,7 +900,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         var uuid = conn.uuid(req.params.id);
         getOneBySecondaryIndex("news", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
@@ -901,7 +910,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 logger.info("News not found --> " + req.params.id);
                 return res.status(404).send("News not found --> " + req.params.id);
             }
-            
+
             "", "", uuid, 0, 50
             var table = "commentaries";
             var index = "operator_uuid";
@@ -911,7 +920,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
             var limit = 50;
             var sort = "date";
             var order = req.query.order || "desc";
-            
+
             var params = {
                 table: table,
                 index: index,
@@ -922,7 +931,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 sort: sort,
                 order: order,
             };
-            
+
             getAllByMultipleIndexOrderBySkipLimit(params, conn, function (err, comments) {
                 if (err) {
                     console.error("Error: ", urlTag, err.stack);
@@ -930,7 +939,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 }
                 //logger.info(comments.length)
                 news.comments = comments;
-                
+
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
@@ -943,19 +952,19 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 res.send(news);
             });
         });
-        
+
     });
-    
+
 });
 
 
 //bind to action/articles.js -> loadArticleDetail
 server.get('/api/product/:id', limiter, (req, res) => {
     var sort = req.query.sort;
-    
+
     var urlTag = `/api/product/${req.params.id}`;
     //logger.info(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -974,8 +983,8 @@ server.get('/api/product/:id', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
-        
+
+
         getOneBySecondaryIndex("product", "titleurlize", req.params.id, conn, function (err, news) {
             if (err) {
                 console.error("Error: ", urlTag, err.stack);
@@ -991,7 +1000,7 @@ server.get('/api/product/:id', limiter, (req, res) => {
                 }
                 //logger.info(comments.length)
                 news.comments = comments;
-                
+
                 if (news) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
@@ -1004,9 +1013,9 @@ server.get('/api/product/:id', limiter, (req, res) => {
                 res.send(news);
             });
         });
-        
+
     });
-    
+
 });
 
 var comentarismosite = "http://www.comentarismo.com";
@@ -1016,14 +1025,14 @@ var {
     getLatestYoutubeWithCommentGroupDay, getLatestYoutubeCommentatorsGroupDay
 } = require("./comentarismo_api");
 server.get('/apihomepage/', limiter, (req, res) => {
-    
-    
+
+
     var index = req.query.index;
     var value = req.query.value;
-    
-    
+
+
     var urlTag = `apihomepage?index=${index}&value=${value}`;
-    
+
     //-------REDIS CACHE START ------//
     client.get(urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -1043,27 +1052,27 @@ server.get('/apihomepage/', limiter, (req, res) => {
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         if (index === "product") {
             getLatestProductsWithCommentGroupDay(index, value, conn, function (err, news) {
-                
+
                 if (err) {
                     console.log("Error: getLatestCommentatorsGroupDay -> ", err);
                     return res.status(500).send({});
                 } else {
                     //get commentators reduced
                     getLatestProductsCommentatorsGroupDay(index, value, conn, function (err, commentators) {
-                        
+
                         var result = {
                             news: news,
                             commentators: commentators
                         };
-                        
+
                         if (err) {
                             console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
                             return res.send(result);
                         } else {
-                            
+
                             if (!DISABLE_CACHE) {
                                 client.set(urlTag, JSON.stringify(result), redis.print);
                             }
@@ -1074,24 +1083,24 @@ server.get('/apihomepage/', limiter, (req, res) => {
             })
         } else if (index === "youtube") {
             getLatestYoutubeWithCommentGroupDay(index, value, conn, function (err, news) {
-                
+
                 if (err) {
                     console.log("Error: getLatestCommentatorsGroupDay -> ", err);
                     return res.status(500).send({});
                 } else {
                     //get commentators reduced
                     getLatestYoutubeCommentatorsGroupDay(index, value, conn, function (err, commentators) {
-                        
+
                         var result = {
                             news: news,
                             commentators: commentators
                         };
-                        
+
                         if (err) {
                             console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
                             return res.send(result);
                         } else {
-                            
+
                             if (!DISABLE_CACHE) {
                                 client.set(urlTag, JSON.stringify(result), redis.print);
                             }
@@ -1101,26 +1110,26 @@ server.get('/apihomepage/', limiter, (req, res) => {
                 }
             })
         } else {
-            
+
             getLatestNewsWithCommentGroupDay(index, value, conn, function (err, news) {
-                
+
                 if (err) {
                     console.log("Error: getLatestCommentatorsGroupDay -> ", err);
                     return res.status(500).send({});
                 } else {
                     //get commentators reduced
                     getLatestNewsCommentatorsGroupDay(index, value, conn, function (err, commentators) {
-                        
+
                         var result = {
                             news: news,
                             commentators: commentators
                         };
-                        
+
                         if (err) {
                             console.log("Error: getLatestNewsGroupDay, getLatestCommentatorsGroupDay -> ", err);
                             return res.send(result);
                         } else {
-                            
+
                             if (!DISABLE_CACHE) {
                                 client.set(urlTag, JSON.stringify(result), redis.print);
                             }
@@ -1131,7 +1140,7 @@ server.get('/apihomepage/', limiter, (req, res) => {
             })
         }
     })
-    
+
 });
 
 
@@ -1174,16 +1183,16 @@ server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, re
 
 
 server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) => {
-    
+
     var table = req.params.table;
     var index = req.params.index;
     var value = req.params.value;
     var skip = parseInt(req.params.skip);
     var limit = parseInt(req.params.limit);
-    
+
     var urlTag = `/${table}/${index}/${value}/${skip}/${limit}`;
     //console.log(urlTag);
-    
+
     //-------REDIS CACHE START ------//
     client.get("intropage" + urlTag, function (err, js) {
         if (!DISABLE_CACHE) {
@@ -1203,9 +1212,9 @@ server.get('/intropage/:table/:index/:value/:skip/:limit', limiter, (req, res) =
             }
         }
         //-------REDIS CACHE END ------//
-        
+
         let {getAlexaRank} = require('./alexa_api');
-        
+
         getAlexaRank(comentarismosite, table, index, value, skip, limit, "date", 50, conn, function (err, alexarank) {
             if (err) {
                 console.log("Error: getAlexaRank, ", urlTag)
@@ -1234,7 +1243,7 @@ server.get("/random", limiter, (req, res) => {
             return res.redirect(301, "/topvideos/type/YouTubeVideo");
         } else {
             var theone = results[0];
-            
+
             return res.redirect(301, "/sentiment/" + encodeURIComponent(theone.url));
         }
     }).catch(function (err) {
@@ -1249,14 +1258,14 @@ server.get('*', limiter, (req, res, next) => {
     let history = useQueries(createMemoryHistory)();
     let location = history.createLocation(req.url);
     let reqUrl = location.pathname + location.search;
-    
+
     let store = configureStore();
     let routes = createRoutes(history);
-    
+
     //sitemap
     if (reqUrl.indexOf("sitemap.xml") !== -1) {
         logger.info("Will generate sitemap.xml for request --> " + reqUrl);
-        
+
         var urlTag = "sitemap.xml";
         //-------REDIS CACHE START ------//
         client.get(urlTag, function (err, js) {
@@ -1277,7 +1286,7 @@ server.get('*', limiter, (req, res, next) => {
                 }
             }
             //-------REDIS CACHE END ------//
-            
+
             generateSitemap(conn, function (err, xml) {
                 if (!xml) {
                     logger.info("Error: generateSitemap " + location);
@@ -1286,7 +1295,7 @@ server.get('*', limiter, (req, res, next) => {
                     res.status(500).send("Server unavailable");
                     return;
                 }
-                
+
                 if (xml) {
                     //-------REDIS CACHE SAVE START ------//
                     logger.info(urlTag + " will save cached");
@@ -1299,7 +1308,7 @@ server.get('*', limiter, (req, res, next) => {
                 res.header('Content-Type', 'application/xml');
                 return res.send(xml);
             });
-            
+
         });
         //section sitemap
     } else if (reqUrl.indexOf("index.xml") !== -1) {
@@ -1313,15 +1322,15 @@ server.get('*', limiter, (req, res, next) => {
         var table = vars[1];
         var index = vars[2];
         var value = vars[3];
-        
+
         logger.info("table: " + table + " index: " + index + " value: " + value);
-        
+
         if (table === "topvideos") {
             table = "sentiment_report"
         }
-        
+
         if (table === "news" || table === "commentators" || table === "sentiment_report" || table === "product" || table === "sentiment_report") {
-            
+
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//
             client.get(urlTag, function (err, js) {
@@ -1341,7 +1350,7 @@ server.get('*', limiter, (req, res, next) => {
                     }
                 }
                 //-------REDIS CACHE END ------//
-                
+
                 generateIndexXml(table, index, value, conn, function (err, xml) {
                     if (err || !xml) {
                         logger.info("Error: generateSitemap sitemap.xml, will return 500 server unavailable --> ");
@@ -1350,7 +1359,7 @@ server.get('*', limiter, (req, res, next) => {
                         }
                         return res.status(500).send("Server unavailable");
                     }
-                    
+
                     if (xml) {
                         //-------REDIS CACHE SAVE START ------//
                         // logger.info(urlTag + " will save cached");
@@ -1365,17 +1374,17 @@ server.get('*', limiter, (req, res, next) => {
                     res.header('Content-Type', 'application/xml');
                     return res.send(xml);
                 });
-                
+
             });
-            
+
         } else {
             //not alllowed
             logger.info("Error generateSitemap index.xml --> not alllowed --> Server unavailable");
             return res.status(500).send("Server unavailable");
         }
-        
+
     } else {
-        
+
         //logger.info(location);
         // console.log("React Render ", location.pathname)
         match({routes, location}, (error, redirectLocation, renderProps) => {
@@ -1385,9 +1394,9 @@ server.get('*', limiter, (req, res, next) => {
                 logger.info("Error: 500 internal error " + location, error.stack);
                 return res.status(500).send(error.message);
             }
-            
+
             let [getCurrentUrl, unsubscribe] = subscribeUrl();
-            
+
             getReduxPromise().then(() => {
                 let reduxState = escape(JSON.stringify(store.getState()));
                 let html = ReactDOMServer.renderToString(
@@ -1395,7 +1404,7 @@ server.get('*', limiter, (req, res, next) => {
                         { <RouterContext {...renderProps}/> }
                     </Provider>
                 );
-                
+
                 //let html = ReactDOMServer.renderToStaticMarkup(body(null,
                 //    div({id: 'content', dangerouslySetInnerHTML: {__html:
                 //        //ReactDOMServer.renderToString(App(props))
@@ -1406,26 +1415,26 @@ server.get('*', limiter, (req, res, next) => {
                 //    }})
                 //    //script({src: '/bundle.js'})
                 //));
-                
+
                 let head = Helmet.rewind();
                 //logger.info("Helmet.rewind -> "+head.title.toString());
                 if (head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
                     head.title = "<title data-react-helmet=\"true\">Loading ... </title>";
                 }
-                
+
                 var searchCss = [];
                 // if (reqUrl.indexOf("/search") !== -1
                 //     || reqUrl.indexOf("/jcp") !== -1) {
                 searchCss.push("/static/search_theme.css")
                 // }
-                
+
                 if (getCurrentUrl() === reqUrl) {
                     res.render('index', {html, head, scriptSrcs, reduxState, styleSrc, searchCss});
                 } else {
                     logger.info("Redirect 302 " + location);
                     res.redirect(302, getCurrentUrl());
                 }
-                
+
                 unsubscribe();
             })
                 .catch((err) => {
@@ -1441,7 +1450,7 @@ server.get('*', limiter, (req, res, next) => {
                 let promise = comp.fetchData ?
                     comp.fetchData({query, params, store, history}) :
                     Promise.resolve();
-                
+
                 return promise;
             }
         });
@@ -1473,7 +1482,7 @@ server.use((err, req, res, next) => {
         console.log("Got error on server.use, something may be really wrong!!! ")
     }
     // TODO report error here or do some further handlings
-    
+
     res.status(500).send("something went wrong... --> " + err.stack)
 });
 

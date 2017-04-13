@@ -2,22 +2,25 @@ import React, { Component, PropTypes } from 'react'
 
 import { connect } from 'react-redux'
 import { loadCommentatorDetail } from 'actions/commentators'
-import {XScript} from 'components/XScript'
+import {XScript} from 'components/XScriptProduct'
 import Icon from "components/Icon"
 
 import Date from "components/Date"
 import Helmet from "react-helmet";
 var moment = require("moment");
 
+const table = "commentator_product";
+const  $ = require("jquery");
+
 class Commentator extends Component {
     static fetchData({ store, params }) {
-        let { id } = params
-        return store.dispatch(loadCommentatorDetail({id, table}))
+        let { id } = params;
+        return store.dispatch(loadCommentatorDetail({id,table}))
     }
 
     componentDidMount() {
-        let { id } = this.props.params;
-        this.props.loadCommentatorDetail({id,table})
+        // let { id } = this.props.params;
+        // this.props.loadCommentatorDetail({id,table})
     }
 
     render() {
@@ -72,7 +75,9 @@ class Commentator extends Component {
                     <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
+
                     {commentContainer}
+
                     <div style={{height: '50px'}}></div>
                     <div className="row single-post-row">
                         <div className="article-body">

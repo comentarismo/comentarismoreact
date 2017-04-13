@@ -16,14 +16,14 @@ export function loadCommentators({index,value}) {
 }
 
 export const LOADED_COMMENTATOR_DETAIL = Symbol('LOADED_COMMENTATOR_DETAIL');
-export function loadCommentatorDetail({ id }) {
+export function loadCommentatorDetail({ id, table }) {
     return {
         [CHAIN_API]: [
             ()=> {
                 return {
                     [CALL_API]: {
                         method: 'get',
-                        path: `${config.BASE_URL}/api/commentators/${id}`,
+                        path: `${config.BASE_URL}/api/${table}/${id}`,
                         successType: LOADED_COMMENTATOR_DETAIL
                     }
                 }
