@@ -264,7 +264,7 @@ class Article extends Component {
                              fontFamily: 'Open Sans, sans-serif',
                              color: '#656972'
                          }}>
-                        <Row className="col-lg-6 col-xs-offset-2" style={{marginTop: '30px', height: '350px',}}>
+                        <Row className="col-lg-6 col-xs-offset-2" style={{marginTop: '30px'}}>
                             <CardHeader
                                 title={<span style={{
                                     fontSize: '14px',
