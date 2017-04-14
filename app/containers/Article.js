@@ -23,6 +23,7 @@ import Chip from 'material-ui/Chip';
 import FlatButton from 'material-ui/FlatButton';
 
 var ImageComponent = require('components/Image');
+var ImageResized = require("components/ImageResized");
 
 
 var moment = require("moment");
@@ -48,7 +49,6 @@ class Article extends Component {
         let {id} = params;
         return store.dispatch(loadArticleDetail({id}));
     }
-
 
     getImageElement() {
         let {article} = this.props;
@@ -258,36 +258,50 @@ class Article extends Component {
                 <Grid fluid={true}>
                     <FlatButton label={ article.genre ? article.genre.toUpperCase() : article.genre }/>
                     <Row className="col-xs-offset-1"
-                         style={{background: '#fff', height: 'auto', fontFamily: 'Open Sans, sans-serif', color: '#656972'}}>
-                        <Row className="col-lg-6 col-xs-offset-2" style={{ marginTop: '30px', height: '350px', }}>
+                         style={{
+                             background: '#fff',
+                             height: 'auto',
+                             fontFamily: 'Open Sans, sans-serif',
+                             color: '#656972'
+                         }}>
+                        <Row className="col-lg-6 col-xs-offset-2" style={{marginTop: '30px', height: '350px',}}>
                             <CardHeader
-                                title={<span style={{fontSize: '14px', textTransform: 'uppercase'}}>{ article.operator ? article.operator + " " : " " }</span>}
+                                title={<span style={{
+                                    fontSize: '14px',
+                                    textTransform: 'uppercase'
+                                }}>{ article.operator ? article.operator + " " : " " }</span>}
                                 avatar={<img style={{height: '24px', width: '24px', marginTop: '8px'}}
-                                        src={`/static/img/sources/${article.operator}.png`}/>}
-                                subtitle={<Date style={{ fontSize: '14px'}} date={this.props.article.date}/>}
+                                             src={`/static/img/sources/${article.operator}.png`}/>}
+                                subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
                             />
 
                             <CardTitle
-                                title={<span style={{fontSize: '18px', color: '#35373C !important', lineHeight: '0.8 !important'}}> {article.title} </span>}
-                                subtitle={<span dangerouslySetInnerHTML={{__html:totalComments}}/>}/>
+                                title={<span style={{
+                                    fontSize: '18px',
+                                    color: '#35373C !important',
+                                    lineHeight: '0.8 !important'
+                                }}> {article.title} </span>}
+                                subtitle={<span dangerouslySetInnerHTML={{__html: totalComments}}/>}/>
 
                             <CardText>{ getContentBody() }</CardText>
                             <CardActions>
 
                                 {
-                                    this.props.article.tags && this.props.article.tags.map((tag,i) => {
+                                    this.props.article.tags && this.props.article.tags.map((tag, i) => {
                                         return i < 4 && (
-                                            <Chip  style={stylesTag.chip}>
-                                                <Avatar size={32}>{tag.slice(0,1).toUpperCase()}</Avatar>
-                                                {tag}
-                                            </Chip>
-                                        )
+                                                <Chip style={stylesTag.chip}>
+                                                    <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
+                                                    {tag}
+                                                </Chip>
+                                            )
                                     })
                                 }
                             </CardActions>
                         </Row>
-                        <Row className="col-lg-6 col-xs-offset-8" style={{ marginTop: '30px' }}>
-                            {this.getImageElement()}
+                        <Row className="col-lg-6 col-xs-offset-8" style={{marginTop: '30px'}}>
+                            <ImageResized src={this.props.article.image}
+                                          srcfallback={"https://unsplash.it/1400/350?random"} id={this.props.article.id}
+                                          width="388" height="395" quality="50"/>
                         </Row>
                     </Row>
                 </Grid>
