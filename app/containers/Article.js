@@ -255,8 +255,11 @@ class Article extends Component {
                 <div className="tm-embed-container" id="scriptContainer">
                 </div>
                 <XScript index="operator_titleurlize"/>
-                <Grid fluid={true}>
-                    <FlatButton label={ article.genre ? article.genre.toUpperCase() : article.genre }/>
+                <Grid fluid={true} style={{margin: '2rem'}}>
+                    <FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',}} disabled={true}
+                                label={ article.genre ? article.genre.toUpperCase() : article.genre }/>
                     <Row className="col-xs-offset-1"
                          style={{
                              background: '#fff',
@@ -264,8 +267,8 @@ class Article extends Component {
                              fontFamily: 'Open Sans, sans-serif',
                              color: '#656972'
                          }}>
-                        <Row className="col-lg-6 col-xs-offset-2" style={{marginTop: '30px'}}>
-                            <CardHeader
+                        <Row className="col-lg-6" style={{}}>
+                            <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
                                 title={<span style={{
                                     fontSize: '14px',
                                     textTransform: 'uppercase'
@@ -275,17 +278,20 @@ class Article extends Component {
                                 subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
                             />
 
-                            <CardTitle
-                                title={<span style={{
-                                    fontSize: '18px',
-                                    color: '#35373C !important',
-                                    lineHeight: '0.8 !important'
-                                }}> {article.title} </span>}
+                            <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                                title={article.title} titleStyle={{}}
                                 subtitle={<span dangerouslySetInnerHTML={{__html: totalComments}}/>}/>
 
-                            <CardText>{ getContentBody() }</CardText>
+                            <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
                             <CardActions>
-
+                                <div style={{
+                                        marginLeft: '10px',
+                                        paddingBottom: '10px',
+                                        color: '#656972',
+                                        textTransform: 'uppercase',
+                                        fontSize: '14px',
+                    }}>Trending words
+                                </div>
                                 {
                                     this.props.article.tags && this.props.article.tags.map((tag, i) => {
                                         return i < 4 && (
@@ -298,10 +304,11 @@ class Article extends Component {
                                 }
                             </CardActions>
                         </Row>
-                        <Row className="col-lg-6 col-xs-offset-8" style={{marginTop: '30px'}}>
+                        <Row className="col-lg-6" style={{}}>
+
                             <ImageResized src={this.props.article.image}
                                           srcfallback={"https://unsplash.it/1400/350?random"} id={this.props.article.id}
-                                          width="388" height="395" quality="50"/>
+                                          width="520" height="395" quality="50"/>
                         </Row>
                     </Row>
                 </Grid>
@@ -334,6 +341,8 @@ class Article extends Component {
                                         </div>
                                     </div>
                                 </div>
+                                
+                                
                             )
                         })
                     }
