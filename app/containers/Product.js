@@ -5,6 +5,16 @@ import {loadProductDetail} from 'actions/products'
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
 
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Avatar from 'material-ui/Avatar';
+import {Grid, Row, Col} from 'react-styled-flexboxgrid';
+import Chip from 'material-ui/Chip';
+import FlatButton from 'material-ui/FlatButton';
+
+var ImageComponent = require('components/Image');
+var ImageResized = require("components/ImageResized");
+
+
 import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
@@ -28,6 +38,16 @@ import {PlayImages} from './PlayImages';
 
 import {Tabs, Tab} from 'react-bootstrap';
 
+const stylesTag = {
+    chip: {
+        margin: 4,
+        display: 'inline-flex',
+    },
+    wrapper: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+};
 
 class Product extends Component {
     static fetchData({store, params}) {
@@ -61,8 +81,16 @@ class Product extends Component {
 
         function getContentBody() {
             if (!article.resume) return;
-            return <div id='content' className=''
-                        dangerouslySetInnerHTML={{__html: article.resume}}></div>
+            return <div>
+                <div>
+                    <span className="profile-StatLabel profile-block">Rating: {article.rating}</span>
+                    <span
+                        className={"stars-container stars-" + Math.round(article.rating ? article.rating : 0)}>★★★★★</span>
+                </div>
+                <div id='content' className=''
+                     dangerouslySetInnerHTML={{__html: article.resume}}></div>
+            </div>
+
         }
 
         var searchlist = this.props.article.search;
@@ -72,9 +100,14 @@ class Product extends Component {
             searchlist.push({title: article.title, gimage: article.image});
         }
 
+        var totalComments = article.totalComments ? `${article.totalComments} Comments` : "No Comments";
 
         return (
             <div>
+                <a id="comentarismo-page" data-id={ article.titleurlize }/>
+                <a id="comentarismo-operator" data-id={ article.operator }/>
+                <XScript index="operator_titleurlize"/>
+
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
                     title={`Latest news - Source - ${article.operator ? article.operator.toUpperCase() : ""} - Genre: ${article.genre ? article.genre.toUpperCase() : ""}`}
@@ -95,182 +128,92 @@ class Product extends Component {
                         }
                     ]}
                 />
-                <div className="container-fluid single-post-wrapper col-sm-offset-0 col-lg-12 col-xs-12">
-                    <a id="comentarismo-page" data-id={ article.titleurlize }/>
-                    <a id="comentarismo-operator" data-id={ article.operator }/>
-                    <div className="tm-embed-container" id="scriptContainer">
-                    </div>
-                    <XScript index="operator_titleurlize"/>
-                    <div className="row">
-                        <div className="row">
-
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Title</span>
-                                        <span className="profile-StatValue">{ article.title }</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div className="row">
-
-                            <Tabs animation={false} id="noanim-tab-example">
-                                <Tab eventKey={1} title="Images">
-                                    <PlayImages images={searchlist} playing={true}
-                                                playingtimeout={10000}/>
-                                </Tab>
-                                <Tab eventKey={2} title="Videos" disabled>
-                                    More Videos soon ...
-                                </Tab>
-                            </Tabs>
-
-                        </div>
-                        <div className="col-xs-12" style={{height: '25px'}}></div>
-                        <div className="row">
-                            <div className="profile-button">
-
-                            </div>
-                            <div className="profile-nick">
-                                <div className="profile-nickName">
-
+                <Grid fluid={true} style={{margin: '2rem'}}>
+                    <FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase', paddingLeft: '10px !important',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold' }} disabled={true}
+                                label={this.props.article.categories}/>
+                    <Row className="col-xs-offset-1"
+                         style={{
+                             background: '#fff',
+                             height: 'auto',
+                             fontFamily: 'Open Sans, sans-serif',
+                             color: '#656972'
+                         }}>
+                        <Row className="col-lg-6" style={{}}>
+                            <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                                        title={<span style={{
+                                                           fontSize: '14px',
+                                                           textTransform: 'uppercase'
+                                }}>{ article.operator ? article.operator + " " : " " }</span>}
+                                        avatar={<img style={{height: '24px', width: '24px', marginTop: '8px'}}
+                                            src={`/static/img/sources/${article.operator}.png`}/>}
+                                        subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
+                            />
+                            <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                                       title={article.title}
+                                       subtitle={<span dangerouslySetInnerHTML={{__html: totalComments}}/>}
+                            />
+                            <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
+                            <CardActions>
+                                <div style={{
+                                        marginLeft: '10px',
+                                        paddingBottom: '10px',
+                                        color: '#656972',
+                                        textTransform: 'uppercase',
+                                        fontSize: '14px',
+                                        }}> Trending words
                                 </div>
-                            </div>
+                                {
+                                    this.props.article.tags && this.props.article.tags.map((tag, i) => {
+                                        return i < 4 && (
+                                                <Chip style={stylesTag.chip}>
+                                                    <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
+                                                    {tag}
+                                                </Chip>
+                                            )
+                                    })
+                                }
+                            </CardActions>
+                        </Row>
 
-                            <XSoundcloud permalink_url={article.permalink_url}/>
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Rating: {this.props.article.rating}</span>
-                                        <span
-                                            className={"stars-container stars-" + Math.round(this.props.article.rating ? this.props.article.rating : 0)}>★★★★★</span>
-                                    </li>
-                                </ul>
-                            </div>
+                        <Row className="col-lg-6" style={{}}>
 
-                            <div className="row">
-                                <Tabs animation={false} id="noanim-tab-example">
-                                    <Tab eventKey={1} title="Resume">
-                                        <div className="profile-divStats">
-                                            <ul className="profile-commentsfollowfollowers">
-                                                <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Resume</span>
-                                                    <span
-                                                        className="profile-StatValue">{ getContentBody() }</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </Tab>
-                                </Tabs>
-                            </div>
+                            <ImageResized src={this.props.article.image}
+                                          srcfallback={"https://unsplash.it/1400/350?random"} id={this.props.article.id}
+                                          width="520" height="395" quality="50"/>
+                        </Row>
+                    </Row>
+                </Grid>
 
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Brand</span>
-                                        <span
-                                            className="profile-StatValue">{this.props.article.brand}</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Last Update</span>
-                                        <span className="profile-StatValue"><Date
-                                            date={this.props.article.date}/></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <Tabs animation={false} id="noanim-tab-example">
-                                <Tab eventKey={1} title="Categories">
-                                    <div className="profile-divStats">
-                                        <ul className="profile-commentsfollowfollowers">
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Categories</span>
-                                                <span
-                                                    className="profile-StatValue">{this.props.article.categories}</span>
-                                            </li>
-                                        </ul>
+                <div id="comentarismo-container"
+                     className="col-md-12">
+                    {
+                        article.comments.map((q) => {
+                            return (
+                                <div key={q.id}>
+                                    <div className="col-sm-1 hidden-xs">
+                                        <a className="avatar- img-responsive user-photo"/>
+                                        <Icon nick={q.nick} size={50}/>
                                     </div>
-                                </Tab>
-                            </Tabs>
-
-                            <div className="profile-divStats">
-                                <ul className="profile-commentsfollowfollowers">
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Country</span>
-                                        <span
-                                            className="profile-StatValue">{ article.countries ? article.countries.toUpperCase() : article.countries }</span>
-                                    </li>
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Language</span>
-                                        <span
-                                            className="profile-StatValue">{ article.languages ? article.languages.toUpperCase() : article.languages }</span>
-                                    </li>
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Genre</span>
-                                        <span
-                                            className="profile-StatValue">{ article.genre ? article.genre.toUpperCase() : article.genre }</span>
-                                    </li>
-                                    <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Followers</span>
-                                        <span className="profile-StatValue"/>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="col-xs-12" style={{height: '25px'}}></div>
-
-
-                    <div id="comentarismo-container"
-                         className="col-md-12">
-                        {
-                            article.comments.map((q) => {
-                                return (
-                                    <div key={q.id}>
-                                        <div className="col-sm-1 hidden-xs">
-                                            <a className="avatar- img-responsive user-photo"/>
-                                            <Icon nick={q.nick} size={50}/>
-                                        </div>
-                                        <div className="text-wrapper">
-                                            <b>{q.date }</b>
-                                            <div role="meta" className="comentarismo-comment-header">
+                                    <div className="text-wrapper">
+                                        <b>{q.date }</b>
+                                        <div role="meta" className="comentarismo-comment-header">
                                                         <span className="author">
                                                             <b>{ q.nick }</b>
                                                         </span>
-                                            </div>
-                                            <div className="text">
-                                                <p>{ q.comment }</p>
-                                            </div>
+                                        </div>
+                                        <div className="text">
+                                            <p>{ q.comment }</p>
                                         </div>
                                     </div>
-                                )
-                            })
-                        }
-                    </div>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
-
             </div>
         )
-
-
     }
 }
 
