@@ -32,60 +32,64 @@ class Intro extends Component {
         var value = params.value || "english";
         var skip = params.skip || "0";
         var limit = params.limit || "50";
-        
+
         return store.dispatch(loadIntroDetail({index, value, skip, limit}))
     }
-    
+
     componentDidMount() {
-        
+
         if (typeof window !== 'undefined') {
             console.log("navigator.language: " + navigator.language);
             console.log("navigator.userLanguage: " + navigator.userLanguage);
             //console.log("navigator.browserLanguage: "+navigator.browserLanguage);
             //console.log("navigator.userAgent: "+navigator.userAgent);
-            
-            var path = window.location.pathname.split('/');
-            var index = path[2];
-            
-            var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
-            console.log('detected user language --> ' + userLang);
-            if (userLang.indexOf("pt") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/portuguese";
-            } else if (userLang.indexOf("es") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/spanish";
-            } else if (userLang.indexOf("it") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/italian";
-            } else if (userLang.indexOf("fr") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/french";
-            } else if (userLang.indexOf("russian") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/russian";
-            } else if (userLang.indexOf("croatian") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/croatian";
-            } else {
-                console.log("default lang will be used");
-            }
+
+            // var path = window.location.pathname.split('/');
+            // var index = path[2] || "news";
+            //
+            // var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+            // console.log('detected user language --> ' + userLang);
+            //
+            // if(document.location.href.indexOf("/home/")===-1) {
+            //
+            //     if (userLang.indexOf("pt") !== -1) {
+            //         document.location.href = "/home/" + index + "/portuguese";
+            //     } else if (userLang.indexOf("es") !== -1) {
+            //         document.location.href = "/home/" + index + "/spanish";
+            //     } else if (userLang.indexOf("it") !== -1) {
+            //         document.location.href = "/home/" + index + "/italian";
+            //     } else if (userLang.indexOf("fr") !== -1) {
+            //         document.location.href = "/home/" + index + "/french";
+            //     } else if (userLang.indexOf("russian") !== -1) {
+            //         document.location.href = "/home/" + index + "/russian";
+            //     } else if (userLang.indexOf("croatian") !== -1) {
+            //         document.location.href = "/home/" + index + "/croatian";
+            //     } else {
+            //         console.log("default lang will be used");
+            //     }
+            // }
         }
     }
-    
+
     getArticleLink(news) {
         return '/news/' + news.titleurlize;
     }
-    
+
     getCommentatorLink(commentator) {
         return `/commentators/${commentator.id}`
     }
-    
+
     getTitle(title) {
         const t = title && title.length > 45 ? title.substring(0, 45) + "..." : title
         return (
             <span dangerouslySetInnerHTML={{__html: t}}/>
         );
     }
-    
-    
+
+
     getImageElement(src, id) {
         if (typeof window !== 'undefined') {
-            
+
             var host = "//img.comentarismo.com/r";
             // console.log("IMGRESIZER ",src)
             //do img resize
@@ -108,39 +112,39 @@ class Intro extends Component {
                     $("#" + id).attr("src", "data:image/jpeg;base64," + base64Data);
                 } else {
                     $("#" + id).attr("src", src);
-                    
+
                     //
                 }
             });
-            
+
             request.fail(function (e) {
                 //    console.log(e);
                 $("#" + id).attr("src", src);
             });
         }
-        
+
     }
-    
+
     render() {//languages/english/0/5/
         let comment = this.props.news;
         let commentators = this.props.commentators;
         // let commentaries = this.props.commentaries;
-        
+
         // comment && Object.keys(comment).map(article => {
         //     return (comment[article]);
         // });
-        
+
         var targetLang = "english";
-        
+
         if (typeof window !== 'undefined') {
             console.log("navigator.language: " + navigator.language);
             console.log("navigator.userLanguage: " + navigator.userLanguage);
             //console.log("navigator.browserLanguage: "+navigator.browserLanguage);
             //console.log("navigator.userAgent: "+navigator.userAgent);
-            
+
             var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
             console.log('detected user language --> ' + userLang);
-            
+
             if (userLang.indexOf("pt") !== -1) {
                 targetLang = "portuguese";
             } else if (userLang.indexOf("es") !== -1) {
@@ -156,7 +160,7 @@ class Intro extends Component {
             } else {
                 console.log("default lang will be used");
             }
-            
+
         }
         const style = {
             height: '500px',
@@ -187,14 +191,21 @@ class Intro extends Component {
                         {"name": "description", "content": "Welcome to Comentarismo"},
                         {"property": "og:type", "content": "article"}
                     ]}
-                />
+                >
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/portuguese" hreflang="pt" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/spanish" hreflang="es" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/italian" hreflang="it" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/french" hreflang="fr" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/russian" hreflang="russian" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/news/croatian" hreflang="croatian" />
+                </Helmet>
                 <Tabs style={{height: '135px', paddingBottom: '75px'}} initialSelectedIndex={0}>
                     <Tab label="News" onActive={function () {
                         document.location.href = "/";
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
                         <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"}/>
                     </Tab>
-                    
+
                     <Tab onActive={function () {
                         document.location.href = "/home/product/"+targetLang;
                     }} label="Products" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
@@ -224,7 +235,7 @@ class Intro extends Component {
                                     comment[article].group && comment[article].reduction &&
                                     <div className="col-xs box">
                                         {comment[article].reduction.map((news) => {
-                                            
+
                                             let content = "";
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
@@ -262,7 +273,7 @@ class Intro extends Component {
                                                                 style={{fontSize: '12px !important'}}>{this.getTitle(news.summary)}</span>}/>
                                                     </Card>
                                                 </a>
-                                                
+
                                                 return <Col key={news.id}>{content}</Col>
                                             }
                                             return ""
@@ -291,12 +302,12 @@ class Intro extends Component {
                                     comment[article].group && comment[article].reduction &&
                                     <div className="col-xs-12 box">
                                         {comment[article].reduction.map((news) => {
-                                            
+
                                             let content = "";
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
-                                                
+
                                                 return <Col className="box" key={`${news.id}`}>{content}</Col>
                                             }
                                             return ""
@@ -327,7 +338,7 @@ class Intro extends Component {
                                     commentators[article].group && commentators[article].reduction &&
                                     <div className="col-xs box">
                                         {commentators[article].reduction.map((news) => {
-                                            
+
                                             let content = "";
                                             if (news.languages == targetLang && count < 1) {
                                                 count = count + 1;
@@ -344,7 +355,7 @@ class Intro extends Component {
                                                            />
                                                     </Card>
                                                 </a>
-                                                
+
                                                 return <Col key={news.id} >{content}</Col>
                                             }
                                             return ""
@@ -383,7 +394,7 @@ class Intro extends Component {
                     </Row>
                 </Grid>
             </div>
-        
+
         );
     }
 }
