@@ -65,8 +65,9 @@ class Commentator extends Component {
                     meta={[
                     {"name": "description", "content": `Find all comments for @${commentator.slug && typeof commentator.slug.toUpperCase === "function" ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
                     {"property": "og:type", "content": "comments"},
-                    {"property": "og:image", "content": '/static/img/comentarismo-extra-mini-logo.png'}
-                ]}
+                    {"property": "og:image", "content": 'https://unsplash.it/1400/350?random'},
+                    {"property": "og:title", "content": `${commentator && commentator.nick ? commentator.nick : id}`}
+                    ]}
                 />
                 <div className="container-fluid single-post-wrapper">
                     <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>
