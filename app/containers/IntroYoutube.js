@@ -44,26 +44,29 @@ class Intro extends Component {
             //console.log("navigator.browserLanguage: "+navigator.browserLanguage);
             //console.log("navigator.userAgent: "+navigator.userAgent);
             
-            var path = window.location.pathname.split('/');
-            var index = path[2];
-            
-            var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
-            console.log('detected user language --> ' + userLang);
-            if (userLang.indexOf("pt") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/portuguese";
-            } else if (userLang.indexOf("es") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/spanish";
-            } else if (userLang.indexOf("it") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/italian";
-            } else if (userLang.indexOf("fr") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/french";
-            } else if (userLang.indexOf("russian") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/russian";
-            } else if (userLang.indexOf("croatian") !== -1) {
-                document.location.href = document.location.href + "/home/ " + index + "/croatian";
-            } else {
-                console.log("default lang will be used");
-            }
+            // var path = window.location.pathname.split('/');
+            // var index = path[2] || "youtube";
+            //
+            // var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+            // console.log('detected user language --> ' + userLang);
+            // if(document.location.href.indexOf("/home/")===-1) {
+            //
+            //     if (userLang.indexOf("pt") !== -1) {
+            //         document.location.href = "/home/" + index + "/portuguese";
+            //     } else if (userLang.indexOf("es") !== -1) {
+            //         document.location.href = "/home/" + index + "/spanish";
+            //     } else if (userLang.indexOf("it") !== -1) {
+            //         document.location.href = "/home/" + index + "/italian";
+            //     } else if (userLang.indexOf("fr") !== -1) {
+            //         document.location.href = "/home/" + index + "/french";
+            //     } else if (userLang.indexOf("russian") !== -1) {
+            //         document.location.href = "/home/" + index + "/russian";
+            //     } else if (userLang.indexOf("croatian") !== -1) {
+            //         document.location.href = "/home/" + index + "/croatian";
+            //     } else {
+            //         console.log("default lang will be used");
+            //     }
+            // }
         }
     }
     
