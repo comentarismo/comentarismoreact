@@ -246,12 +246,9 @@ a#inifiniteLoaderPlay {
 .comentarismo-comment {
     max-width: 68em;
     padding-top: 0.95em;
+    margin-left: 2rem;
 }
 
-.comentarismo-follow-up:not(:first-of-type),
-.comentarismo-follow-up .comentarismo-comment {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
 
 .comentarismo-comment > div.avatar,
 .comentarismo-postbox > .avatar {
@@ -736,7 +733,6 @@ p.source {
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     input:focus, select:focus, textarea:focus {
         font-size: 16px;
-        background: #eee
     }
 }
 
@@ -2820,8 +2816,8 @@ b {
 }
 
 .card.small .card-image {
-    width: 194px !important;
-    height: 120px !important;
+    width: 100% !important;
+    height: 150px !important;
 }
 
 div.card-header {
@@ -2836,6 +2832,7 @@ div.card-header {
     text-transform: uppercase;
     font-size: 14px;
     font-weight: bold;
+    margin-left: 2rem;
 }
 
 .comentarismo-recommendations img {
@@ -2983,14 +2980,6 @@ div.card-header {
     color: #3a3a3a;
 }
 
-.comentarismo-comment {
-    margin-top: 20px;
-    max-width: 68em;
-    padding: 10px;
-    background: #FbFbFb;
-    border-bottom: 10px solid white;
-}
-
 .permalink, .spacer {
     opacity: 0;
 }
@@ -2998,7 +2987,6 @@ div.card-header {
 .comentarismo-follow-up:not(:first-of-type),
 .comentarismo-follow-up .comentarismo-comment {
     margin-top: 0px;
-//border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .comentarismo-comment > div.avatar,

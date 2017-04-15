@@ -187,7 +187,7 @@ class Product extends Component {
                 </Grid>
 
                 <div id="comentarismo-container"
-                     className="col-md-12">
+                     className="comentarismo-comment col-md-12">
                     {
                         article.comments.map((q) => {
                             return (
