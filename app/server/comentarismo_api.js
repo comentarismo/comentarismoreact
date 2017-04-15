@@ -37,6 +37,13 @@ if (LATEST_YOUTUBE_DAYS_STR) {
     LATEST_YOUTUBE_DAYS = parseInt(LATEST_YOUTUBE_DAYS_STR)
 }
 
+var MAX_SITEMAP_LIMIT = process.env.MAX_SITEMAP_LIMIT;
+if(MAX_SITEMAP_LIMIT){
+    MAX_SITEMAP_LIMIT = parseInt(MAX_SITEMAP_LIMIT);
+}else {
+    MAX_SITEMAP_LIMIT = 50000;
+}
+
 export function getLatestNewsGroupDay(conn, cb) {
 
     var query = conn.table('news', {readMode: "outdated"}).between(conn.now().sub(LATEST_NEWS_DAYS * 86400), conn.now(),
@@ -341,11 +348,12 @@ export function getAllByIndexPluckDistinct(table, index, value, pluck, conn, cb)
         return cb(errMsg + "getAllByIndexPluckDistinct --> search query is not correct.")
     }
     logger.log('debug', "getAllByIndexPluckDistinct --> table: " + table + " index: " + index + " value: " + value + " pluck: " + pluck);
-    conn.table(table, {readMode: "outdated"})
-        .getAll(value, {index: index}).limit(100)
-        .pluck("titleurlize", "title", "languages", "tags", "date")
+    var q  = conn.table(table, {readMode: "outdated"})
+        .getAll(value, {index: index}).limit(MAX_SITEMAP_LIMIT)
+        .pluck("titleurlize", "id","title", "languages", "tags", "date")
         .distinct()
-        .run().then(function (results) {
+    console.log("getAllByIndexPluckDistinct -> ", q)
+        q.run().then(function (results) {
         if (!results) {
             cb('');
         } else {

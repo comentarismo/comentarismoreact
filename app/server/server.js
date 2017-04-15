@@ -1329,7 +1329,7 @@ server.get('*', limiter, (req, res, next) => {
             table = "sentiment_report"
         }
 
-        if (table === "news" || table === "commentators" || table === "sentiment_report" || table === "product" || table === "sentiment_report") {
+        if (table === "news" || table === "commentators" || table === "commentators_product" || table === "product" || table === "sentiment_report") {
 
             var urlTag = "index.xml_" + table + "_" + index + "_" + value;
             //-------REDIS CACHE START ------//

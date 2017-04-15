@@ -18,6 +18,9 @@ function generateSitemap(conn, cb) {
         if (err || !operators) {
             logger.error(err);
         }
+
+        sitemap.add({url: '/commentators_product/operator/amazon/index.xml', changefreq: 'daily'});
+
         for (var i = 0; i < operators.length; i++) {
             sitemap.add({url: '/news/operator/' + operators[i], changefreq: 'daily'});
             sitemap.add({url: '/commentators/operator/' + operators[i], changefreq: 'daily'});
@@ -31,7 +34,7 @@ function generateSitemap(conn, cb) {
             }
             for (var i = 0; i < langs.length; i++) {
                 sitemap.add({url: '/news/languages/' + langs[i], changefreq: 'daily'});
-                sitemap.add({url: '/commentators/languages/' + langs[i], changefreq: 'daily'});
+                sitemap.add({url: '/commentators/languages/' + langs[i]+ '/index.xml', changefreq: 'daily'});
                 sitemap.add({url: '/news/languages/' + langs[i] + '/index.xml', changefreq: 'daily'});
                 sitemap.add({url: '/commentators/languages/' + langs[i] + '/index.xml', changefreq: 'daily'});
             }
@@ -81,6 +84,11 @@ function generateIndexXml(table, index, value, conn, cb) {
 
     if (table == "sentiment_report") {
         pluck = "url";
+    } else if (table == "commentator") {
+        pluck = "id"
+    } else if (table == "commentators_product") {
+        pluck = "id"
+        table = "commentator_product"
     }
 
     if (!table || !index || !value) {
@@ -96,13 +104,22 @@ function generateIndexXml(table, index, value, conn, cb) {
         //console.log(values)
         if (table == "news") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url:'/news/' + values[i].titleurlize, news: {publication:{name:values[i].title,
-                    language:values[i].languages}, title:values[i].title, publication_date:new Date(values[i].date).toISOString(),keywords:""}, changefreq: 'daily'});
+                sitemap.add({
+                    url: '/news/' + values[i].titleurlize, news: {
+                        publication: {
+                            name: values[i].title,
+                            language: values[i].languages
+                        },
+                        title: values[i].title,
+                        publication_date: new Date(values[i].date).toISOString(),
+                        keywords: ""
+                    }, changefreq: 'daily'
+                });
             }
             return cb(null, sitemap.toString());
         } else if (table == "commentator") {
             for (var i = 0; i < values.length; i++) {
-                sitemap.add({url: '/commentators/' + value + "-" + values[i].slug, changefreq: 'daily'});
+                sitemap.add({url: '/commentators/' + values[i].id, changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         } else if (table == "sentiment_report") {
@@ -113,6 +130,11 @@ function generateIndexXml(table, index, value, conn, cb) {
         } else if (table == "product") {
             for (var i = 0; i < values.length; i++) {
                 sitemap.add({url: '/product/' + encodeURIComponent(values[i].titleurlize), changefreq: 'daily'});
+            }
+            return cb(null, sitemap.toString());
+        } else if (table == "commentator_product") {
+            for (var i = 0; i < values.length; i++) {
+                sitemap.add({url: '/commentators_product/' + encodeURIComponent(values[i].id), changefreq: 'daily'});
             }
             return cb(null, sitemap.toString());
         }
