@@ -19,10 +19,10 @@ const style = {
 };
 
 class ArticleContainer extends Component {
-    static fetchData({store, params}) {
-        let {index, value} = params;
-        return store.dispatch(loadGenres({table: "news", index: "operator_genre", value: value}))
-    }
+    // static fetchData({store, params}) {
+        // let {index, value} = params;
+        // return store.dispatch(loadGenres({table: "news", index: "operator_genre", value: value}))
+    // }
 
     constructor(props) {
         super();

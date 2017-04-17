@@ -37,7 +37,7 @@ module.exports = React.createClass({
     },
 
     getVideoLink: function () {
-        return '/sentiment/' + encodeURIComponent(this.props.video.url);
+        return '/report/' + encodeURIComponent(this.props.video.url)+'?refresh=true';
     },
 
 

@@ -591,11 +591,13 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit(table, index, value
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     var day = dateObj.getUTCDate();
     var year = dateObj.getUTCFullYear();
+    
+    var indexname = index + '_' + 'date'
+    
 
     var query = conn.table(table, {readMode: "outdated"})
-        .between(conn.time(year, month, day, '+00:00'), date, {index: 'date'})
-        .orderBy({index: conn.desc('date')})
-        .filter(conn.row(index).eq(value))
+        .between([value, conn.time(year, month, day, '+00:00')], [value, conn.maxval], {index: indexname})
+        .orderBy({index: conn.desc(indexname)})
         .skip(skip).limit(limit);
 
 

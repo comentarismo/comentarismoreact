@@ -4,7 +4,7 @@ import {loadProductDetail} from 'actions/products'
 
 import ReactDOM from 'react-dom';
 var ImageComponent = require('components/Image');
-
+import {Tabs, Tab} from 'material-ui/Tabs';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import {Grid, Row, Col} from 'react-styled-flexboxgrid';
@@ -35,8 +35,6 @@ import Slider from 'containers/ImageSlider';
 var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
 
 import {PlayImages} from './PlayImages';
-
-import {Tabs, Tab} from 'react-bootstrap';
 
 const stylesTag = {
     chip: {
@@ -106,7 +104,7 @@ class Product extends Component {
             <div>
                 <a id="comentarismo-page" data-id={ article.titleurlize }/>
                 <a id="comentarismo-operator" data-id={ article.operator }/>
-                <XScript index="operator_titleurlize"/>
+               
 
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
@@ -185,9 +183,21 @@ class Product extends Component {
                         </Row>
                     </Row>
                 </Grid>
-
-                <div id="comentarismo-container"
-                     className="comentarismo-comment col-md-12">
+    
+    
+                <Tabs style={{width:'100%', height:'100%', paddingBottom: '0'}}>
+        
+                    <Tab label="Comments" style={{background: '#f5f5f5', color: '#333'}}>
+                        <XScript index="operator_titleurlize"/>
+                    </Tab>
+                    <Tab label="Report" style={{background: '#f5f5f5', color: '#333'}}>
+                    
+                    </Tab>
+    
+                </Tabs>
+                
+                 <div id="comentarismo-container" style={{display: 'none'}}
+                     className="comentarismo-comment hidden col-md-12 ">
                     {
                         article.comments.map((q) => {
                             return (

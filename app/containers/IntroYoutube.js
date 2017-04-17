@@ -70,8 +70,8 @@ class Intro extends Component {
         }
     }
     
-    getArticleLink(news) {
-        return '/news/' + news.titleurlize;
+    getArticleLink(video) {
+        return  '/report/' + encodeURIComponent(video.url);
     }
     
     getCommentatorLink(commentator) {

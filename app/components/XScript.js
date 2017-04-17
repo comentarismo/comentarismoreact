@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import IFrame from 'react-frame-component';
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -14,35 +16,90 @@ class XScript extends React.Component {
     }
 
     render() {
-        var replybtn = "<img src='/static/img/comentarismo_reply.jpg' style='width:10px; height:10px;'/>";
+        function replaceAllShittyChars(unsafe) {
+            return unsafe
+                .replace(/'/g, "")
+                .replace(/"/g, "")
+                .replace(/&amp;/g, "&")
+                .replace(/&lt;/g, " ")
+                .replace(/&gt;/g, " ")
+                .replace(/&quot;/g, " ")
+                .replace(/&#x00A9;/g, " ")
+                .replace(/&#x00EB;/g, " ")
+                .replace(/&#x00E8;/g, " ")
+                .replace(/&#x00E9;/g, " ")
+                .replace(/&#x201C;/g, " ")
+                .replace(/&#x2019;/g, " ")
+                .replace(/&#x2015;/g, " ")
+                .replace(/&#x201D;/g, " ")
+                .replace(/&#8220;/g, " ")
+                .replace(/&#8230;/g, " ")
+                .replace(/&#8220;/g, " ")
+                .replace(/&#8221;/g, " ")
+                .replace(/&#8217;/g, " ")
+                .replace(/&#8216;/g, " ")
+                .replace(/&lsquo;/g, ' ')
+                .replace(/&rsquo;/g, ' ')
+                .replace(/&ndash;/g, ' ')
+                .replace(/&egrave;/g, ' ')
+                .replace(/&Atilde;/g, '')
+                .replace(/&cent;/g, '')
+                .replace(/&euro;/g, '')
+                .replace(/&Acirc;/g, '')
+                .replace(/&oelig;/g, '')
+                .replace(/&trade;/g, '')
+                .replace(/&[^;]+?;/g, ' ')
+                .replace(/(<([^>]+)>)/ig, " ")
+        };
+    
+        let operator = this.props.operator;
+        let page = this.props.page;
+        let key = this.props.key;
+        let image = this.props.image;
+        let title = this.props.title;
+        
+        let replybtn = "<img src='/static/img/comentarismo_reply.jpg' style='width:10px; height:10px;'/>";
+        
+        if (typeof window !== 'undefined') {
+            operator = this.props.operator || $("#comentarismo-operator").attr("data-id");
+            page = this.props.page || $("#comentarismo-page").attr("data-id");
+            key = this.props.key || $("#comentarismo-key").attr("data-id") || "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY=";
+            image = this.props.image || ($('meta[property="og:image"]') ? $('meta[property="og:image"]').attr('content') : "");
+            title =  this.props.title || ($('meta[property="og:title"]') ? $('meta[property="og:title"]').attr('content') : "");
+            if(title){
+                title = replaceAllShittyChars(title);
+            }
+        }
 
-        return <div ref="it"
-                    dangerouslySetInnerHTML={{__html:
-                    '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
-                    '<script>$(function () {' +
-                      'var operator = $("#comentarismo-operator").attr("data-id"); ' +
-                      'var page = $("#comentarismo-page").attr("data-id"); '+
-                      'var key = $("#comentarismo-key").attr("data-id") || "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="; '+
-                      'var comentarismo = new Comentarismo({' +
-                            ' icons: {'+
-                                'commenticon: "/static/img/comentarismo_add_comment.jpg",'+
-                                'thumbsup: "/static/img/thumbs-up.jpg",'+
-                                'thumbsdown: "/static/img/thumbs-down.jpg",'+
-                                'replybtn: "'+ replybtn +'"'+
-                            ' },'+
-                            'host: "api.comentarismo.com",' +
-                            'cached: "api.comentarismo.com/elk",'+
-                            'table:"commentaries",' +
-                            'forum: "test",' +
-                            'reco: "myid",' +
-                            'key: key,' +
-                            'page: encodeURIComponent(page),' +
-                            'operator: operator,' +
-                            "index:'"+this.props.index+"',"+
-                        '});' +
-                      '});' +
-                    '</script>'}}
-        ></div>
+        var head = '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
+            '<script>$(function () {' +
+            'var comentarismo = new Comentarismo({' +
+            ' icons: {'+
+            'commenticon: "<i class=\'material-icons dp48\'>comment</\i>",'+
+            'thumbsup: "/static/img/thumbs-up.jpg",'+
+            'thumbsdown: "/static/img/thumbs-down.jpg",'+
+            'replybtn: "'+ replybtn +'"'+
+            ' },'+
+            'image: \''+image+'\',' +
+            'title: \''+title+'\',' +
+            'host: "api.comentarismo.com",' +
+            'cached: "api.comentarismo.com/elk",'+
+            'table:"commentaries",' +
+            'forum: "test",' +
+            'reco: "myid",' +
+            'css: "//api.comentarismo.com/static/css/custom.css",'+
+            'key: \''+key+'\',' +
+            'page: \''+encodeURIComponent(page)+'\',' +
+            'operator: \''+operator+'\',' +
+            "index:'"+this.props.index+"',"+
+            '});' +
+            '});' +
+            '</script>';
+    
+        var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
+      
+        return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'450px', left:'0px;'}}>
+        </IFrame>
     }
 }
 

@@ -204,14 +204,14 @@ class Article extends Component {
                 new Chart(ctx, {
                     type: 'bar',
                     data: data,
-                    options: {showLines: false, responsive: true, maintainAspectRatio: false}
+                    options: {showLines: false, responsive: true, maintainAspectRatio: true}
                 });
 
             });
 
             sentimentReport = <Card>
                 <h5>Free Sentiment Analysis powered by Comentarismo API</h5>
-                <canvas id="myChart" width="100%" height="200"></canvas>
+                <canvas id="myChart" width="200px" height="100px"></canvas>
             </Card>
         }
 
@@ -254,7 +254,7 @@ class Article extends Component {
                 <a id="comentarismo-operator" data-id={ article.operator }/>
                 <div className="tm-embed-container" id="scriptContainer">
                 </div>
-                <XScript index="operator_titleurlize"/>
+                
                 <Grid fluid={true} style={{margin: '2rem'}}>
                     <FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase',
                                         fontSize: '14px',
@@ -313,13 +313,25 @@ class Article extends Component {
                     </Row>
                 </Grid>
 
-                {sentimentReport}
+               
 
                 <div>
                     <XSoundcloud permalink_url={article.permalink_url}/>
                 </div>
-
-
+    
+    
+                <Tabs style={{width:'100%', height:'100%', paddingBottom: '0'}}>
+        
+                    <Tab label="Comments" style={{background: '#f5f5f5', color: '#333'}}>
+                        <XScript index="operator_titleurlize"/>
+                    </Tab>
+                    <Tab label="Report" style={{background: '#f5f5f5', color: '#333'}}>
+                        {sentimentReport}
+                    </Tab>
+                   
+                </Tabs>
+                
+                
                 <div id="comentarismo-container" className="comentarismo-comment col-md-12">
                     {
                         article.comments.map((q) => {

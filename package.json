@@ -78,6 +78,7 @@
     "react-bootstrap": "0.30.7",
     "react-bubble-chart": "^0.4.0",
     "react-dom": "=15.4.0",
+    "react-frame-component": "^1.0.3",
     "react-helmet": "^3.1.0",
     "react-redux": "^4.4.5",
     "react-router": "2.8.1",

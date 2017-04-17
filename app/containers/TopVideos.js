@@ -18,10 +18,10 @@ import Helmet from "react-helmet";
 import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 class ArticleContainer extends Component {
-    static fetchData({store, params}) {
-        let {index, value} = params;
-        return store.dispatch(loadArticles({index, value}))
-    }
+    // static fetchData({store, params}) {
+    //     let {index, value} = params;
+    //     return store.dispatch(loadArticles({index, value}))
+    // }
 
     constructor(props) {
         super();
@@ -84,7 +84,7 @@ class ArticleContainer extends Component {
                     ]}
                 />
                 
-                <Tabs style={{height: '135', paddingBottom: '75px'}}>
+                <Tabs style={{width:'100%', height:'100%', paddingBottom: '75px'}}>
                     <Tab label="News" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
                         <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"} />
                     </Tab>

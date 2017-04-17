@@ -28,8 +28,6 @@ class Commentator extends Component {
         }
         let { id } = this.props.params;
 
-        var commentContainer = <XScript index="operator_nick"/>;
-
         var commentsavgperday = 0.0;
 
         try {
@@ -74,8 +72,8 @@ class Commentator extends Component {
                     <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>
                     <div className="tm-embed-container" id="scriptContainer">
                     </div>
-                    {commentContainer}
-                    <div style={{height: '50px'}}></div>
+                    
+                    
                     <div className="row single-post-row">
                         <div className="article-body">
                             <div className="container">
@@ -170,8 +168,13 @@ class Commentator extends Component {
                                     </div>
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
                                 </div>
-
-                                <div id="comentarismo-container" className="comentarismo-comment">
+    
+                                <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>
+                                <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>
+                                
+                                <XScript operator={ commentator && commentator.operator ? commentator.operator : "" } page={ commentator && commentator.nick ? commentator.nick : id }  index="operator_nick"/>
+                                
+                                <div id="comentarismo-container" className="comentarismo-comment hidden">
                                     {
                                         commentator.comments.map((q)=> {
                                             var date = q.date && q.date.epoch_time ? <Date date={q.date}/> : q.date;

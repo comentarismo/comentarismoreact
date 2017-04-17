@@ -30,6 +30,7 @@ import SuggestComment from 'containers/SuggestComment'
 import Notfound from 'containers/Notfound';
 
 import SentimentComment from 'containers/SentimentComment';
+import SentimentReport from 'containers/SentimentReport';
 
 import TopVideos from 'containers/TopVideos';
 
@@ -48,8 +49,10 @@ export default function (history) {
 
             <Route path="/" component={Layout}>
                 <Route path="search" component={Search}/>
-
+    
                 <Route path="sentiment/:url" component={SentimentComment}/>
+                <Route path="report/:url" component={SentimentReport}/>
+                
                 <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
                 <Route path="commentators_product/:id" component={CommentatorProduct}/>
