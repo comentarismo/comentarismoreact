@@ -73,12 +73,12 @@ class SentimentReport extends Component {
                         {"property": "og:type", "content": "article"},
                         {"property": "og:type", "content": "article"},
     
-                        {"property": "og:title", "content": `${article.title ? article.title : ''}`},
-                        {"property": "og:video", "content": `${article.url ? article.url : ''}`},
+                        {"property": "og:title", "content": `${comment.title ? article.title : ''}`},
+                        {"property": "og:video", "content": `${comment.url ? article.url : ''}`},
     
                         {
                             "property": "og:image",
-                            "content": `${article.metadata ? article.metadata.thumbnail : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
+                            "content": `${comment.metadata ? article.metadata.thumbnail : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
                         }
                     ]}
                 />
@@ -165,14 +165,14 @@ var Sentiment = React.createClass({
     
     runReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/sentiment/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "");
+            window.location.href = '/report/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "");
         }
     },
     
     
     updateReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/sentiment/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "") + "&refresh=true";
+            window.location.href = '/report/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "") + "&refresh=true";
         }
     },
     
