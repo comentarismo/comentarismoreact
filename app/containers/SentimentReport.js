@@ -8,7 +8,6 @@ import Helmet from "react-helmet";
 import Icon from "components/Icon"
 
 import {FormControl} from 'react-bootstrap';
-import {XScript} from 'components/XScript';
 
 import {loadSentimentCommentDetail} from 'actions/commentators'
 
@@ -23,6 +22,8 @@ import {saSentimentCommentDetail} from '../middleware/sa';
 import YouTube from 'react-youtube';
 
 import BubbleChart from 'components/BubbleChart';
+
+import {XScript} from 'components/XScriptYoutube'
 
 class SentimentReport extends Component {
     static fetchData({store, params}) {
@@ -52,7 +53,7 @@ class SentimentReport extends Component {
     
     render() {
         //console.log(this.props)
-        let {comment} = this.state;
+        let {comment} = this.props;
         let {url} = this.props.params;
         if (typeof window !== 'undefined') {
             var vars = this.getUrlVars();
@@ -73,16 +74,18 @@ class SentimentReport extends Component {
                         {"property": "og:type", "content": "article"},
                         {"property": "og:type", "content": "article"},
     
-                        {"property": "og:title", "content": `${comment.title ? article.title : ''}`},
-                        {"property": "og:video", "content": `${comment.url ? article.url : ''}`},
+                        {"property": "og:title", "content": `${comment.title ? comment.title : ''}`},
+                        {"property": "og:video", "content": `${comment.url ? comment.url : ''}`},
     
                         {
                             "property": "og:image",
-                            "content": `${comment.metadata ? article.metadata.thumbnail : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
+                            "content": `${comment.metadata ? comment.metadata.thumbnail : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
                         }
                     ]}
                 />
                 <Sentiment comment={comment} url={url} lang={lang} refresh={refresh}/>
+    
+                <XScript operator={comment.operator} page={comment.id} index="operator_uuid"/>
                 
                 
                 <div className="clearfix"></div>
@@ -145,7 +148,7 @@ var Sentiment = React.createClass({
     componentDidMount() {
         let {url, comment, lang, refresh} = this.props;
         if (!comment || !comment.metadata) {
-            console.log("componentDidMount -> ", url)
+            console.log("componentDidMount, could not get metadata, will retry with client side request-> ", url)
             //this.props.loadSentimentCommentDetail({url});
             
             saSentimentCommentDetail(url, lang, refresh, function (err, res) {
@@ -334,22 +337,22 @@ var Sentiment = React.createClass({
             }
         };
         if (this.state.comment.sentimentscores) {
-            var that = this;
             
             for (var u = 0; u < this.state.comment.sentimentscores.length; u++) {
                 
                 var t = this.state.comment.sentimentscores[u];
-                
-                Object.keys(t).forEach(function (key) {
-                    var target = {
-                        _id: key,
-                        sentiment: t[key],
-                        value: bubblechart.length + 10
-                    }
-                    if (bubblechart.length < numBubbles) {
-                        bubblechart.push(target);
-                    }
-                })
+                if(t) {
+                    Object.keys(t).forEach(function (key) {
+                        var target = {
+                            _id: key,
+                            sentiment: t[key],
+                            value: bubblechart.length + 10
+                        }
+                        if (bubblechart.length < numBubbles) {
+                            bubblechart.push(target);
+                        }
+                    });
+                }
             }
         }
         
@@ -459,8 +462,6 @@ var Sentiment = React.createClass({
                 
                 
                 <Tabs style={{width: '100%', height: '100%', paddingBottom: '0'}}>
-                    
-                    
                     <Tab label="BubbleChart" style={{background: '#f5f5f5', color: '#333'}}>
                         <BubbleChart data={bubblechart}/>
                         <div className="col-md-12">
@@ -482,7 +483,6 @@ var Sentiment = React.createClass({
                     </Tab>
                 
                 </Tabs>
-            
             
             </div>
         );

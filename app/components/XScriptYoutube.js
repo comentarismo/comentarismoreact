@@ -1,21 +1,28 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
 import IFrame from 'react-frame-component';
+import $ from 'jquery';
 
 class XScript extends React.Component {
     static initScripts(el, url) {
-        var script = document.createElement('script');
+        var script = document.createElement('script')
         script.setAttribute('type', 'text/javascript');
         script.setAttribute('src', url);
         el.appendChild(script);
     }
 
     componentDidMount() {
-        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
+      XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
     }
 
     render() {
+    
+        let operator = this.props.operator;
+        let page = this.props.page;
+        let key = this.props.key;
+        let image = this.props.image;
+        let title = this.props.title;
+    
         function replaceAllShittyChars(unsafe) {
             return unsafe
                 .replace(/'/g, "")
@@ -52,14 +59,8 @@ class XScript extends React.Component {
                 .replace(/(<([^>]+)>)/ig, " ")
         };
     
-        let operator = this.props.operator;
-        let page = this.props.page;
-        let key = this.props.key;
-        let image = this.props.image;
-        let title = this.props.title;
-        
         let replybtn = "<img src='/static/img/comentarismo_reply.jpg' style='width:10px; height:10px;'/>";
-        
+    
         if (typeof window !== 'undefined') {
             operator = this.props.operator || $("#comentarismo-operator").attr("data-id");
             page = this.props.page || $("#comentarismo-page").attr("data-id");
@@ -70,7 +71,9 @@ class XScript extends React.Component {
                 title = replaceAllShittyChars(title);
             }
         }
-
+        
+        
+    
         var head = '<script type="text/javascript" src="/static/comentarismo-client-min.js"></script>' +
             '<script>$(function () {' +
             'var comentarismo = new Comentarismo({' +
@@ -84,7 +87,7 @@ class XScript extends React.Component {
             'title: \''+title+'\',' +
             'host: "api.comentarismo.com",' +
             'cached: "api.comentarismo.com/elk",'+
-            'table:"commentaries",' +
+            'table:"commentaries_sentiment_report",' +
             'forum: "test",' +
             'reco: "myid",' +
             'css: "//api.comentarismo.com/static/css/custom.css",'+
@@ -97,9 +100,10 @@ class XScript extends React.Component {
             '</script>';
     
         var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
-      
+    
         return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'450px', left:'0px;'}}>
         </IFrame>
+        
     }
 }
 

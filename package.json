@@ -4,7 +4,7 @@
   "description": "Comentarismo ReactJS",
   "scripts": {
     "start": "WEBPACK_PORT=3005 DISABLE_CACHE=true cross-env NODE_PATH=./app concurrent --kill-others \"nodemon --harmony_array_includes app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
-    "start-prod": "NODE_ENV=production PORT=3001 NODE_PATH=./app node --harmony_array_includes app/server",
+    "start-prod": "NODE_ENV=production PORT=3005 NODE_PATH=./app node --harmony_array_includes app/server",
     "test": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js' -w",
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
