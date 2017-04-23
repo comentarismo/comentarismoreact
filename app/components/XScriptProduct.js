@@ -93,8 +93,8 @@ class XScript extends React.Component {
             'page: \''+encodeURIComponent(page)+'\',' +
             'operator: \''+operator+'\',' +
             "index:'"+this.props.index+"',"+
-            '});' +
             '}); comentarismo.connect();' +
+            '});' +
             '</script>';
     
         var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;

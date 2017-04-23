@@ -147,13 +147,13 @@ var Sentiment = React.createClass({
     
     componentDidMount() {
         let {url, comment, lang, refresh} = this.props;
-        if (!comment || !comment.metadata) {
-            console.log("componentDidMount, could not get metadata, will retry with client side request-> ", url)
+        if (!comment || !comment.metadata || refresh) {
+            console.log("componentDidMount, could not get metadata, or refresh is enabled ... will perform with client side request-> ", url)
             //this.props.loadSentimentCommentDetail({url});
             
             saSentimentCommentDetail(url, lang, refresh, function (err, res) {
                 // Do something
-                if (err || !res || res.body.length == 0) {
+                if (err || !res || res.body.length === 0) {
                     console.log("Got error when trying to fallback on sentiment report :| ", err)
                 } else {
                     var comment = res.body;

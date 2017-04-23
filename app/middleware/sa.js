@@ -60,7 +60,7 @@ export function doImageResize(url,data,cb){
 }
 
 export function saSentimentCommentDetail(url,lang,refresh,cb){
-    var target = `${config.SNT_URL}/moody?vid=${url}`;
+    var target = `${config.FE_SNT_URL}/moody?vid=${url}`;
     if(lang) {
         target =  target+`&lang=${lang}`;
     }
