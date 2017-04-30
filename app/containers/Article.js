@@ -255,12 +255,12 @@ class Article extends Component {
                 <div className="tm-embed-container" id="scriptContainer">
                 </div>
                 
-                <Grid fluid={true} style={{margin: '2rem'}}>
+                <Grid fluid={true} className="center-sm col-xs-12" style={{padding: '4rem', paddingBottom: '6rem'}}>
                     <FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase',
                                         fontSize: '14px',
                                         fontWeight: 'bold',}} disabled={true}
                                 label={ article.genre ? article.genre.toUpperCase() : article.genre }/>
-                    <Row className="col-xs-offset-1"
+                    <Row
                          style={{
                              background: '#fff',
                              height: 'auto',
@@ -320,7 +320,7 @@ class Article extends Component {
                 </div>
     
     
-                <Tabs style={{width:'100%', height:'100%', paddingBottom: '0'}}>
+                <Tabs style={{width:'100%'}}>
         
                     <Tab label="Comments" style={{background: '#f5f5f5', color: '#333'}}>
                         <XScript index="operator_titleurlize"/>

@@ -286,6 +286,8 @@ class Intro extends Component {
                                         {comment[article].reduction.map((news) => {
                                             let c = {
                                                 nick: news.topcomments[0].authorname,
+                                                title: news.title,
+                                                likes: news.topcomments[0].likes,
                                                 comment: news.topcomments[0].content
                                             }
                                             let content =  <ExpandableComment comment={c}/>;
@@ -370,6 +372,15 @@ class Intro extends Component {
                             </Tab>
                         </Tabs>
                 
+                    </Row>
+                    <Row  style={{ padding: '5rem'}}>
+                        <ul style={{listStyle: 'none', display: 'inline-flex', margin: 'auto'}}>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="//api.comentarismo.com/about.html">About</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">API</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Contact</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Terms of Use</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Privacy Policy</a></li>
+                        </ul>
                     </Row>
                 </Grid>
             </div>

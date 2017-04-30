@@ -30,7 +30,7 @@ class ModalBody extends React.Component {
     
     render() {
         return (
-            <div className="modal-body">
+            <div>
                 <span dangerouslySetInnerHTML={this.rawMarkup()}/>
             
             </div>
@@ -63,7 +63,7 @@ export default class ExpandableComment extends React.Component {
     };
     
     getShortComment(title) {
-        const t = title && title.length > 40 ? title.substring(0, 40) + "..." : title
+        const t = title && title.length > 40 ? title.substring(0, 40) + "..." : title;
         return (
             <ModalBody content={t}/>
         );
@@ -76,7 +76,7 @@ export default class ExpandableComment extends React.Component {
     }
     
     getAvatar(nick) {
-        const n = nick && nick.length >= 1 ? nick.substring(0, 1) : "A"
+        const n = nick && nick.length >= 1 ? nick.substring(0, 1) : "A";
         return (
             <Avatar>{n}</Avatar>
         );
@@ -88,13 +88,13 @@ export default class ExpandableComment extends React.Component {
             <Card style={style} class="col-xs-12" expanded={this.state.expanded}
                   onExpandChange={this.handleExpandChange}>
                 <CardHeader
-                    title={<span>{this.props.comment.nick}</span>}
-                    subtitle={this.getShortComment(this.props.comment.comment)}
+                    title={<span>{this.props.comment.nick} </span>}
+                    subtitle={<span>{this.props.comment.likes} LIKES on <b>{this.props.title ? this.props.title : this.props.comment.title}</b></span>}
                     avatar={this.getAvatar(this.props.comment.nick)}
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
-                
+
                 <CardText expandable={true}>
                     {this.getComment(this.props.comment.comment)}
                 </CardText>

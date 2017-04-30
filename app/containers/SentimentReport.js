@@ -8,8 +8,13 @@ import Helmet from "react-helmet";
 import Icon from "components/Icon"
 
 import {FormControl} from 'react-bootstrap';
+import {loadArticleDetail} from 'actions/articles'
 
 import {loadSentimentCommentDetail} from 'actions/commentators'
+import {Grid, Row, Col} from 'react-styled-flexboxgrid';
+import Chip from 'material-ui/Chip';
+import FlatButton from 'material-ui/FlatButton';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 var $ = require('jquery')
 var emojione = require("emojione");
@@ -358,31 +363,7 @@ var Sentiment = React.createClass({
         
         return (
             <div className="">
-                
-                <div className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header navbar-brand">
-                            Paste a Youtube URL below And Get a <b>Free</b> Sentiment <b>Analysis</b> Right <b> Now!</b>
-                        </div>
-                    </div>
-                </div>
-                
-                
-                <nav className="navbar navbar-default">
-                    <div className="container-fluid">
-                        <div className="navbar-header">
-                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
-                                    data-target="#navbar"
-                                    aria-expanded="false" aria-controls="navbar">
-                                <span className="sr-only">Toggle navigation</span>
-                                <span className="icon-bar"></span>
-                                <span className="icon-bar"></span>
-                                <span className="icon-bar"></span>
-                            </button>
-                            <span
-                                className="navbar-brand">Insert a Youtube URL, Select the language and press Run.</span>
-                        </div>
-                        <div id="navbar" className="navbar-collapse collapse col-xs-12 col-md-12 col-lg-12">
+                        {/*<div id="navbar" className="navbar-collapse collapse col-xs-12 col-md-12 col-lg-12">
                             <div className="navbar-form navbar-left form-horizontal">
                                 <div>
                                     <input type="text" className="form-control" placeholder="Post URL" name="vid"
@@ -398,7 +379,7 @@ var Sentiment = React.createClass({
                                         <option value="ru">Russian</option>
                                         <option value="hr">Croatian</option>
                                     </FormControl>
-                                    
+
                                     <a className="btn btn-primary" onClick={this.runReport}>Run
                                     </a>
                                 </div>
@@ -407,59 +388,87 @@ var Sentiment = React.createClass({
                             </ul>
                         </div>
                     </div>
-                </nav>
-                
-                <a type="button" className="btn btn-primary" onClick={this.updateReport}>Update Report</a>
-                
-                
-                <div id="report">
-                    <div id="header" className="stroke">
-                        <h1 id="video_title">{comment.title}</h1>
-                        <h4>
-                            <span id="channel_title">{comment.metadata ? comment.metadata.channeltitle : ""}</span> on
-                            <span id="network_title">{comment.type}</span>
-                        </h4>
-                        
-                        <hr/>
-                        
-                        
-                        <div className="row bignums">
-                            <div className="col-xs-2 col-xs-offset-2">
-                                <span
-                                    id="total_comments">{comment.metadata ? comment.metadata.videoviews : ""} </span>
-                                <span className="desc">Total Views</span>
+
+                    <a type="button" className="btn btn-primary" onClick={this.updateReport}>Update Report</a>
+
+            */}
+                <Grid fluid={true} className="center-sm col-xs-12" style={{padding: '4rem 0 6rem 4rem'}}>
+                    {/*<FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',}} disabled={true}
+                                label={ article.genre ? article.genre.toUpperCase() : article.genre }/>*/}
+                    <Row
+                        style={{
+                             background: '#fff',
+                             height: 'auto',
+                             fontFamily: 'Open Sans, sans-serif',
+                             color: '#656972'
+                         }}>
+                        <Row className="col-lg-6" style={{}}>
+                            <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                                        title={<span style={{
+                                    fontSize: '14px',
+                                    textTransform: 'uppercase'
+                                }}> You Tube </span>}
+                                        avatar={<img src="/static/img/sources/youtube.png" style={{height: '24px', width: '24px', marginTop: '8px'}}
+                                             />}
+                                        subtitle={<Date style={{fontSize: '14px'}} date={comment.date}/>}
+                            />
+
+                            <CardTitle 
+                                       title={comment.title} />
+                            <div style={{
+                                        marginLeft: '15px',
+                                        paddingBottom: '5rem',
+                                        color: '#656972',
+                                        textTransform: 'uppercase',
+                                        fontSize: '14px',
+                                        lineHeight: '1.5'
+                                    }}>
+                                <div>
+                                    <span><b>{comment.metadata ? comment.metadata.totalcomments : ""}</b></span>
+                                    <span className="desc"> Total Comments</span>
+                                </div>
+                                <div>
+                                    <span><b>{comment.metadata ? comment.metadata.videoviews : ""}</b></span>
+                                    <span className="desc"> Total Views</span>
+                                </div>
+                                <div>
+                                    <span id="comments_per_day"><b>{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</b></span>
+                                    <span className="desc"> Number of comments per day</span>
+                                </div>
                             </div>
-                            
-                            <div className="col-xs-2 col-xs-offset-2">
-                                <span
-                                    id="total_comments">{comment.metadata ? comment.metadata.totalcomments : ""}</span>
-                                <span className="desc">Total Comments</span>
-                            </div>
-                            <div className="col-xs-2">
-                                <span
-                                    id="comments_per_day">{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</span>
-                                <span className="desc">By Day</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="progress">
-                            <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
-                                 aria-valuemin="0"
-                                 aria-valuemax="100" style={{width: "0%"}}>
-                                Comments Analyzed: 0%
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <YouTube
-                            videoId={comment.metadata ? comment.metadata.id : comment.id}
-                            opts={opts}
-                            onReady={this._onReady}
-                        />
-                    </div>
-                </div>
-                
+                            {/*<CardActions>
+                                <div style={{
+                                        marginLeft: '10px',
+                                        paddingBottom: '10px',
+                                        color: '#656972',
+                                        textTransform: 'uppercase',
+                                        fontSize: '14px',
+                    }}>Trending words
+                                </div>
+                                {
+                                    this.props.article.tags && this.props.article.tags.map((tag, i) => {
+                                        return i < 4 && (
+                                                <Chip style={stylesTag.chip}>
+                                                    <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
+                                                    {tag}
+                                                </Chip>
+                                            )
+                                    })
+                                }
+                            </CardActions> */}
+                        </Row>
+                        <Row className="col-lg-6" style={{}}>
+                            <YouTube
+                                videoId={comment.metadata ? comment.metadata.id : comment.id}
+                                opts={opts}
+                                onReady={this._onReady}
+                                width="500" height="395"
+                            />
+                        </Row>
+                    </Row>
+                </Grid>
                 
                 <Tabs style={{width: '100%', height: '100%', paddingBottom: '0'}}>
                     <Tab label="BubbleChart" style={{background: '#f5f5f5', color: '#333'}}>

@@ -12,6 +12,8 @@ import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
 import moment from 'moment';
+import Divider from 'material-ui/Divider';
+
 
 var Article = require('components/Article');
 var $ = require('jquery');
@@ -392,13 +394,20 @@ class Intro extends Component {
                         </Tabs>
 
                     </Row>
+                    <Row  style={{ padding: '5rem'}}>
+                        <ul style={{listStyle: 'none', display: 'inline-flex', margin: 'auto'}}>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="//api.comentarismo.com/about.html">About</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">API</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Contact</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Terms of Use</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Privacy Policy</a></li>
+                        </ul>
+                    </Row>
                 </Grid>
             </div>
-
         );
     }
 }
-
 
 function mapStateToProps(state) {
     return {

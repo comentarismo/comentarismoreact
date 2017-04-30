@@ -126,12 +126,12 @@ class Product extends Component {
                         }
                     ]}
                 />
-                <Grid fluid={true} style={{margin: '2rem'}}>
+                <Grid fluid={true} className="center-sm col-xs-12" style={{padding: '4rem', paddingBottom: '6rem'}}>
                     <FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase', paddingLeft: '10px !important',
                                         fontSize: '14px',
                                         fontWeight: 'bold' }} disabled={true}
                                 label={this.props.article.categories}/>
-                    <Row className="col-xs-offset-1"
+                    <Row
                          style={{
                              background: '#fff',
                              height: 'auto',

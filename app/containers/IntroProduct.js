@@ -302,7 +302,7 @@ class IntroProduct extends Component {
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
-                                            if (news.languages == targetLang && count < 10) {
+                                            if (news.languages == targetLang && count < 6) {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 
@@ -328,13 +328,13 @@ class IntroProduct extends Component {
                           }}>
                     Active commentators</div>
                     
-                    <Row style={{ marginLeft: '9rem'}} className="col-xs box">
+                    <Row style={{ marginLeft: '9rem'}} >
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div className="col-xs">
+                                    <div className="col-xs box" style={{display: 'flex !important', flexWrap: 'wrap'}}>
                                         {commentators[article].reduction.map((news) => {
                                             
                                             let content = "";
@@ -363,7 +363,7 @@ class IntroProduct extends Component {
                             })
                         }
                     </Row>
-                    
+
                     <Row
                          style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
                         <img
@@ -389,6 +389,15 @@ class IntroProduct extends Component {
                             </Tab>
                         </Tabs>
                     
+                    </Row>
+                    <Row  style={{ padding: '5rem'}}>
+                        <ul style={{listStyle: 'none', display: 'inline-flex', margin: 'auto'}}>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="//api.comentarismo.com/about.html">About</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">API</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Contact</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Terms of Use</a></li>
+                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Privacy Policy</a></li>
+                        </ul>
                     </Row>
                 </Grid>
             </div>
