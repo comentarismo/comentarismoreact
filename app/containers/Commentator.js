@@ -10,6 +10,8 @@ import Helmet from "react-helmet";
 var moment = require("moment");
 var table = "commentator";
 
+var $ = require('jquery');
+
 class Commentator extends Component {
     static fetchData({ store, params }) {
         let { id } = params
