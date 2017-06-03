@@ -1,12 +1,12 @@
 import React, {Component, PropTypes} from 'react';
-import Title from 'react-title-component';
+// import Title from 'react-title-component';
 import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
+// import IconButton from 'material-ui/IconButton';
 import spacing from 'material-ui/styles/spacing';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {darkWhite, lightWhite, grey900} from 'material-ui/styles/colors';
 import AppNavDrawer from './AppNavDrawer';
-import FullWidthSection from './FullWidthSection';
+// import FullWidthSection from './FullWidthSection';
 import withWidth, {MEDIUM, LARGE} from 'material-ui/utils/withWidth';
 import LoginStore from 'store/LoginStore';
 import config from 'config'
@@ -163,6 +163,12 @@ class Master extends Component {
             muiTheme: muiTheme,
         });
     };
+    
+    showHome () {
+        if (typeof window !== 'undefined') {
+            window.location.href = '/'
+        }
+    }
 
     render() {
         const {
@@ -200,9 +206,8 @@ class Master extends Component {
             <div>
                 <AppBar
                     onLeftIconButtonTouchTap={this.handleTouchTapLeftIconButton}
-                    title={<Link to="/"
-                                 style={{color: '#fff', textDecoration: 'none', float: 'left', fontSize: '16px'}}> C
-                        O M E N T A R I S M O </Link>}
+                    title={ <a href="/#" onClick={this.showHome}
+                                 style={{color: '#fff', textDecoration: 'none', float: 'left', fontSize: '16px'}}> C O M E N T A R I S M O </a>}
                     zDepth={0}
                     iconElementRight={ LoginStore.isLoggedIn() ?
                         <a href={`${host}/logout`} style={{color: '#fff !important', visited: '#fff !important'}} > Welcome back { LoginStore.user.username}! &#160;
