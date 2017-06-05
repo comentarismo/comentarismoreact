@@ -150,7 +150,7 @@ class Product extends Component {
                             />
                             <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}
                                        title={article.title}
-                                       subtitle={<span dangerouslySetInnerHTML={{__html: totalComments}}/>}
+                                       subtitle={<a target="_blank" href={`/html/product.html?table=commentaries_product&skip=0&limit=50&operator=${this.props.article.operator}&key=operator_titleurlize&value=${this.props.article.titleurlize}`}><span dangerouslySetInnerHTML={{__html: totalComments}}/></a>}
                             />
                             <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
                             <CardActions>
@@ -184,7 +184,7 @@ class Product extends Component {
                     </Row>
                 </Grid>
     
-    
+                
                 <Tabs style={{width:'100%', height:'100%', paddingBottom: '0'}}>
         
                     <Tab label="Comments" style={{background: '#f5f5f5', color: '#333'}}>

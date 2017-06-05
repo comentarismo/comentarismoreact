@@ -18,6 +18,8 @@ import {Provider} from 'react-redux';
 import {generateSitemap, generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
 
+const Wreck = require('wreck');
+
 // var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 
 var REDIS_HOST = process.env.REDIS_HOST || "g7-box";
@@ -183,6 +185,9 @@ var mem_stats = Stats('test', uri);
 
 var ENABLE_INFLUX = process.env.ENABLE_INFLUX || false;
 
+// var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://comentarismo.com"
+var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://localhost:3000"
+
 // example stat collection of process memory usage
 console.log("stat influxdb collection of process memory usage for this app");
 
@@ -262,6 +267,34 @@ function limiterhandler(req, res) {
     });
 }
 
+
+server.get('/html/:page', limiter, (req,res, next) => {
+    
+    var page = req.params.page;
+    
+    //?db=test&table=commentaries&skip=100&limit=50&operator=uol&key=operator_uuid&value=uoljohan-cruyff-morre-aos-68-anos-apos-luta-contra-cancer#overview-section
+    var target = `${COMENTARISMO_API}/html/${page}?db=test&table=${req.query.table}&skip=${req.query.skip}&limit=${req.query.limit}&operator=${req.query.operator}&key=${req.query.key}&value=${req.query.value}`
+    
+    console.log(target)
+    Wreck.request("GET", target, {}, (err, response) => {
+        
+        if (err) {
+            return res.status(500).send('Something broke!');
+        }
+    
+        Wreck.read(response, null, (err, body) => {
+    
+            if (err) {
+                return res.status(500).send('Something broke!');
+            }
+    
+            res.write(body, 'binary');
+            return res.end(undefined, 'binary');
+        });
+    });
+    
+    
+})
 
 server.get('/versions.json', limiter, (req, res) => {
     res.send([
