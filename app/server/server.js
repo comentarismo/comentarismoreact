@@ -185,8 +185,7 @@ var mem_stats = Stats('test', uri);
 
 var ENABLE_INFLUX = process.env.ENABLE_INFLUX || false;
 
-// var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://comentarismo.com"
-var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://localhost:3000"
+var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://api.comentarismo.com"
 
 // example stat collection of process memory usage
 console.log("stat influxdb collection of process memory usage for this app");
