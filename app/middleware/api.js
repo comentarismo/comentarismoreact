@@ -47,7 +47,6 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
         let deferred = Promise.defer();
 
         let params = extractParams(apiAction[CALL_API]);
-        console.log("createRequestPromise -> ", params.url);
         superAgent[params.method](params.url)
             .withCredentials()
             .end((err, res)=> {
