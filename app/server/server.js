@@ -64,7 +64,7 @@ var RETHINKDB_PASSWORD = process.env.RETHINKDB_PASSWORD;
 var RETHINKDB_TABLE = process.env.RETHINKDB_TABLE || 'test';
 var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
-// var aday = 86400000;
+// var aday = 86400;
 // var dayHours = 24;
 // var expireTime = aday / dayHours;
 

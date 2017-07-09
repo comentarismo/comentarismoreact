@@ -2,28 +2,24 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {loadProductDetail} from 'actions/products'
 
-import ReactDOM from 'react-dom';
-var ImageComponent = require('components/Image');
+import Icon from "components/Icon"
+import Date from "components/Date"
+import Helmet from "react-helmet";
+
 import {Tabs, Tab} from 'material-ui/Tabs';
+var emojione = require("emojione");
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import {Grid, Row, Col} from 'react-styled-flexboxgrid';
 import Chip from 'material-ui/Chip';
 import FlatButton from 'material-ui/FlatButton';
 
-var ImageComponent = require('components/Image');
 var ImageResized = require("components/ImageResized");
 
 
-import Icon from "components/Icon"
-import Date from "components/Date"
-import Helmet from "react-helmet";
+var moment = require("moment");
 
-var width = "388";
-var height = "395";
-var quality = "50";
 var $ = require('jquery');
-var base64Encode = require("../util/imgresizer").base64Encode;
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -47,6 +43,19 @@ const stylesTag = {
     },
 };
 
+var terrible = "Terrible!";
+var sucks = "Sucks";
+var bad = "Bad";
+var notgood = "Not Good";
+var eh = "Eh";
+var neutral = "Neutral";
+var ok = "OK";
+var good = "Good";
+var likeit = "Like It";
+var lovedit = "Loved It";
+var awesome = "Awesome!";
+var unknown = "Unknown";
+
 class Product extends Component {
     static fetchData({store, params}) {
         let {id} = params
@@ -55,6 +64,23 @@ class Product extends Component {
 
     render() {
         let {article} = this.props;
+
+
+        var commentsavgperday = 0.0;
+
+        try {
+            if (this.props.article && this.props.article.date && this.props.article.totalComments) {
+                var dt = moment(this.props.article.date);
+                var today = moment();
+
+                var diffInDays = today.diff(dt, 'days'); // x days
+                if (diffInDays > 0) {
+                    commentsavgperday = parseFloat(this.props.article.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+                }
+            }
+        } catch (e) {
+            console.log("Error when getting commentsavgperday :| ", e);
+        }
 
         if (!article || !article.operator) {
             return (
@@ -98,8 +124,158 @@ class Product extends Component {
             searchlist.push({title: article.title, gimage: article.image});
         }
 
-        var totalComments = article.totalComments ? `${article.totalComments} Comments` : "No Comments";
-
+        var sentimentReport = <div/>
+        if (typeof window !== 'undefined' && article.sentiment) {
+            $(function () {
+                var emojis = {
+                    "Terrible!": terrible +
+                    emojione.shortnameToUnicode(":scream:"),
+                    "Sucks": sucks + emojione.shortnameToUnicode(":angry:"),
+                    "Bad": bad + emojione.shortnameToUnicode(":worried:"),
+                    "Not Good": notgood +
+                    emojione.shortnameToUnicode(":unamused:"),
+                    "Eh": eh + emojione.shortnameToUnicode(":confused:"),
+                    "Neutral": neutral +
+                    emojione.shortnameToUnicode(":expressionless:"),
+                    "OK": ok + emojione.shortnameToUnicode(":neutral_face:"),
+                    "Good": good + emojione.shortnameToUnicode(":smile:"),
+                    "Like It": likeit + emojione.shortnameToUnicode(":smiley:"),
+                    "Loved It": lovedit + emojione.shortnameToUnicode(":yum:"),
+                    "Awesome!": awesome +
+                    emojione.shortnameToUnicode(":grinning:"),
+                    "Unknown": unknown +
+                    emojione.shortnameToUnicode(":no_mouth:")
+                };
+            
+                //$("#header").css({
+                //    "background-image": "url('" + article.image + "')"
+                //});
+                $(".progress-bar").
+                    attr('aria-valuenow', 100).
+                    css({'width': 100 + '%'}).
+                    text('Comments Analyzed: ' + 100 + '%');
+            
+                var Chart = require("chart.js");
+            
+                var elabels = [
+                    emojis[terrible],
+                    emojis[sucks],
+                    emojis[bad],
+                    emojis[notgood],
+                    emojis[eh],
+                    emojis[neutral],
+                    emojis[ok],
+                    emojis[good],
+                    emojis[likeit],
+                    emojis[lovedit],
+                    emojis[awesome],
+                    emojis[unknown]
+                ];
+            
+                var labels = [
+                    terrible,
+                    sucks,
+                    bad,
+                    notgood,
+                    eh,
+                    neutral,
+                    ok,
+                    good,
+                    likeit,
+                    lovedit,
+                    awesome,
+                    unknown];
+                var dp = {};
+            
+                // console.log("article.sentiment, ", article.sentiment)
+                for (var x in article.sentiment) {
+                    var n = article.sentiment[x]["name"];
+                    if (n == "") {
+                        n = unknown;
+                    }
+                    var p = article.sentiment[x]["percent"];
+                    // console.log(p);
+                    dp[n] = p;
+                }
+                var element = document.getElementById("myChart");
+                var ctx = {};
+                if (element) {
+                    ctx = element.getContext("2d");
+                }
+                // Bar Chart
+                var data = {
+                    labels: elabels,
+                    datasets: [
+                        {
+                            label: "Percent",
+                            backgroundColor: [
+                                "#040D45",
+                                "#0A0D57",
+                                "#0C0F63",
+                                "#111585",
+                                "#12168C",
+                                "#151AAD",
+                                "#2D32C4",
+                                "#3A3EC7",
+                                "#4D51C9",
+                                "#5F62C9",
+                                "#7679CC",
+                                "#8F91CC",
+                            ],
+                            borderColor: "rgba(255,99,132,1)",
+                            borderWidth: 1,
+                            hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                            hoverBorderColor: "rgba(255,99,132,1)",
+                            data: [
+                                dv(dp[terrible], 0),
+                                dv(dp[sucks], 0),
+                                dv(dp[bad], 0),
+                                dv(dp[notgood], 0),
+                                dv(dp[eh], 0),
+                                dv(dp[neutral], 0),
+                                dv(dp[ok], 0),
+                                dv(dp[good], 0),
+                                dv(dp[likeit], 0),
+                                dv(dp[lovedit], 0),
+                                dv(dp[awesome], 0),
+                                dv(dp[unknown], 0)]
+                        }
+                    ]
+                };
+            
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        showLines: false,
+                        responsive: true,
+                        maintainAspectRatio: true
+                    }
+                });
+            
+            });
+        
+            sentimentReport = <Card>
+                <h5>Free Sentiment Analysis powered by Comentarismo API</h5>
+                <canvas id="myChart" width="200px" height="100px"></canvas>
+            </Card>
+        }
+    
+        var totalComments = article.totalComments
+            ? `${article.totalComments} Comments`
+            : "No Comments";
+        
+        
+        const stylesTag = {
+            chip: {
+                margin: 4,
+                display: 'inline-flex',
+            },
+            wrapper: {
+                display: 'flex',
+                flexWrap: 'wrap',
+            },
+        };
         return (
             <div>
                 <a id="comentarismo-page" data-id={ article.titleurlize }/>
@@ -191,7 +367,7 @@ class Product extends Component {
                         <XScript index="operator_titleurlize"/>
                     </Tab>
                     <Tab label="Report" style={{background: '#f5f5f5', color: '#333'}}>
-                    
+                        {sentimentReport}
                     </Tab>
     
                 </Tabs>
@@ -227,6 +403,9 @@ class Product extends Component {
     }
 }
 
+function dv(data, defaultData) {
+    return (data ? data : defaultData);
+}
 
 function mapStateToProps(state) {
     return {article: state.productDetail}
