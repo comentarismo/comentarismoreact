@@ -26,6 +26,18 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 import Autocomplete from 'components/Autocomplete'
 import ExpandableComment from 'containers/ExpandableComment';
 
+const commentatorStyle = {
+    height: '150px',
+    width: '300px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'left',
+    boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
+    borderRadius: '2px',
+    margin: '20px 20px 20px 0'
+};
+
 class Intro extends Component {
     static fetchData({store, params}) {
         var index = params.index || "youtube";
@@ -127,6 +139,7 @@ class Intro extends Component {
     render() {//languages/english/0/5/
         let comment = this.props.news;
         let commentators = this.props.commentators;
+        var countCommentators = 0;
         // let commentaries = this.props.commentaries;
         
         // comment && Object.keys(comment).map(article => {
@@ -315,15 +328,15 @@ class Intro extends Component {
                     <Row>
                         {
                             commentators && Object.keys(commentators).map(article => {
-                                var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
                                     <div className="col-xs box">
                                         {commentators[article].reduction.map((news) => {
                                         
                                             let content = "";
-                                            if (news.languages == targetLang && count < 1) {
-                                                count = count + 1;
+                                            // TODO: filter by language
+                                            if (countCommentators < 10 && news.totalComments > 1) {
+                                                countCommentators = countCommentators + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
                                                     <Card key={news.id} style={commentatorStyle} className="box">
                                                         <CardHeader title={news.nick}

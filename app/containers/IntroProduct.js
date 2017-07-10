@@ -338,7 +338,7 @@ class IntroProduct extends Component {
                                         {commentators[article].reduction.map((news) => {
                                             
                                             let content = "";
-                                            if (news.languages == targetLang && count < 10) {
+                                            if (news.languages === targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
                                                     <Card key={news.id} style={commentatorStyle} className="box">

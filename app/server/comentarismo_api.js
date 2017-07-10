@@ -192,12 +192,13 @@ export function getLatestNewsWithCommentGroupDay (index, value, conn, cb) {
 export function getLatestYoutubeCommentatorsGroupDay (index, value, conn, cb) {
     
     var query = conn.table('commentator_sentiment_report',
-        {readMode: 'outdated'}).
-        between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
-            {index: 'maxDate'}).
-        orderBy({index: conn.desc('maxDate')}).
-        limit(5000).
-        group([conn.row('maxDate').month(), conn.row('operator')]).
+        {readMode: 'outdated'})
+        // between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
+        //     {index: 'maxDate'}).
+        // orderBy({index: conn.desc('maxDate')}).
+        .limit(5000)
+        .orderBy("maxDate")
+        .group([conn.row('maxDate'), conn.row('operator'), conn.row('languages')]).
         ungroup().
         map(function (row) {
             return {
@@ -207,6 +208,7 @@ export function getLatestYoutubeCommentatorsGroupDay (index, value, conn, cb) {
                 }).limit(5),
             }
         })
+        // .limit(50)
     if (IS_DEBUG) {
         console.log('getLatestYoutubeCommentatorsGroupDay query -> ', query)
     }
