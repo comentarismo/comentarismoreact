@@ -10,6 +10,8 @@ var Product = require('components/Product');
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import Helmet from "react-helmet";
+import { Tabs, Tab } from 'material-ui/Tabs';
+import Autocomplete from 'components/Autocomplete'
 
 class ProductContainer extends Component {
     static fetchData({store, params}) {
@@ -63,12 +65,12 @@ class ProductContainer extends Component {
             <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title={`Latest news - Category - ${this.props.params.value ? this.props.params.value.toUpperCase() : ""} `}
+                    title={`Latest Products - Category - ${this.props.params.value ? this.props.params.value.toUpperCase() : ""} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
                         {
                             "name": "description",
-                            "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world news, sports, business, technology, analysis and reviews from the world's leading liberal comments website.`
+                            "content": `Find the most active commentators of the ${this.props.params.value} in several categories like world most wanted products, amazon, best seller, technology, analysis and reviews from the world's leading liberal comments website.`
                         },
                         {"property": "og:type", "content": "article"},
                         {
@@ -77,7 +79,37 @@ class ProductContainer extends Component {
                         }
                     ]}
                 />
+    
                 <Card>
+                <Tabs style={{
+                    width: '100%',
+                    height: '100%',
+                    paddingBottom: '75px'
+                }}>
+                    <Tab label="Products" onActive={function () {
+                        document.location.href = "/product/genre/bestseller";
+                    }} style={{
+                        background: '#f5f5f5',
+                        color: '#333',
+                        height: '84px'
+                    }}>
+                        <Autocomplete placeHolder={"Products"}
+                                      hintText={"Recommend me latest products"}/>
+                    </Tab>
+                    
+                    <Tab label="Commentators" onActive={function () {
+                        document.location.href = "/commentators_product/operator/amazon";
+                    }} style={{
+                        background: '#f5f5f5',
+                        color: '#333',
+                        height: '84px'
+                    }}>
+                        <Autocomplete placeHolder={"Commentators"}
+                                      hintText={"Recommend me Commentators"}/>
+                    </Tab>
+                  
+                </Tabs>
+ 
                     <InfiniteScroll
                         ref='masonryContainer'
                         skip={0}

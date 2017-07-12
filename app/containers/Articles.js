@@ -18,6 +18,9 @@ const style = {
     margin: 12,
 };
 
+import { Tabs, Tab } from 'material-ui/Tabs';
+import Autocomplete from 'components/Autocomplete';
+
 class ArticleContainer extends Component {
     // static fetchData({store, params}) {
         // let {index, value} = params;
@@ -67,6 +70,10 @@ class ArticleContainer extends Component {
         if (!this.state.articles) {
             this.state.articles = [];
         }
+        
+        const index = this.props.params.index;
+        const value = this.props.params.value;
+        
         return (
             <div>
                 <Helmet
@@ -86,6 +93,36 @@ class ArticleContainer extends Component {
                     ]}
                 />
                 <Card>
+    
+                    <Tabs style={{
+                        width: '100%',
+                        height: '100%',
+                        paddingBottom: '75px'
+                    }} initialSelectedIndex={0}>
+                        <Tab label="News" onActive={function () {
+                            document.location.href = `/news/${index}/${value}`;
+                        }} style={{
+                            background: '#f5f5f5',
+                            color: '#333',
+                            height: '84px'
+                        }}>
+                            <Autocomplete placeHolder={"News"}
+                                          hintText={"Recommend me latest news"}/>
+                        </Tab>
+        
+                        <Tab label="Commentators" onActive={function () {
+                            document.location.href = `/commentators_news/${index}/${value}`;
+                        }} style={{
+                            background: '#f5f5f5',
+                            color: '#333',
+                            height: '84px'
+                        }}>
+                            <Autocomplete placeHolder={"Commentators"}
+                                          hintText={"Recommend me Commentators"}/>
+                        </Tab>
+    
+                    </Tabs>
+                    
                     { this.props.genres && this.props.genres.length > 0 &&
                     <div >
                         {this.props.genres.map(function (a) {

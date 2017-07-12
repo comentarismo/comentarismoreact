@@ -171,9 +171,8 @@ class Commentator extends Component {
                                     <div className="col-xs-12" style={{height: '25px'}}></div>
                                 </div>
     
-                                <XScript index="operator_nick"/>
                                 
-                                <div id="comentarismo-container" className="comentarismo-comment hidden">
+                                <div id="comentarismo-container" className="comentarismo-comment">
                                     {
                                         commentator.comments.map((q)=> {
                                             var date = q.date && q.date.epoch_time ? <Date date={q.date}/> : q.date;
@@ -193,7 +192,7 @@ class Commentator extends Component {
                                                             <a href="#" className="permalink"> Read more</a>
                                                         </div>
                                                         <div className="text">
-                                                            <p>Commentator: { q.nick }</p>
+                                                            <p><b>{ q.nick }</b></p>
                                                         </div>
 
                                                         <div className="text">
@@ -201,18 +200,7 @@ class Commentator extends Component {
                                                         </div>
                                                     </div>
                                                     <div className="comentarismo-comment-footer">
-                                                        <a className="upvote" id="like" data-id="-like">
-                                                            <img src="/static/img/thumbs-up.png"
-                                                                 style={{width: '10px',height: '10px'}}/>
-                                                        </a>
-                                                        <span className="spacer">|</span>
-                                                        <a className="downvote" id="dislike" data-id="-dislike">
-                                                            <img src="/static/img/thumbs-down.png"
-                                                                 style={{width: '10px',height: '10px'}}/>
-                                                        </a>
-                                                        <a className="button destroy" id="delete" data-id="-delete"/>
-                                                        <span className="spacer">|</span>
-                                                        <a data-id="-reply" className="reply"> Reply</a>
+                                                    
                                                     </div>
                                                     <div className="comentarismo-follow-up" id="-reply-thread"></div>
                                                 </div>

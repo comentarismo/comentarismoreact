@@ -540,6 +540,8 @@ server.get('/api_v2/:table/:id', limiter, (req, res) => {
     var commentsTable = "";
     if (table === "commentator_product") {
         commentsTable = "commentaries_product";
+    } else if (table === "commentator_sentiment_report") {
+        commentsTable = "commentaries_sentiment_report";
     } else {
         commentsTable = "commentaries";
     }

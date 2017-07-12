@@ -513,7 +513,7 @@ export function getCommentariesByCommentariesIds (
             cb('Error: getCommentariesByCommentariesIds returns no results :( ')
         } else {
             if (IS_DEBUG) {
-                console.log('getCommentariesByCommentariesIds, ', result)
+                console.log('getCommentariesByCommentariesIds, ', result.length)
             }
             cb(null, result)
         }
@@ -548,7 +548,7 @@ export function getOneBySecondaryIndex (table, index, value, conn, cb) {
                 cb('')
             } else {
                 if (IS_DEBUG) {
-                    logger.info(results.length)
+                    logger.info('getOneBySecondaryIndex, ',results.length)
                 }
                 cb(null, results[0])
             }

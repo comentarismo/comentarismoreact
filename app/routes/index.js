@@ -11,9 +11,9 @@ import Intro from 'containers/Intro';
 import IntroProduct from 'containers/IntroProduct';
 import IntroYoutube from 'containers/IntroYoutube';
 
-import Commentators from 'containers/Commentators';
 import Commentator from 'containers/Commentator';
 import CommentatorProduct from 'containers/CommentatorProduct';
+import CommentatorVideo from 'containers/CommentatorVideo';
 
 import Articles from 'containers/Articles';
 import Article from 'containers/Article';
@@ -37,6 +37,10 @@ import TopVideos from 'containers/TopVideos';
 import Search from 'containers/SearchComponent';
 import SearchComponentJCP from 'containers/SearchComponentJCP';
 
+import CommentatorsNews from 'containers/CommentatorsNews';
+import CommentatorsProduct from 'containers/CommentatorsProduct';
+import CommentatorsVideo from 'containers/CommentatorsVideo';
+
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -55,9 +59,15 @@ export default function (history) {
                 
                 <Route path="topvideos/:index/:value" component={TopVideos}/>
                 <Route path="commentators/:id" component={Commentator}/>
-                <Route path="commentators_product/:id" component={CommentatorProduct}/>
-
-                <Route path="commentators/:index/:value" component={Commentators}/>
+                
+                <Route path="commentator_news/:id" component={Commentator}/>
+                <Route path="commentator_product/:id" component={CommentatorProduct}/>
+                <Route path="commentator_video/:id" component={CommentatorVideo}/>
+    
+                <Route path="commentators_news/:index/:value" component={CommentatorsNews}/>
+                <Route path="commentators_product/:index/:value" component={CommentatorsProduct}/>
+                <Route path="commentators_video/:index/:value" component={CommentatorsVideo}/>
+    
                 <Route path="news/:id" component={Article}/>
                 <Route path="news/:index/:value" component={Articles}/>
 
