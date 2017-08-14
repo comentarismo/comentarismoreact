@@ -1,18 +1,21 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {loadArticleDetail} from 'actions/articles'
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 
 import Icon from "components/Icon"
 import Date from "components/Date"
 import Helmet from "react-helmet";
-import Slider from 'containers/ImageSlider';
+// import Slider from 'containers/ImageSlider';
 import {PlayImages} from './PlayImages';
 
 import {Tabs, Tab} from 'material-ui/Tabs';
 var emojione = require("emojione");
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardActions, CardHeader, CardTitle, CardText} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
+// import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
@@ -22,7 +25,7 @@ import {Grid, Row, Col} from 'react-styled-flexboxgrid';
 import Chip from 'material-ui/Chip';
 import FlatButton from 'material-ui/FlatButton';
 
-var ImageComponent = require('components/Image');
+// var ImageComponent = require('components/Image');
 var ImageResized = require("components/ImageResized");
 
 
@@ -49,20 +52,42 @@ class Article extends Component {
         let {id} = params;
         return store.dispatch(loadArticleDetail({id}));
     }
-
-    getImageElement() {
-        let {article} = this.props;
-        var src;
-        // use meta:og image if available
-        if (article && article.image) {
-            src = article.image;
+    
+    getMoreImages () {
+        if (typeof window !== 'undefined' && this.props.article.search) {
+            const actions = [
+                <FlatButton
+                    label="Close"
+                    primary={true}
+                    onTouchTap={this.handleClose}
+                />,
+            ];
+            return <Dialog
+                title="RELATED CONTENT FROM THE WEB ..."
+                actions={actions}
+                modal={false}
+                open={this.state.open}
+                onRequestClose={this.handleClose}
+                autoScrollBodyContent={true}
+            >
+                <div>
+                    <PlayImages images={this.props.article.search}/>
+                </div>
+            </Dialog>;
         }
-        // use default image if meta:og is missing
-        var srcfallback = "/static/img/comentarismo-bg-450-150.png";
-
-        return src ?
-            <ImageComponent forceUpdate={true} src={src} srcfallback={srcfallback} classes={'profile-bg-news'}/> : null;
     }
+    
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+    
+    handleClose = () => {
+        this.setState({open: false});
+    };
+    
+    state = {
+        open: false,
+    };
 
     render() {
         let {article} = this.props;
@@ -107,8 +132,7 @@ class Article extends Component {
 
         function getContentBody() {
             if (!article.resume) return;
-            return <div id='content' className=''
-                        dangerouslySetInnerHTML={{__html: article.resume}}></div>
+            return <div id='content' dangerouslySetInnerHTML={{__html: article.resume}} />
         }
 
         var searchlist = this.props.article.search;
@@ -289,6 +313,16 @@ class Article extends Component {
                             <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
                             <CardActions>
                                 <div style={{
+                                    marginLeft: '10px',
+                                    paddingBottom: '10px',
+                                    color: '#656972',
+                                    textTransform: 'uppercase',
+                                    fontSize: '14px',
+                                }}>
+                                <RaisedButton label="View More Images"
+                                              onTouchTap={this.handleOpen}/>
+                                    </div>
+                                <div style={{
                                         marginLeft: '10px',
                                         paddingBottom: '10px',
                                         color: '#656972',
@@ -309,14 +343,13 @@ class Article extends Component {
                             </CardActions>
                         </Row>
                         <Row className="col-lg-6" style={{}}>
-
+                            {this.getMoreImages()}
                             <ImageResized src={this.props.article.image}
                                           srcfallback={"https://unsplash.it/1400/350?random"} id={this.props.article.id}
                                           width="520" height="395" quality="50"/>
                         </Row>
                     </Row>
                 </Grid>
-
                
 
                 <div>
