@@ -30,6 +30,11 @@ const Menu = ({resources}) => (
             <ListItem key="search" containerElement={<Link to={`/search`}/>}
                       primaryText="Search"
                       leftIcon={<SearchIcon/>}/>
+    
+            <a href={`https://comentarismo.on.spiceworks.com/portal`}
+               target="_blank">
+                <ListItem primaryText="Support" leftIcon={<DashboardIcon/>}/>
+            </a>
 
 
             {/*<ListItem key="settings" containerElement={<Link to={`/settings`} />} primaryText="Settings" leftIcon={<SettingsIcon/>} />*/}
@@ -50,20 +55,44 @@ const Menu = ({resources}) => (
                 lineHeight: '48px',
                 paddingLeft: '16px',
                 width: '100%'
-            }}>Sources
+            }}>Videos
             </div>
-
 
             <a href={`/topvideos/type/YouTubeVideo`}>
                 <ListItem primaryText="Youtube"
                           leftIcon={<img src="/static/img/sources/youtube.png"/>}/>
             </a>
+    
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>Products
+            </div>
 
-
-            <a href={`/product/genre/bestseller`}>
+            <a href={`/product/operator/amazon`}>
                 <ListItem primaryText="Amazon"
                           leftIcon={<img src="/static/img/sources/amazon.png"/>}/>
             </a>
+    
+            <a href={`/product/operator/victoriassecret`}>
+                <ListItem primaryText="Victoria's Secret"
+                          leftIcon={<img
+                              src="/static/img/sources/victoriassecret.png"/>}/>
+            </a>
+    
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News
+            </div>
     
             <a href={`/news/operator/dailymail`}>
                 <ListItem primaryText="DailyMail"
@@ -166,9 +195,12 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="Novayagazeta"
                           leftIcon={<img src="/static/img/sources/novayagazeta_ru.png"/>}/>
             </a>
-            <ListItem containerElement={<Link to={`https://comentarismo.on.spiceworks.com/portal`} target="_blank"/>}
-                      primaryText="Support" leftIcon={<DashboardIcon/>}/>
-
+    
+            <a href={`/news/operator/novayagazeta_ru`}>
+                <ListItem primaryText="Novayagazeta"
+                          leftIcon={<img
+                              src="/static/img/sources/novayagazeta_ru.png"/>}/>
+            </a>
 
         </List>
     </Paper>

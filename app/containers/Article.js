@@ -54,7 +54,8 @@ class Article extends Component {
     }
     
     getMoreImages () {
-        if (typeof window !== 'undefined' && this.props.article.search) {
+        if (typeof window !== 'undefined' && this.props.article.search &&
+            this.props.article.search.length > 0) {
             const actions = [
                 <FlatButton
                     label="Close"
@@ -82,7 +83,7 @@ class Article extends Component {
     };
     
     handleClose = () => {
-        this.setState({open: false});
+        window.location.reload();
     };
     
     state = {
