@@ -2102,10 +2102,10 @@ module.exports = {
     ];
     var length = methods.length;
     var console = (window.console = window.console || {});
-    
+
     while (length--) {
         method = methods[length];
-        
+
         // Only stub undefined methods.
         if (!console[method]) {
             console[method] = noop;
@@ -2199,7 +2199,7 @@ var forum;
 Comentarismo = function (options) {
     var that = this;
     sentimentFilter = '';
-    
+
     if (document.location.hostname.indexOf("localhost") !== -1) {
         this.host = "//localhost:3000";
         this.wshost = "ws://" + "localhost:3000";
@@ -2228,14 +2228,17 @@ Comentarismo = function (options) {
         } else {
             this.reco = "//reco.comentarismo.com";
         }
-        
-        
-        this.wshost = "ws://" + options.host;
+
+        if (options.wshost) {
+            this.wshost = options.wshost;
+        } else {
+            this.wshost = "ws://" + options.host;
+        }
     }
-    
+
     //initialize comentarismo icons
     if (options && options.icons) {
-        
+
         var replybtn;
         if (options.icons.replybtn && options.icons.replybtn_style) {
             replybtn = "<i class=' material-icons dp48'>replay</i>";
@@ -2244,7 +2247,7 @@ Comentarismo = function (options) {
             console.log("Will load default reply button");
             replybtn = "<i class=' material-icons dp48'>replay</i>";
         }
-        
+
         this.icons = {
             commenticon: options.icons.commenticon,
             thumbsup: options.icons.thumbsup,
@@ -2252,7 +2255,7 @@ Comentarismo = function (options) {
             replybtn: replybtn
         };
     }
-    
+
     //image
     if (!options.image) {
         options.image = ($('meta[property="og:image"]') ? $('meta[property="og:image"]').attr('content') : "");
@@ -2266,47 +2269,47 @@ Comentarismo = function (options) {
     if (options.reco) {
         container.initRecoContainer(options.selector, options.index, this.icons);
     }
-    
+
     //start analytics
     analytics('create', 'UA-51773618-1', 'auto');
     setInterval(function () {
         ga('send', 'event', 'ping', window.location.href, {}, 0)
     }, 20000);
-    
+
     //hide error and info
     $(".success").hide();
     $(".error").hide();
-    
-    
+
+
     //declare all vars
     forum = this.forum = options.forum;
     this.$el = $("#comments-list");
-    
+
     if (options.debug && options.debug == "true") {
         console.log("COMENTARISMO - DEBUG MODE ACTIVATED")
         window.debug = true;
     }
-    
+
     //check if is mobile app
     this.mobile = options.mobile ? true : false;
     if (this.mobile && window.debug) {
         console.log("COMENTARISMO STARTING AS MOBILE APP. ")
     }
-    
+
     new Dropkick('#filtersentiment', {mobile: this.mobile});
     $('#filtersentiment').on('change', _.bind(this.onClickFiltersentiment, that));
-    
+
     this.table = table = options.table || "commentaries";
-    
+
     if (options.css) {
         $('head').append('<link rel="stylesheet" href="' + options.css + '" type="text/css" />');
     } else {
         //run default CSS
         $('head').append('<link rel="stylesheet" href="' + host + '/static/css/custom.css" type="text/css" />');
     }
-    
+
     $('head').append('<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" type="text/css" />');
-    
+
     $('head').append('<style rel="text/css">.jq-ry-container { position: relative; padding: 0 5px; line-height: 0; display: block; ' +
         'cursor: pointer; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; } ' +
         '.jq-ry-container[readonly="readonly"] { cursor: default; } .jq-ry-container > .jq-ry-group-wrapper { position: relative; width: 100%; } ' +
@@ -2314,19 +2317,19 @@ Comentarismo = function (options) {
         '.jq-ry-container > .jq-ry-group-wrapper > .jq-ry-group > svg { display: inline-block; } .jq-ry-container > .jq-ry-group-wrapper > ' +
         '.jq-ry-group.jq-ry-normal-group { width: 100%; } .jq-ry-container > .jq-ry-group-wrapper > .jq-ry-group.jq-ry-rated-group ' +
         '{ width: 0; z-index: 11; position: absolute; top: 0; left: 0; overflow: hidden; }</style>');
-    
+
     this.key = key = options.key;
-    
+
     limit = options.limit || 50;
     skip = options.skip || 0;
     sel = this.$el;
-    
-    
+
+
     cached = false;
     if (options.cached) {
         cached = options.cached.length > 0;
     }
-    
+
     // if (this.forum === "test") {
     if (window.debug) {
         console.log("Loading Comentarismo Social Plugin");
@@ -2350,31 +2353,31 @@ Comentarismo = function (options) {
     if (testdefaultIndex) {
         defaultIndex = testdefaultIndex;
     }
-    
+
     page = testpage;
     this.operator = operator = testoperator;
-    
+
     // } else {
     //WTF ?
     // throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{forum:'comentarismo'} ")
     // }
-    
+
     page = encodeURIComponent(page);
-    
-    
+
+
     var payload = analytichelper.run();
     if (window.debug) {
         console.log("analytichelper payload", payload);
     }
     //namespace is the index
     var namespace = operator;
-    
+
     analytichelper.send(that, "view", payload, operator);
-    
+
     if (options.reco) {
         recohelper.selectUser(function (user) {
             that.fp = user;
-            
+
             //create item
             //namespace, thing, image, link, thingId
             recohelper.createItem(that, namespace, options.title, options.image, document.location.href, function (itemID) {
@@ -2390,7 +2393,7 @@ Comentarismo = function (options) {
                         recohelper.loadRecsForUser(that, namespace, userID, function () {
                             //People who viewed this page are also interested in
                             recohelper.loadRecsForThing(that, namespace, itemID, function () {
-                            
+
                             });
                         });
                     });
@@ -2398,24 +2401,24 @@ Comentarismo = function (options) {
             });
         });
     }
-    
+
     this.commentForm = $('#comment-form');
     this.commentForm.on('submit', _.bind(this.onSubmitCommentForm, this));
-    
+
     this.addCommentLink = $('.add-comment');
     this.addCommentLink.on('click', _.bind(this.onClickShowCommentForm, this));
-    
+
     this.toggleComment = $('a[id^=delete]');
     this.toggleComment.on('click', _.bind(this.onClickDeleteComment, this));
-    
+
     this.toggleComment = $('a[id^=like]');
     this.toggleComment.on('click', _.bind(this.onClickLikeComment, this));
-    
+
     this.toggleComment = $('a[id^=dislike]');
     this.toggleComment.on('click', _.bind(this.onClickDisLikeComment, this));
-    
+
     if (cached) {
-        
+
         count_elk.elkCountArticle(this, defaultIndex, sel, page, operator, function (err, length) {
             if (err || length === 0) {
                 console.log("Will retry loading count from API");
@@ -2431,14 +2434,14 @@ Comentarismo = function (options) {
             count_api.afterCountArticle(err, end);
         });
     }
-    
-    
+
+
     if (cached) {
         running = true;
         $('a#inifiniteLoader').show();
         //that, operator, thekey, list, page, skip, limit,user,
         load_elk.elkLoadArticle(this, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
-            
+
             if (err || length === 0) {
                 console.log("Will retry loading comments from API");
                 //we loaded but could not find it on elasticsearch
@@ -2453,7 +2456,7 @@ Comentarismo = function (options) {
                     limit: limit,
                     user: user,
                 };
-                
+
                 load_api.loadArticleV1(opts, function (length, err) {
                     console.log("Total comments found --> ", length);
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
@@ -2497,7 +2500,7 @@ Comentarismo = function (options) {
             });
         });
     }
-    
+
     //listen to scroll events is optional
     if (options.scroll) {
         $(window).scroll(function () {
@@ -2509,39 +2512,39 @@ Comentarismo = function (options) {
                 $('a#commentsloadmore').hide('1000');
                 return;
             }
-            
+
             //console.log("$(window).scrollTop(), == ,$(document).height(), -, $(window).height(), &&, !running , &&, !end");
             //console.log($(window).scrollTop(), "==" ,$(document).height(), "-", $(window).height(), "("+ $(document).height() - $(window).height() +")", "&&", !running , "&&", !end);
-            
+
             if ($(window).scrollTop() == $(document).height() - $(window).height() && !running && !end) {
                 that.loadMoreComments();
-                
+
                 return false;
             }
         });
-        
-    }else {
-        var loader =  $("#commentsloadmore");
-    
-        if(loader) {
+
+    } else {
+        var loader = $("#commentsloadmore");
+
+        if (loader) {
             console.log("Binding commentsloadmore onclick")
             loader.on('click', _.bind(that.onClickLoadmorecomments, this));
             loader.show();
         }
     }
-    
-    
+
+
 };
 
-Comentarismo.prototype.onClickLoadmorecomments = function(arg){
+Comentarismo.prototype.onClickLoadmorecomments = function (arg) {
     this.loadMoreComments(function (err) {
-        var loader =  $("#commentsloadmore");
-        if(err){
+        var loader = $("#commentsloadmore");
+        if (err) {
             console.log("Error: after loadMoreComments bind onclick -> ", err);
         }
-        if(this.end){
+        if (this.end) {
             loader.hide();
-        }else {
+        } else {
             loader.show();
         }
     });
@@ -2551,17 +2554,17 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
     var that = this;
     running = true;
     $('a#inifiniteLoader').show();
-    
+
     if (cached) {
-        
+
         load_elk.elkLoadArticle(that, operator, defaultIndex, sel, page, skip, limit, user, function (length, err) {
-            
-            
+
+
             if (err || length === 0) {
                 console.log("Will retry loading it from API");
                 //we loaded but could not find it on elasticsearch
                 //should retry using regular loadArticle
-                
+
                 var opts = {
                     that: that,
                     table: table,
@@ -2572,9 +2575,9 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
                     limit: limit,
                     user: user,
                 };
-                
+
                 load_api.loadArticleV1(opts, function (length, err) {
-                    
+
                     load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                         that.filterAllSentiment();
                         limit = limit + 50;
@@ -2585,7 +2588,7 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
                             cb(null, e);
                         }
                     });
-                    
+
                 });
             } else {
                 load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
@@ -2601,7 +2604,7 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
             }
         });
     } else {
-        
+
         var opts = {
             that: that,
             table: table,
@@ -2612,7 +2615,7 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
             limit: limit,
             user: user,
         };
-        
+
         load_api.loadArticleV1(opts, function (length, err) {
             load_api.afterLoadArticle(err, length, limit, skip, end, function (e) {
                 that.filterAllSentiment();
@@ -2629,7 +2632,7 @@ Comentarismo.prototype.loadMoreComments = function (cb) {
 };
 
 Comentarismo.prototype.filterAllSentiment = function () {
-    
+
     $("div[id^=toggle]").each(function (i, c) {
         if (c.attributes["sentiment"]) {
             var sentiment = c.attributes["sentiment"].nodeValue;
@@ -2668,13 +2671,13 @@ Comentarismo.prototype.onClickFiltersentiment = function (e) {
                 //$(this).hide()
             }
         });
-        
+
         if (counter === 0) {
             var errorbox = $(".error");
             errorbox.html($.i18n._('isnoexistingcomment'));
             errorbox.show();
             errorbox.focus();
-            
+
         } else {
             var errorbox = $(".error");
             errorbox.hide();
@@ -2691,7 +2694,7 @@ Comentarismo.prototype.onClickFiltersentiment = function (e) {
 //
 //            }
 //        },1000)
-    
+
     }
 };
 
@@ -2709,28 +2712,28 @@ Comentarismo.prototype.connect = function (dthat) {
     }
     var whost = that.wshost;
     // console.log("page"+page);
-    
+
     var pageDecode = decodeURIComponent(page)
     // console.log("pageDecode "+pageDecode);
-    
+
     var buf = new Buffer(pageDecode);
     var encodedString = buf.toString('base64');
-    
-    if(!that.forum){
-      console.log("Could not connect to WS, that.forum is undefined :| ")
-      return;
+
+    if (!that.forum) {
+        console.log("Could not connect to WS, that.forum is undefined :| ")
+        return;
     }
-    
+
     ws = that.socket = new WebSocket(whost + "/ws/page/" + encodedString + "/?db=" + that.forum);
     //io.connect(host+"/ws/"+path);
     //TODO: update websockets to socketio ? or sockJS ?
     //new WebSocket("ws://localhost:3000/ws/page/http%3A%2F%2Flocalhost%3A3000%2Ftest/");
     var list = that.$el;
     var user = that.user;
-    
+
     //this.socket.on('commentsFor', _.bind(this.handleCommentsFor, this));
     //TODO: solve this
-    
+
     ws.onmessage = function (e) {
         var data = JSON.parse(e.data);
         if (!data) {
@@ -2741,7 +2744,7 @@ Comentarismo.prototype.connect = function (dthat) {
         console.log("data ", data);
         //console.log("data.pong ",data.pong);
         if (e.data.indexOf("pong") !== -1) {
-            
+
             //ga('send', 'event', 'ws_ping', "/ws/page/" + titleurlize + "/", page, 0);
             console.log("reset the counter for missed heartbeats");
             // reset the counter for missed heartbeats
@@ -2749,38 +2752,38 @@ Comentarismo.prototype.connect = function (dthat) {
             setTimeout(function () {
                 ws.send(heartbeat_msg);
             }, 5000);
-            
+
             return;
         }
-        
+
         //ga('send', 'event', 'onmessage', "/ws/page/" + titleurlize + "/", page, 0);
-        
+
         if (data.OldValue !== null && data.NewValue === null) {
             // deleted item
             var item = data.OldValue;
             $("[data-id='" + item.id + "']").remove();
         } else if (data.OldValue === null && data.NewValue !== null ||
             data.OldValue !== null && data.NewValue !== null) {
-            
+
             // new item
             var item = data.NewValue;
-            
+
             //remove old item
             $("[data-id='" + item.id + "']").remove();
-            
+
             var date_news = moment.utc(item.date).toString();
             var date_cmt = moment.utc().toString();
-            
+
             //verify if we are on mobile mode
             if (that.mobile) {
                 item.mobile = true;
             }
-            
+
             //add icon customizations
             if (that.icons) {
                 item.icons = that.icons;
             }
-            
+
             var replies = "";
             if (item && item.replies && item.replies.length > 0) {
                 var i = 0;
@@ -2789,14 +2792,14 @@ Comentarismo.prototype.connect = function (dthat) {
                     reply.operator = item.operator;
                     reply.titleurlize = item.titleurlize;
                     reply.title = item.title;
-                    
+
                     if (that.mobile) {
                         reply.mobile = true;
                     }
                     var newone = create_.createReplyComment(reply, date_cmt);
                     replies = replies + newone;
                     //+ replies;
-                    
+
                     if (i === item.replies.length - 1) {
                         var finalHtml = create_.createComment(item, date_cmt, date_news, replies, '', user);
                         list.prepend(
@@ -2812,24 +2815,24 @@ Comentarismo.prototype.connect = function (dthat) {
                         i = i + 1;
                     }
                 }
-                
+
             } else {
                 console.log("load comments else ")
-                
+
                 list.prepend(
                     create_.createComment(item, date_cmt, date_news, "", "nick")
                 );
-                
+
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-delete]', delete_.deleteComment.bind(that));
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-like]', like.likeComment.bind(that));
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-dislike]', dislike.dislikeComment.bind(that));
                 $('#toggle > div').on('click', '[class="add-comment"]', form_.onClickShowCommentForm.bind(that));
                 $('#toggle > div').on('click', '[data-id=' + item.id + '-reply]', form_.onClickShowCommentReplyForm.bind(that));
-                
-                
+
+
             }
-            
-            
+
+
         }
         // else if (data.OldValue !== null && data.NewValue === null) {
         //     // deleted item
@@ -2854,8 +2857,8 @@ Comentarismo.prototype.connect = function (dthat) {
         //
         // }
     };
-    
-    
+
+
     ws.onopen = function () {
         // ...
         // other code which has to be executed after the client
@@ -2888,7 +2891,7 @@ Comentarismo.prototype.connect = function (dthat) {
 };
 
 Comentarismo.prototype.islogin = function (cb) {
-    
+
     var request = $.ajax({
         url: host + '/auth/islogin',
         type: 'post',
@@ -2896,7 +2899,7 @@ Comentarismo.prototype.islogin = function (cb) {
             xhr.withCredentials = true;
         }
     });
-    
+
     request.done(function (data, textStatus, jqXHR) {
         if (window.debug) {
             console.log("islogin, ", data);
@@ -2946,25 +2949,25 @@ Comentarismo.prototype.showAlertMessage = function (msg, element) {
         title: "",
         buttons: {}
     })).html(msg);
-    
+
 };
 
 Comentarismo.prototype.onSubmitCommentForm = function (evt) {
     evt.stopPropagation();
     evt.preventDefault();
-    
+
     var that = this;
-    
+
     var urlTarget = that.host + '/auth/new' + '?db=' + (that.forum ? that.forum : '') + "&table=" + (that.table ? that.table : '')
-    
+
     ga('send', 'event', 'onSubmitCommentForm', urlTarget, page, 0);
-    
+
     var form = evt.currentTarget.form;
-    
+
     if (!form || !form.captchaid) {
         form = this.commentForm[0];
     }
-    
+
     var targetPage = ( page ? page : location.protocol + '//' + location.host + location.pathname + (location.search ? location.search : "") )
     //TODO: bind the value here
     var rating = 0;
@@ -2977,15 +2980,15 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         comment: form.body.value,
         operator: operator,
     };
-    
+
     if (window.debug) {
         console.log("onSubmitCommentForm, ", js);
     }
-    
+
     var formid = form.formid;
-    
+
     var successbox = $(".success");
-    
+
     if (formid && formid.value) {
         js.inreplyto = formid.value;
         //successbox = $("#" + formid.value + "-success");
@@ -2994,7 +2997,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         rating = $("#comment-rating").rateYo("rating");
         js.rating = rating;
     }
-    
+
     var request = $.ajax({
         url: urlTarget,
         type: 'post',
@@ -3005,7 +3008,7 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             withCredentials: true
         }
     });
-    
+
     request.done(function (data, textStatus, jqXHR) {
         if (window.debug) {
             console.log("onSubmitCommentForm, ", jqXHR);
@@ -3016,15 +3019,15 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             alertMsg = $.i18n._('hasbeenprocessed')
         }
         that.showAlertMessage(alertMsg, $(".error"));
-        
-        
+
+
         $('#new-todo').val('');
         $('#captchasolution').val('');
-        
+
         var commentForm = $('#comment-form');
         commentForm.addClass('hidden');
         $(".form-wrapper").detach();
-        
+
     });
     var alertMsg;
     request.fail(function (jqXHR) {
@@ -3035,15 +3038,15 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
                 alertMsg = $.i18n._('hasbeenprocessed')
             }
             that.showAlertMessage(alertMsg, $(".error"));
-            
-            
+
+
             $('#new-todo').val('');
             $('#captchasolution').val('');
-            
+
             var commentForm = $('#comment-form');
             commentForm.addClass('hidden');
             $(".form-wrapper").detach();
-            
+
         } else if (jqXHR.status === 400) {
             successbox.hide();
             if (that.mobile) {
@@ -3052,8 +3055,8 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
                 alertMsg = $.i18n._('wrongcaptchasolution')
             }
             that.showAlertMessage(alertMsg, $(".error"));
-            
-            
+
+
             $('#captchasolution').val('');
         } else if (jqXHR.status === 406) {
             successbox.hide();
@@ -3062,9 +3065,9 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             } else {
                 alertMsg = $.i18n._('youhavepostedthiscomment')
             }
-            
+
             that.showAlertMessage(alertMsg, $(".error"));
-            
+
             $('#captchasolution').val('');
         } else {
             successbox.hide();
@@ -3076,8 +3079,8 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
             that.showAlertMessage(alertMsg, $(".error"));
         }
     });
-    
-    
+
+
 };
 
 
@@ -3096,22 +3099,22 @@ Comentarismo.prototype.imgresize = function (selector) {
 Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list, item, thekey, user, cb) {
     var date_news = moment.utc(item.date).toString();
     var date_cmt = moment.utc().toString();
-    
+
     // console.log("Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew")
     //verify if we are on mobile mode
     if (that.mobile) {
         item.mobile = true;
     }
-    
+
     //add icon customizations
     if (that.icons) {
         item.icons = that.icons;
     }
     var id = encodeURIComponent(item.id)
-    if(id && id.indexOf(".")!==-1){
-      id = id.replace(".","-")
+    if (id && id.indexOf(".") !== -1) {
+        id = id.replace(".", "-")
     }
-    
+
     var replies = "";
     if (item && item.replies && item.replies.length > 0) {
         var i = 0;
@@ -3120,13 +3123,13 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list
             reply.operator = item.operator;
             reply.titleurlize = item.titleurlize;
             reply.title = item.title;
-            
+
             if (that.mobile) {
                 reply.mobile = true;
             }
             var newone = create_.createReplyComment(reply, date_cmt);
             replies = replies + newone;
-            
+
             if (i === item.replies.length - 1) {
                 var finalHtml = create_.createComment(item, date_cmt, date_news, replies, thekey, user);
                 list.append(
@@ -3142,26 +3145,26 @@ Comentarismo.prototype.addCommentHtmlNew = function addCommentHtmlNew(that, list
                 i = i + 1;
             }
         }
-        
+
     } else {
-        
+
         list.append(
             create_.createComment(item, date_cmt, date_news, "", thekey)
         );
-        
+
         $('#toggle > div').on('click', '[data-id=' + id + '-delete]', delete_.deleteComment.bind(that));
         $('#toggle > div').on('click', '[data-id=' + id + '-like]', like.likeComment.bind(that));
         $('#toggle > div').on('click', '[data-id=' + id + '-dislike]', dislike.dislikeComment.bind(that));
         $('#toggle > div').on('click', '[class="add-comment"]', form_.onClickShowCommentForm.bind(that));
         $('#toggle > div').on('click', '[data-id=' + id + '-reply]', form_.onClickShowCommentReplyForm.bind(that));
-        
+
         return cb();
     }
 };
 
 Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie) {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-        
+
         if (options.url && options.url.indexOf("elk.") !== -1) {
             //skip elk operations
         } else {
@@ -3170,14 +3173,14 @@ Comentarismo.prototype.ajaxPrefilter = function ajaxPrefilter(cookie) {
             if (options.data) {
                 options.data += '&' + cookie;
             }
-            
+
             // if there is no data being sent
             // create the data and add the sessionId
             else {
                 options.data = cookie;
             }
         }
-        
+
     });
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)

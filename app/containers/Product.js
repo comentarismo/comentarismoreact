@@ -13,6 +13,8 @@ import Avatar from 'material-ui/Avatar';
 import {Grid, Row, Col} from 'react-styled-flexboxgrid';
 import Chip from 'material-ui/Chip';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import Dialog from 'material-ui/Dialog';
 
 var ImageResized = require("components/ImageResized");
 
@@ -24,9 +26,9 @@ var $ = require('jquery');
 import {GoogleSearchScript} from 'components/GoogleSearchScript';
 
 import {XScript} from 'components/XScriptProduct';
-import {XSoundcloud} from 'components/XSoundcloud';
+// import {XSoundcloud} from 'components/XSoundcloud';
+// import Slider from 'containers/ImageSlider';
 
-import Slider from 'containers/ImageSlider';
 
 var shareButton = <button className="btn btn-primary"><i className="glyphicon glyphicon-link"/></button>
 
@@ -61,6 +63,62 @@ class Product extends Component {
         let {id} = params
         return store.dispatch(loadProductDetail({id}))
     }
+    
+    viewMoreImagesButton (){
+        if(typeof window !== 'undefined' && this.props.article.search &&
+            this.props.article.search.length > 0)
+        {
+            return <div style={{
+                marginLeft: '10px',
+                paddingBottom: '10px',
+                color: '#656972',
+                textTransform: 'uppercase',
+                fontSize: '14px',
+            }}>
+                <RaisedButton label="View More Images"
+                              onTouchTap={this.handleOpen}/>
+            </div>
+        }else {
+            return <div/>
+        }
+    }
+    
+    getMoreImages () {
+        if (typeof window !== 'undefined' && this.props.article.search &&
+            this.props.article.search.length > 0) {
+            const actions = [
+                <FlatButton
+                    label="Close"
+                    primary={true}
+                    onTouchTap={this.handleClose}
+                />,
+            ];
+            return <Dialog
+                title="RELATED CONTENT FROM THE WEB ..."
+                actions={actions}
+                modal={false}
+                open={this.state.open}
+                onRequestClose={this.handleClose}
+                autoScrollBodyContent={true}
+            >
+                <div>
+                    <PlayImages images={this.props.article.search}/>
+                </div>
+            </Dialog>;
+        }
+    }
+    
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+    
+    handleClose = () => {
+        window.location.reload();
+    };
+    
+    state = {
+        open: false,
+    };
 
     render() {
         let {article} = this.props;
@@ -330,6 +388,7 @@ class Product extends Component {
                             />
                             <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
                             <CardActions>
+                                {this.viewMoreImagesButton()}
                                 <div style={{
                                         marginLeft: '10px',
                                         paddingBottom: '10px',
@@ -352,7 +411,7 @@ class Product extends Component {
                         </Row>
 
                         <Row className="col-lg-6" style={{}}>
-
+                            {this.getMoreImages()}
                             <ImageResized src={this.props.article.image}
                                           srcfallback={"https://unsplash.it/1400/350?random"} id={this.props.article.id}
                                           width="520" height="395" quality="50"/>

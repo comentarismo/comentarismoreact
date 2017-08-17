@@ -53,6 +53,24 @@ class Article extends Component {
         return store.dispatch(loadArticleDetail({id}));
     }
     
+    viewMoreImagesButton () {
+        if (typeof window !== 'undefined' && this.props.article.search &&
+            this.props.article.search.length > 0) {
+            return <div style={{
+                marginLeft: '10px',
+                paddingBottom: '10px',
+                color: '#656972',
+                textTransform: 'uppercase',
+                fontSize: '14px',
+            }}>
+                <RaisedButton label="View More Images"
+                              onTouchTap={this.handleOpen}/>
+            </div>
+        } else {
+            return <div/>
+        }
+    }
+    
     getMoreImages () {
         if (typeof window !== 'undefined' && this.props.article.search &&
             this.props.article.search.length > 0) {
@@ -136,14 +154,6 @@ class Article extends Component {
             return <div id='content' dangerouslySetInnerHTML={{__html: article.resume}} />
         }
 
-        var searchlist = this.props.article.search;
-
-        if (!searchlist) {
-            searchlist = [];
-            searchlist.push({title: article.title, gimage: article.image});
-        }
-
-
         var sentimentReport = <div/>
 
         if (typeof window !== 'undefined' && article.sentiment) {
@@ -184,7 +194,7 @@ class Article extends Component {
                 // console.log("article.sentiment, ", article.sentiment)
                 for (var x in article.sentiment) {
                     var n = article.sentiment[x]["name"];
-                    if (n == "") {
+                    if (n === "") {
                         n = unknown;
                     }
                     var p = article.sentiment[x]["percent"];
@@ -313,16 +323,7 @@ class Article extends Component {
 
                             <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>
                             <CardActions>
-                                <div style={{
-                                    marginLeft: '10px',
-                                    paddingBottom: '10px',
-                                    color: '#656972',
-                                    textTransform: 'uppercase',
-                                    fontSize: '14px',
-                                }}>
-                                <RaisedButton label="View More Images"
-                                              onTouchTap={this.handleOpen}/>
-                                    </div>
+                                {this.viewMoreImagesButton()}
                                 <div style={{
                                         marginLeft: '10px',
                                         paddingBottom: '10px',

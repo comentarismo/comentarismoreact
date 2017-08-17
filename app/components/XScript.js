@@ -10,9 +10,27 @@ class XScript extends React.Component {
         script.setAttribute('src', url);
         el.appendChild(script);
     }
-
-    componentDidMount() {
-        XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
+    
+    componentDidMount () {
+        const intervalId = window.setInterval(() => {
+            if (ReactDOM.findDOMNode(this.refs['it']) &&
+                typeof ReactDOM.findDOMNode(this.refs['it']).appendChild ===
+                "function") {
+                // Trigger script
+                XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']),
+                    "/static/comentarismo-client-min.js");
+                try {
+                    // Clear the intervalId
+                    window.clearInterval(intervalId);
+                } catch (e) {
+                    console.log(e);
+                    console.log("XScript.initScripts failed, will retry");
+                } finally {
+                    // Clear the intervalId
+                    window.clearInterval(intervalId);
+                }
+            }
+        }, 100);
     }
 
     render() {
