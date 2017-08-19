@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import IFrame from 'react-frame-component';
+import { IFrame } from 'components/IFrame';
 
 class XScript extends React.Component {
     static initScripts(el, url) {
@@ -14,8 +14,7 @@ class XScript extends React.Component {
     componentDidMount () {
         const intervalId = window.setInterval(() => {
             if (ReactDOM.findDOMNode(this.refs['it']) &&
-                typeof ReactDOM.findDOMNode(this.refs['it']).appendChild ===
-                "function") {
+                typeof ReactDOM.findDOMNode(this.refs['it']).appendChild === "function") {
                 // Trigger script
                 XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']),
                     "/static/comentarismo-client-min.js");
@@ -116,7 +115,7 @@ class XScript extends React.Component {
     
         var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
       
-        return <IFrame initialContent={body} style={{marginTop: '4rem', border:0,position:'inherit', width:'100%', height:'100vh', left:'0px;'}}>
+        return <IFrame initialContent={body} style={{marginTop: '4rem', border:0,position:'inherit', width:'100%', height:'100vh', left:'0px'}}>
         </IFrame>
     }
 }

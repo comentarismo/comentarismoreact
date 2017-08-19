@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom';
-import IFrame from 'react-frame-component';
+import { IFrame } from 'components/IFrame';
 import $ from 'jquery';
 
 class XScript extends React.Component {
@@ -14,9 +14,9 @@ class XScript extends React.Component {
     componentDidMount() {
         const intervalId = window.setInterval(() => {
             if (ReactDOM.findDOMNode(this.refs['it']) && typeof ReactDOM.findDOMNode(this.refs['it']).appendChild === "function"){
-                // Trigger script
-                XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
                 try {
+                    // Trigger script
+                    XScript.initScripts(ReactDOM.findDOMNode(this.refs['it']), "/static/comentarismo-client-min.js");
                     // Clear the intervalId
                     window.clearInterval(intervalId);
                 } catch (e){
@@ -99,7 +99,7 @@ class XScript extends React.Component {
             'image: \''+image+'\',' +
             'title: \''+title+'\',' +
             'host: "api.comentarismo.com",' +
-            'wshost: "//api.comentarismo.com",' +
+            'wshost: "wss://api.comentarismo.com",' +
             'cached: "api.comentarismo.com/elk",'+
             'table:"commentaries_product",' +
             'forum: "test",' +
@@ -113,9 +113,10 @@ class XScript extends React.Component {
             '});' +
             '</script>';
     
-        var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
+        var body = `<!DOCTYPE html><html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
     
-        return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'100vh', left:'0px;'}}>
+        return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'100vh', left:'0px'}}>
+            <div style={{display: 'none'}}>test</div>
         </IFrame>
         
     }
