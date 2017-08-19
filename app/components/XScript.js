@@ -100,6 +100,7 @@ class XScript extends React.Component {
             'image: \''+image+'\',' +
             'title: \''+title+'\',' +
             'host: "api.comentarismo.com",' +
+            'wshost: "wss://api.comentarismo.com",' +
             'cached: "api.comentarismo.com/elk",'+
             'table:"commentaries",' +
             'forum: "test",' +

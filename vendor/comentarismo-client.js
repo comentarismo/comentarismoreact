@@ -453,7 +453,7 @@ var comentarismoContainerHtml =
     "<div id='comments-list'>" +
     "</div>" +
     "<a id='inifiniteLoader' style='display:none;'>" +
-    "<img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
+    "<img src='//api.comentarismo.com/static/images/ajax-loader.gif' /></a>" +
     "<a id='commentsloadmore' style='display:none;'>Load more ...</a>" +
     "</div>";
 
@@ -485,7 +485,7 @@ var comentarismoContainerHtmlNoReply =
     "<div id='comments-list'>" +
     "</div>" +
     "<a id='inifiniteLoader' style='display:none;'>" +
-    "<img src='http://api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
+    "<img src='//api.comentarismo.com/static/images/ajax-loader.gif' /></a>";
 
 
 var initComentarismoContainer = function initComentarismoContainer(div, noreply, options) {
@@ -517,7 +517,7 @@ var recoHTML = "<p class=''>" +
 
 var initRecoContainer = function initRecoContainer(div, noreply, options){
     var commenticon = (options && options.commenticon) ? options.commenticon : 
-        "http://api.comentarismo.com/static/images/comments.ico";
+        "//api.comentarismo.com/static/images/comments.ico";
 
     var targetHtml;
     // if (noreply == "nick") {
