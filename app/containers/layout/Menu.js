@@ -83,6 +83,27 @@ const Menu = ({resources}) => (
                           leftIcon={<img
                               src="/static/img/sources/victoriassecret.png"/>}/>
             </a>
+            
+             <a href={`/product/operator/mediamarkt`}>
+                <ListItem primaryText="MediaMarkt"
+                          leftIcon={<img
+                              src="/static/img/sources/mediamarkt.png"/>}/>
+            </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>CryptoCurrency News & Reviews
+            </div>
+            
+             <a href={`/product/operator/cryptocompare`}>
+                <ListItem primaryText="Cryptocompare"
+                          leftIcon={<img src="/static/img/sources/cryptocompare.png"/>}/>
+            </a>
     
             <div style={{
                 boxSizing: 'border-box',
