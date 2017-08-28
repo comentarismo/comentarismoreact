@@ -158,6 +158,11 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="RT"
                           leftIcon={<img src="/static/img/sources/rt.png"/>}/>
             </a>
+            
+             <a href={`/news/operator/metronieuws`}>
+                <ListItem primaryText="MetroNieuws"
+                          leftIcon={<img src="/static/img/sources/metronieuws.png"/>}/>
+            </a>
 
             <a href={`/news/operator/lemonde`}>
                 <ListItem primaryText="Lemonde"
