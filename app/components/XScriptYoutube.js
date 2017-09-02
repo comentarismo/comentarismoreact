@@ -104,17 +104,16 @@ class XScript extends React.Component {
             'image: \''+image+'\',' +
             'title: \''+title+'\',' +
             'host: "api.comentarismo.com",' +
-            'wshost: "wss://api.comentarismo.com",' +
             'cached: "api.comentarismo.com/elk",'+
             'table:"commentaries_sentiment_report",' +
             'forum: "test",' +
-            'reco: "myid",' +
+            'reco: "//reco.comentarismo.com",' +
             'css: "//api.comentarismo.com/static/css/custom.css",'+
             'key: \''+key+'\',' +
             'page: \''+encodeURIComponent(page)+'\',' +
             'operator: \''+operator+'\',' +
             "index:'"+this.props.index+"',"+
-            '}); comentarismo.connect();' +
+            '}); ' +
             '});' +
             '</script>';
     

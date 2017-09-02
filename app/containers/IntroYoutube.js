@@ -101,7 +101,7 @@ class Intro extends Component {
     getImageElement(src, id) {
         if (typeof window !== 'undefined') {
             
-            var host = "//img.comentarismo.com/r";
+            var host = "https://img.comentarismo.com/r";
             // console.log("IMGRESIZER ",src)
             //do img resize
             var request = $.ajax({

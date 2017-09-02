@@ -203,7 +203,7 @@ setInterval(function () {
     // collect this stat into the 'process-memory-usage' series
     // first argument is the data points
     // second (optional) argument are the tags
-    if (ENABLE_INFLUX == true) {
+    if (ENABLE_INFLUX === true) {
         mem_stats.collect({
             rss: mem.rss,
             heap_total: mem.heapTotal,
@@ -928,7 +928,7 @@ server.get('/api/news/:id', limiter, (req, res) => {
                 return res.status(404).send("News not found --> " + req.params.id);
             }
 
-            "", "", uuid, 0, 50
+            // "", "", uuid, 0, 50
             var table = "commentaries";
             var index = "operator_uuid";
             var value = uuid;

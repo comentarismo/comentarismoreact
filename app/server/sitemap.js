@@ -124,16 +124,16 @@ function generateIndexXml (table, index, value, conn, cb) {
         //hostname: 'http://localhost:3002',
         cacheTime: 600000,
     })
-    table = (table == 'commentators' ? 'commentator' : table)
-    var pluck = (table == 'news' || table === 'product'
+    table = (table === 'commentators' ? 'commentator' : table)
+    var pluck = (table === 'news' || table === 'product'
         ? 'titleurlize'
         : 'slug')
     
-    if (table == 'sentiment_report') {
+    if (table === 'sentiment_report') {
         pluck = 'url'
-    } else if (table == 'commentator') {
+    } else if (table === 'commentator') {
         pluck = 'id'
-    } else if (table == 'commentators_product') {
+    } else if (table === 'commentators_product') {
         pluck = 'id'
         table = 'commentator_product'
     }

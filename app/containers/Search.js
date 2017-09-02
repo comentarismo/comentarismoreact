@@ -95,8 +95,9 @@ class Search extends Component {
 			if (q) {
 				searchOnLoad = true;
 			}
-			
-			const searchkit = new SearchkitManager("//api.comentarismo.com/elk/_all", {
+            
+            // const searchkit = new SearchkitManager("//localhost:3000/elk/_all", {
+            const searchkit = new SearchkitManager("//api.comentarismo.com/elk/_all", {
 				searchOnLoad: searchOnLoad,
 				useHistory: true,
 				httpHeaders: {

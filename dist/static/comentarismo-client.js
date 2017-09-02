@@ -1691,12 +1691,12 @@ function createItem(that, namespace, thing, image, link, cb) {
     if (window.debug) {
         console.log("createItem, ", urlTarget)
     }
-    
-    if(!image || !thing || !link){
-        console.log("ERROR: Could not validate Item !image || !thing || !link -> ",image,thing,link);
+
+    if (!image || !thing || !link) {
+        console.log("ERROR: Could not validate Item !image || !thing || !link -> ", image, thing, link);
         cb();
-    }else {
-    
+    } else {
+
         $.ajax({
             url: urlTarget,
             type: "POST",
@@ -1771,7 +1771,7 @@ function likeItem(that, namespace, itemID, userID, cb) {
     // send off the like request
     // var encodedString = encodeBuffer(itemID)
 
-    var urlTarget = that.reco + "/users/" + userID + "/like/" + itemID + "?namespace="+namespace;
+    var urlTarget = that.reco + "/users/" + userID + "/like/" + itemID + "?namespace=" + namespace;
 
     if (window.debug) {
         console.log("likeItem, ", urlTarget)
@@ -1802,7 +1802,7 @@ function likeItem(that, namespace, itemID, userID, cb) {
 }
 
 function loadRecsForThing(that, namespace, curr_thingId, cb) {
-    var urlTarget = that.reco + "/thing/" + curr_thingId + "/recommend" + "?namespace="+namespace;
+    var urlTarget = that.reco + "/thing/" + curr_thingId + "/recommend" + "?namespace=" + namespace;
     console.log("loadRecsForThing, ", urlTarget);
     // request recommendations
     $.ajax({
@@ -1846,8 +1846,8 @@ function loadRecsForThing(that, namespace, curr_thingId, cb) {
                 var t = recs[i];
                 if (t) {
                     // var thing = decodeBuffer(t.thing);
-                    var thing = "<div class='card-header'>"+t.thing + "</div>";
-                    var img = (t.image ? "<img class='card-image'  src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) );
+                    var thing = "<div class='card-header'>" + t.thing + "</div>";
+                    var img = (t.image ? "<img class='card-image' id='" + t.id + "'/>" : jdenticon.toSvg(md5(thing), 100) );
 
                     if (!_.contains(t.people, curr_userId) && count < 4) {
                         count = count + 1;
@@ -1858,15 +1858,19 @@ function loadRecsForThing(that, namespace, curr_thingId, cb) {
             html = html + list + "</ul>";
 
             $("#comentarismo-recommendations-thing").prepend(html);
-            
-            if(count === 0){
-              $('#comentarismo-recommendations-thing').hide();
-              $('#p-comentarismo-recommendations-thing').hide();
+            if (count === 0) {
+                $('#comentarismo-recommendations-thing').hide();
+                $('#p-comentarismo-recommendations-thing').hide();
+            } else {
+
+                for (var i = 0; i < recs.length; i++) {
+                    var t = recs[i];
+                    if (t) {
+                        imgresizer(t.image, t.id);
+                    }
+                }
             }
 
-            // for (i in data) {
-            //     $("#r_" + data[i].itemId).addClass("hidden");
-            // }
             cb();
 
         }, error: function (error) {
@@ -1886,7 +1890,7 @@ function loadRecsForThing(that, namespace, curr_thingId, cb) {
 
 function loadRecsForUser(that, namespace, curr_userId, cb) {
 
-    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend" + "?namespace="+namespace;
+    var urlTarget = that.reco + "/users/" + curr_userId + "/recommend" + "?namespace=" + namespace;
     console.log("loadRecsForUser, ", urlTarget);
     // request recommendations
     $.ajax({
@@ -1931,8 +1935,8 @@ function loadRecsForUser(that, namespace, curr_userId, cb) {
                 var t = recs[i];
                 if (t) {
                     // var thing = decodeBuffer(t.thing);
-                    var thing = "<div class='card-header'>"+t.thing + "</div>";
-                    var img = (t.image ? "<img class='card-image' src='" + t.image + "'/>" : jdenticon.toSvg(md5(thing), 100) )
+                    var thing = "<div class='card-header'>" + t.thing + "</div>";
+                    var img = (t.image ? "<img class='card-image' id='" + t.id + "'/>" : jdenticon.toSvg(md5(thing), 100) );
 
                     if (!_.contains(t.people, curr_userId) && count < 4) {
                         count = count + 1;
@@ -1943,10 +1947,18 @@ function loadRecsForUser(that, namespace, curr_userId, cb) {
             html = html + list + "</ul>";
 
             $("#comentarismo-recommendations").html(html);
-    
-            if(count === 0){
-              $('#comentarismo-recommendations').hide();
-              $('#p-comentarismo-recommendations').hide();
+
+            if (count === 0) {
+                $('#comentarismo-recommendations').hide();
+                $('#p-comentarismo-recommendations').hide();
+            } else {
+
+                for (var i = 0; i < recs.length; i++) {
+                    var t = recs[i];
+                    if (t) {
+                        imgresizer(t.image, t.id);
+                    }
+                }
             }
 
             // for (i in data) {
@@ -2076,6 +2088,72 @@ function getLikes(that, curr_userId, cb) {
     })
 }
 
+var quality = "50";
+var width = "200";
+var height = "195";
+
+function imgresizer(image, slug) {
+    //http post
+    var host = "https://img.comentarismo.com/r";
+
+    if (document.location.hostname.indexOf("localhost") !== -1) {
+        host = "http://localhost:3666/r";
+    }
+    var request = $.ajax({
+        url: host + '/img/',
+        type: 'post',
+        data: {
+            url: image,
+            width: width,
+            height: height,
+            quality: quality
+        },
+        mimeType: "text/plain; charset=x-user-defined"
+    });
+
+    request.done(function (binaryData) {
+        if (binaryData && binaryData !== "") {
+            console.log("imgresizer DONE OK");
+            var base64Data = base64Encode(binaryData);
+            $("#" +slug).attr("src", "data:image/jpeg;base64," + base64Data);
+        } else {
+            console.log(binaryData);
+        }
+    });
+
+    request.fail(function (e) {
+        console.log(e);
+    });
+}
+
+function base64Encode(str) {
+    var CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var out = "", i = 0, len = str.length, c1, c2, c3;
+    while (i < len) {
+        c1 = str.charCodeAt(i++) & 0xff;
+        if (i === len) {
+            out += CHARS.charAt(c1 >> 2);
+            out += CHARS.charAt((c1 & 0x3) << 4);
+            out += "==";
+            break;
+        }
+        c2 = str.charCodeAt(i++);
+        if (i === len) {
+            out += CHARS.charAt(c1 >> 2);
+            out += CHARS.charAt(((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4));
+            out += CHARS.charAt((c2 & 0xF) << 2);
+            out += "=";
+            break;
+        }
+        c3 = str.charCodeAt(i++);
+        out += CHARS.charAt(c1 >> 2);
+        out += CHARS.charAt(((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4));
+        out += CHARS.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >> 6));
+        out += CHARS.charAt(c3 & 0x3F);
+    }
+    return out;
+}
+
 module.exports = {
     getLikes: getLikes,
     loadRecsForUser: loadRecsForUser,
@@ -2085,6 +2163,8 @@ module.exports = {
     loadRecsWithLikes: loadRecsWithLikes,
     createUser: createUser,
     createItem: createItem,
+    base64Encode: base64Encode,
+    imgresizer: imgresizer,
 }
 }).call(this,require("buffer").Buffer)
 },{"buffer":16,"fingerprintjs2":21}],14:[function(require,module,exports){
@@ -2223,7 +2303,7 @@ Comentarismo = function (options) {
         } else {
             this.analytics = "//analytics.comentarismo.com";
         }
-        if (options.reco && options.reco.indexOf("https") !== -1) {
+        if (options.reco) {
             this.reco = options.reco;
         } else {
             this.reco = "//reco.comentarismo.com";
@@ -2285,7 +2365,7 @@ Comentarismo = function (options) {
     forum = this.forum = options.forum;
     this.$el = $("#comments-list");
 
-    if (options.debug && options.debug == "true") {
+    if (options.debug && options.debug === "true") {
         console.log("COMENTARISMO - DEBUG MODE ACTIVATED")
         window.debug = true;
     }
@@ -2516,7 +2596,7 @@ Comentarismo = function (options) {
             //console.log("$(window).scrollTop(), == ,$(document).height(), -, $(window).height(), &&, !running , &&, !end");
             //console.log($(window).scrollTop(), "==" ,$(document).height(), "-", $(window).height(), "("+ $(document).height() - $(window).height() +")", "&&", !running , "&&", !end);
 
-            if ($(window).scrollTop() == $(document).height() - $(window).height() && !running && !end) {
+            if ($(window).scrollTop() === $(document).height() - $(window).height() && !running && !end) {
                 that.loadMoreComments();
 
                 return false;

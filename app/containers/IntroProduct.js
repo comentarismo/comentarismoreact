@@ -89,7 +89,7 @@ class IntroProduct extends Component {
     getImageElement(src, id) {
         if (typeof window !== 'undefined') {
             
-            var host = "//img.comentarismo.com/r";
+            var host = "https://img.comentarismo.com/r";
             // console.log("IMGRESIZER ",src)
             //do img resize
             var request = $.ajax({
@@ -236,7 +236,7 @@ class IntroProduct extends Component {
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
-                                            if (news.languages == targetLang && count < 10) {
+                                            if (news.languages === targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
                                                     <Card key={news.id} style={style}>
@@ -302,7 +302,7 @@ class IntroProduct extends Component {
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
-                                            if (news.languages == targetLang && count < 6) {
+                                            if (news.languages === targetLang && count < 6) {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 

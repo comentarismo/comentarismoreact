@@ -35,7 +35,7 @@ module.exports = React.createClass({
 
         var id = this.props.article.id;
 
-        var host = "//img.comentarismo.com/r";
+        var host = "https://img.comentarismo.com/r";
         // console.log("IMGRESIZER ",src)
         //do img resize
         var request = $.ajax({

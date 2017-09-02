@@ -92,7 +92,7 @@ class Intro extends Component {
     getImageElement(src, id) {
         if (typeof window !== 'undefined') {
 
-            var host = "//img.comentarismo.com/r";
+            var host = "https://img.comentarismo.com/r";
             // console.log("IMGRESIZER ",src)
             //do img resize
             var request = $.ajax({
@@ -239,7 +239,7 @@ class Intro extends Component {
                                         {comment[article].reduction.map((news) => {
 
                                             let content = "";
-                                            if (news.languages == targetLang && count < 1) {
+                                            if (news.languages === targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
                                                     <Card key={news.id} style={style} className="box">
