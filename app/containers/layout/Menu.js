@@ -99,6 +99,10 @@ const Menu = ({resources}) => (
                 width: '100%'
             }}>CryptoCurrency News & Reviews
             </div>
+            <a href={`/product/operator/bitconnect`}>
+                <ListItem primaryText="Bitconnect"
+                          leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
+            </a>
             
              <a href={`/product/operator/cryptocompare`}>
                 <ListItem primaryText="Cryptocompare"
@@ -162,6 +166,11 @@ const Menu = ({resources}) => (
              <a href={`/news/operator/metronieuws`}>
                 <ListItem primaryText="MetroNieuws"
                           leftIcon={<img src="/static/img/sources/metronieuws.png"/>}/>
+            </a>
+            
+            <a href={`/news/operator/indiatimes`}>
+                <ListItem primaryText="India Times"
+                          leftIcon={<img src="/static/img/sources/indiatimes.png"/>}/>
             </a>
 
             <a href={`/news/operator/lemonde`}>
