@@ -99,7 +99,7 @@ const Menu = ({resources}) => (
                 width: '100%'
             }}>CryptoCurrency News & Reviews
             </div>
-            <a href={`/product/operator/bitconnect`}>
+            <a href={`/news/operator/bitconnect`}>
                 <ListItem primaryText="Bitconnect"
                           leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
             </a>
