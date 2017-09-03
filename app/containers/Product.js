@@ -162,17 +162,31 @@ class Product extends Component {
         }
 
         function getContentBody() {
-            if (!article.resume) return;
-            return <div>
+            var targetText = article.summary;
+            if (!targetText) {
+                if (!article.resume){
+                    return
+                }else {
+                    targetText = article.resume;
+                }
+            }
+            return (<div>
                 <div>
                     <span className="profile-StatLabel profile-block">Rating: {article.rating}</span>
                     <span
-                        className={"stars-container stars-" + Math.round(article.rating ? article.rating : 0)}>★★★★★</span>
+                        className={"stars-container stars-" + Math.round(article.rating ? article.rating : 1)}>★★★★★</span>
                 </div>
-                <div id='content' className=''
-                     dangerouslySetInnerHTML={{__html: article.resume}}></div>
-            </div>
-
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '20px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Product Summary
+                </div>
+                <div id='content' dangerouslySetInnerHTML={{__html: targetText}} />
+            </div>);
         }
 
         var searchlist = this.props.article.search;

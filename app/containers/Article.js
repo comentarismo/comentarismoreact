@@ -150,8 +150,25 @@ class Article extends Component {
         }
 
         function getContentBody() {
-            if (!article.resume) return;
-            return <div id='content' dangerouslySetInnerHTML={{__html: article.resume}} />
+            var targetText = article.summary;
+            if (!targetText) {
+                if (!article.resume){
+                    return
+                }else {
+                    targetText = article.resume;
+                }
+            }
+            return (<div>
+                <div style={{
+                        marginLeft: '10px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>News Summary
+                </div>
+                <div id='content' dangerouslySetInnerHTML={{__html: targetText}} />
+            </div>);
         }
 
         var sentimentReport = <div/>
