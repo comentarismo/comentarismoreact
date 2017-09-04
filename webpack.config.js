@@ -28,7 +28,7 @@ var config = {
   },
   output: {
     path: path.join(__dirname, 'vendor'),
-    filename: DEBUG ? '[name].js' : '[name].[chunkhash].js'
+    filename: DEBUG ? '[name].js' : '[name].js'
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -73,9 +73,18 @@ if (DEBUG) {
   config.plugins = config.plugins.concat([
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filname: '[name].[chunkhash].js'
+      filname: '[name].js'
     }),
-    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      },
+      output: {
+        comments: false
+      },
+      sourceMap: false,
+      minimize: true
+    }),
     new AssetsPlugin({ path: path.join(__dirname, 'vendor') })
   ]);
 }

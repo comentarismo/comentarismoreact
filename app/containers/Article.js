@@ -161,6 +161,7 @@ class Article extends Component {
             return (<div>
                 <div style={{
                         marginLeft: '10px',
+                        paddingTop: '20px',
                         paddingBottom: '10px',
                         color: '#656972',
                         textTransform: 'uppercase',

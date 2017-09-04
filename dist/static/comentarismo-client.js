@@ -1862,11 +1862,14 @@ function loadRecsForThing(that, namespace, curr_thingId, cb) {
                 $('#comentarismo-recommendations-thing').hide();
                 $('#p-comentarismo-recommendations-thing').hide();
             } else {
-
+                count = 0;
                 for (var i = 0; i < recs.length; i++) {
                     var t = recs[i];
                     if (t) {
-                        imgresizer(t.image, t.id);
+                        if (!_.contains(t.people, curr_userId) && count < 4) {
+                            count = count + 1;
+                            imgresizer(t.image, t.id);
+                        }
                     }
                 }
             }
@@ -1952,11 +1955,14 @@ function loadRecsForUser(that, namespace, curr_userId, cb) {
                 $('#comentarismo-recommendations').hide();
                 $('#p-comentarismo-recommendations').hide();
             } else {
-
+                count = 0;
                 for (var i = 0; i < recs.length; i++) {
                     var t = recs[i];
                     if (t) {
-                        imgresizer(t.image, t.id);
+                        if (!_.contains(t.people, curr_userId) && count < 4) {
+                            count = count + 1;
+                            imgresizer(t.image, t.id);
+                        }
                     }
                 }
             }
