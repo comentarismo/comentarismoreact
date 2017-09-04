@@ -5,7 +5,9 @@
     <meta name="google-site-verification" content="M84QmLURMWUW7yZn_3njxuZBtmx5ZgAuS-OGM2_M6Ys" />
     <%- head.title.toString() %>
     <%- head.meta.toString() %>
-
+</head>
+<body>
+<noscript id="deferred-styles">
     <% styleSrc.forEach(function(src){ %>
     <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
     <% }) %>
@@ -13,9 +15,20 @@
     <% searchCss.forEach(function(src){ %>
     <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
     <% }) %>
-
-</head>
-<body>
+</noscript>
+<script>
+  var loadDeferredStyles = function() {
+    var addStylesNode = document.getElementById("deferred-styles");
+    var replacement = document.createElement("div");
+    replacement.innerHTML = addStylesNode.textContent;
+    document.body.appendChild(replacement)
+    addStylesNode.parentElement.removeChild(addStylesNode);
+  };
+  var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+      webkitRequestAnimationFrame || msRequestAnimationFrame;
+  if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+  else window.addEventListener('load', loadDeferredStyles);
+</script>
 <div id="root"><%- html %></div>
 <script type="text/javascript" charset="utf-8">
     window.__REDUX_STATE__ = '<%= reduxState %>';
