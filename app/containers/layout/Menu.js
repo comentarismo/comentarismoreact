@@ -47,6 +47,30 @@ const Menu = ({resources}) => (
                 <List style={{padding: 0}}>
                 </List>
             </Paper>
+            
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>CryptoCurrency News & Reviews
+            </div>
+            <a href={`/news/operator/bitconnect`}>
+                <ListItem primaryText="Bitconnect"
+                          leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
+            </a>
+            
+             <a href={`/product/operator/cryptocompare`}>
+                <ListItem primaryText="Cryptocompare"
+                          leftIcon={<img src="/static/img/sources/cryptocompare.png"/>}/>
+            </a>
+            
+            <a href={`/news/operator/deepdotweb`}>
+                <ListItem primaryText="deepdotweb"
+                          leftIcon={<img src="/static/img/sources/deepdotweb.png"/>}/>
+            </a>
 
             <div style={{
                 boxSizing: 'border-box',
@@ -88,25 +112,6 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="MediaMarkt"
                           leftIcon={<img
                               src="/static/img/sources/mediamarkt.png"/>}/>
-            </a>
-            
-             <div style={{
-                boxSizing: 'border-box',
-                color: 'rgb(145, 147, 152)',
-                fontSize: '14px',
-                lineHeight: '48px',
-                paddingLeft: '16px',
-                width: '100%'
-            }}>CryptoCurrency News & Reviews
-            </div>
-            <a href={`/news/operator/bitconnect`}>
-                <ListItem primaryText="Bitconnect"
-                          leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
-            </a>
-            
-             <a href={`/product/operator/cryptocompare`}>
-                <ListItem primaryText="Cryptocompare"
-                          leftIcon={<img src="/static/img/sources/cryptocompare.png"/>}/>
             </a>
     
             <div style={{

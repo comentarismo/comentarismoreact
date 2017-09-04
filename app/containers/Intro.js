@@ -306,7 +306,7 @@ class Intro extends Component {
                                         {comment[article].reduction.map((news) => {
 
                                             let content = "";
-                                            if (news.languages == targetLang && count < 1) {
+                                            if (news.languages === targetLang && count < 1) {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
 
