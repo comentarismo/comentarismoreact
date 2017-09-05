@@ -186,6 +186,36 @@ class Product extends Component {
                     }}>Product Summary
                 </div>
                 <div id='content' dangerouslySetInnerHTML={{__html: targetText}} />
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '20px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Product Desc. Length:
+                    <div id='content' dangerouslySetInnerHTML={{__html: (article.title.length + article.resume.length)}} />
+                </div>
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Summary Length:
+                    <div id='content' dangerouslySetInnerHTML={{__html: targetText.length}} />
+                </div>
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Summary Ratio:
+                    <div id='content' dangerouslySetInnerHTML={{__html: (100 - (100 * (targetText.length / (article.title.length + article.resume.length)))).toFixed(2) }} />
+                </div>
             </div>);
         }
 
@@ -392,8 +422,8 @@ class Product extends Component {
                                                            fontSize: '14px',
                                                            textTransform: 'uppercase'
                                 }}>{ article.operator ? article.operator + " " : " " }</span>}
-                                        avatar={<img style={{height: '24px', width: '24px', marginTop: '8px'}}
-                                            src={`/static/img/sources/${article.operator}.png`}/>}
+                                        avatar={<a href={`/product/operator/${article.operator}`}><img style={{height: '24px', width: '24px', marginTop: '8px'}}
+                                                src={`/static/img/sources/${article.operator}.png`}/></a>}
                                         subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
                             />
                             <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}

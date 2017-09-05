@@ -58,18 +58,35 @@ const Menu = ({resources}) => (
             }}>CryptoCurrency News & Reviews
             </div>
             <a href={`/news/operator/bitconnect`}>
-                <ListItem primaryText="Bitconnect"
+                <ListItem primaryText="BitConnect"
                           leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
             </a>
             
              <a href={`/product/operator/cryptocompare`}>
-                <ListItem primaryText="Cryptocompare"
+                <ListItem primaryText="CryptoCompare"
                           leftIcon={<img src="/static/img/sources/cryptocompare.png"/>}/>
             </a>
             
             <a href={`/news/operator/deepdotweb`}>
-                <ListItem primaryText="deepdotweb"
+                <ListItem primaryText="DeepDotWeb"
                           leftIcon={<img src="/static/img/sources/deepdotweb.png"/>}/>
+            </a>
+            
+            <a href={`/news/operator/techcrunch`}>
+                <ListItem primaryText="TechCrunch"
+                          leftIcon={<img src="/static/img/sources/techcrunch.png"/>}/>
+            </a>
+            <a href={`/news/operator/economictimes`}>
+                <ListItem primaryText="TheEconomicTimes"
+                          leftIcon={<img src="/static/img/sources/economictimes.png"/>}/>
+            </a>
+            <a href={`/news/operator/bit-media`}>
+                <ListItem primaryText="Bit-Media"
+                          leftIcon={<img src="/static/img/sources/bit-media.png"/>}/>
+            </a>
+            <a href={`/news/operator/thenextweb`}>
+                <ListItem primaryText="TheNextWeb"
+                          leftIcon={<img src="/static/img/sources/thenextweb.png"/>}/>
             </a>
 
             <div style={{

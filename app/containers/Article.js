@@ -169,6 +169,36 @@ class Article extends Component {
                     }}>News Summary
                 </div>
                 <div id='content' dangerouslySetInnerHTML={{__html: targetText}} />
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '20px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>News Length:
+                    <div id='content' dangerouslySetInnerHTML={{__html: (article.title.length + article.resume.length)}} />
+                </div>
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Summary Length:
+                    <div id='content' dangerouslySetInnerHTML={{__html: targetText.length}} />
+                </div>
+                <div style={{
+                        marginLeft: '10px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        color: '#656972',
+                        textTransform: 'uppercase',
+                        fontSize: '14px',
+                    }}>Summary Ratio:
+                    <div id='content' dangerouslySetInnerHTML={{__html: (100 - (100 * (targetText.length / (article.title.length + article.resume.length)))).toFixed(2) }} />
+                </div>
             </div>);
         }
 
@@ -326,8 +356,8 @@ class Article extends Component {
                                     fontSize: '14px',
                                     textTransform: 'uppercase'
                                 }}>{ article.operator ? article.operator + " " : " " }</span>}
-                                avatar={<img style={{height: '24px', width: '24px', marginTop: '8px'}}
-                                             src={`/static/img/sources/${article.operator}.png`}/>}
+                                avatar={<a href={`/news/operator/${article.operator}`}><img style={{height: '24px', width: '24px', marginTop: '8px'}}
+                                        src={`/static/img/sources/${article.operator}.png`}/></a>}
                                 subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
                             />
 
@@ -344,6 +374,7 @@ class Article extends Component {
                                 {this.viewMoreImagesButton()}
                                 <div style={{
                                         marginLeft: '10px',
+                                        paddingTop: '20px',
                                         paddingBottom: '10px',
                                         color: '#656972',
                                         textTransform: 'uppercase',
@@ -352,7 +383,7 @@ class Article extends Component {
                                 </div>
                                 {
                                     this.props.article.tags && this.props.article.tags.map((tag, i) => {
-                                        return i < 4 && (
+                                        return  (
                                                 <Chip style={stylesTag.chip}>
                                                     <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
                                                     {tag}
