@@ -5,6 +5,7 @@ import {Link} from 'react-router'
 import _ from 'lodash'
 import RaisedButton from 'material-ui/RaisedButton';
 import MobileTearSheet from 'components/MobileTearSheet';
+import Date from "components/Date"
 
 import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
@@ -22,10 +23,10 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import Autocomplete from 'components/Autocomplete';
 
 class ArticleContainer extends Component {
-    // static fetchData({store, params}) {
-        // let {index, value} = params;
-        // return store.dispatch(loadGenres({table: "news", index: "operator_genre", value: value}))
-    // }
+    static fetchData({store, params}) {
+        let {index, value} = params;
+        return store.dispatch(loadGenres({table: "news", index: "operator_genre", value: value}))
+    }
 
     constructor(props) {
         super();
@@ -44,14 +45,14 @@ class ArticleContainer extends Component {
         //console.log(index,value);
         getAllByRangeIndexOrderByFilterSkipLimit("news", index, value, skip, limit, "date", "desc", 10, function (err, res) {
             // Do something
-            if (err || !res || res.body.length == 0) {
+            if (err || !res || res.body.length === 0) {
                 //this.props.params.hasMore = false;
                 this.setState({hasMore: false});
             } else {
                 var articles = res.body;
-                var hasMore = articles.length == limit;
+                var hasMore = articles.length === limit;
                 var newArticles = _.union(this.state.articles, articles);
-
+                
                 this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
                 //console.log(`skip ${skip} limit ${limit}`);
             }
@@ -122,6 +123,17 @@ class ArticleContainer extends Component {
                         </Tab>
     
                     </Tabs>
+                    
+                    
+                    <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                        title={<span style={{
+                            fontSize: '14px',
+                            textTransform: 'uppercase'
+                        }}>{ this.props.params.value ? this.props.params.value+ " " : " " }</span>}
+                        avatar={<a href={`/news/operator/${this.props.genres && this.props.genres.length > 0 ? this.props.genres[0][0] : this.props.params.value}`}><img style={{height: '100px', width: '100px', marginTop: '-15px'}}
+                                src={`/static/img/sources/${this.props.params.value}.png`}/></a>}
+                        subtitle={<Date style={{fontSize: '14px'}} date={new Date()}/>}
+                    />
                     
                     { this.props.genres && this.props.genres.length > 0 &&
                     <div >

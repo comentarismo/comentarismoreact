@@ -57,6 +57,15 @@ const Menu = ({resources}) => (
                 width: '100%'
             }}>CryptoCurrency News & Reviews
             </div>
+            
+             <a href={`/news/operator/newsbitcoin`}>
+                <ListItem primaryText="Bitcoin.com"
+                          leftIcon={<img src="/static/img/sources/newsbitcoin.png"/>}/>
+            </a>
+             <a href={`/news/operator/coindesk`}>
+                <ListItem primaryText="CoinDesk"
+                          leftIcon={<img src="/static/img/sources/coindesk.png"/>}/>
+            </a>
             <a href={`/news/operator/bitconnect`}>
                 <ListItem primaryText="BitConnect"
                           leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>

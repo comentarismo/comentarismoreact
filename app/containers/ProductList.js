@@ -1,22 +1,30 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {loadProducts} from 'actions/products'
+import RaisedButton from 'material-ui/RaisedButton';
 import _ from 'lodash'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Helmet from "react-helmet";
+import { Tabs, Tab } from 'material-ui/Tabs';
+
+// import {loadProducts} from 'actions/products'
 
 import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
 var Product = require('components/Product');
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
-import Helmet from "react-helmet";
-import { Tabs, Tab } from 'material-ui/Tabs';
 import Autocomplete from 'components/Autocomplete'
+import {loadGenres} from 'actions/genres'
+import Date from "components/Date"
+
+const style = {
+    margin: 12,
+};
 
 class ProductContainer extends Component {
     static fetchData({store, params}) {
         let {index, value} = params;
-        return store.dispatch(loadProducts({index, value}))
+        return store.dispatch(loadGenres({table: "product", index: "operator_genre", value: value}))
     }
 
     constructor(props) {
@@ -25,6 +33,7 @@ class ProductContainer extends Component {
             skip: 0,
             limit: 5,
             articles: props.articles,
+            genres: [],
             hasMore: true
         };
     }
@@ -35,12 +44,12 @@ class ProductContainer extends Component {
         //console.log(index,value);
         getAllByRangeIndexOrderByFilterSkipLimit("product", index, value, skip, limit, "date", "desc", 10,function (err, res) {
             // Do something
-            if (err || !res || res.body.length == 0) {
+            if (err || !res || res.body.length === 0) {
                 //this.props.params.hasMore = false;
                 this.setState({hasMore: false});
             } else {
                 var articles = res.body;
-                var hasMore = articles.length == limit;
+                var hasMore = articles.length === limit;
                 var newArticles = _.union(this.state.articles, articles);
 
                 this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
@@ -109,6 +118,24 @@ class ProductContainer extends Component {
                     </Tab>
                   
                 </Tabs>
+                    
+                     <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                        title={<span style={{
+                            fontSize: '14px',
+                            textTransform: 'uppercase'
+                        }}>{ this.props.params.value ? this.props.params.value+ " " : " " }</span>}
+                        avatar={<a href={`/product/operator/${this.props.params.value}`}><img style={{height: '50px', width: '50px', marginTop: '-15px'}}
+                                src={`/static/img/sources/${this.props.params.value}.png`}/></a>}
+                        subtitle={<Date style={{fontSize: '14px'}} date={new Date()}/>}
+                    />
+                    
+                    { this.props.genres && this.props.genres.length > 0 &&
+                    <div >
+                        {this.props.genres.map(function (a) {
+                            return <RaisedButton key={a[1]} href={"/product/genre/" + a[1]} label={a[1]} style={style}/>
+                        })}
+                    </div>
+                    }
  
                     <InfiniteScroll
                         ref='masonryContainer'
@@ -141,9 +168,10 @@ function mapStateToProps(state) {
         hasMore: true,
         perPage: 50,
         index_: state.index_,
-        value_: state.value_
+        value_: state.value_,
+        genres: state.genres,
     }
 }
 
 export {ProductContainer}
-export default connect(mapStateToProps, {loadProducts})(ProductContainer)
+export default connect(mapStateToProps, {loadGenres})(ProductContainer)

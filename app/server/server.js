@@ -1188,8 +1188,8 @@ server.get('/api/getalldistinctybyindex/:table/:index/:value', limiter, (req, re
         //-------REDIS CACHE END ------//
 
         getAllDistinctByIndex(conn, req.params.table, req.params.index, req.params.value).then((result) => {
-            if (!DISABLE_CACHE) {
-                client.set(urlTag, JSON.stringify(result), 'EX', EXPIRE_REDIS);
+            if (!DISABLE_CACHE && result.length > 0) {
+                client.set(urlTag, JSON.stringify(result), 'EX', '2592000');
             }
             res.type('application/json');
             return res.send(result);
