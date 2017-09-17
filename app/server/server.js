@@ -125,14 +125,17 @@ var client = redis.createClient({
     retry_strategy: function (options) {
 
         if (options.error && options.error.code === 'ECONNREFUSED') {
+            console.log('ERROR: REDIS, ECONNREFUSED, ', err)
             // End reconnecting on a specific error and flush all commands with a individual error
             return new Error('The server refused the connection');
         }
         if (options.total_retry_time > 1000 * 60 * 60) {
+            console.log('ERROR: REDIS, options.total_retry_time > 1000 * 60 * 60, ', err)
             // End reconnecting after a specific timeout and flush all commands with a individual error
             return new Error('Retry time exhausted');
         }
         if (options.times_connected > 10) {
+            console.log('ERROR: REDIS, options.times_connected > 10, ', err)
             // End reconnecting with built in error
             return undefined;
         }
@@ -142,13 +145,14 @@ var client = redis.createClient({
 });
 
 client.on("connect", function () {
+    console.log('****** REDIS will test connection');
     client.set("foo_rand000000000000", "testing redis connection", 'EX',
         EXPIRE_REDIS);
     client.get("foo_rand000000000000", redis.print);
 });
 
 client.on("error", function (err) {
-    logger.error(err);
+    console.log('ERROR: REDIS, ', err);
 });
 
 var RateLimit = require('./express-rate-limit');

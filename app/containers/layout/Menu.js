@@ -70,6 +70,10 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="BitConnect"
                           leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
             </a>
+            <a href={`/news/operator/cointelegraph`}>
+                <ListItem primaryText="cointelegraph"
+                          leftIcon={<img src="/static/img/sources/cointelegraph.png"/>}/>
+            </a>
             
              <a href={`/product/operator/cryptocompare`}>
                 <ListItem primaryText="CryptoCompare"
@@ -96,6 +100,14 @@ const Menu = ({resources}) => (
             <a href={`/news/operator/thenextweb`}>
                 <ListItem primaryText="TheNextWeb"
                           leftIcon={<img src="/static/img/sources/thenextweb.png"/>}/>
+            </a>
+             <a href={`/news/operator/livebitcoinnews`}>
+                <ListItem primaryText="livebitcoinnews"
+                          leftIcon={<img src="/static/img/sources/livebitcoinnews.png"/>}/>
+            </a>
+            <a href={`/news/operator/themerkle`}>
+                <ListItem primaryText="themerkle"
+                          leftIcon={<img src="/static/img/sources/themerkle.png"/>}/>
             </a>
 
             <div style={{
