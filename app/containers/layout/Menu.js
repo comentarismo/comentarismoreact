@@ -109,6 +109,14 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="themerkle"
                           leftIcon={<img src="/static/img/sources/themerkle.png"/>}/>
             </a>
+            <a href={`/news/operator/ethnews`}>
+                <ListItem primaryText="ethnews"
+                          leftIcon={<img src="/static/img/sources/ethnews.png"/>}/>
+            </a>
+            <a href={`/news/operator/cryptocoinsnews`}>
+                <ListItem primaryText="cryptocoinsnews"
+                          leftIcon={<img src="/static/img/sources/cryptocoinsnews.png"/>}/>
+            </a>
 
             <div style={{
                 boxSizing: 'border-box',
