@@ -55,7 +55,7 @@ const Menu = ({resources}) => (
                 lineHeight: '48px',
                 paddingLeft: '16px',
                 width: '100%'
-            }}>CryptoCurrency News & Reviews
+            }}>CryptoCurrency News (EN)
             </div>
             
              <a href={`/news/operator/newsbitcoin`}>
@@ -71,7 +71,7 @@ const Menu = ({resources}) => (
                           leftIcon={<img src="/static/img/sources/bitconnect.png"/>}/>
             </a>
             <a href={`/news/operator/cointelegraph`}>
-                <ListItem primaryText="cointelegraph"
+                <ListItem primaryText="CoinTelegraph"
                           leftIcon={<img src="/static/img/sources/cointelegraph.png"/>}/>
             </a>
             
@@ -102,11 +102,11 @@ const Menu = ({resources}) => (
                           leftIcon={<img src="/static/img/sources/thenextweb.png"/>}/>
             </a>
              <a href={`/news/operator/livebitcoinnews`}>
-                <ListItem primaryText="livebitcoinnews"
+                <ListItem primaryText="LiveBitcoinNews"
                           leftIcon={<img src="/static/img/sources/livebitcoinnews.png"/>}/>
             </a>
             <a href={`/news/operator/themerkle`}>
-                <ListItem primaryText="themerkle"
+                <ListItem primaryText="TheMerkle"
                           leftIcon={<img src="/static/img/sources/themerkle.png"/>}/>
             </a>
             <a href={`/news/operator/ethnews`}>
@@ -114,9 +114,54 @@ const Menu = ({resources}) => (
                           leftIcon={<img src="/static/img/sources/ethnews.png"/>}/>
             </a>
             <a href={`/news/operator/cryptocoinsnews`}>
-                <ListItem primaryText="cryptocoinsnews"
+                <ListItem primaryText="CryptoCoinsNews"
                           leftIcon={<img src="/static/img/sources/cryptocoinsnews.png"/>}/>
             </a>
+            <a href={`/news/operator/usatoday`}>
+                <ListItem primaryText="USAToday"
+                          leftIcon={<img src="/static/img/sources/usatoday.png"/>}/>
+            </a>
+            
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>CryptoCurrency News (CN)
+            </div>
+            
+             <a href={`/news/operator/bitcoin86`}>
+                <ListItem primaryText="Bitcoin86"
+                          leftIcon={<img src="/static/img/sources/bitcoin86.png"/>}/>
+            </a>
+            
+             <a href={`/news/operator/chinanews`}>
+                <ListItem primaryText="ChinaNews"
+                          leftIcon={<img src="/static/img/sources/chinanews.png"/>}/>
+            </a>
+            
+              <a href={`/news/operator/youthcn`}>
+                <ListItem primaryText="Youth.cn"
+                          leftIcon={<img src="/static/img/sources/youthcn.png"/>}/>
+            </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>CryptoCurrency News (RU)
+            </div>
+            
+             <a href={`/news/operator/forklog`}>
+                <ListItem primaryText="ForkLog"
+                          leftIcon={<img src="/static/img/sources/forklog.png"/>}/>
+            </a>
+            
 
             <div style={{
                 boxSizing: 'border-box',
@@ -140,7 +185,7 @@ const Menu = ({resources}) => (
                 lineHeight: '48px',
                 paddingLeft: '16px',
                 width: '100%'
-            }}>Products
+            }}>Products (EN)
             </div>
 
             <a href={`/product/operator/amazon`}>
@@ -154,6 +199,15 @@ const Menu = ({resources}) => (
                               src="/static/img/sources/victoriassecret.png"/>}/>
             </a>
             
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>Products (NL)
+            </div>
              <a href={`/product/operator/mediamarkt`}>
                 <ListItem primaryText="MediaMarkt"
                           leftIcon={<img
@@ -167,7 +221,7 @@ const Menu = ({resources}) => (
                 lineHeight: '48px',
                 paddingLeft: '16px',
                 width: '100%'
-            }}>News
+            }}>News (EN)
             </div>
     
             <a href={`/news/operator/dailymail`}>
@@ -214,15 +268,35 @@ const Menu = ({resources}) => (
                           leftIcon={<img src="/static/img/sources/rt.png"/>}/>
             </a>
             
+             <a href={`/news/operator/indiatimes`}>
+                <ListItem primaryText="India Times"
+                          leftIcon={<img src="/static/img/sources/indiatimes.png"/>}/>
+            </a>
+            
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (NL)
+            </div>
+            
              <a href={`/news/operator/metronieuws`}>
                 <ListItem primaryText="MetroNieuws"
                           leftIcon={<img src="/static/img/sources/metronieuws.png"/>}/>
             </a>
             
-            <a href={`/news/operator/indiatimes`}>
-                <ListItem primaryText="India Times"
-                          leftIcon={<img src="/static/img/sources/indiatimes.png"/>}/>
-            </a>
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (FR)
+            </div>
 
             <a href={`/news/operator/lemonde`}>
                 <ListItem primaryText="Lemonde"
@@ -233,6 +307,16 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="Lefigaro"
                           leftIcon={<img src="/static/img/sources/lefigaro.png"/>}/>
             </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (ES)
+            </div>
 
             <a href={`/news/operator/elpais`}>
                 <ListItem primaryText="Elpais"
@@ -243,11 +327,33 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="Marca"
                           leftIcon={<img src="/static/img/sources/marca.png"/>}/>
             </a>
+            
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (IT)
+            </div>
 
             <a href={`/news/operator/repubblica`}>
                 <ListItem primaryText="La Repubblica"
                           leftIcon={<img src="/static/img/sources/repubblica.png"/>}/>
             </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (PT)
+            </div>
+            
             <a href={`/news/operator/g1`}>
                 <ListItem primaryText="G1"
                           leftIcon={<img src="/static/img/sources/g1.png"/>}/>
@@ -273,10 +379,31 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="JornalGGN"
                           leftIcon={<img src="/static/img/sources/jornalggn.png"/>}/>
             </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (HR)
+            </div>
+            
             <a href={`/news/operator/indexhr`}>
                 <ListItem primaryText="Index.HR"
                           leftIcon={<img src="/static/img/sources/indexhr.png"/>}/>
             </a>
+            
+             <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>News (RU)
+            </div>
             <a href={`/news/operator/novayagazeta_ru`}>
                 <ListItem primaryText="Novayagazeta"
                           leftIcon={<img src="/static/img/sources/novayagazeta_ru.png"/>}/>
