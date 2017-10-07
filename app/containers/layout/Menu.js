@@ -121,7 +121,22 @@ const Menu = ({resources}) => (
                 <ListItem primaryText="USAToday"
                           leftIcon={<img src="/static/img/sources/usatoday.png"/>}/>
             </a>
-            
+
+            <div style={{
+                boxSizing: 'border-box',
+                color: 'rgb(145, 147, 152)',
+                fontSize: '14px',
+                lineHeight: '48px',
+                paddingLeft: '16px',
+                width: '100%'
+            }}>CryptoCurrency News (JP)
+            </div>
+
+            <a href={`/news/operator/yahoonews_jp`}>
+                <ListItem primaryText="Yahoonews Japan"
+                          leftIcon={<img src="/static/img/sources/yahoonews_jp.png"/>}/>
+            </a>
+
             <div style={{
                 boxSizing: 'border-box',
                 color: 'rgb(145, 147, 152)',
