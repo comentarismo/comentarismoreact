@@ -1,7 +1,6 @@
 import superAgent from 'superagent';
 import Promise, {using} from 'bluebird';
 import _ from 'lodash';
-import config from 'config';
 
 export const CALL_API = Symbol('CALL_API');
 export const CHAIN_API = Symbol('CHAIN_API');
@@ -34,7 +33,7 @@ export default ({dispatch, getState}) => next => action => {
     overall.finally((err)=> {
         return deferred.resolve(err)
     }).catch((err)=> {
-        console.log("createRequestPromise catch((err)) ");
+        console.log("ERROR: api.js, createRequestPromise catch((err)), ", err);
         return deferred.resolve(err)
     });
 
@@ -51,7 +50,7 @@ function createRequestPromise(apiActionCreator, next, getState, dispatch) {
             .withCredentials()
             .end((err, res)=> {
                 if (err) {
-                    // console.log("createRequestPromise err -> ", err.error);
+                    console.log("ERROR: api.js, createRequestPromise, ", params.url, err);
                     if (params.errorType) {
                         dispatch({
                             type: params.errorType,

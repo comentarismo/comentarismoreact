@@ -6,40 +6,19 @@ var url = require("url");
 
 const Queue = require('rethinkdb-job-queue');
 
-var RETHINKDB_HOST = process.env.RETHINKDB_HOST || 'g7-box';
-var RETHINKDB_PORT = process.env.RETHINKDB_PORT || 28015;
-var RETHINKDB_PASSWORD = process.env.RETHINKDB_PASSWORD;
-
-var RETHINKDB_QUEUE_TABLE = process.env.RETHINKDB_QUEUE_TABLE || "comentarismosync";
-var targetTimeout = process.env.RETHINKDB_TIMEOUT || 120;
-
-var r = require('rethinkdbdash');
-const connection = r({
-    discovery: false,
-    db: RETHINKDB_QUEUE_TABLE,
-    timeout: targetTimeout,
-
-    servers: [
-        {
-            host: RETHINKDB_HOST,
-            port: RETHINKDB_PORT,
-            password: RETHINKDB_PASSWORD
-        }
-    ]
-});
-
-const analyticsQueueOptions = {
-    name: "analyticsQueue"
-};
-const analyticsQueue = new Queue(connection, analyticsQueueOptions);
-analyticsQueue.jobOptions = {
-    priority: 'highest',
-    timeout: 300000,
-    retryMax: 5,
-    retryDelay: 60000
-};
-
 function RateLimit(options) {
+    
+    const analyticsQueueOptions = {
+        name: "analyticsQueue"
+    };
+    
+    const analyticsQueue = new Queue(options.RETHINKDB_CONNECTION, analyticsQueueOptions);
+    analyticsQueue.jobOptions = {
+        priority: 'highest',
+        timeout: 300000,
+        retryMax: 5,
+        retryDelay: 60000
+    };
 
     options = defaults(options, {
         // window, delay, and max apply per-key unless global is set to true

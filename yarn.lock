@@ -5025,9 +5025,15 @@ rethinkdb@^2.3.1:
   dependencies:
     bluebird ">= 2.3.2 < 3"
 
-rethinkdbdash@2.3.28, rethinkdbdash@^2.3.23:
+rethinkdbdash@^2.3.23:
   version "2.3.28"
   resolved "https://registry.yarnpkg.com/rethinkdbdash/-/rethinkdbdash-2.3.28.tgz#f15fed3a2f0c178155fcadb6fc212b3df80f73df"
+  dependencies:
+    bluebird ">= 3.0.1"
+
+rethinkdbdash@^2.3.31:
+  version "2.3.31"
+  resolved "https://registry.yarnpkg.com/rethinkdbdash/-/rethinkdbdash-2.3.31.tgz#fe2f73d1fa6e6f5d96d8e881292013cf6dca914d"
   dependencies:
     bluebird ">= 3.0.1"
 

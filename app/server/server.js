@@ -173,6 +173,7 @@ var maxLimit = process.env.MAX_LIMIT || 20;
 var delayLimit = process.env.DELAY_LIMIT || 0;
 
 var limiter = new RateLimit({
+    RETHINKDB_CONNECTION: conn,
     store: new RedisStore({
         client: client,
         expiry: expireLimit
