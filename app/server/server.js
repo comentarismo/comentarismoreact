@@ -70,9 +70,15 @@ var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
 var REDIS_EXPIRE = process.env.REDIS_EXPIRE || '10'; //1h
 
-var GIT_HASH = require('child_process')
-  .execSync('git rev-parse --short HEAD')
-  .toString().trim() || process.env.GIT_HASH;
+var GIT_HASH = process.env.GIT_HASH;
+var fs = require('fs');
+fs.readFile(path.join(__dirname, '../..', 'version.txt'), function (err, githash) {
+    if (!err && githash) {
+        GIT_HASH = githash.toString().trim();
+    } else {
+        console.log("Could not open GIT_HASH :(", err);
+    }
+});
 
 /** LOGGER **/
 var log = require("./logger");
@@ -185,7 +191,6 @@ var parseUrl = require('parseurl');
 server.use("/assets/:GIT_HASH", (req,res) => {
     
     var GIT_HASH = req.params.GIT_HASH;
-    // var PATH = req.params.PATH;
     
     var PATH  = parseUrl(req).pathname.replace(`/${GIT_HASH}/`, '');
     
@@ -214,19 +219,7 @@ server.use(favicon(path.join(__dirname, '../..', 'dist/static/img/favicon.ico'))
 var requestIp = require('request-ip');
 server.use(requestIp.mw());
 
-var Stats = require('influx-collector');
-
-var INFLUX_HOST = process.env.INFLUX_HOST || "178.62.232.43";
-var INFLUX_PORT = process.env.INFLUX_PORT || "8086";
-var INFLUX_TABLE = process.env.INFLUX_TABLE || "comentarismoanalytics";
-var INFLUX_USERNAME = process.env.INFLUX_USERNAME || "admin";
-var INFLUX_PASSWORD = process.env.INFLUX_PASSWORD || "admin";
-
-var uri = `http://${INFLUX_USERNAME}:${INFLUX_PASSWORD}@${INFLUX_HOST}:${INFLUX_PORT}/${INFLUX_TABLE}`;
-// create a stats collector
-var mem_stats = Stats('test', uri);
-
-var ENABLE_INFLUX = process.env.ENABLE_INFLUX || false;
+var ENABLE_INFLUX = /true/.test(process.env.ENABLE_INFLUX);
 
 var COMENTARISMO_API = process.env.COMENTARISMO_API || "http://api.comentarismo.com"
 
@@ -239,7 +232,18 @@ setInterval(function () {
     // collect this stat into the 'process-memory-usage' series
     // first argument is the data points
     // second (optional) argument are the tags
-    if (ENABLE_INFLUX === true) {
+    if (ENABLE_INFLUX) {
+        var Stats = require('influx-collector');
+
+        var INFLUX_HOST = process.env.INFLUX_HOST || "178.62.232.43";
+        var INFLUX_PORT = process.env.INFLUX_PORT || "8086";
+        var INFLUX_TABLE = process.env.INFLUX_TABLE || "comentarismoanalytics";
+        var INFLUX_USERNAME = process.env.INFLUX_USERNAME || "admin";
+        var INFLUX_PASSWORD = process.env.INFLUX_PASSWORD || "admin";
+        
+        var uri = `http://${INFLUX_USERNAME}:${INFLUX_PASSWORD}@${INFLUX_HOST}:${INFLUX_PORT}/${INFLUX_TABLE}`;
+        // create a stats collector
+        var mem_stats = Stats('test', uri);
         mem_stats.collect({
             rss: mem.rss,
             heap_total: mem.heapTotal,
@@ -248,18 +252,18 @@ setInterval(function () {
             pid: process.pid,
             app: 'comentarismoreact'
         });
+        
+        mem_stats.on("error", function (err) {
+            console.log("influxdb stats err, ", err);
+        });
+        
+        // make sure to handle errors to avoid uncaughtException
+        // would be annoying if stats crashed your app :)
+        mem_stats.on('error', function (err) {
+            console.error("Error: mem_stats -> ", err); // or whatever you want
+        });
     }
 }, 10 * 1000);
-
-mem_stats.on("error", function (err) {
-    console.log("influxdb stats err, ", err);
-});
-
-// make sure to handle errors to avoid uncaughtException
-// would be annoying if stats crashed your app :)
-mem_stats.on('error', function (err) {
-    console.error("Error: mem_stats -> ", err); // or whatever you want
-});
 
 
 var limithtml = "";
