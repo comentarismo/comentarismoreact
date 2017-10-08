@@ -427,7 +427,8 @@ class Product extends Component {
                                         subtitle={<Date style={{fontSize: '14px'}} date={this.props.article.date}/>}
                             />
                             <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}
-                                       title={article.title}
+                                       title={<a target="_blank"
+                                        href={article.link}><span dangerouslySetInnerHTML={{__html:  article.title}}/></a>}
                                        subtitle={<a target="_blank" href={`/html/product.html?table=commentaries_product&skip=0&limit=50&operator=${this.props.article.operator}&key=operator_titleurlize&value=${this.props.article.titleurlize}`}><span dangerouslySetInnerHTML={{__html: totalComments}}/></a>}
                             />
                             <CardText style={{paddingTop: '0px', paddingBottom: '0px'}}>{ getContentBody() }</CardText>

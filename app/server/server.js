@@ -3,7 +3,7 @@ import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {RouterContext, match} from 'react-router';
-import {GoogleSearchScript} from "components/GoogleSearchScript"
+// import {GoogleSearchScript} from "components/GoogleSearchScript"
 import favicon from 'serve-favicon';
 import redis from "redis";
 import {createMemoryHistory, useQueries} from 'history';
@@ -70,6 +70,10 @@ var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
 var REDIS_EXPIRE = process.env.REDIS_EXPIRE || '10'; //1h
 
+var GIT_HASH = require('child_process')
+  .execSync('git rev-parse --short HEAD')
+  .toString().trim() || process.env.GIT_HASH;
+
 /** LOGGER **/
 var log = require("./logger");
 var logger = log.getLogger();
@@ -81,14 +85,14 @@ let styleSrc;
 if (process.env.NODE_ENV === 'production') {
     //let assets = require('../../dist/webpack-assets.json');
     scriptSrcs = [
-        `/static/vendor.js`,
-        `/static/app.js`,
-        '/static/all.min.js'
+        `/assets/${GIT_HASH}/vendor.js`,
+        `/assets/${GIT_HASH}/app.js`,
+        `/assets/${GIT_HASH}/all.min.js`
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
-        '/static/all.min.css',
+        `/assets/${GIT_HASH}/all.min.css`,
     ];
 } else {
     scriptSrcs = [
@@ -174,7 +178,35 @@ var limiter = new RateLimit({
 
 server.use(limiter);
 server.use(compression());
+
 server.use(Express.static(path.join(__dirname, '../..', 'dist')));
+
+var parseUrl = require('parseurl');
+server.use("/assets/:GIT_HASH", (req,res) => {
+    
+    var GIT_HASH = req.params.GIT_HASH;
+    // var PATH = req.params.PATH;
+    
+    var PATH  = parseUrl(req).pathname.replace(`/${GIT_HASH}/`, '');
+    
+    if(IS_DEBUG) {
+        console.log(`ASSETS -> PATH=/static${PATH}`)
+    }
+    
+    var filePath = path.join(path.join(__dirname, '../..', 'dist'), `/static${PATH}`).replace(/\\/g, '/');
+    
+    if(IS_DEBUG) {
+        console.log(`ASSETS ->  filePath=${filePath}`)
+    }
+    
+    if(!fs.existsSync(filePath)) {
+      return res.status(404);
+    }
+
+    var data = fs.readFileSync(filePath);
+    res.end(data);
+})
+
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 server.use(favicon(path.join(__dirname, '../..', 'dist/static/img/favicon.ico')));

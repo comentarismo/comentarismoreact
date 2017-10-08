@@ -362,7 +362,9 @@ class Article extends Component {
                             />
 
                             <CardTitle style={{paddingTop: '0px !important', paddingBottom: '0px'}}
-                                title={article.title} titleStyle={{}}
+                                title={<a target="_blank"
+                                             href={article.link}><span
+                                    dangerouslySetInnerHTML={{__html:  article.title}}/></a>} titleStyle={{}}
                                 subtitle={<a target="_blank"
                                              href={`/html/news.html?table=commentaries&skip=0&limit=50&operator=${this.props.article.operator}&key=operator_titleurlize&value=${this.props.article.titleurlize}`}><span
                                     dangerouslySetInnerHTML={{__html: totalComments}}/></a>}

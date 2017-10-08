@@ -2,6 +2,12 @@ var path = require('path');
 var webpack = require('webpack');
 var AssetsPlugin = require('assets-webpack-plugin');
 
+var GIT_HASH = require('child_process')
+  .execSync('git rev-parse --short HEAD')
+  .toString().trim()
+
+console.log(`Building with GIT_HASH: ${GIT_HASH}`);
+
 var DEBUG = !(process.env.NODE_ENV === 'production');
 var env = {
   NODE_ENV: process.env.NODE_ENV,
