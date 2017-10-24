@@ -1,1 +1,1 @@
-web: NODE_PATH=./app node --harmony_array_includes app/server
+web: NODE_PATH=./app node app/server
