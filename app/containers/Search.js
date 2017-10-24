@@ -104,8 +104,8 @@ class Search extends Component {
             searchOnLoad = true
         }
         
-        const searchkit = new SearchkitManager('//localhost:9000/elk/_all', {
-            // const searchkit = new SearchkitManager("//api.comentarismo.com/elk/_all", {
+        // const searchkit = new SearchkitManager('//localhost:9000/elk/_all', {
+        const searchkit = new SearchkitManager("https://apis.comentarismo.com/elk/_all", {
             searchOnLoad: searchOnLoad,
             useHistory: !isServer,
             httpHeaders: {
