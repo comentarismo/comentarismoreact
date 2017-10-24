@@ -3,10 +3,10 @@
   "version": "1.1.0",
   "description": "Comentarismo ReactJS",
   "scripts": {
-    "start": "DISABLE_CACHE=false DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon --harmony_array_includes app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
-    "dev": "REDIS_HOST=localhost RETHINKDB_HOST=g7-box RETHINKDB_PASSWORD= DISABLE_CACHE=true DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon --harmony_array_includes app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
-    "dev-prod": " RETHINKDB_HOST=147.135.131.12 RETHINKDB_PASSWORD=9jYqGM4udXkvwgs4CcrUGYlYYlNurKzsJPEwWaLM41o= DISABLE_CACHE=true DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon --harmony_array_includes app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
-    "start-prod": "npm run build && DEBUG=true RETHINKDB_HOST=147.135.131.12 RETHINKDB_PASSWORD=9jYqGM4udXkvwgs4CcrUGYlYYlNurKzsJPEwWaLM41o= NODE_ENV=production PORT=3005 NODE_PATH=./app node --harmony_array_includes app/server",
+    "start": "DISABLE_CACHE=false DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
+    "dev": "REDIS_HOST=localhost RETHINKDB_HOST=g7-box RETHINKDB_PASSWORD= DISABLE_CACHE=true DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
+    "dev-prod": " RETHINKDB_HOST=147.135.131.12 RETHINKDB_PASSWORD=9jYqGM4udXkvwgs4CcrUGYlYYlNurKzsJPEwWaLM41o= DISABLE_CACHE=true DEBUG=true WEBPACK_PORT=3004 cross-env NODE_PATH=./app concurrent --kill-others \"nodemon app/server\" \"node webpack.server.js\" \"gulp css:watch\"",
+    "start-prod": "npm run build && DEBUG=true RETHINKDB_HOST=147.135.131.12 RETHINKDB_PASSWORD=9jYqGM4udXkvwgs4CcrUGYlYYlNurKzsJPEwWaLM41o= NODE_ENV=production PORT=3005 NODE_PATH=./app node  app/server",
     "test": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js' -w",
     "test:ci": "cross-env NODE_ENV=test cross-env NODE_PATH=./app mocha --compilers js:babel-register -r app/spec/support/setup.mocha.js --recursive 'app/spec/**/*.test.js'",
     "webpack": "webpack",
@@ -14,8 +14,8 @@
     "build": "rimraf ./dist/ && npm run bower && NODE_ENV=production npm run webpack --optimize-minimize -p && gulp prod && echo $(git rev-parse --short HEAD) > version.txt"
   },
   "engines": {
-    "node": "5.12.0",
-    "npm": "3.10.9",
+    "node": "6.11.4",
+    "npm": "3.10.10",
     "bower": "1.7.9"
   },
   "dependencies": {
@@ -103,7 +103,7 @@
     "rewire": "^2.3.4",
     "rewire-webpack": "^1.0.0",
     "rimraf": "^2.5.4",
-    "searchkit": "1.0.0-7",
+    "searchkit": "^2.3.0-6",
     "serve-favicon": "^2.3.0",
     "sinon": "^1.17.1",
     "sinon-chai": "^2.8.0",
