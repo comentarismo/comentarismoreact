@@ -342,7 +342,7 @@ class Intro extends Component {
                                         {commentators[article].reduction.map((news) => {
 
                                             let content = "";
-                                            if (news.languages == targetLang && count < 1) {
+                                            if (news.languages === targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getCommentatorLink(news)}>
                                                     <Card key={news.id} style={commentatorStyle} className="box">
