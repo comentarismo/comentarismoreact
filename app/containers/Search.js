@@ -48,9 +48,9 @@ const RefinementOption = (props) => (
 const SelectedFilter = (props) => (
     <div className={props.bemBlocks.option().
         mix(props.bemBlocks.container('item')).
-        mix(`selected-filter--${props.filterId}`)()}>
+        mix(`selected-filter--${props.filterId}`)}>
         <div className={props.bemBlocks.option(
-            'name')}>{props.labelKey}: {props.labelKey == 'Sentiment' ?
+            'name')}>{props.labelKey}: {props.labelKey === 'Sentiment' ?
             <Sentiment sentiment={props.labelValue}/> : props.labelValue}</div>
         <div className={props.bemBlocks.option('remove-action')}
              onClick={props.removeFilter}>x
@@ -162,6 +162,13 @@ class Search extends Component {
                             fields={['operator']}
                             title="Source"
                             id="operator"/>
+                        
+                        <RefinementListFilter
+                            id="sentiment"
+                            title="Sentiment"
+                            field="sentiment"
+                            operator="AND"
+                            size={5} itemComponent={RefinementOption}/>
                         
                     </SideBar>
                     

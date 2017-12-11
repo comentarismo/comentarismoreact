@@ -9,7 +9,7 @@ class SearchNewsCommentsList extends React.Component {
 	render() {
 		const {hits} = this.props;
 		
-		if (!hits || hits.length == 0) {
+		if (!hits || hits.length === 0) {
 			return ("")
 		}
 		
@@ -36,7 +36,7 @@ class SearchNewsCommentsList extends React.Component {
 						const _hit = _.extend({}, hit._source, hit.highlight)
 						return (
 							
-							<tr key={_hit._id}>
+							<tr key={_hit._id + _hit.nick}>
 								<td><img style={{height: '24px', width: '24px'}}
 								         src={`/static/img/sources/${_hit.operator}.png`}/></td>
 								<td><b>
