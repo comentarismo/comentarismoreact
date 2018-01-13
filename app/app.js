@@ -1,25 +1,26 @@
-import 'babel-polyfill';
+import 'babel-polyfill'
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import { browserHistory } from 'react-router'
 
-import configureStore from 'store/configureStore';
-import createRoutes from 'routes/index';
-import { Provider } from 'react-redux';
+import configureStore from 'store/configureStore'
+import createRoutes from 'routes/index'
+import { Provider } from 'react-redux'
 
-let reduxState;
-if (window.__REDUX_STATE__) {
-  try {
-    reduxState = JSON.parse(unescape(__REDUX_STATE__));
-  } catch (e) {
-  }
+let reduxState = window.__REDUX_STATE__;
+if (reduxState && typeof reduxState === 'string') {
+    try {
+        reduxState = JSON.parse(reduxState);
+    } catch (e) {
+        console.log('REACT FAILED TO HYDRATE STATE!! ', e)
+    }
 }
 
-const store = configureStore(reduxState);
+const store = configureStore(reduxState)
 
 ReactDOM.render((
-  <Provider store={store}>
-    { createRoutes(browserHistory) }
-  </Provider>
-), document.getElementById('root'));
+    <Provider store={store}>
+        {createRoutes(browserHistory)}
+    </Provider>
+), document.getElementById('root'))

@@ -30,8 +30,8 @@
   else window.addEventListener('load', loadDeferredStyles);
 </script>
 <div id="root"><%- html %></div>
-<script type="text/javascript" charset="utf-8">
-    window.__REDUX_STATE__ = '<%= reduxState %>';
+<script>
+    window.__REDUX_STATE__ = <%- reduxState %>;
 </script>
 
 <% scriptSrcs.forEach(function(src){ %>

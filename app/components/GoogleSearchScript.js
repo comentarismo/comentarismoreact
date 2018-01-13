@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
+import _ from 'lodash'
 
 var $ = require("jquery");
 var pos = require('pos');

@@ -135,17 +135,17 @@ var client = redis.createClient({
     retry_strategy: function (options) {
 
         if (options.error && options.error.code === 'ECONNREFUSED') {
-            console.log('ERROR: REDIS, ECONNREFUSED, ', err)
+            console.log('ERROR: REDIS, ECONNREFUSED, ', options)
             // End reconnecting on a specific error and flush all commands with a individual error
             return new Error('The server refused the connection');
         }
         if (options.total_retry_time > 1000 * 60 * 60) {
-            console.log('ERROR: REDIS, options.total_retry_time > 1000 * 60 * 60, ', err)
+            console.log('ERROR: REDIS, options.total_retry_time > 1000 * 60 * 60, ', options)
             // End reconnecting after a specific timeout and flush all commands with a individual error
             return new Error('Retry time exhausted');
         }
         if (options.times_connected > 10) {
-            console.log('ERROR: REDIS, options.times_connected > 10, ', err)
+            console.log('ERROR: REDIS, options.times_connected > 10, ', options)
             // End reconnecting with built in error
             return undefined;
         }
@@ -1451,7 +1451,7 @@ server.get('*', limiter, (req, res, next) => {
             let [getCurrentUrl, unsubscribe] = subscribeUrl();
 
             getReduxPromise().then(() => {
-                let reduxState = escape(JSON.stringify(store.getState()));
+                let reduxState = JSON.stringify(store.getState());
                 let html = ReactDOMServer.renderToString(
                     <Provider store={store}>
                         { <RouterContext {...renderProps}/> }
@@ -1471,7 +1471,7 @@ server.get('*', limiter, (req, res, next) => {
 
                 let head = Helmet.rewind();
                 //logger.info("Helmet.rewind -> "+head.title.toString());
-                if (head.title.toString() == "<title data-react-helmet=\"true\"></title>") {
+                if (head.title.toString() === "<title data-react-helmet=\"true\"></title>") {
                     head.title = "<title data-react-helmet=\"true\">Loading ... </title>";
                 }
 
