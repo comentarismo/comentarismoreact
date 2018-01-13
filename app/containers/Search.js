@@ -20,7 +20,6 @@ import {
     LayoutResults,
     ActionBar,
     ActionBarRow,
-    MovieHitsGridItem,
     TagCloud,
     RefinementListFilter,
     NoHits,
@@ -32,7 +31,15 @@ import {
     HierarchicalMenuFilter,
     Pagination,
     ResetFilters,
+    ViewSwitcherToggle,
+    SortingSelector,
+    ViewSwitcherHits
 } from 'searchkit'
+
+import {
+    SearchHitsGridItem,
+    SearchHitsListItem,
+} from 'components/ResultComponents'
 
 const RefinementOption = (props) => (
     <div className={props.bemBlocks.option().
@@ -105,13 +112,14 @@ class Search extends Component {
         }
         
         // const searchkit = new SearchkitManager('//localhost:9000/elk/_all', {
-        const searchkit = new SearchkitManager("https://apis.comentarismo.com/elk/_all", {
-            searchOnLoad: searchOnLoad,
-            useHistory: !isServer,
-            httpHeaders: {
-                // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
-            },
-        })
+        const searchkit = new SearchkitManager(
+            'https://apis.comentarismo.com/elk/_all', {
+                searchOnLoad: searchOnLoad,
+                useHistory: !isServer,
+                httpHeaders: {
+                    // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
+                },
+            })
         
         searchkit.setQueryProcessor((plainQueryObject) => {
             console.log('queryProcessor, ', plainQueryObject)
@@ -169,7 +177,7 @@ class Search extends Component {
                             field="sentiment"
                             operator="AND"
                             size={5} itemComponent={RefinementOption}/>
-                        
+                    
                     </SideBar>
                     
                     <LayoutResults>
@@ -178,6 +186,32 @@ class Search extends Component {
                             
                             <ActionBarRow>
                                 <HitsStats component={customHitStats}/>
+                                
+                                <ViewSwitcherToggle/>
+                                <SortingSelector options={[
+                                    {
+                                        label: 'Latest Comments',
+                                        field: 'date',
+                                        order: 'desc',
+                                        defaultOption: true,
+                                    },
+                                    {
+                                        label: 'Earliest Comments',
+                                        field: 'date',
+                                        order: 'asc',
+                                    },
+                                    {
+                                        label: 'Sentiment (Bad to Good)',
+                                        field: 'sentiment',
+                                        order: 'asc',
+                                    },
+                                    {
+                                        label: 'Sentiment (Good to Bad)',
+                                        field: 'sentiment',
+                                        order: 'desc',
+                                    },
+                                
+                                ]}/>
                             </ActionBarRow>
                             
                             <ActionBarRow>
@@ -191,15 +225,20 @@ class Search extends Component {
                         
                         <Hits mod="sk-hits-list" hitsPerPage={5}
                               listComponent={SearchNewsCommentsList}
-                              highlightFields={['comment', 'nick', 'title']}
+                              highlightFields={[
+                                  'comment',
+                                  'nick',
+                                  'title',
+                                  'date']}
                               sourceFilter={[
                                   'title',
                                   'comment',
                                   'nick',
                                   'operator',
                                   'titleurlize',
-                                  'sentiment']}/>
-                        <NoHits/>
+                                  'sentiment', 'date']}/>
+                        
+                        <NoHits suggestionField={'title'}/>
                         <Pagination showNumbers={true}/>
                     
                     </LayoutResults>

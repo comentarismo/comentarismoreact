@@ -3,6 +3,7 @@ import React, {Component, ReactClass, PropTypes} from 'react';
 import * as _ from "lodash";
 
 import Sentiment from "components/Sentiment";
+import Date from "components/Date"
 
 class SearchNewsCommentsList extends React.Component {
 	
@@ -29,6 +30,7 @@ class SearchNewsCommentsList extends React.Component {
 						<th>Author</th>
 						<th>Comment</th>
 						<th>News</th>
+						<th>Date</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -40,18 +42,23 @@ class SearchNewsCommentsList extends React.Component {
 								<td><img style={{height: '24px', width: '24px'}}
 								         src={`/static/img/sources/${_hit.operator}.png`}/></td>
 								<td><b>
-									<a target="_blank" href={`/news/${_hit.titleurlize}`} className="sk-hits-grid-hit"
+									<div
 									   dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.nick", _hit.nick)}}/>
 								</b></td>
 								
 								<td>
 									<Sentiment sentiment={hit._source ? hit._source.sentiment : ""}/>
-									<b><a target="_blank" href={`/news/${_hit.titleurlize}`} className="sk-hits-grid-hit"
+									<b><div
 									      dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.comment", _hit.comment)}}/></b>
 								</td>
 								<td><b>
 									<a target="_blank" href={`/news/${_hit.titleurlize}`} className="sk-hits-grid-hit"
 									   dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.title", _hit.title)}}/>
+								</b>
+								</td>
+								<td><b>
+									<Date style={{fontSize: '14px'}} date={_.get(_hit, "highlight.title", _hit.date)}/>
+									
 								</b>
 								</td>
 							</tr>  )
