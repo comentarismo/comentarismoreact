@@ -93,7 +93,6 @@ if (process.env.NODE_ENV === 'production') {
     scriptSrcs = [
         `/assets/${GIT_HASH}/vendor.js`,
         `/assets/${GIT_HASH}/app.js`,
-        `/assets/${GIT_HASH}/all.min.js`
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,

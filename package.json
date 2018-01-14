@@ -19,7 +19,7 @@
     "bower": "1.7.9"
   },
   "dependencies": {
-    "assets-webpack-plugin": "3.4.0",
+    "assets-webpack-plugin": "^3.5.1",
     "babel-core": "^6.3.15",
     "babel-loader": "^6.2.0",
     "babel-plugin-react-transform": "^2.0.0",
@@ -110,8 +110,8 @@
     "sitemap": "^1.6.0",
     "styled-components": "^1.4.4",
     "superagent": "^1.8.3",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.0",
     "winston": "^2.2.0",
     "wreck": "^12.2.2",
     "xml2js": "^0.4.16"
