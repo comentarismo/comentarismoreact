@@ -36,10 +36,7 @@ import {
     ViewSwitcherHits
 } from 'searchkit'
 
-import {
-    SearchHitsGridItem,
-    SearchHitsListItem,
-} from 'components/ResultComponents'
+
 
 const RefinementOption = (props) => (
     <div className={props.bemBlocks.option().
