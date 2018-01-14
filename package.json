@@ -14,8 +14,8 @@
     "build": "rimraf ./dist/ && npm run bower && NODE_ENV=production npm run webpack --optimize-minimize -p && gulp prod && echo $(git rev-parse --short HEAD) > version.txt"
   },
   "engines": {
-    "node": "6.11.4",
-    "npm": "3.10.10",
+    "node": "9.4.0",
+    "npm": "5.6.0",
     "bower": "1.7.9"
   },
   "dependencies": {
