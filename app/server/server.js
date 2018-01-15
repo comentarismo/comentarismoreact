@@ -97,7 +97,6 @@ if (process.env.NODE_ENV === 'production') {
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
-        `/assets/${GIT_HASH}/all.min.css`,
     ];
 } else {
     scriptSrcs = [
@@ -109,7 +108,6 @@ if (process.env.NODE_ENV === 'production') {
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
-        '/static/all.css'
     ];
 }
 
