@@ -13,16 +13,11 @@ var buildProperties = {
     GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || 'DEVELOP',
     cssFiles: [
         //'app/styles/main.scss',
-        'app/css/all.css',
         './vendor/comentarismo-client.css',
-        './bower_components/bootstrap/dist/css/bootstrap.css',
-        './bower_components/bootstrap/dist/maps/bootstrap.css.map',
-        './bower_components/components-font-awesome/css/font-awesome.css'
     ],
-    comentarismoApi: [
+    assetFiles: [
         './vendor/app.js',
         './vendor/vendor.js',
-        './vendor/dev.js',
         './vendor/comentarismo-client.js',
         './vendor/comentarismo-client-min.map.json',
         './vendor/comentarismo-client-min.js',
@@ -100,7 +95,7 @@ gulp.task('minify-js', function () {
 });
 
 gulp.task('vendor', function () {
-    gulp.src(buildProperties.comentarismoApi)
+    gulp.src(buildProperties.assetFiles)
         .pipe(gulp.dest(buildProperties.publicDir + '/static'))
         .on('error', function (error) {
             console.log(error);
