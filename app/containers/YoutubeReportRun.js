@@ -1,4 +1,5 @@
-import React, {ReactClass} from 'react';
+import React from 'react';
+var createReactClass = require('create-react-class');
 
 import {State, Navigation} from 'react-router';
 
@@ -10,7 +11,7 @@ import {GoogleSearchScript} from 'components/GoogleSearchScript';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 
-var YoutubeReportRun = React.createClass({
+var YoutubeReportRun = createReactClass({
     displayName: 'Sentiment',
 
     getInitialState: function () {

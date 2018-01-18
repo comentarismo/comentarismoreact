@@ -1,8 +1,8 @@
 'use strict';
 
 var React = require('react');
-import Date from "components/Date";
-import Image from "components/Image";
+var createReactClass = require('create-react-class');
+
 
 import config from 'config'
 var host = config.API_URL;
@@ -15,7 +15,7 @@ import {CtrBtns,FormGroup,FormGroupTextArea,handleDeleteButton,handleSaveButton,
 import Icon from "components/Icon"
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'CommentatorComponent',
 
 

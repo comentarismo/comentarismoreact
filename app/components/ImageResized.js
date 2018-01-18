@@ -1,13 +1,14 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 var jdenticon = require("jdenticon");
 var md5 = require('md5');
 var $ = require('jquery');
 var base64Encode = require("../util/imgresizer").base64Encode;
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'Image',
 
     onError: function () {

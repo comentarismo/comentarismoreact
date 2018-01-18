@@ -1,4 +1,7 @@
-import React, {Component, ReactClass, PropTypes} from 'react';
+import React, {Component} from 'react';
+var createReactClass = require('create-react-class');
+
+import PropTypes from 'prop-types';
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
 import {ImageSlide} from 'components/ImageSlide';
@@ -6,7 +9,7 @@ import {ImageSlide} from 'components/ImageSlide';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 
-var Empty = React.createClass({
+var Empty = createReactClass({
     render: function () {
         return (
             <div>Bad Server, no donuts for you.</div>
@@ -14,7 +17,7 @@ var Empty = React.createClass({
     }
 });
 
-var PlayButton = React.createClass({
+var PlayButton = createReactClass({
     render: function () {
         return (
             <FlatButton  onClick={this.props.onClick}>
@@ -24,7 +27,7 @@ var PlayButton = React.createClass({
     }
 });
 
-var PauseButton = React.createClass({
+var PauseButton = createReactClass({
     render: function () {
         return (
             <FlatButton onClick={this.props.onClick}>
@@ -34,7 +37,7 @@ var PauseButton = React.createClass({
     }
 });
 
-var PreviousButton = React.createClass({
+var PreviousButton = createReactClass({
     render: function () {
         return (
             <FlatButton onClick={this.props.onClick}>
@@ -44,7 +47,7 @@ var PreviousButton = React.createClass({
     }
 });
 
-var NextButton = React.createClass({
+var NextButton = createReactClass({
     render: function () {
         return (
             <FlatButton onClick={this.props.onClick}>
@@ -55,7 +58,7 @@ var NextButton = React.createClass({
 });
 
 
-var PlayImages = React.createClass({
+var PlayImages = createReactClass({
 
     getInitialState: function () {
         let {images} = this.props;

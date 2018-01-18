@@ -1,7 +1,8 @@
 'use strict';
 
 var React = require('react');
-import Date from "components/Date";
+var createReactClass = require('create-react-class');
+
 import Image from "components/Image";
 
 import config from 'config'
@@ -14,7 +15,7 @@ var crud = require("./crud");
 import {CtrBtns,FormGroup,FormGroupTextArea,handleDeleteButton,handleSaveButton,handleChange,getInitialState} from "./crud"
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'NewsComponent',
 
 

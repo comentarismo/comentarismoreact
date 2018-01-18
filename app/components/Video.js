@@ -1,13 +1,14 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Icon from "components/Icon"
 
 var jdenticon = require("jdenticon");
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'Video',
 
     getTitle: function () {

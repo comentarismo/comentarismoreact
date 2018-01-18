@@ -1,9 +1,13 @@
-import React, { Component,ReactClass,PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+var createReactClass = require('create-react-class');
+
+
 import Like from 'components/Like';
 import DisLike from 'components/DisLike';
 import {CommentSlide} from 'components/CommentSlide';
 
-var Empty = React.createClass({
+var Empty = createReactClass({
     render: function () {
         return (
             <div>Bad Server, no donuts for you.</div>
@@ -11,7 +15,7 @@ var Empty = React.createClass({
     }
 });
 
-var PlayButton = React.createClass({
+var PlayButton = createReactClass({
     render: function () {
         return (
             <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
@@ -21,7 +25,7 @@ var PlayButton = React.createClass({
     }
 });
 
-var PauseButton = React.createClass({
+var PauseButton = createReactClass({
     render: function () {
         return (
             <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
@@ -31,7 +35,7 @@ var PauseButton = React.createClass({
     }
 });
 
-var PreviousButton = React.createClass({
+var PreviousButton = createReactClass({
     render: function () {
         return (
             <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
@@ -41,7 +45,7 @@ var PreviousButton = React.createClass({
     }
 });
 
-var NextButton = React.createClass({
+var NextButton = createReactClass({
     render: function () {
         return (
             <div className="col-xs-4 next btn btn-custom" onClick={this.props.onClick}>
@@ -52,7 +56,7 @@ var NextButton = React.createClass({
 });
 
 
-var PlayComment = React.createClass({
+var PlayComment = createReactClass({
 
     getInitialState: function () {
         let { comment,skip } = this.props;

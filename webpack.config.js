@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 var AssetsPlugin = require('assets-webpack-plugin')
+var CompressionPlugin = require("compression-webpack-plugin");
 
 var GIT_HASH = require('child_process').
     execSync('git rev-parse --short HEAD').
@@ -75,6 +76,7 @@ if (DEBUG) {
             },
         }),
         new webpack.optimize.UglifyJsPlugin({
+            mangle: true,
             compress: {
                 warnings: false,
                 screw_ie8: true,
@@ -92,7 +94,17 @@ if (DEBUG) {
             },
             sourceMap: false,
             minimize: true,
+            exclude: [/\.min\.js$/gi]
         }),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new CompressionPlugin({
+          asset: "[path].gz[query]",
+          algorithm: "gzip",
+          test: /\.js$|\.css$|\.html$/,
+          threshold: 10240,
+          minRatio: 0
+        }),
+        new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HashedModuleIdsPlugin(),
         new AssetsPlugin({path: path.join(__dirname, 'vendor')}),
     ])

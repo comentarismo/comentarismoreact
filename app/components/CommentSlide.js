@@ -1,4 +1,6 @@
 import React from 'react';
+var createReactClass = require('create-react-class');
+
 import {XDiv} from 'components/XDiv';
 import {ShareNetworks} from 'components/ShareNetworks';
 import Date from "components/Date";
@@ -8,7 +10,7 @@ import Sentiment from "components/Sentiment";
 //import config from 'config'
 //var host = config.BASE_URL;
 
-var CommentSlide = React.createClass({
+var CommentSlide = createReactClass({
     render: function () {
         let { comment } = this.props;
 

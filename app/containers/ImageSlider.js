@@ -1,7 +1,8 @@
 import React from 'react';
-//The MIT License (MIT) Copyright (c) 2016 React Image Slider
+var createReactClass = require('create-react-class');
 
-export default React.createClass({
+//The MIT License (MIT) Copyright (c) 2016 React Image Slider
+export default createReactClass({
     getDefaultProps() {
         return {
             isInfinite: true,

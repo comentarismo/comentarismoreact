@@ -14,7 +14,7 @@ var crud = require("./crud");
 import {CtrBtns,FormGroup,FormGroupTextArea,handleDeleteButton,handleSaveButton,handleChange,getInitialState} from "./crud"
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'NewsComponent',
 
 

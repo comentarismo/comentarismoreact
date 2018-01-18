@@ -1,4 +1,6 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
+
 var _ = require("underscore");
 
 function handleDeleteButton($,target,cb){
@@ -149,7 +151,7 @@ function getInitialState(article,avoidKey){
     return targetObj
 }
 
-var CtrBtns = React.createClass({
+var CtrBtns = createReactClass({
     render: function () {
         return (
             <div className='col-sm-offset-20 col-xs-12'>
@@ -164,7 +166,7 @@ var CtrBtns = React.createClass({
     }
 });
 
-var FormGroup = React.createClass({
+var FormGroup = createReactClass({
     render: function () {
         return (
             <div className='form-group'>
@@ -178,7 +180,7 @@ var FormGroup = React.createClass({
     }
 });
 
-var FormGroupTextArea = React.createClass({
+var FormGroupTextArea = createReactClass({
     render: function () {
         return (
             <div className='form-group'>

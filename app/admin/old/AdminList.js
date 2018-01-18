@@ -1,4 +1,7 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
+var createReactClass = require('create-react-class');
+
 import { connect } from 'react-redux'
 import { loadCommentators } from 'actions/commentators'
 import { Link } from 'react-router'
@@ -168,7 +171,7 @@ class CommentatorContainer extends Component {
 }
 
 
-var UserList = React.createClass({
+var UserList = createReactClass({
     render: function () {
         var props = this.props;
         return (
@@ -192,7 +195,7 @@ var UserList = React.createClass({
     }
 });
 
-var CommentatorList = React.createClass({
+var CommentatorList = createReactClass({
     render: function () {
         var props = this.props;
         return (
@@ -233,7 +236,7 @@ var CommentatorList = React.createClass({
 
 var Sidebar = require('react-sidebar').default;
 
-var CommentsList = React.createClass({
+var CommentsList = createReactClass({
 
     onclickSpam: function (event) {
         var props = this.props;
@@ -300,7 +303,7 @@ var CommentsList = React.createClass({
     }
 });
 
-var NewsList = React.createClass({
+var NewsList = createReactClass({
     render: function () {
         var props = this.props;
         return (

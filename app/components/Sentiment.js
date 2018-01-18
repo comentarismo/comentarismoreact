@@ -1,4 +1,6 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
+
 var emojione = require("emojione");
 
 var terrible = " Terrible!";
@@ -29,7 +31,7 @@ var emojis = {
     "6": emojione.shortnameToUnicode(":no_mouth:") + unknown
 };
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     render: function () {
         return (<div
             dangerouslySetInnerHTML={{__html:emojis[this.props.sentiment] }}></div>);

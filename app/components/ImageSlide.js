@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+var createReactClass = require('create-react-class');
 
 import { Popover } from 'react-bootstrap'
 import {
@@ -10,7 +11,7 @@ var Drift
 
 import $ from 'jquery'
 
-var ImageSlide = React.createClass({
+var ImageSlide = createReactClass({
     render: function () {
         let {image} = this.props
         

@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
+var createReactClass = require('create-react-class');
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'AlexaRank',
 
     render: function () {

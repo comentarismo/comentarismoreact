@@ -1,5 +1,7 @@
-import React, {Component, ReactClass, PropTypes} from 'react';
+import React, {Component} from 'react';
+var createReactClass = require('create-react-class');
 
+import PropTypes from 'prop-types';
 import {State, Navigation} from 'react-router';
 
 import {connect} from 'react-redux';
@@ -117,7 +119,7 @@ var emojis = {
 	"Unknown": unknown + emojione.shortnameToUnicode(":no_mouth:")
 };
 
-var Sentiment = React.createClass({
+var Sentiment = createReactClass({
 	displayName: 'Sentiment',
 	
 	getInitialState: function () {
@@ -496,7 +498,7 @@ var Sentiment = React.createClass({
 	}
 });
 
-var PlayButton = React.createClass({
+var PlayButton = createReactClass({
 	render: function () {
 		return (
 			<div className="col-xs-3 btn btn-custom" onClick={this.props.onClick}>
@@ -506,7 +508,7 @@ var PlayButton = React.createClass({
 	}
 });
 
-var CommentsView = React.createClass({
+var CommentsView = createReactClass({
 	displayName: 'CommentsView',
 	
 	getInitialState: function () {

@@ -1,4 +1,7 @@
-import React, { Component,ReactClass,PropTypes } from 'react';
+import React, { Component} from 'react';
+var createReactClass = require('create-react-class');
+
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -15,7 +18,7 @@ import {CommentSlide} from 'components/CommentSlide';
 var analytics = require('ga-browser')();
 
 
-var Slide = React.createClass({
+var Slide = createReactClass({
     render: function () {
         let { comment } = this.props;
 
@@ -70,7 +73,7 @@ var Slide = React.createClass({
     }
 });
 
-var Slideshow = React.createClass({
+var Slideshow = createReactClass({
 
     getInitialState: function () {
         let { comment } = this.props

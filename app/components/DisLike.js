@@ -1,12 +1,13 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 import config from 'config'
 var host = config.API_URL;
 var analytics = require('ga-browser')();
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'DisLike',
 
     getInitialState: function () {

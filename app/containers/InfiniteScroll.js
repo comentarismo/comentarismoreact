@@ -1,11 +1,14 @@
 var $ = require('jquery');
+var createReactClass = require('create-react-class');
+import DOM from 'react-dom-factories';
+
 
 module.exports = function (React) {
     if (React.addons && React.addons.InfiniteScroll) {
         return React.addons.InfiniteScroll;
     }
     React.addons = React.addons || {};
-    var InfiniteScroll = React.addons.InfiniteScroll = React.createClass({
+    var InfiniteScroll = React.addons.InfiniteScroll = createReactClass({
         getDefaultProps: function () {
             return {
                 skip: 0,
@@ -26,10 +29,10 @@ module.exports = function (React) {
         },
         render: function () {
             var props = this.props;
-            return React.DOM.div(null, props.children, props.hasMore && (props.loader || InfiniteScroll._defaultLoader));
+            return DOM.div(null, props.children, props.hasMore && (props.loader || InfiniteScroll._defaultLoader));
         },
         scrollListener: function () {
-            var willScroll = $(window).scrollTop() == $(document).height() - $(window).height();
+            var willScroll = $(window).scrollTop() === $(document).height() - $(window).height();
             if (willScroll) {
                 this.detachScrollListener();
                 // call loadMore after detachScrollListener to allow

@@ -1,7 +1,9 @@
 'use strict';
 
 var React = require('react');
-module.exports = React.createClass({
+var createReactClass = require('create-react-class');
+
+module.exports = createReactClass({
     displayName: 'ExternalScripts',
     shouldComponentUpdate: function() {
         return false;

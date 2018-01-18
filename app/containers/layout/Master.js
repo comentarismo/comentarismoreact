@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component } from 'react';
+import PropTypes from 'prop-types';
 // import Title from 'react-title-component';
 import AppBar from 'material-ui/AppBar';
 // import IconButton from 'material-ui/IconButton';
@@ -205,7 +206,7 @@ class Master extends Component {
         return (
             <div>
                 <AppBar
-                    onLeftIconButtonTouchTap={this.handleTouchTapLeftIconButton}
+                    onLeftIconButtonClick={this.handleTouchTapLeftIconButton}
                     title={ <a href="/#" onClick={this.showHome}
                                  style={{color: '#fff', textDecoration: 'none', float: 'left', fontSize: '16px'}}> C O M E N T A R I S M O </a>}
                     zDepth={0}

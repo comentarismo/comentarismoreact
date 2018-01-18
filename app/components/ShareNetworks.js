@@ -1,9 +1,11 @@
 import React from 'react';
+var createReactClass = require('create-react-class');
+
 import config from 'config'
 var BASE_URL = config.BASE_URL;
 var analytics = require('ga-browser')();
 
-var ShareNetworks = React.createClass({
+var ShareNetworks = createReactClass({
 
     componentDidMount: function () {
         analytics('create', 'UA-51773618-1', 'auto');
