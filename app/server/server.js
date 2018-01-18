@@ -1,4 +1,5 @@
 import Express from 'express';
+import serveStatic from 'serve-static';
 import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -57,6 +58,9 @@ let server = new Express();
 let port = process.env.PORT || 3002;
 let scriptSrcs;
 
+//Helmet package - 11 security modules
+const helmet = require('helmet');
+
 var RETHINKDB_HOST = process.env.RETHINKDB_HOST || 'g7-box';
 var RETHINKDB_PORT = process.env.RETHINKDB_PORT || 28015;
 var RETHINKDB_PASSWORD = process.env.RETHINKDB_PASSWORD;
@@ -70,7 +74,7 @@ var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
 var REDIS_EXPIRE = process.env.REDIS_EXPIRE || '10'; //1h
 
-var GIT_HASH = process.env.GIT_HASH;
+var GIT_HASH = process.env.GIT_HASH || "0" ;
 var fs = require('fs');
 fs.readFile(path.join(__dirname, '../..', 'version.txt'), function (err, githash) {
     if (!err && githash) {
@@ -183,11 +187,15 @@ var limiter = new RateLimit({
 server.use(limiter);
 server.use(compression());
 
-server.use(Express.static(path.join(__dirname, '../..', 'dist')));
+//start security
+server.use(helmet());
+
+server.use(serveStatic(path.join(__dirname, '../..', 'dist')));
 
 var parseUrl = require('parseurl');
 server.use("/assets/:GIT_HASH", (req,res) => {
     
+    res.setHeader('Content-Type', 'application/javascript');
     var GIT_HASH = req.params.GIT_HASH;
     
     var PATH  = parseUrl(req).pathname.replace(`/${GIT_HASH}/`, '');
