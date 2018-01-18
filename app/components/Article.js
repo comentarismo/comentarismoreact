@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 var base64Encode = require("../util/imgresizer").base64Encode;
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
@@ -17,7 +18,7 @@ var jdenticon = require("jdenticon");
 var md5 = require('md5');
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'Article',
 
     getImageElement: function () {

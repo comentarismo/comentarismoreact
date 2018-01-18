@@ -1,5 +1,5 @@
-import React, {Component, ReactClass, PropTypes} from 'react';
-
+import React, {Component, ReactClass} from 'react';
+import PropTypes from 'prop-types';
 import * as _ from "lodash";
 
 import Icon from "components/Icon";

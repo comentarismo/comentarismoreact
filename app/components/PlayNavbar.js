@@ -1,10 +1,12 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
+
 import { Navbar,Nav,NavItem,NavDropdown,MenuItem } from 'react-bootstrap';
 var analytics = require('ga-browser')();
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'MainNavbar',
 
     onError: function () {
