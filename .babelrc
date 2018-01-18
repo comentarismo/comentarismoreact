@@ -4,5 +4,8 @@
     "test": {
       "plugins": [ "babel-plugin-rewire" ]
     }
-  }
+  },
+  "plugins": [
+    ["babel-plugin-styled-components", {"ssr": true}]
+  ]
 }

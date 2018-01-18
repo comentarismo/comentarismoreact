@@ -6,7 +6,7 @@ import {RouterContext, match} from 'react-router';
 // import {GoogleSearchScript} from "components/GoogleSearchScript"
 import favicon from 'serve-favicon';
 import redis from "redis";
-import {createMemoryHistory, useQueries} from 'history';
+import {createMemoryHistory,createLocation} from 'history';
 import compression from 'compression';
 import Promise from 'bluebird';
 
@@ -1314,8 +1314,15 @@ server.get("/random", limiter, (req, res) => {
 //TODO: cache sitemap with redis
 
 server.get('*', limiter, (req, res, next) => {
-    let history = useQueries(createMemoryHistory)();
-    let location = history.createLocation(req.url);
+    let history = createMemoryHistory({
+      initialEntries: [ '/' ],  // The initial URLs in the history stack
+      initialIndex: 0,          // The starting index in the history stack
+      keyLength: 6,             // The length of location.key
+      // A function to use to confirm navigation with the user. Required
+      // if you return string prompts from transition hooks (see below)
+      getUserConfirmation: null
+    });
+    let location = createLocation(req.url);
     let reqUrl = location.pathname + location.search;
 
     let store = configureStore();
