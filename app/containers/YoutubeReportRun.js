@@ -50,12 +50,7 @@ var YoutubeReportRun = createReactClass({
     },
 
     render: function () {
-        const style = {
-            width: '85%',
-            margin: 20,
-            textAlign: 'center',
-            display: 'inline-block',
-        };
+      
         return (
             <div>
                     <CardHeader
@@ -65,9 +60,9 @@ var YoutubeReportRun = createReactClass({
                     />
 
                     <CardText>
-                        <div id="navbar" className="navbar-collapse collapse">
-                            <div className="navbar-form navbar-left form-horizontal">
-                                    <input type="text" className="form-control" placeholder="Post URL" name="vid"
+                        <div id="navbar" >
+                            <div >
+                                    <input type="text" placeholder="Post URL" name="vid"
                                            value={this.state.vid} onChange={this.handleChange}
                                            style={{width: "350px"}}/>
                                     <FormControl componentClass="select" placeholder="select" value={this.state.lang}
@@ -81,13 +76,13 @@ var YoutubeReportRun = createReactClass({
                                         <option value="hr">Croatian</option>
                                     </FormControl>
 
-                                    <a className="btn btn-primary" onClick={this.runReport}>Run
+                                    <a onClick={this.runReport}>Run
                                     </a>
                             </div>
                         </div>
                     </CardText>
                     <CardActions>
-                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
+                        <button type="button" data-toggle="collapse"
                                 data-target="#navbar"
                                 aria-expanded="false" aria-controls="navbar">
                             <span className="sr-only">Toggle navigation</span>

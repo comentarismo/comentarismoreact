@@ -10,6 +10,7 @@ import commentDetail from 'reducers/commentDetail';
 
 import suggestCommentDetail from 'reducers/suggestCommentDetail'
 import introDetail from 'reducers/introDetail'
+import introProductDetail from 'reducers/introProductDetail'
 import adminDetail from 'reducers/adminDetail'
 
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     articleDetail,
     productDetail,
     introDetail,
+    introProductDetail,
     adminDetail
 });
 

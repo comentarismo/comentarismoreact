@@ -1,19 +1,30 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux'
 import { loadCommentators } from 'actions/commentators'
-import { Link } from 'react-router'
 import _ from 'lodash'
 
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import {getAllByIndexFilterSkipLimit} from '../middleware/sa';
 
 import Icon from "components/Icon"
-import Date from "components/Date"
 import Helmet from "react-helmet";
 import { Tabs, Tab } from 'material-ui/Tabs';
+import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
+import moment from 'moment';
+import {Grid, Row, Col} from 'react-styled-flexboxgrid';
+
 import Autocomplete from 'components/Autocomplete'
+
+
+const style = {
+    height: '600px',
+    width: '400px',
+    textAlign: 'left',
+    boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
+    borderRadius: '2px',
+    margin: '20px 20px 20px 0'
+};
 
 class CommentatorsProductContainer extends Component {
     //static fetchData({ store, params }) {
@@ -42,12 +53,12 @@ class CommentatorsProductContainer extends Component {
         //console.log(index,value);
         getAllByIndexFilterSkipLimit("commentator_product", index, value, skip, limit, "totalComments", function (err, res) {
             // Do something
-            if (err || !res || res.body.length == 0) {
+            if (err || !res || res.body.length === 0) {
                 //this.props.params.hasMore = false;
                 this.setState({hasMore: false});
             } else {
                 var articles = res.body;
-                var hasMore = articles.length == limit;
+                var hasMore = articles.length === limit;
                 var newArticles = _.union(this.state.articles, articles);
 
                 this.setState({skip: skip, limit: limit, articles: newArticles, hasMore: hasMore});
@@ -59,7 +70,7 @@ class CommentatorsProductContainer extends Component {
     getLoaderElement() {
         return (
             <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i></div>
+                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'/></div>
             </div>
         );
     }
@@ -111,47 +122,54 @@ class CommentatorsProductContainer extends Component {
     
                 </Tabs>
                 
-                <div className="row single-post-row">
-                    <div className="col-sm-12 col-sm-offset-0 col-xs-12 article-body">
-                        <div className="col-xs-12">
-                            <div className="content">
-                                <div className="posts">
-                                    <InfiniteScroll
-                                        ref='masonryContainer'
-                                        skip={0}
-                                        limit={30}
-                                        loader={this.getLoaderElement()}
-                                        loadMore={this.handlePageChange.bind(this)}
-                                        hasMore={this.state.hasMore}>
-                                        {
-                                            this.state.articles.map((q)=> {
-                                                return (
-                                                    <div className="col-lg-3 col-md-3 col-sm-5 col-xs-10">
-                                                        <a href={`/commentator_product/${q.id}`} className='thumbnail article'>
-                                                            <div className="imageNoPadding">
-                                                                <Icon nick={q.nick}/>
-                                                            </div>
-                                                            <div className='caption'>
-                                                                <h3 className='article-header'>{q.nick}</h3>
-                                                                <p>Last seen: <Date date={q.maxDate}/></p>
-                                                                Interest:
-                                                                {q.genre && Object.keys(q.genre).map(function (char, idx) {
-                                                                    return <span> {q.genre[idx]} </span>
-                                                                }.bind(this))}
-                                                                <p className='source'>Total
-                                                                    Comments {q.totalComments}</p>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </InfiniteScroll>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <Grid fluid={true}>
+                    <InfiniteScroll
+                        ref='masonryContainer'
+                        skip={0}
+                        limit={30}
+                        loader={this.getLoaderElement()}
+                        loadMore={this.handlePageChange.bind(this)}
+                        hasMore={this.state.hasMore}>
+                        <Row style={{ marginLeft: '5rem'}}>
+                        {
+                            
+                            this.state.articles.map((comentator)=> {
+                                return (
+                                     <Row style={{ marginLeft: '5rem'}}>
+                                        <a href={`/commentator_product/${comentator.id}`}>
+                                             <Card key={comentator.id} style={style}>
+                                                    <CardHeader
+                                                                avatar={<Icon nick={comentator.nick}/>}/>
+                                                    <CardMedia
+                                                        overlay={<CardTitle
+                                                            style={{height: '45px', padding: '0 10px'}} title={<span
+                                                            style={{
+                                                                fontSize: '14px !important',
+                                                                lineHeight: '1.5'
+                                                            }}>{comentator.nick}</span>}/>}>
+                                                       
+                                                    </CardMedia>
+                                                    
+                                                     <CardTitle
+                                                         title={<div><b>Interests:</b>
+                                                        {comentator.genre && Object.keys(comentator.genre).map(function (count, idx) {
+                                                            return (count < 5 ? <span> {comentator.genre[idx]} </span> : '.')
+                                                        }.bind(this))}</div>}
+                                                         subtitle={<span style={{paddingTop: '5px', fontSize: '12px !important', textTransform: 'uppercase'}}> <b>Last seen:</b> {moment(comentator.maxDate).format('MMMM Do YYYY, h:mm')}</span>}
+                                                     />
+                                                 
+                                                    <CardTitle
+                                                        title={<span
+                                                            style={{padding: '3px', background: '#656972', color: '#fff', fontSize: '12px !important', textTransform: 'uppercase'}}>Total  Comments {comentator.totalComments}</span>}/>
+                                             </Card>
+                                        </a>
+                                     </Row>
+                                )
+                            })
+                        }
+                        </Row>
+                    </InfiniteScroll>
+                 </Grid>
             </div>
         )
     }

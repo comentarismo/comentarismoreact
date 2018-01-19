@@ -4,8 +4,6 @@ import {connect} from 'react-redux'
 import {loadArticles} from 'actions/articles'
 import _ from 'lodash'
 
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-
 import {Tabs, Tab} from 'material-ui/Tabs';
 import Autocomplete from 'components/Autocomplete'
 
@@ -17,6 +15,8 @@ var Video = require('components/Video');
 var InfiniteScroll = require('./InfiniteScroll')(React);
 import Helmet from "react-helmet";
 import {YoutubeReportRun} from "containers/YoutubeReportRun";
+import {Grid,Row} from 'react-styled-flexboxgrid';
+
 
 class ArticleContainer extends Component {
     // static fetchData({store, params}) {
@@ -41,12 +41,12 @@ class ArticleContainer extends Component {
         getAllByRangeIndexOrderByFilterSkipLimit('sentiment_report', index,
             value, skip, limit, 'date', 'desc', 10, function (err, res) {
                 // Do something
-                if (err || !res || res.body.length == 0) {
+                if (err || !res || res.body.length === 0) {
                     //this.props.params.hasMore = false;
                     this.setState({hasMore: false})
                 } else {
                     var articles = res.body
-                    var hasMore = articles.length == limit
+                    var hasMore = articles.length === limit
                     var newArticles = _.union(this.state.articles, articles)
                     
                     this.setState({
@@ -63,8 +63,7 @@ class ArticleContainer extends Component {
     getLoaderElement () {
         return (
             <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i
-                    className='fa fa-cog fa-spin'></i></div>
+                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'/></div>
             </div>
         )
     }
@@ -123,25 +122,29 @@ class ArticleContainer extends Component {
                 
                 </Tabs>
                 
-                <YoutubeReportRun/>
-                <InfiniteScroll
-                    ref='masonryContainer'
-                    skip={0}
-                    limit={50}
-                    loader={this.getLoaderElement()}
-                    loadMore={this.handlePageChange.bind(this)}
-                    hasMore={this.state.hasMore}>
-                    {
-                        this.state.articles.map(function (article) {
-                            return (
-                                <Video
-                                    key={article.id}
-                                    video={article}
-                                />
-                            )
-                        })
-                    }
-                </InfiniteScroll>
+                <Grid fluid={true}>
+                    <YoutubeReportRun/>
+                    <InfiniteScroll
+                        ref='masonryContainer'
+                        skip={0}
+                        limit={50}
+                        loader={this.getLoaderElement()}
+                        loadMore={this.handlePageChange.bind(this)}
+                        hasMore={this.state.hasMore}>
+                        <Row style={{ marginLeft: '5rem'}}>
+                        {
+                            this.state.articles.map(function (article) {
+                                return (
+                                    <Video
+                                        key={article.id}
+                                        video={article}
+                                    />
+                                )
+                            })
+                        }
+                        </Row>
+                    </InfiniteScroll>
+                </Grid>
             </div>
         )
     }

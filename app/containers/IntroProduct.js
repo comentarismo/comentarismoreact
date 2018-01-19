@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 
 import Helmet from "react-helmet";
 
-import {loadIntroDetail} from 'actions/intro'
+import {introProductDetail} from 'actions/intro'
 
 import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
@@ -34,7 +34,7 @@ class IntroProduct extends Component {
         var skip = params.skip || "0";
         var limit = params.limit || "50";
         
-        return store.dispatch(loadIntroDetail({index, value, skip, limit}))
+        return store.dispatch(introProductDetail({index, value, skip, limit}))
     }
     
     componentDidMount() {
@@ -410,18 +410,18 @@ class IntroProduct extends Component {
 
 function mapStateToProps(state) {
     return {
-        commentators: state.introDetail.commentators,
-        news: state.introDetail.news,
-        commentaries: state.introDetail.commentaries,
+        commentators: state.introProductDetail.commentators,
+        news: state.introProductDetail.news,
+        commentaries: state.introProductDetail.commentaries,
     }
 }
 
 IntroProduct.propTypes = {
-    commentators: PropTypes.any.isRequired,
-    news: PropTypes.any.isRequired,
-    commentaries: PropTypes.any.isRequired,
+    commentators: PropTypes.any,
+    news: PropTypes.any,
+    commentaries: PropTypes.any,
 };
 
 
 export {IntroProduct}
-export default connect(mapStateToProps, {loadIntroDetail})(IntroProduct)
+export default connect(mapStateToProps, {introProductDetail})(IntroProduct)

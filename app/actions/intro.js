@@ -18,3 +18,22 @@ export function loadIntroDetail({ index,value }) {
         ]
     }
 }
+
+
+export const LOADED_INTRO_PRODUCTS = Symbol('LOADED_INTRO_PRODUCTS')
+export function introProductDetail({ index,value }) {
+    //console.log("loading Intro data");
+    return {
+        [CHAIN_API]: [
+            ()=> {
+                return {
+                    [CALL_API]: {
+                        method: 'get',
+                        path: `${config.BASE_URL}/apihomepage?index=${index}&value=${value}`,
+                        successType: LOADED_INTRO_PRODUCTS
+                    }
+                }
+            }
+        ]
+    }
+}

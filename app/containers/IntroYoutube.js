@@ -413,9 +413,9 @@ function mapStateToProps(state) {
 }
 
 Intro.propTypes = {
-    commentators: PropTypes.any.isRequired,
-    news: PropTypes.any.isRequired,
-    commentaries: PropTypes.any.isRequired,
+    commentators: PropTypes.any,
+    news: PropTypes.any,
+    commentaries: PropTypes.any,
 };
 
 
