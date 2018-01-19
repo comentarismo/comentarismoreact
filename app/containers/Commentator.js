@@ -34,10 +34,10 @@ class Commentator extends Component {
         return store.dispatch(loadCommentatorDetail({id, table}))
     }
     
-    componentDidMount () {
-        let {id} = this.props.params
-        this.props.loadCommentatorDetail({id, table})
-    }
+    // componentDidMount () {
+    //     let {id} = this.props.params
+    //     this.props.loadCommentatorDetail({id, table})
+    // }
     
     render () {
         let {commentator} = this.props
