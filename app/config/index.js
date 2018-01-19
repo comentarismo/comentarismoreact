@@ -1,7 +1,7 @@
-var BASE_URL = 'http://www.comentarismo.com';
-var API_URL = 'http://api.comentarismo.com';
-var ELK_URL = 'http://elk.comentarismo.com';
-var SNT_URL = 'http://sentiment.comentarismo.com';
+var BASE_URL = 'https://www.comentarismo.com';
+var API_URL = 'https://api.comentarismo.com';
+var ELK_URL = 'https://elk.comentarismo.com';
+var SNT_URL = 'https://sentiment.comentarismo.com';
 var FE_SNT_URL = '//sentiment.comentarismo.com';
 
 

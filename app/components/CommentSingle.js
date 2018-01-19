@@ -38,7 +38,7 @@ export default class CommentSingle extends React.Component {
                     showExpandableButton={true}
                 />
                 <CardTitle style={{textTransform: 'uppercase'}}
-                           title={`GENRE: ${q.genre}`}
+                           title={q.genre ? `GENRE: ${q.genre}`: ''}
                            subtitle={date} expandable={true}/>
                 
                 <CardText expandable={true}>

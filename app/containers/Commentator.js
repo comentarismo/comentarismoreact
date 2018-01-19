@@ -9,17 +9,14 @@ import Helmet from 'react-helmet'
 import CommentSingle from 'components/CommentSingle'
 
 import {
-    Card,
     CardActions,
     CardHeader,
-    CardMedia,
     CardTitle,
     CardText,
 } from 'material-ui/Card'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import { Grid, Row, Col } from 'react-styled-flexboxgrid'
 
-import FlatButton from 'material-ui/FlatButton'
 import LinearProgress from 'material-ui/LinearProgress'
 
 import Chip from 'material-ui/Chip'
@@ -60,7 +57,7 @@ class Commentator extends Component {
             
             var diffInDays = today.diff(targetDate, 'days') // x days
             
-            console.log('commentsavgperday, diffInDays, ', diffInDays)
+            // console.log('commentsavgperday, diffInDays, ', diffInDays)
             
             if (diffInDays > 0) {
                 commentsavgperday = parseFloat(commentator.totalComments) /

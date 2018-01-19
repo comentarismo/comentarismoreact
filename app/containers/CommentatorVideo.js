@@ -3,15 +3,30 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux'
 import { loadCommentatorDetail } from 'actions/commentators'
-import {XScript} from 'components/XScriptProduct'
-import Icon from "components/Icon"
-
-import Date from "components/Date"
 import Helmet from "react-helmet";
 var moment = require("moment");
 
 const table = "commentator_sentiment_report";
 const  $ = require("jquery");
+
+import Date from "components/Date"
+import CommentSingle from 'components/CommentSingle'
+
+import {
+    CardActions,
+    CardHeader,
+    CardTitle,
+    CardText,
+} from 'material-ui/Card'
+import { Tabs, Tab } from 'material-ui/Tabs'
+import { Grid, Row, Col } from 'react-styled-flexboxgrid'
+
+import LinearProgress from 'material-ui/LinearProgress'
+
+import Chip from 'material-ui/Chip'
+import Avatar from 'material-ui/Avatar'
+
+var ImageResized = require('components/ImageResized')
 
 class Commentator extends Component {
     static fetchData({ store, params }) {
@@ -56,7 +71,7 @@ class Commentator extends Component {
                 .css({'width': 100 + '%'})
                 .text('Comments Analyzed: ' + 100 + '%');
         }
-
+        
         return (
             <div>
                 <Helmet
@@ -70,152 +85,174 @@ class Commentator extends Component {
                     {"property": "og:title", "content": `${commentator && commentator.nick ? commentator.nick : id}`}
                     ]}
                 />
-                <div className="container-fluid single-post-wrapper">
-                    <a id="comentarismo-page" data-id={ commentator && commentator.nick ? commentator.nick : id }/>
-                    <a id="comentarismo-operator" data-id={ commentator && commentator.operator ? commentator.operator : "" }/>
-                    <div className="tm-embed-container" id="scriptContainer">
-                    </div>
-
-                    <div style={{height: '50px'}}></div>
-                    <div className="row single-post-row">
-                        <div className="article-body">
-                            <div className="container">
-                                <div className="row">
-                                    <div className="profile-div">
-                                        <div id="report">
-                                            <div id="header" className="stroke"
-                                                 style={{"backgroundImage": "url('" + "https://unsplash.it/1400/350?random" + "')"}}>
-                                                <h1 id="video_title">{commentator.nick}</h1>
-                                                <h4>
-                                                <span
-                                                    id="channel_title">{commentator.operator ? commentator.operator : ""}</span> on <span id="network_title">Comment & Sentiment Analysis Project</span>
-                                                </h4>
-
-                                                <hr/>
-
-                                                <div className="row bignums">
-                                                    <div className="col-xs-4 col-xs-offset-4">
-                                                <span
-                                                    id="total_comments">{commentator.totalComments ? commentator.totalComments : ""}</span>
-                                                        <span className="desc">Total Comments</span>
-                                                    </div>
-                                                    <div className="col-xs-4">
-                                                <span
-                                                    id="comments_per_day">{commentsavgperday && commentsavgperday !== "0" ? commentsavgperday.toFixed(2) : "0" }</span>
-                                                        <span className="desc">By Day</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="progress">
-                                                    <div className="progress-bar progress-bar-success" role="progressbar"
-                                                         aria-valuenow="0"
-                                                         aria-valuemin="0"
-                                                         aria-valuemax="100" style={{width: "0%"}}>
-                                                        Comments Analyzed: 0%
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                    <div className="profile-nick">
-                                        <div className="profile-nickName">
-                                            { commentator.nick }
-                                        </div>
-                                        <span>@{ commentator.slug }</span>
-                                    </div>
-                                    <div className="profile-divStats">
-                                        <ul className="profile-commentsfollowfollowers">
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">First Seen</span>
-                                                        <span
-                                                            className="profile-StatValue"><Date
-                                                            date={commentator.minDate}/></span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="profile-divStats">
-                                        <ul className="profile-commentsfollowfollowers">
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Last Seen</span>
-                                                        <span
-                                                            className="profile-StatValue"><Date
-                                                            date={commentator.maxDate}/></span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="profile-divStats">
-                                        <ul className="profile-commentsfollowfollowers">
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Countries</span>
-                                                        <span
-                                                            className="profile-StatValue">{ commentator.countries }</span>
-                                            </li>
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Languages</span>
-                                                        <span
-                                                            className="profile-StatValue">{ commentator.languages }</span>
-                                            </li>
-                                            <li className="profile-commentsfollowfollowersLi">
-                                                        <span
-                                                            className="profile-StatLabel profile-block">Followers</span>
-                                                <span className="profile-StatValue"/>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-xs-12" style={{height: '25px'}}></div>
-                                </div>
-    
+              
+                
+                
+                 <Grid fluid={false}
+                      style={{padding: '4rem', paddingBottom: '6rem'}}>
+                    
+                    <Row
+                        style={{
+                            background: '#fff',
+                            height: 'auto',
+                            fontFamily: 'Open Sans, sans-serif',
+                            color: '#656972',
+                        }}>
+                        <Row className="col-lg-6" style={{}}>
+                            <CardHeader style={{
+                                paddingTop: '0px !important',
+                                paddingBottom: '0px',
+                            }}
+                                        title={<span style={{
+                                            fontSize: '14px',
+                                            textTransform: 'uppercase',
+                                        }}>{commentator.operator
+                                            ? commentator.operator + ' '
+                                            : ' '}</span>}
+                                        avatar={<a
+                                            href={`/news/operator/${commentator.operator}`}><img
+                                            style={{
+                                                height: '24px',
+                                                width: '24px',
+                                                marginTop: '8px',
+                                            }}
+                                            src={`/static/img/sources/${commentator.operator}.png`}/></a>}
+                                        subtitle={<Date
+                                            style={{fontSize: '14px'}}
+                                            date={this.props.commentator.date}/>}
+                            />
+                            
+                            <CardTitle style={{
+                                paddingTop: '0px !important',
+                                paddingBottom: '0px',
+                            }}
+                                       title={<a target="_blank"
+                                                 href={commentator.link}><span
+                                           dangerouslySetInnerHTML={{__html: commentator.title}}/></a>}
+                                       titleStyle={{}}
+                                       subtitle={<a target="_blank"
+                                                    href={`/html/news.html?table=commentaries&skip=0&limit=50&operator=${commentator.operator}&key=operator_titleurlize&value=${commentator.titleurlize}`}><span
+                                           dangerouslySetInnerHTML={{__html: ''}}/></a>}
+                            />
+                        </Row>
+                        <Col key={commentator.id}>
+                            <Row>
                                 
-                                <div id="comentarismo-container" className="comentarismo-comment">
-                                    {
-                                        commentator.comments.map((q)=> {
-                                            var date = q.date && q.date.epoch_time ? <Date date={q.date}/> : q.date;
-
-                                            return (
-                                                <div key={q.id + Math.random()}
-                                                     className="col-md-12">
-                                                    <div className="col-sm-1 hidden-xs">
-                                                        <Icon nick={q.nick} size={50}/>
-                                                    </div>
-                                                    <div className="text-wrapper">
-                                                        <b>{ date }</b>
-                                                        <div role="meta" className="comentarismo-comment-header">
-                                                        <span className="author">
-                                                            <b>{ q.title }</b>
-                                                        </span>
-                                                            <a href="#" className="permalink"> Read more</a>
-                                                        </div>
-                                                        <div className="text">
-                                                            <p><b>{ q.nick }</b></p>
-                                                        </div>
-
-                                                        <div className="text">
-                                                            <p>{ q.comment }</p>
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        className="comentarismo-comment-footer">
-    
-                                                    </div>
-                                                    <div
-                                                        className="comentarismo-follow-up"
-                                                        id="-reply-thread"></div>
-                                                </div>
-                                            )
-                                        })
-                                    }
+                                <CardText style={{
+                                    paddingTop: '0px',
+                                    paddingBottom: '0px',
+                                }}>
+                                    
+                                    <Col key={commentator.id} style={{
+                                        fontSize: '14px',
+                                        textTransform: 'uppercase',
+                                    }}>
+                                        <Row>
+                                            <span>NICK: <b>{commentator.nick}</b></span>
+                                        </Row>
+                                        <Row>
+                                            <span>HANDLE: <b>@{commentator.slug}</b></span>
+                                        </Row>
+                                        
+                                        <Row>
+                                            Total Comments: <b>
+                                            <span
+                                                id="total_comments">{commentator.totalComments
+                                                ? commentator.totalComments
+                                                : ''}</span></b>
+                                        </Row>
+                                    </Col>
+                                    <Col key={commentator.id} style={{
+                                        fontSize: '14px',
+                                        textTransform: 'uppercase',
+                                    }}>
+                                        
+                                        <Row>
+                                            Average comments per day: <b> <span
+                                            id="comments_per_day"> {commentsavgperday &&
+                                        commentsavgperday !== '0'
+                                            ? commentsavgperday.toFixed(2)
+                                            : '0'}</span></b>
+                                        </Row>
+                                        
+                                        <Row><span> FIRST SEEN: <Date
+                                            date={commentator.minDate}/></span>
+                                        </Row>
+                                        <Row><span> LAST SEEN: <Date
+                                            date={commentator.maxDate}/></span>
+                                        </Row>
+                                        
+                                        <Row>
+                                            <span>COUNTRY: <b>{commentator.countries}</b></span>
+                                        </Row>
+                                        
+                                        <Row>
+                                            <span>LANGUAGE: <b>{commentator.languages}</b></span>
+                                        
+                                        </Row>
+                                    </Col>
+                                
+                                </CardText>
+                                <CardActions>
+                                
+                                
+                                </CardActions>
+                            </Row>
+                        </Col>
+                        <Col key={commentator.id}>
+                            <div className="progress" style={{
+                                color: '#656972',
+                                textTransform: 'uppercase',
+                            }}>
+                                <LinearProgress mode="determinate" value="100"/>
+                                <div
+                                    className="progress-bar progress-bar-success"
+                                    role="progressbar"
+                                    aria-valuenow="0"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    style={{width: '0%'}}>
+                                    
+                                    <b>Comments Analyzed: 0%</b>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                            <ImageResized src={commentator.image}
+                                          srcfallback={'https://unsplash.it/1400/350?random'}
+                                          id={commentator.id}
+                                          width="520" height="395"
+                                          quality="50"/>
+                        
+                        
+                        </Col>
+                        
+                    </Row>
+                
+                
+                </Grid>
+                
+                <Tabs style={{width: '100%'}}>
+                    
+                    <Tab label="Comments"
+                         style={{background: '#f5f5f5', color: '#333'}}>
+                        {
+                            commentator.comments.map((q) => {
+                               
+                                
+                                return (
+                                    <CommentSingle key={q.id} comment={q} />
+                                )
+                            })
+                        }
+                    
+                    </Tab>
+                    <Tab label="Report"
+                         style={{background: '#f5f5f5', color: '#333'}}>
+                    
+                    </Tab>
+                
+                </Tabs>
+                
+                
             </div>
         )
     }
