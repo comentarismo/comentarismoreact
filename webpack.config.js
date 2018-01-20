@@ -1,7 +1,8 @@
 var path = require('path')
 var webpack = require('webpack')
 var AssetsPlugin = require('assets-webpack-plugin')
-var CompressionPlugin = require("compression-webpack-plugin");
+var CompressionPlugin = require('compression-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 var GIT_HASH = require('child_process').
     execSync('git rev-parse --short HEAD').
@@ -23,9 +24,11 @@ var config = {
         
     },
     resolve: {
+        extensions: ['.js', '.scss'],
         modules: [
             path.resolve(__dirname, 'app'),
             'node_modules',
+            path.join(__dirname, 'vendor/searchkit/theming'),
         ],
     },
     output: {
@@ -33,6 +36,8 @@ var config = {
         filename: DEBUG ? '[name].js' : '[name].js',
     },
     plugins: [
+        new ExtractTextPlugin('theme.css', {allChunks: true}),
+        new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
@@ -46,6 +51,32 @@ var config = {
                 loader: 'babel-loader',
                 exclude: /node_modules/,
                 include: __dirname,
+            },
+            {
+                test: /\.scss$/,
+                loader: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                sourceMap: true,
+                                minimize: true,
+                                importLoaders: 2,
+                            },
+                        },
+                        {
+                            loader: 'postcss-loader',
+                        },
+                        {
+                            loader: 'sass-loader',
+                            options: {sourceMap: true},
+                        },
+                    ],
+                    
+                }),
+                include: path.join(__dirname,
+                    'vendor/searchkit/theming/**/*.scss'),
             },
         ],
     },
@@ -94,17 +125,16 @@ if (DEBUG) {
             },
             sourceMap: false,
             minimize: true,
-            exclude: [/\.min\.js$/gi]
+            exclude: [/\.min\.js$/gi],
         }),
         new webpack.NoEmitOnErrorsPlugin(),
         new CompressionPlugin({
-          asset: "[path].gz[query]",
-          algorithm: "gzip",
-          test: /\.js$|\.css$|\.html$/,
-          threshold: 10240,
-          minRatio: 0
+            asset: '[path].gz[query]',
+            algorithm: 'gzip',
+            test: /\.js$|\.css$|\.html$/,
+            threshold: 10240,
+            minRatio: 0,
         }),
-        new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HashedModuleIdsPlugin(),
         new AssetsPlugin({path: path.join(__dirname, 'vendor')}),
     ])

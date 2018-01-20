@@ -270,7 +270,7 @@ class IntroProduct extends Component {
                                                             title={<span
                                                                 style={{padding: '3px', background: '#656972', color: '#fff', fontSize: '12px !important', textTransform: 'uppercase'}}>{`${news.totalComments} Comments`}</span>}
                                                             subtitle={<span
-                                                                style={{fontSize: '12px !important'}}>{this.getTitle(news.resume)}</span>}/>
+                                                                style={{fontSize: '12px !important'}}>{this.getTitle(news.summary)}</span>}/>
                                                     </Card>
                                                 </a>
                                                 
@@ -303,7 +303,7 @@ class IntroProduct extends Component {
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
-                                            if (news.languages === targetLang && count < 6) {
+                                            if (news.languages === targetLang && count < 1) {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 

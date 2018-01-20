@@ -65,13 +65,14 @@
 </script>
 
 <div id="root"><%- html %></div>
-<script charset="UTF-8">
-    window.__data = <%- reduxState %>;
-</script>
 
 <% scriptSrcs.forEach(function(src){ %>
 <script defer src="<%= src %>"></script>
 <% }) %>
+
+<script defer charset="UTF-8">
+    window.__data = <%- reduxState %>;
+</script>
 
 </body>
 </html>

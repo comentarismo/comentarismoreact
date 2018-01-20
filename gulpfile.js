@@ -6,6 +6,7 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
+var sass = require('gulp-sass');
 
 
 var buildProperties = {
@@ -14,6 +15,10 @@ var buildProperties = {
     cssFiles: [
         //'app/styles/main.scss',
         './vendor/comentarismo-client.css',
+        // './bower_components/components-font-awesome/css/font-awesome.css',
+        './vendor/searchkit/dist/theming/components.css',
+        './vendor/searchkit/dist/theming/theme.css',
+        './vendor/searchkit/dist/theming/vars.css',
     ],
     assetFiles: [
         './vendor/app.js',
@@ -21,7 +26,6 @@ var buildProperties = {
         './vendor/comentarismo-client.js',
         './vendor/comentarismo-client-min.map.json',
         './vendor/comentarismo-client-min.js',
-        './vendor/search_theme.css',
     ],
     imageFiles: ['./img/**/*']
 };
@@ -44,7 +48,7 @@ gulp.task('css', ["sourcemaps"], function () {
         .on('end', function () {
             console.log('Done css concat dependencies.');
         }).pipe(rename('all.min.css'))
-        .pipe(cleanCSS({keepSpecialComments: 0, sourceMap: false,compatibility: 'ie8'}))
+        .pipe(cleanCSS({keepSpecialComments: 0, sourceMap: true,inline: ['none'],compatibility: 'ie8'}))
         .pipe(sourcemaps.write('maps'))
         .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
         .on('end', function () {
@@ -55,6 +59,25 @@ gulp.task('css', ["sourcemaps"], function () {
 gulp.task('css:watch', function () {
     gulp.watch('./app/styles/*', ['css']);
     gulp.watch('./app/css/*', ['css']);
+    gulp.watch('./app/styles/*', ['sass']);
+    gulp.watch('./vendor/searchkit/theming/*', ['searchkit']);
+    gulp.watch('./vendor/searchkit/theming/components/*', ['searchkit']);
+});
+
+gulp.task('searchkit', function () {
+ return gulp.src(['./vendor/searchkit/**/*.scss'])
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(sourcemaps.write('./maps'))
+  .pipe(gulp.dest('./vendor/searchkit/dist'));
+});
+
+gulp.task('sass', function () {
+ return gulp.src(['./app/styles/main.scss'])
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(sourcemaps.write('./maps'))
+  .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
 });
 
 gulp.task('js:watch', function () {
@@ -119,6 +142,6 @@ gulp.task('fonts', function () {
         });
 });
 
-gulp.task('default', ['css', 'fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
+gulp.task('default', ['sass','searchkit', 'fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
 
-gulp.task('prod', ['css', 'fonts', 'images', 'minify-js', 'vendor']);
+gulp.task('prod', ['sass','searchkit', 'fonts', 'images', 'minify-js', 'vendor']);
