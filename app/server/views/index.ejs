@@ -12,6 +12,9 @@
     </style>
 </head>
 <body>
+<script async charset="UTF-8">
+    window.__data = <%- reduxState %>;
+</script>
 <noscript id="deferred-styles">
     <% styleSrc.forEach(function(src){ %>
     <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
@@ -67,12 +70,8 @@
 <div id="root"><%- html %></div>
 
 <% scriptSrcs.forEach(function(src){ %>
-<script defer src="<%= src %>"></script>
+<script async src="<%= src %>"></script>
 <% }) %>
-
-<script defer charset="UTF-8">
-    window.__data = <%- reduxState %>;
-</script>
 
 </body>
 </html>
