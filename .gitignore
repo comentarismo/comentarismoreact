@@ -17,3 +17,4 @@ poc
 /dist/maps/
 /cert/flynn-ca.cer
 /vendor/dev.js
+/vendor/searchkit/dist

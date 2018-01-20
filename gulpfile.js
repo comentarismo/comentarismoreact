@@ -37,7 +37,7 @@ gulp.task('sourcemaps', function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('css', ["sourcemaps"], function () {
+gulp.task('css', ['searchkit','sass',"sourcemaps"], function () {
     return gulp.src(buildProperties.cssFiles)
         // .pipe($.sourcemaps.init())
         .pipe(concat('all.css'))
@@ -59,9 +59,9 @@ gulp.task('css', ["sourcemaps"], function () {
 gulp.task('css:watch', function () {
     gulp.watch('./app/styles/*', ['css']);
     gulp.watch('./app/css/*', ['css']);
-    gulp.watch('./app/styles/*', ['sass']);
-    gulp.watch('./vendor/searchkit/theming/*', ['searchkit']);
-    gulp.watch('./vendor/searchkit/theming/components/*', ['searchkit']);
+    gulp.watch('./app/styles/*', ['css']);
+    gulp.watch('./vendor/searchkit/theming/*', ['css']);
+    gulp.watch('./vendor/searchkit/theming/components/*', ['css']);
 });
 
 gulp.task('searchkit', function () {
@@ -142,6 +142,6 @@ gulp.task('fonts', function () {
         });
 });
 
-gulp.task('default', ['sass','searchkit', 'fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
+gulp.task('default', ['css','fonts', 'images', 'minify-js', 'vendor', 'css:watch']);
 
-gulp.task('prod', ['sass','searchkit', 'fonts', 'images', 'minify-js', 'vendor']);
+gulp.task('prod', ['css', 'fonts', 'images', 'minify-js', 'vendor']);
