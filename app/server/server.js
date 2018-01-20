@@ -82,7 +82,7 @@ var log = require("./logger");
 var logger = log.getLogger();
 /** LOGGER **/
 
-var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
+var WEBPACK_PORT = process.env.WEBPACK_POT || 3001;
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
@@ -94,6 +94,8 @@ if (process.env.NODE_ENV === 'production') {
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
+        // `/assets/${GIT_HASH}/all.css`,
+        '/static/all.min.css'
     ];
 } else {
     scriptSrcs = [
