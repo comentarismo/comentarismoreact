@@ -74,15 +74,8 @@ var RETHINKDB_TIMEOUT = process.env.RETHINKDB_TIMEOUT || 120;
 
 var REDIS_EXPIRE = process.env.REDIS_EXPIRE || '10'; //1h
 
-var GIT_HASH = process.env.GIT_HASH || "0" ;
-var fs = require('fs');
-fs.readFile(path.join(__dirname, '../..', 'version.txt'), function (err, githash) {
-    if (!err && githash) {
-        GIT_HASH = githash.toString().trim();
-    } else {
-        console.log("Could not open GIT_HASH :(", err);
-    }
-});
+var GIT_HASH = require("./version.js").GIT_HASH;
+var VERSION = require("./version.js").VERSION;
 
 /** LOGGER **/
 var log = require("./logger");
@@ -192,6 +185,14 @@ server.use(compression());
 server.use(helmet());
 
 server.use(serveStatic(path.join(__dirname, '../..', 'dist')));
+
+server.get('/versions.json', limiter, (req, res) => {
+    var versions = {
+        version:VERSION,
+        GIT_HASH:GIT_HASH
+    }
+    res.send(versions);
+})
 
 var parseUrl = require('parseurl');
 server.use("/assets/:GIT_HASH", (req,res) => {
@@ -349,12 +350,6 @@ server.get('/html/:page', limiter, (req,res, next) => {
     });
     
     
-})
-
-server.get('/versions.json', limiter, (req, res) => {
-    res.send([
-        "v0.16.7",
-        "v0.16.6"]);
 })
 
 server.get('/api/comment/:id', limiter, (req, res) => {
