@@ -230,7 +230,7 @@ class Intro extends Component {
                         fontWeight: 'bold',
                     }}>
                     Trending  News</div>
-                    <Row  style={{ marginLeft: '9rem'}}>
+                    <Row  style={{ marginLeft: '2rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
@@ -297,7 +297,7 @@ class Intro extends Component {
                     }}>
                     Trending  comments</div>
 
-                    <Row style={{ marginLeft: '8rem', marginRight: '8rem' }}>
+                    <Row style={{ marginLeft: '2rem', marginRight: '2rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
@@ -333,7 +333,7 @@ class Intro extends Component {
                     }}>
                     Active commentators</div>
 
-                    <Row style={{ marginLeft: '9rem'}}>
+                    <Row style={{ marginLeft: '2rem'}}>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;

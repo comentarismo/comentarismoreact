@@ -20,6 +20,8 @@ import {generateSitemap, generateIndexXml} from './sitemap';
 import Helmet from "react-helmet";
 
 const Wreck = require('wreck');
+var serialize = require('serialize-javascript');
+
 
 // var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 
@@ -94,6 +96,8 @@ if (process.env.NODE_ENV === 'production') {
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
+        // `/assets/${GIT_HASH}/all.css`,
+        '/static/all.min.css'
     ];
 } else {
     scriptSrcs = [
@@ -1459,7 +1463,6 @@ server.get('*', limiter, (req, res, next) => {
             let [getCurrentUrl, unsubscribe] = subscribeUrl();
 
             getReduxPromise().then(() => {
-                let reduxState = JSON.stringify(store.getState());
                 let html = ReactDOMServer.renderToString(
                     <Provider store={store}>
                         { <RouterContext {...renderProps}/> }
@@ -1476,6 +1479,9 @@ server.get('*', limiter, (req, res, next) => {
                 //    }})
                 //    //script({src: '/bundle.js'})
                 //));
+                
+                let reduxState = serialize(store.getState(),{isJSON: true});
+
 
                 let head = Helmet.rewind();
                 //logger.info("Helmet.rewind -> "+head.title.toString());
