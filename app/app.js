@@ -8,18 +8,13 @@ import configureStore from 'store/configureStore'
 import createRoutes from 'routes/index'
 import { Provider } from 'react-redux'
 
-let reduxState = window.__data
-if (reduxState && typeof reduxState === 'string') {
-    try {
-        reduxState = JSON.parse(reduxState)
-    } catch (e) {
-        console.log('REACT FAILED TO HYDRATE STATE!! ', e)
-    }
-} else if (!reduxState) {
-    console.log('REACT FAILED TO HYDRATE STATE!! ', window.__data)
+const preloadedState = window.__PRELOADED_STATE__
+if (!preloadedState) {
+    console.log('REACT FAILED TO HYDRATE STATE!! ', window.__PRELOADED_STATE__)
 }
+delete window.__PRELOADED_STATE__
 
-const store = configureStore(reduxState)
+const store = configureStore(preloadedState)
 
 ReactDOM.render((
     <Provider store={store}>

@@ -12,6 +12,8 @@ var GIT_HASH = require('child_process').
 console.log(`Building with GIT_HASH: ${GIT_HASH}`)
 
 var DEBUG = !(process.env.NODE_ENV === 'production')
+var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
+
 var env = {
     NODE_ENV: process.env.NODE_ENV,
     API_BASE_URL: process.env.API_BASE_URL,
@@ -84,14 +86,14 @@ var config = {
 
 if (DEBUG) {
     config.entry.dev = [
-        'webpack-dev-server/client?http://localhost:3001',
+        `webpack-dev-server/client?http://localhost:${WEBPACK_PORT}`,
         'webpack/hot/only-dev-server',
     ]
     
     config.plugins = config.plugins.concat([
         new webpack.HotModuleReplacementPlugin(),
     ])
-    config.output.publicPath = 'http://localhost:3001/static/'
+    config.output.publicPath = `http://localhost:${WEBPACK_PORT}/static/`
     config.module.loaders[0].query = {
         'env': {
             'development': {

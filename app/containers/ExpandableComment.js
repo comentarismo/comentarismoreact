@@ -85,7 +85,7 @@ export default class ExpandableComment extends React.Component {
     
     render() {
         return (
-            <Card style={style} class="col-xs-12" expanded={this.state.expanded}
+            <Card style={style} expanded={this.state.expanded}
                   onExpandChange={this.handleExpandChange}>
                 <CardHeader
                     title={<span>{this.props.comment.nick} </span>}
