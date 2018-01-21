@@ -5,23 +5,25 @@
     margin-bottom: 16px;
   }
 }
-
-.sk-action-bar {
-  .sk-panel {
-    &__header {
-      display: none;
-    }
-  }
-}
+//
+//.sk-action-bar {
+//  .sk-panel {
+//    &__header {
+//      display: none;
+//    }
+//  }
+//}
 
 .sk-panel {
   width: 100%;
 
   &__header {
-    color: $sk-title-color;
-    margin-bottom: 5px;
+    color: $comentarismo-black-text;
     font-weight: $sk-bold-weight;
+    font-family: $comentarismo-font-family;
     font-size: $sk-heading-font-size;
+    padding: 8px 0 8px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.0980392);
 
     &.is-collapsable  {
       cursor: pointer;

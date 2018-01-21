@@ -14,16 +14,17 @@
     -webkit-appearance: none;
     -moz-appearance:    none;
     appearance:         none;
-    background:$sk-selector-background;
-    padding:6px 10px;
+    background: $sk-layout-panel-background;
+    padding: 6px 10px;
     padding-right: 30px;
-    border:1px solid $sk-selector-border-color;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     outline:0;
-    font-weight:$sk-bold-weight;
-    font-size:$sk-text-font-size;
+    font-family: $comentarismo-font-family;
+    font-weight: $sk-medium-weight;
+    font-size: $sk-action-font-size;
     border-radius:$sk-border-radius;
     color:$sk-selector-text-color;
-    height: initial;
+    height: 40px;
     line-height: initial;
   }
 
@@ -31,7 +32,7 @@
     content:"";
     position:absolute;
     top:50%;
-    margin-top:-3px;
+    margin-top: 3px;
     right:10px;
     @include sk-arrow-down(6px);
     pointer-events: none;

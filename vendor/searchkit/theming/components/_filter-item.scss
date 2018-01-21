@@ -7,13 +7,11 @@
 @mixin filter-option {
   position:relative;
   cursor:pointer;
-  padding:0px 0;
-  line-height:22px;
+  padding: 4px 0;
   display:flex;
-  font-weight: $sk-light-weight;
 
   input#{&}__checkbox {
-    margin: 5px 5px 0 1px;
+    margin: 2px 8px 4px 0px;
     flex: 0 0 15px;
   }
 
@@ -30,12 +28,14 @@
   &__text {
     flex:auto;
     font-size:$sk-list-font-size;
-    color:$sk-list-text-color;
+    color:$comentarismo-secondary-text;
+    font-family: $sk-font-family;
   }
 
   &__count {
     font-size: $sk-list-secondary-font-size;
     text-align: right;
     color: $sk-list-secondary-text-color;
+    font-family: $sk-font-family;
   }
 }

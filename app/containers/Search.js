@@ -68,7 +68,7 @@ const customHitStats = (props) => {
     return (
         <div className={bemBlocks.container()} data-qa="hits-stats">
             <div className={bemBlocks.container('info')} data-qa="info">
-                We found {hitsCount} comments in {timeTaken}ms!
+                We found {hitsCount} comments!
             
             </div>
         </div>
@@ -218,9 +218,8 @@ class Search extends Component {
                             </ActionBarRow>
                         
                         </ActionBar>
-                        <Pagination showNumbers={true}/>
-                        
-                        <Hits mod="sk-hits-list" hitsPerPage={5}
+
+                        <Hits mod="sk-hits-list" hitsPerPage={10}
                               listComponent={SearchNewsCommentsList}
                               highlightFields={[
                                   'comment',

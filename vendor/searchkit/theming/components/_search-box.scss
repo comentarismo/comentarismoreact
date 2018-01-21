@@ -5,14 +5,17 @@
   flex: auto;
 
   form {
-    display:flex;
-    margin:0;
-    position:relative;
+    display: flex;
+    flex:1;
+    margin: 60px;
+    padding: $comentarismo-padding-medium;
+    position: relative;
+    box-shadow: $comentarismo-box-shadow;
   }
 
   &__icon {
     flex:0 20px 20px;
-    margin:10px 0 0 10px;
+    margin: 10px 0 0 10px;
     
     &:before {
       content:"";
@@ -29,7 +32,7 @@
     padding:10px 20px;
     width:100%;
     flex:3;
-    font-size:18px;
+    font-size: $sk-text-font-size;
     border:none;
     height: initial;
     line-height: initial;
