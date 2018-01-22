@@ -68,7 +68,7 @@ const customHitStats = (props) => {
     return (
         <div className={bemBlocks.container()} data-qa="hits-stats">
             <div className={bemBlocks.container('info')} data-qa="info">
-                We found {hitsCount} comments!
+                We found {hitsCount} comments ({timeTaken} milliseconds)
             
             </div>
         </div>

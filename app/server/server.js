@@ -88,16 +88,19 @@ var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
 
 let styleSrc;
 if (process.env.NODE_ENV === 'production') {
-    //let assets = require('../../dist/webpack-assets.json');
+    let assets = require(path.join(__dirname, '../..', 'dist/webpack-assets.json'));
     scriptSrcs = [
-        `/assets/${GIT_HASH}/vendor.js`,
-        `/assets/${GIT_HASH}/app.js`,
+        `/comentarismo-sw-file.js?hash=${GIT_HASH}`,
+        // `/assets/${GIT_HASH}/meta.js`,
+        // `/assets/${GIT_HASH}/app.js`,
+        `/${assets.manifest.js}?hash=${GIT_HASH}`,
+        `/${assets.app.js}?hash=${GIT_HASH}`,
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
         '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900',
         // `/assets/${GIT_HASH}/all.css`,
-        '/static/all.min.css'
+        `/static/all.min.css?hash=${GIT_HASH}`
     ];
 } else {
     scriptSrcs = [

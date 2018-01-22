@@ -15,6 +15,8 @@ var host = config.API_URL;
 import FlatButton from 'material-ui/FlatButton';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Link} from 'react-router';
+import Helmet from "react-helmet";
+var GIT_HASH = require("../../server/version.js").GIT_HASH;
 
 import {
     cyan500, cyan700,
@@ -205,6 +207,22 @@ class Master extends Component {
 
         return (
             <div>
+                <Helmet
+                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
+                    titleTemplate="Comentarismo.com - %s"
+                    meta={[
+                        {"name": "description", "content": "Welcome to Comentarismo"},
+                    ]}>
+                   <script dangerouslySetInnerHTML={{
+                     __html: `(function() {
+                       if(‘serviceWorker’ in navigator) {
+                        navigator.serviceWorker.register(‘/comentarismo-sw-file.js’);
+                       }
+                     })();`
+                    }}/>
+                </Helmet>
+                
                 <AppBar
                     onLeftIconButtonClick={this.handleTouchTapLeftIconButton}
                     title={ <a href="/#" onClick={this.showHome}

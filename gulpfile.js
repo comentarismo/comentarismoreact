@@ -22,10 +22,13 @@ var buildProperties = {
     ],
     assetFiles: [
         './vendor/app.js',
-        './vendor/vendor.js',
+        // './vendor/vendor.js',
         './vendor/comentarismo-client.js',
         './vendor/comentarismo-client-min.map.json',
         './vendor/comentarismo-client-min.js',
+        './pwa/manifest.json',
+        './pwa/localforage.js',
+        './pwa/ServiceWorkerWare.js',
     ],
     imageFiles: ['./img/**/*']
 };
