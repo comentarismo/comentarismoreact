@@ -22,6 +22,10 @@ import Helmet from "react-helmet";
 const Wreck = require('wreck');
 var serialize = require('serialize-javascript');
 
+// Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
+// user agent is not known.
+global.navigator = global.navigator || {};
+global.navigator.userAgent = global.navigator.userAgent || 'all';
 
 // var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 
@@ -95,6 +99,7 @@ if (process.env.NODE_ENV === 'production') {
         // `/assets/${GIT_HASH}/app.js`,
         `/${assets.manifest.js}?hash=${GIT_HASH}`,
         `/${assets.app.js}?hash=${GIT_HASH}`,
+        '/static/all.js',
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
@@ -104,9 +109,9 @@ if (process.env.NODE_ENV === 'production') {
     ];
 } else {
     scriptSrcs = [
-        `http://localhost:${WEBPACK_PORT}/static/vendor.js`,
-        `http://localhost:${WEBPACK_PORT}/static/dev.js`,
-        `http://localhost:${WEBPACK_PORT}/static/app.js`,
+        `http://localhost:${WEBPACK_PORT}/vendor.js`,
+        `http://localhost:${WEBPACK_PORT}/dev.js`,
+        `http://localhost:${WEBPACK_PORT}/app.js`,
         '/static/all.js',
     ];
     styleSrc = [
@@ -1493,9 +1498,8 @@ server.get('*', limiter, (req, res, next) => {
                 }
 
                 var searchCss = [];
-                // if (reqUrl.indexOf("/search") !== -1
-                //     || reqUrl.indexOf("/jcp") !== -1) {
-                // searchCss.push("/static/search_theme.css")
+                // if (reqUrl.indexOf("/report/") !== -1) {
+                //     searchCss.push("/static/all.min.css")
                 // }
 
                 if (getCurrentUrl() === reqUrl) {

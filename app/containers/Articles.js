@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import {connect} from 'react-redux'
 import {loadGenres} from 'actions/genres'
-import {Link} from 'react-router'
+// import {Link} from 'react-router'
 import _ from 'lodash'
 import RaisedButton from 'material-ui/RaisedButton';
-import MobileTearSheet from 'components/MobileTearSheet';
+import CircularProgress from 'material-ui/CircularProgress';
+
+// import MobileTearSheet from 'components/MobileTearSheet';
 import Date from "components/Date"
 
 import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
@@ -60,12 +62,12 @@ class ArticleContainer extends Component {
         }.bind(this));
     }
 
-    getLoaderElement() {
+    getLoaderElement () {
         return (
-            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i></div>
+            <div>
+                <CircularProgress size={80} thickness={5} />
             </div>
-        );
+        )
     }
 
     render() {
@@ -108,7 +110,7 @@ class ArticleContainer extends Component {
                             color: '#333',
                             height: '84px'
                         }}>
-                            <Autocomplete placeHolder={"News"}
+                            <Autocomplete key="autoc1" placeHolder={"News"}
                                           hintText={"Recommend me latest news"}/>
                         </Tab>
         
@@ -119,7 +121,7 @@ class ArticleContainer extends Component {
                             color: '#333',
                             height: '84px'
                         }}>
-                            <Autocomplete placeHolder={"Commentators"}
+                            <Autocomplete key="autoc2"  placeHolder={"Commentators"}
                                           hintText={"Recommend me Commentators"}/>
                         </Tab>
     

@@ -1,98 +1,139 @@
-import React, {Component} from 'react';
-var createReactClass = require('create-react-class');
+import React, { Component } from 'react'
 
-import PropTypes from 'prop-types';
-import {State, Navigation} from 'react-router';
+var S = require('jquery')
 
-import {connect} from 'react-redux';
+var createReactClass = require('create-react-class')
 
-import Helmet from "react-helmet";
-import Icon from "components/Icon"
+import PropTypes from 'prop-types'
+import { State, Navigation } from 'react-router'
 
-import {FormControl} from 'react-bootstrap';
-import {loadArticleDetail} from 'actions/articles'
+import { connect } from 'react-redux'
 
-import {loadSentimentCommentDetail} from 'actions/commentators'
-import {Grid, Row, Col} from 'react-styled-flexboxgrid';
-import Chip from 'material-ui/Chip';
-import FlatButton from 'material-ui/FlatButton';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import Helmet from 'react-helmet'
+import Icon from 'components/Icon'
 
-var $ = require('jquery')
-var emojione = require("emojione");
-import Date from "components/Date"
-import {Tabs, Tab} from 'material-ui/Tabs';
-import {GoogleSearchScript} from 'components/GoogleSearchScript';
+import { FormControl } from 'react-bootstrap'
+import { loadArticleDetail } from 'actions/articles'
 
-import {saSentimentCommentDetail} from '../middleware/sa';
+import { loadSentimentCommentDetail } from 'actions/commentators'
+import { Grid, Row, Col } from 'react-styled-flexboxgrid'
+import Chip from 'material-ui/Chip'
+import RaisedButton from 'material-ui/RaisedButton'
+import TextField from 'material-ui/TextField'
 
-import YouTube from 'react-youtube';
+import {
+    Card,
+    CardActions,
+    CardHeader,
+    CardMedia,
+    CardTitle,
+    CardText,
+} from 'material-ui/Card'
+import Avatar from 'material-ui/Avatar'
 
-import BubbleChart from 'components/BubbleChart';
+var emojione = require('emojione')
+import Date from 'components/Date'
+import { Tabs, Tab } from 'material-ui/Tabs'
+import CircularProgress from 'material-ui/CircularProgress'
 
-import {XScript} from 'components/XScriptYoutube'
+// import TextField from 'material-ui/TextField'
+//
+// import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
+// import Checkbox from 'material-ui/Checkbox'
+
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
+
+import { GoogleSearchScript } from 'components/GoogleSearchScript'
+
+import { saSentimentCommentDetail } from '../middleware/sa'
+
+import YouTube from 'react-youtube'
+
+import BubbleChart from 'components/BubbleChart'
+
+import { XScript } from 'components/XScriptYoutube'
+import {YoutubeReportRun} from "containers/YoutubeReportRun";
 
 class SentimentReport extends Component {
-    static fetchData({store, params}) {
-        let {url, lang, refresh} = params;
-        console.log("SentimentComment, fetchData -> ", url, lang, refresh);
+    static fetchData ({store, params}) {
+        let {url, lang, refresh} = params
+        console.log('SentimentComment, fetchData -> ', url, lang, refresh)
         return store.dispatch(loadSentimentCommentDetail({url, lang, refresh}))
     }
     
-    
-    constructor(props) {
-        super();
+    constructor (props) {
+        super()
         this.state = {
             comment: {},
-        };
+        }
     }
     
-    getUrlVars() {
-        var vars = [], hash;
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    getUrlVars () {
+        var vars = [], hash
+        var hashes = window.location.href.slice(window.location.href.indexOf(
+            '?') + 1).split('&')
         for (var i = 0; i < hashes.length; i++) {
-            hash = hashes[i].split('=');
-            vars.push(hash[0]);
-            vars[hash[0]] = hash[1];
+            hash = hashes[i].split('=')
+            vars.push(hash[0])
+            vars[hash[0]] = hash[1]
         }
-        return vars;
+        return vars
     }
     
-    render() {
+    render () {
         //console.log(this.props)
-        let {comment} = this.props;
-        let {url} = this.props.params;
+        let {comment} = this.props
+        let {url} = this.props.params
         if (typeof window !== 'undefined') {
-            var vars = this.getUrlVars();
-            var lang = vars["lang"]
-            var refresh = vars["refresh"]
-            console.log("render -> ", url, lang, refresh);
+            var vars = this.getUrlVars()
+            var lang = vars['lang']
+            var refresh = vars['refresh']
+            console.log('render -> ', url, lang, refresh)
         }
-        
         
         return (
             <div>
                 <Helmet
-                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    htmlAttributes={{'lang': 'en'}} // amp takes no value
                     title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                        {"name": "description", "content": "Welcome to Comentarismo"},
-                        {"property": "og:type", "content": "article"},
-                        {"property": "og:type", "content": "article"},
-    
-                        {"property": "og:title", "content": `${comment.title ? comment.title : ''}`},
-                        {"property": "og:video", "content": `${comment.url ? comment.url : ''}`},
-    
                         {
-                            "property": "og:image",
-                            "content": `${comment.metadata ? comment.metadata.thumbnail : "//comentarismo.com/static/img/comentarismo-extra-mini-logo.png" }`
-                        }
+                            'name': 'description',
+                            'content': 'Welcome to Comentarismo',
+                        },
+                        {
+                            'property': 'og:type',
+                            'content': 'article',
+                        },
+                        {
+                            'property': 'og:type',
+                            'content': 'article',
+                        },
+                        
+                        {
+                            'property': 'og:title',
+                            'content': `${comment.title ? comment.title : ''}`,
+                        },
+                        {
+                            'property': 'og:video',
+                            'content': `${comment.url ? comment.url : ''}`,
+                        },
+                        
+                        {
+                            'property': 'og:image',
+                            'content': `${comment.metadata
+                                ? comment.metadata.thumbnail
+                                : '//comentarismo.com/static/img/comentarismo-extra-mini-logo.png' }`,
+                        },
                     ]}
                 />
-                <Sentiment comment={comment} url={url} lang={lang} refresh={refresh}/>
-    
-                <XScript operator={comment.operator} page={comment.id} index="operator_uuid"/>
+                <Sentiment comment={comment} url={url} lang={comment && comment.metadata ? comment.metadata.language: null}
+                           refresh={refresh}/>
+                
+                <XScript operator={comment.operator} page={comment.id}
+                         index="operator_uuid"/>
                 
                 
                 <div className="clearfix"></div>
@@ -100,48 +141,63 @@ class SentimentReport extends Component {
                     <div className="container">
                         <div className="">
                             <div className="col-sm-12 text-center">
-                                <p className="copyright">© 2017 Comentarismo.com</p>
+                                <p className="copyright">© 2017
+                                    Comentarismo.com</p>
                             </div>
                         </div>
                     </div>
                 </footer>
             </div>
-        );
+        )
     }
 }
 
-var terrible = "Terrible!";
-var sucks = "Sucks";
-var bad = "Bad";
-var notgood = "Not Good";
-var eh = "Eh";
-var neutral = "Neutral";
-var ok = "OK";
-var good = "Good";
-var likeit = "Like It";
-var lovedit = "Loved It";
-var awesome = "Awesome!";
-var unknown = "Unknown";
+var terrible = 'Terrible!'
+var sucks = 'Sucks'
+var bad = 'Bad'
+var notgood = 'Not Good'
+var eh = 'Eh'
+var neutral = 'Neutral'
+var ok = 'OK'
+var good = 'Good'
+var likeit = 'Like It'
+var lovedit = 'Loved It'
+var awesome = 'Awesome!'
+var unknown = 'Unknown'
+
+var terribleInt = -5
+var sucksInt = -4
+var badInt = -3
+var notgoodInt = -2
+var ehInt = -1
+var neutralInt = 0
+var okInt = 1
+var goodInt = 2
+var likeitInt = 3
+var loveditInt = 4
+var awesomeInt = 5
+var unknownInt = 6
+
 var emojis = {
-    "Terrible!": terrible + emojione.shortnameToUnicode(":scream:"),
-    "Sucks": sucks + emojione.shortnameToUnicode(":angry:"),
-    "Bad": bad + emojione.shortnameToUnicode(":worried:"),
-    "Not Good": notgood + emojione.shortnameToUnicode(":unamused:"),
-    "Eh": eh + emojione.shortnameToUnicode(":confused:"),
-    "Neutral": neutral + emojione.shortnameToUnicode(":expressionless:"),
-    "OK": ok + emojione.shortnameToUnicode(":neutral_face:"),
-    "Good": good + emojione.shortnameToUnicode(":smile:"),
-    "Like It": likeit + emojione.shortnameToUnicode(":smiley:"),
-    "Loved It": lovedit + emojione.shortnameToUnicode(":yum:"),
-    "Awesome!": awesome + emojione.shortnameToUnicode(":grinning:"),
-    "Unknown": unknown + emojione.shortnameToUnicode(":no_mouth:")
-};
+    'Terrible!': terrible + emojione.shortnameToUnicode(':scream:'),
+    'Sucks': sucks + emojione.shortnameToUnicode(':angry:'),
+    'Bad': bad + emojione.shortnameToUnicode(':worried:'),
+    'Not Good': notgood + emojione.shortnameToUnicode(':unamused:'),
+    'Eh': eh + emojione.shortnameToUnicode(':confused:'),
+    'Neutral': neutral + emojione.shortnameToUnicode(':expressionless:'),
+    'OK': ok + emojione.shortnameToUnicode(':neutral_face:'),
+    'Good': good + emojione.shortnameToUnicode(':smile:'),
+    'Like It': likeit + emojione.shortnameToUnicode(':smiley:'),
+    'Loved It': lovedit + emojione.shortnameToUnicode(':yum:'),
+    'Awesome!': awesome + emojione.shortnameToUnicode(':grinning:'),
+    'Unknown': unknown + emojione.shortnameToUnicode(':no_mouth:'),
+}
 
 var Sentiment = createReactClass({
     displayName: 'Sentiment',
     
     getInitialState: function () {
-        let {url, comment, lang, refresh} = this.props;
+        let {url, comment, lang, refresh} = this.props
         
         return {
             vid: url,
@@ -152,318 +208,400 @@ var Sentiment = createReactClass({
         }
     },
     
-    componentDidMount() {
-        let {url, comment, lang, refresh} = this.props;
-        if (!comment || !comment.metadata || refresh) {
-            console.log("componentDidMount, could not get metadata, or refresh is enabled ... will perform with client side request-> ", url)
-            //this.props.loadSentimentCommentDetail({url});
+    next: function () {
+        let {url, comment, lang} = this.props
+        if (comment && comment.metadata && comment.keywords &&
+            comment.sentimentscores && comment.sentiment &&
+            comment.sentimentlist) {
+            console.log(
+                'INFO: Sentiment report looks perfect, going to re-use this for now :D')
             
-            saSentimentCommentDetail(url, lang, refresh, function (err, res) {
-                // Do something
-                if (err || !res || res.body.length === 0) {
-                    console.log("Got error when trying to fallback on sentiment report :| ", err)
-                } else {
-                    var comment = res.body;
-                    console.log("fallback ok :D , updating view ", comment.metadata);
-                    this.setState({comment: comment, lang: comment.metadata.language});
-                    // this.forceUpdate();
-                }
-            }.bind(this));
+            this._runReport()
             
+            return
         }
+        var that = this
+        saSentimentCommentDetail(url, lang, false, function (err, res) {
+            // Do something
+            if (err || !res || res.body.length === 0) {
+                console.log(
+                    'Got error when trying to fallback on sentiment report :| ',
+                    err)
+                
+                this.timeout = setTimeout(this.next, 1000)
+            } else {
+                var comment = res.body
+                
+                if (!comment || !comment.metadata || !comment.keywords ||
+                    !comment.sentiment || !comment.sentimentlist ||
+                    !comment.topcomments) {
+                    console.log(
+                        'Got error when trying to fallback on sentiment report :|, will retry again in 1s ',
+                        comment)
+                    this.timeout = setTimeout(this.next, 1000)
+                    return
+                }
+                
+                console.log('fallback ok :D , updating view ',
+                    comment.metadata)
+                this.setState(
+                    {comment: comment, lang: comment.metadata.language})
+                
+                that._runReport()
+                
+            }
+        }.bind(this))
+    },
+    
+    componentDidMount () {
+        this.timeout = setTimeout(this.next, 1000)
     },
     
     runReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/report/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "");
+            window.location.href = '/report/' +
+                encodeURIComponent(this.state.vid) + '?' +
+                (this.state.lang ? 'lang=' + this.state.lang : '')
         }
     },
     
-    
     updateReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/report/' + encodeURIComponent(this.state.vid) + "?" + (this.state.lang ? "lang=" + this.state.lang : "") + "&refresh=true";
+            window.location.href = '/report/' +
+                encodeURIComponent(this.state.vid) + '?' +
+                (this.state.lang ? 'lang=' + this.state.lang : '') +
+                '&refresh=true'
         }
     },
     
     handleChange: function (event) {
-        var change = event.target.value;
-        this.setState({vid: change});
+        var change = event.target.value
+        this.setState({vid: change})
     },
     
     handleChangeLang: function (event) {
-        var change = event.target.value;
-        this.setState({lang: change});
+        var change = event.target.value
+        this.setState({lang: change})
     },
     
-    _runReport(){
-        let {comment} = this.state;
+    _runReport () {
+        let {comment} = this.state
         
-        if (typeof window !== 'undefined' && comment && comment.metadata) {
-            $("#header").css({
-                "background-image": "url('" + comment.metadata.thumbnail + "')"
-            });
-            $(".progress-bar").attr('aria-valuenow', comment.commentcoveragepercent)
-                .css({'width': comment.commentcoveragepercent + '%'})
-                .text('Comments Analyzed: ' + comment.commentcoveragepercent + '%');
-            $("nav input").val(comment.url);
+        if (typeof window !== 'undefined' && comment && comment.keywords &&
+            comment.sentiment) {
             
-            var Chart = require("chart.js");
+            console.log('Going to generate report :D ')
+            
+            var Chart = require('chart.js')
             
             // Sort the keyword list
-            var sortable = [];
+            var sortable = []
             for (var k in comment.keywords) {
-                sortable.push([k, comment.keywords[k]]);
+                sortable.push([k, comment.keywords[k]])
             }
             
             sortable.sort(function (a, b) {
                 return b[1] - a[1]
             })
             
-            var y = 0;
+            var y = 0
             for (var s in sortable) {
-                y++;
-                $("#keywords").append('<tr><td>' + y + '.</td><td>' + sortable[s][0] + ' (' + sortable[s][1] + ')</td></tr>');
+                y++
+                S('#keywords').
+                    append('<tr><td>' + y + '.</td><td>' + sortable[s][0] +
+                        ' (' + sortable[s][1] + ')</td></tr>')
             }
             
             var elabels = [
-                emojis[terrible], emojis[sucks], emojis[bad], emojis[notgood], emojis[eh], emojis[neutral],
-                emojis[ok], emojis[good], emojis[likeit], emojis[lovedit], emojis[awesome], emojis[unknown]
-            ];
+                emojis[terrible],
+                emojis[sucks],
+                emojis[bad],
+                emojis[notgood],
+                emojis[eh],
+                emojis[neutral],
+                emojis[ok],
+                emojis[good],
+                emojis[likeit],
+                emojis[lovedit],
+                emojis[awesome],
+                emojis[unknown],
+            ]
             
-            var labels = [terrible, sucks, bad, notgood, eh, neutral, ok, good, likeit, lovedit, awesome, unknown];
-            var dp = {};
+            var labels = [
+                terrible,
+                sucks,
+                bad,
+                notgood,
+                eh,
+                neutral,
+                ok,
+                good,
+                likeit,
+                lovedit,
+                awesome,
+                unknown]
+            var dp = {}
             for (var x in comment.sentiment) {
-                var n = comment.sentiment[x]["name"];
-                if (n == "") {
-                    n = unknown;
+                var n = comment.sentiment[x]['name']
+                if (n === '') {
+                    n = unknown
                 }
-                var p = comment.sentiment[x]["percent"];
+                var p = comment.sentiment[x]['percent']
                 
-                dp[n] = p;
+                dp[n] = p
             }
-            var element = document.getElementById("myChart");
-            var ctx = {};
+            var element = document.getElementById('myChart')
+            var ctx = {}
             if (element) {
-                ctx = element.getContext("2d");
+                ctx = element.getContext('2d')
             }
             // Bar Chart
             var data = {
                 labels: elabels,
                 datasets: [
                     {
-                        label: "Percent",
+                        label: 'Percent',
                         backgroundColor: [
-                            "#040D45",
-                            "#0A0D57",
-                            "#0C0F63",
-                            "#111585",
-                            "#12168C",
-                            "#151AAD",
-                            "#2D32C4",
-                            "#3A3EC7",
-                            "#4D51C9",
-                            "#5F62C9",
-                            "#7679CC",
-                            "#8F91CC",
+                            '#040D45',
+                            '#0A0D57',
+                            '#0C0F63',
+                            '#111585',
+                            '#12168C',
+                            '#151AAD',
+                            '#2D32C4',
+                            '#3A3EC7',
+                            '#4D51C9',
+                            '#5F62C9',
+                            '#7679CC',
+                            '#8F91CC',
                         ],
-                        borderColor: "rgba(255,99,132,1)",
+                        borderColor: 'rgba(255,99,132,1)',
                         borderWidth: 1,
-                        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                        hoverBorderColor: "rgba(255,99,132,1)",
-                        data: [dv(dp[terrible], 0), dv(dp[sucks], 0), dv(dp[bad], 0), dv(dp[notgood], 0), dv(dp[eh], 0), dv(dp[neutral], 0), dv(dp[ok], 0), dv(dp[good], 0), dv(dp[likeit], 0), dv(dp[lovedit], 0), dv(dp[awesome], 0), dv(dp[unknown], 0)]
-                    }
-                ]
-            };
-            
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [
+                            dv(dp[terribleInt], 0),
+                            dv(dp[sucksInt], 0),
+                            dv(dp[badInt], 0),
+                            dv(dp[notgoodInt], 0),
+                            dv(dp[ehInt], 0),
+                            dv(dp[neutralInt], 0),
+                            dv(dp[okInt], 0),
+                            dv(dp[goodInt], 0),
+                            dv(dp[likeitInt], 0),
+                            dv(dp[loveditInt], 0),
+                            dv(dp[awesomeInt], 0),
+                            dv(dp[unknownInt], 0)],
+                    },
+                ],
+            }
             
             new Chart(ctx, {
                 type: 'bar',
                 data: data,
-                options: {showLines: false, responsive: false, maintainAspectRatio: true}
-            });
+                options: {
+                    showLines: false,
+                    responsive: false,
+                    maintainAspectRatio: true,
+                },
+            })
             
-            
-            var ctx2 = document.getElementById("scaleChart").getContext("2d");
+            var ctx2 = document.getElementById('scaleChart').getContext('2d')
             
             // Bar Chart
             var data2 = {
                 labels: elabels,
                 datasets: [
                     {
-                        label: "Percent",
+                        label: 'Percent',
                         backgroundColor: [
-                            "#040D45",
-                            "#0A0D57",
-                            "#0C0F63",
-                            "#111585",
-                            "#12168C",
-                            "#151AAD",
-                            "#2D32C4",
-                            "#3A3EC7",
-                            "#4D51C9",
-                            "#5F62C9",
-                            "#7679CC",
-                            "#8F91CC",
+                            '#040D45',
+                            '#0A0D57',
+                            '#0C0F63',
+                            '#111585',
+                            '#12168C',
+                            '#151AAD',
+                            '#2D32C4',
+                            '#3A3EC7',
+                            '#4D51C9',
+                            '#5F62C9',
+                            '#7679CC',
+                            '#8F91CC',
                         ],
-                        borderColor: "rgba(255,99,132,1)",
+                        borderColor: 'rgba(255,99,132,1)',
                         borderWidth: 1,
-                        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                        hoverBorderColor: "rgba(255,99,132,1)",
-                        data: [dv(dp[terrible], 0), dv(dp[sucks], 0), dv(dp[bad], 0), dv(dp[notgood], 0), dv(dp[eh], 0), dv(dp[neutral], 0), dv(dp[ok], 0), dv(dp[good], 0), dv(dp[likeit], 0), dv(dp[lovedit], 0), dv(dp[awesome], 0), dv(dp[unknown], 0)]
-                    }
-                ]
-            };
+                        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                        hoverBorderColor: 'rgba(255,99,132,1)',
+                        data: [
+                            dv(dp[terribleInt], 0),
+                            dv(dp[sucksInt], 0),
+                            dv(dp[badInt], 0),
+                            dv(dp[notgoodInt], 0),
+                            dv(dp[ehInt], 0),
+                            dv(dp[neutralInt], 0),
+                            dv(dp[okInt], 0),
+                            dv(dp[goodInt], 0),
+                            dv(dp[likeitInt], 0),
+                            dv(dp[loveditInt], 0),
+                            dv(dp[awesomeInt], 0),
+                            dv(dp[unknownInt], 0)],
+                    },
+                ],
+            }
             
+            new Chart(ctx2, {type: 'pie', data: data2, options: {}})
             
-            new Chart(ctx2, {type: 'pie', data: data2, options: {}});
-            
-            
+        } else {
+            console.log('ERROR: Could not load Charts :( ', comment)
         }
     },
     
     render: function () {
-        let {comment, numBubbles} = this.state;
+        let {comment, numBubbles} = this.state
+        
         if (!comment || !comment.metadata) {
             return (
-                <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                    <div className='thumbnail article text-center'>Youtube Sentiment Report is Loading <i
-                        className='fa fa-cog fa-spin'></i></div>
+                <div>
+                    <CircularProgress size={80} thickness={5}/>
                 </div>
             )
         }
         
-        var bubblechart = [];
-        
+        var bubblechart = []
         
         const opts = {
             height: '290',
             width: '640',
             playerVars: { // https://developers.google.com/youtube/player_parameters
-                autoplay: 1
-            }
-        };
-        if (this.state.comment.sentimentscores) {
+                autoplay: 0,
+            },
+        }
+        var bubblechartComponent = null
+        if (comment.sentimentscores) {
             
-            for (var u = 0; u < this.state.comment.sentimentscores.length; u++) {
+            for (var u = 0; u < comment.sentimentscores.length; u++) {
                 
-                var t = this.state.comment.sentimentscores[u];
-                if(t) {
+                var t = comment.sentimentscores[u]
+                if (t) {
                     Object.keys(t).forEach(function (key) {
                         var target = {
                             _id: key,
                             sentiment: t[key],
-                            value: bubblechart.length + 10
+                            value: bubblechart.length + 10,
                         }
                         if (bubblechart.length < numBubbles) {
-                            bubblechart.push(target);
+                            bubblechart.push(target)
                         }
-                    });
+                    })
                 }
             }
+            bubblechartComponent = <BubbleChart data={bubblechart}/>
+        } else {
+            console.log(
+                'ERROR: sentimentscores is not defined, bubble chart will not load!!!!!!!!!!!!!!!!!!! ')
         }
         
         return (
             <div className="">
-                        {/*<div id="navbar" className="navbar-collapse collapse col-xs-12 col-md-12 col-lg-12">
-                            <div className="navbar-form navbar-left form-horizontal">
-                                <div>
-                                    <input type="text" className="form-control" placeholder="Post URL" name="vid"
-                                           value={this.state.vid} onChange={this.handleChange}
-                                           style={{width: "350px"}}/>
-                                    <FormControl componentClass="select" placeholder="select" value={this.state.lang}
-                                                 onChange={this.handleChangeLang}>
-                                        <option value="en">English</option>
-                                        <option value="es">Spanish</option>
-                                        <option value="pt">Portuguese</option>
-                                        <option value="fr">French</option>
-                                        <option value="it">Italian</option>
-                                        <option value="ru">Russian</option>
-                                        <option value="hr">Croatian</option>
-                                    </FormControl>
+                
+                
+                <Grid fluid={true}
+                      style={{padding: '4rem 0 6rem 4rem'}}>
+                    <Row>
+                        <YoutubeReportRun/>
 
-                                    <a className="btn btn-primary" onClick={this.runReport}>Run
-                                    </a>
-                                </div>
-                            </div>
-                            <ul className="nav navbar-nav">
-                            </ul>
-                        </div>
-                    </div>
-
-                    <a type="button" className="btn btn-primary" onClick={this.updateReport}>Update Report</a>
-
-            */}
-                <Grid fluid={true} className="center-sm col-xs-12" style={{padding: '4rem 0 6rem 4rem'}}>
-                    {/*<FlatButton style={{color: '#656972 !important', opacity: '1', textTransform: 'uppercase',
-                                        fontSize: '14px',
-                                        fontWeight: 'bold',}} disabled={true}
-                                label={ article.genre ? article.genre.toUpperCase() : article.genre }/>*/}
-                    <Row
-                        style={{
-                             background: '#fff',
-                             height: 'auto',
-                             fontFamily: 'Open Sans, sans-serif',
-                             color: '#656972'
-                         }}>
-                        <Row className="col-lg-6" style={{}}>
-                            <CardHeader style={{paddingTop: '0px !important', paddingBottom: '0px'}}
+                        <Row style={{
+                            paddingTop: '5px !important',
+                            background: '#fff',
+                            height: 'auto',
+                            fontFamily: 'Open Sans, sans-serif',
+                            color: '#656972',
+                        }}>
+                            <CardHeader style={{
+                                paddingBottom: '0px',
+                            }}
                                         title={<span style={{
-                                    fontSize: '14px',
-                                    textTransform: 'uppercase'
-                                }}> You Tube </span>}
-                                        avatar={<img src="/static/img/sources/youtube.png" style={{height: '24px', width: '24px', marginTop: '8px'}}
-                                             />}
-                                        subtitle={<Date style={{fontSize: '14px'}} date={comment.date}/>}
+                                            fontSize: '14px',
+                                            textTransform: 'uppercase',
+                                        }}> YouTube </span>}
+                                        avatar={<img
+                                            src="/static/img/sources/youtube.png"
+                                            style={{
+                                                height: '24px',
+                                                width: '24px',
+                                                marginTop: '8px',
+                                            }}
+                                        />}
+                                        subtitle={<Date
+                                            style={{fontSize: '14px'}}
+                                            date={comment.date}/>}
                             />
-
-                            <CardTitle 
-                                       title={comment.title} />
+                            
+                            <CardTitle
+                                title={comment.title}/>
                             <div style={{
-                                        marginLeft: '15px',
-                                        paddingBottom: '5rem',
-                                        color: '#656972',
-                                        textTransform: 'uppercase',
-                                        fontSize: '14px',
-                                        lineHeight: '1.5'
-                                    }}>
+                                marginLeft: '15px',
+                                paddingBottom: '5rem',
+                                color: '#656972',
+                                textTransform: 'uppercase',
+                                fontSize: '14px',
+                                lineHeight: '1.5',
+                            }}>
                                 <div>
-                                    <span><b>{comment.metadata ? comment.metadata.totalcomments : ""}</b></span>
-                                    <span className="desc"> Total Comments</span>
+                                    <span><b>{comment.metadata
+                                        ? comment.metadata.totalcomments
+                                        : ''}</b></span>
+                                    <span
+                                        > Comments</span>
                                 </div>
                                 <div>
-                                    <span><b>{comment.metadata ? comment.metadata.videoviews : ""}</b></span>
-                                    <span className="desc"> Total Views</span>
+                                    <span><b>{comment.metadata
+                                        ? comment.metadata.videoviews
+                                        : ''}</b></span>
+                                    <span> Views</span>
                                 </div>
                                 <div>
-                                    <span id="comments_per_day"><b>{comment.commentavgperday ? comment.commentavgperday.toFixed(2) : "0" }</b></span>
-                                    <span className="desc"> Number of comments per day</span>
+                                    <span
+                                        id="comments_per_day"><b>{comment.commentavgperday
+                                        ? comment.commentavgperday.toFixed(2)
+                                        : '0'}</b></span>
+                                    <span > Comments per day</span>
                                 </div>
                             </div>
-                            {/*<CardActions>
-                                <div style={{
-                                        marginLeft: '10px',
-                                        paddingBottom: '10px',
-                                        color: '#656972',
-                                        textTransform: 'uppercase',
-                                        fontSize: '14px',
-                    }}>Trending words
-                                </div>
-                                {
-                                    this.props.article.tags && this.props.article.tags.map((tag, i) => {
-                                        return i < 4 && (
-                                                <Chip style={stylesTag.chip}>
-                                                    <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
-                                                    {tag}
-                                                </Chip>
-                                            )
-                                    })
-                                }
-                            </CardActions> */}
                         </Row>
-                        <Row className="col-lg-6" style={{}}>
+                        <Row>
+                            
+                            <div style={{
+                                marginLeft: '10px',
+                                paddingBottom: '10px',
+                                color: '#656972',
+                                textTransform: 'uppercase',
+                                fontSize: '14px',
+                            }}>Trending words
+                            </div>
+                            {
+                                comment.keywords &&
+                                Object.keys(comment.keywords).
+                                    map((tag, i) => {
+                                        return i < 4 && (
+                                            <Chip key={`${tag}-${i}`}>
+                                                <Avatar
+                                                    size={32}>{tag.slice(0,
+                                                    1).
+                                                    toUpperCase()}</Avatar>
+                                                 <a href={`/search?q=${tag}`}>
+                                                    {tag}
+                                                 </a>
+                                            </Chip>
+                                        )
+                                    })
+                            }
+                        </Row>
+                        <Row>
                             <YouTube
-                                videoId={comment.metadata ? comment.metadata.id : comment.id}
+                                videoId={comment.metadata
+                                    ? comment.metadata.id
+                                    : comment.id}
                                 opts={opts}
                                 onReady={this._onReady}
                                 width="500" height="395"
@@ -472,11 +610,13 @@ var Sentiment = createReactClass({
                     </Row>
                 </Grid>
                 
-                <Tabs style={{width: '100%', height: '100%', paddingBottom: '0'}}>
-                    <Tab label="BubbleChart" style={{background: '#f5f5f5', color: '#333'}}>
-                        <BubbleChart data={bubblechart}/>
-                        <div className="col-md-12">
-                            <div className="">{numBubbles + (numBubbles === 1 ? " Circle" : " Circles")}</div>
+                <Tabs>
+                    <Tab label="BubbleChart"
+                         style={{background: '#f5f5f5', color: '#333'}}>
+                        {bubblechartComponent}
+                        <div style={{'justify-content':'center'}}>
+                            <div className="">{numBubbles +
+                            (numBubbles === 1 ? ' Circle' : ' Circles')}</div>
                             <input
                                 className=""
                                 type="range"
@@ -486,131 +626,146 @@ var Sentiment = createReactClass({
                                 onChange={this.onChange}/>
                         </div>
                     </Tab>
-                    <Tab label="Sentiment Statistics" style={{background: '#f5f5f5', color: '#333'}}>
+                    <Tab label="Sentiment Statistics"
+                         style={{background: '#f5f5f5', color: '#333'}}>
                         <canvas id="myChart" width="600" height="300"></canvas>
                     </Tab>
-                    <Tab label="Scale of values" style={{background: '#f5f5f5', color: '#333'}}>
-                        <canvas id="scaleChart" width="200px" height="100px"></canvas>
+                    <Tab label="Scale of values"
+                         style={{background: '#f5f5f5', color: '#333'}}>
+                        <canvas id="scaleChart" width="200px"
+                                height="100px"></canvas>
                     </Tab>
                 
                 </Tabs>
             
             </div>
-        );
+        )
     },
     onChange: function (e) {
         this.setState({numBubbles: e.target.value})
     },
     _onReady: function (event) {
         // access to player in all event handlers via event.target
-        //event.target.pauseVideo();
-        this._runReport()
-    }
-});
+        // event.target.pauseVideo()
+    },
+})
 
 var PlayButton = createReactClass({
     render: function () {
         return (
-            <div className="col-xs-3 btn btn-custom" onClick={this.props.onClick}>
-                <span className="fa fa-play" data-text="play"/> {this.props.label}
+            <div className="col-xs-3 btn btn-custom"
+                 onClick={this.props.onClick}>
+        <span className="fa fa-play"
+              data-text="play"/> {this.props.label}
             </div>
         )
-    }
-});
+    },
+})
 
 var CommentsView = createReactClass({
     displayName: 'CommentsView',
     
     getInitialState: function () {
-        let {comment, emojis, sentimentlist} = this.props;
+        let {comment, emojis, sentimentlist} = this.props
         return {
             comment: comment,
             emojis: emojis,
-            sentimentlist: sentimentlist
+            sentimentlist: sentimentlist,
         }
     },
     
     componentWillReceiveProps: function (p) {
         //console.log(p);
-        let {comment, sentimentlist} = p;
-        console.log("componentWillReceiveProps -> ")
-        this.setState({comment: comment, sentimentlist: sentimentlist});
+        let {comment, sentimentlist} = p
+        console.log('componentWillReceiveProps -> ')
+        this.setState({comment: comment, sentimentlist: sentimentlist})
     },
-    
     
     loadterrible: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[terrible]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[terrible]})
     },
     loadsucks: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[sucks]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[sucks]})
     },
     loadbad: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[bad]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[bad]})
     },
     loadnotgood: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[notgood]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[notgood]})
     },
     loadeh: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[eh]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[eh]})
     },
     loadneutral: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[neutral]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[neutral]})
     },
     loadok: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[ok]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[ok]})
     },
     loadgood: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[good]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[good]})
     },
     loadlikeit: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[likeit]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[likeit]})
     },
     loadlovedit: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[lovedit]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[lovedit]})
     },
     loadawesome: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[awesome]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[awesome]})
     },
     loadunknown: function () {
-        let {sentimentlist} = this.state;
-        this.setState({comment: sentimentlist[unknown]});
+        let {sentimentlist} = this.state
+        this.setState({comment: sentimentlist[unknown]})
     },
     
-    
     render: function () {
-        let {comment, emojis} = this.state;
+        let {comment, emojis} = this.state
         
         if (!comment) {
-            comment = [];
+            comment = []
         }
         
-        var loadterribleButton = <PlayButton label={emojis[terrible]} onClick={this.loadterrible}/>;
-        var loadsucksButton = <PlayButton label={emojis[sucks]} onClick={this.loadsucks}/>;
-        var loadbadButton = <PlayButton label={emojis[bad]} onClick={this.loadbad}/>;
-        var loadnotgoodButton = <PlayButton label={emojis[notgood]} onClick={this.loadnotgood}/>;
-        var loadehButton = <PlayButton label={emojis[eh]} onClick={this.loadeh}/>;
-        var loadneutralButton = <PlayButton label={emojis[neutral]} onClick={this.loadneutral}/>;
-        var loadokButton = <PlayButton label={emojis[ok]} onClick={this.loadok}/>;
-        var loadgoodButton = <PlayButton label={emojis[good]} onClick={this.loadgood}/>;
-        var loadlikeitButton = <PlayButton label={emojis[likeit]} onClick={this.loadlikeit}/>;
-        var loadloveditButton = <PlayButton label={emojis[lovedit]} onClick={this.loadlovedit}/>;
-        var loadawesomeButton = <PlayButton label={emojis[awesome]} onClick={this.loadawesome}/>;
-        var loadunknownButton = <PlayButton label={emojis[unknown]} onClick={this.loadunknown}/>;
+        var loadterribleButton = <PlayButton label={emojis[terrible]}
+                                             onClick={this.loadterrible}/>
+        var loadsucksButton = <PlayButton label={emojis[sucks]}
+                                          onClick={this.loadsucks}/>
+        var loadbadButton = <PlayButton label={emojis[bad]}
+                                        onClick={this.loadbad}/>
+        var loadnotgoodButton = <PlayButton label={emojis[notgood]}
+                                            onClick={this.loadnotgood}/>
+        var loadehButton = <PlayButton label={emojis[eh]}
+                                       onClick={this.loadeh}/>
+        var loadneutralButton = <PlayButton label={emojis[neutral]}
+                                            onClick={this.loadneutral}/>
+        var loadokButton = <PlayButton label={emojis[ok]}
+                                       onClick={this.loadok}/>
+        var loadgoodButton = <PlayButton label={emojis[good]}
+                                         onClick={this.loadgood}/>
+        var loadlikeitButton = <PlayButton label={emojis[likeit]}
+                                           onClick={this.loadlikeit}/>
+        var loadloveditButton = <PlayButton label={emojis[lovedit]}
+                                            onClick={this.loadlovedit}/>
+        var loadawesomeButton = <PlayButton label={emojis[awesome]}
+                                            onClick={this.loadawesome}/>
+        var loadunknownButton = <PlayButton label={emojis[unknown]}
+                                            onClick={this.loadunknown}/>
         
         return (
             
-            <div id="comentarismo-container" className="comentarismo-comment col-md-10">
+            <div id="comentarismo-container"
+                 className="comentarismo-comment col-md-10">
                 
                 <div className="col-md-12">
                     {loadterribleButton}
@@ -626,7 +781,7 @@ var CommentsView = createReactClass({
                     {loadawesomeButton}
                     {loadunknownButton}
                 </div>
-                <div className="col-xs-12" style={{height: "45px"}}></div>
+                <div className="col-xs-12" style={{height: '45px'}}></div>
                 
                 
                 <div className="col-md-12">
@@ -640,9 +795,11 @@ var CommentsView = createReactClass({
                                     </div>
                                     <div className="text-wrapper col-xs-11">
                                         <div className="col-xs-8">
-                                            <div role="meta" className="comentarismo-comment-header">
-                                                        <span className="author">
-                                                            <b>@{ q.authorname }</b>
+                                            <div role="meta"
+                                                 className="comentarismo-comment-header">
+                                                        <span
+                                                            className="author">
+                                                            <b>@{q.authorname}</b>
                                                         </span>
                                             </div>
                                         </div>
@@ -651,13 +808,16 @@ var CommentsView = createReactClass({
                                         </div>
                                         
                                         <div className="col-xs-8">
-                                            <div role="meta" className="comentarismo-comment-header">
-                                                        <span className="author">
-                                                            <b><img src="/static/img/thumbs-up.png"
-                                                                    style={{
-                                                                        width: "10px",
-                                                                        height: "10px"
-                                                                    }}/> { q.likes }
+                                            <div role="meta"
+                                                 className="comentarismo-comment-header">
+                                                        <span
+                                                            className="author">
+                                                            <b><img
+                                                                src="/static/img/thumbs-up.png"
+                                                                style={{
+                                                                    width: '10px',
+                                                                    height: '10px',
+                                                                }}/> {q.likes}
                                                             </b>
                                                         </span>
                                             </div>
@@ -671,11 +831,14 @@ var CommentsView = createReactClass({
                                             <p dangerouslySetInnerHTML={{__html: q.content}}></p>
                                         </div>
                                         
-                                        <div className="comentarismo-comment-footer col-sm-12">
+                                        <div
+                                            className="comentarismo-comment-footer col-sm-12">
                                         
                                         </div>
-                                        <div className="comentarismo-follow-up"></div>
-                                        <div className="comentarismo-postbox"></div>
+                                        <div
+                                            className="comentarismo-follow-up"></div>
+                                        <div
+                                            className="comentarismo-postbox"></div>
                                     
                                     </div>
                                 </div>
@@ -686,24 +849,22 @@ var CommentsView = createReactClass({
                 </div>
             </div>
         )
-    }
-});
+    },
+})
 
-function dv(data, defaultData) {
-    return (data ? data : defaultData);
+function dv (data, defaultData) {
+    return (data ? data : defaultData)
 }
 
-function mapStateToProps(state) {
+function mapStateToProps (state) {
     return {comment: state.commentatorDetail}
 }
 
 SentimentReport.propTypes = {
     comment: PropTypes.object.isRequired,
-};
+}
 
-
-export {SentimentReport}
-export default connect(mapStateToProps, {loadSentimentCommentDetail})(SentimentReport)
-
-
-//<img src="/static/img/flags/png/us.png"/> <img src="/static/img/flags/png/es.png"/> <img src="/static/img/flags/png/br.png"/> <img src="/static/img/flags/png/it.png"/>
+export { SentimentReport }
+export default connect(mapStateToProps, {loadSentimentCommentDetail})(
+    SentimentReport)
+    

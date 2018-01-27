@@ -62,9 +62,10 @@ class Autocomplete extends Component {
 	}
 	
 	render() {
-		return <div  style={{ display: 'inline-flex', width: '100%'}}>
-			<AutoComplete textFieldStyle={{ height: '84px'}}
-				hintText={this.props.hintText}   fullWidth
+		return <div  key={`div-${this.props.id}`}  style={{ display: 'inline-flex', width: '100%'}}>
+			<AutoComplete key={`autocomplete-${this.props.id}`}  textFieldStyle={{ height: '84px'}}
+				hintText={this.props.hintText}
+	          fullWidth
 			searchText={this.state.inputValue}
 			floatingLabelText={this.props.placeHolder}
 			filter={AutoComplete.noFilter}
@@ -72,7 +73,7 @@ class Autocomplete extends Component {
 			dataSource={this.state.dataSource}
 			onUpdateInput={this.onUpdateInput}
 			onNewRequest={this.onNewRequest}/>
-			<button onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#656972', borderRadius: '0px'}}>RECOMMEND</button>
+			<button key={`button-${this.props.id}`}  onClick={this.onNewRequest} style={{height: '76px', width: '152px', color: '#fff', background: '#656972', borderRadius: '0px'}}>SEARCH</button>
 		</div>
 
 	}

@@ -7,6 +7,8 @@ var uglify = require('gulp-uglify');
 var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
 var sass = require('gulp-sass');
+var less = require('gulp-less');
+var path = require('path');
 
 
 var buildProperties = {
@@ -14,7 +16,8 @@ var buildProperties = {
     GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || 'DEVELOP',
     cssFiles: [
         //'app/styles/main.scss',
-        './vendor/comentarismo-client.css',
+        // './vendor/comentarismo-client.css',
+        './vendor/bubblecharts.css',
         // './bower_components/components-font-awesome/css/font-awesome.css',
         './vendor/searchkit/dist/theming/components.css',
         './vendor/searchkit/dist/theming/theme.css',
@@ -29,6 +32,7 @@ var buildProperties = {
         './pwa/manifest.json',
         './pwa/localforage.js',
         './pwa/ServiceWorkerWare.js',
+        
     ],
     imageFiles: ['./img/**/*']
 };
@@ -40,7 +44,7 @@ gulp.task('sourcemaps', function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('css', ['searchkit','sass',"sourcemaps"], function () {
+gulp.task('css', ['searchkit','sass',"bubblecharts"], function () {
     return gulp.src(buildProperties.cssFiles)
         // .pipe($.sourcemaps.init())
         .pipe(concat('all.css'))
@@ -76,11 +80,19 @@ gulp.task('searchkit', function () {
 });
 
 gulp.task('sass', function () {
- return gulp.src(['./app/styles/main.scss'])
+ return gulp.src(['./app/**/*.scss'])
   .pipe(sourcemaps.init())
   .pipe(sass().on('error', sass.logError))
   .pipe(sourcemaps.write('./maps'))
   .pipe(gulp.dest(buildProperties.publicDir + "/static/"))
+});
+
+gulp.task('bubblecharts', function () {
+  return gulp.src('./app/styles/bubblecharts.less')
+    .pipe(less({
+      paths: [ path.join(__dirname, 'less', 'includes') ]
+    }))
+    .pipe(gulp.dest('./vendor'));
 });
 
 gulp.task('js:watch', function () {

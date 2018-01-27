@@ -73,7 +73,7 @@ class Master extends Component {
                     clockCircleColor: fade(darkBlack, 0.07),
                     shadowColor: fullBlack,
                 },
-                userAgent: 'all'
+                userAgent: global.navigator.userAgent || 'all'
             }),
         });
     }

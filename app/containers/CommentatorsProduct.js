@@ -10,6 +10,8 @@ import {getAllByIndexFilterSkipLimit} from '../middleware/sa';
 import Icon from "components/Icon"
 import Helmet from "react-helmet";
 import { Tabs, Tab } from 'material-ui/Tabs';
+import CircularProgress from 'material-ui/CircularProgress';
+
 import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
 import moment from 'moment';
 import {Grid, Row, Col} from 'react-styled-flexboxgrid';
@@ -67,12 +69,12 @@ class CommentatorsProductContainer extends Component {
         }.bind(this));
     }
 
-    getLoaderElement() {
+    getLoaderElement () {
         return (
-            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'/></div>
+            <div>
+                <CircularProgress size={80} thickness={5} />
             </div>
-        );
+        )
     }
 
     render() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
 import { loadArticleDetail } from 'actions/articles'
@@ -165,6 +165,7 @@ class Article extends Component {
             var targetText = article.summary
             if (!targetText) {
                 if (!article.resume) {
+                    targetText = article.summary
                     return
                 } else {
                     targetText = article.resume
@@ -496,10 +497,15 @@ class Article extends Component {
                                     this.props.article.tags &&
                                     this.props.article.tags.map((tag, i) => {
                                         return (
-                                            <Chip style={stylesTag.chip}>
-                                                <Avatar size={32}>{tag.slice(0,
-                                                    1).toUpperCase()}</Avatar>
-                                                {tag}
+                                            <Chip key={`${tag}-${i}`}
+                                                  style={stylesTag.chip}>
+                                                <Avatar
+                                                    size={32}>{tag.slice(0,
+                                                    1).
+                                                    toUpperCase()}</Avatar>
+                                                <a href={`/search?q=${tag}`}>
+                                                    {tag}
+                                                </a>
                                             </Chip>
                                         )
                                     })

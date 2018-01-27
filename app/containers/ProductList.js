@@ -2,10 +2,12 @@ import React, {Component } from 'react'
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux'
 import RaisedButton from 'material-ui/RaisedButton';
-import _ from 'lodash'
+import CircularProgress from 'material-ui/CircularProgress';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import Helmet from "react-helmet";
 import { Tabs, Tab } from 'material-ui/Tabs';
+
+import _ from 'lodash'
+import Helmet from "react-helmet";
 
 // import {loadProducts} from 'actions/products'
 
@@ -59,12 +61,12 @@ class ProductContainer extends Component {
         }.bind(this));
     }
 
-    getLoaderElement() {
+    getLoaderElement () {
         return (
-            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'></i></div>
+            <div>
+                <CircularProgress size={80} thickness={5} />
             </div>
-        );
+        )
     }
 
     render() {

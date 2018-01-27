@@ -27,18 +27,6 @@ var base64Encode = require("../util/imgresizer").base64Encode;
 import Autocomplete from 'components/Autocomplete'
 import ExpandableComment from 'containers/ExpandableComment';
 
-const commentatorStyle = {
-    height: '150px',
-    width: '300px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'left',
-    boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
-    borderRadius: '2px',
-    margin: '20px 20px 20px 0'
-};
-
 class Intro extends Component {
     static fetchData({store, params}) {
         var index = params.index || "youtube";
@@ -159,31 +147,40 @@ class Intro extends Component {
             console.log('detected user language --> ' + userLang);
             
             if (userLang.indexOf("pt") !== -1) {
-                targetLang = "pt";
+                targetLang = "portuguese";
             } else if (userLang.indexOf("es") !== -1) {
-                targetLang = "es";
+                targetLang = "spanish";
             } else if (userLang.indexOf("it") !== -1) {
-                targetLang = "it";
+                targetLang = "italian";
             } else if (userLang.indexOf("fr") !== -1) {
-                targetLang = "fr";
+                targetLang = "french";
             } else if (userLang.indexOf("russian") !== -1) {
-                targetLang = "ru";
+                targetLang = "russian";
             } else if (userLang.indexOf("croatian") !== -1) {
-                targetLang = "hr";
+                targetLang = "croatian";
             } else {
                 console.log("default lang will be used");
             }
             
         }
         const style = {
-            height: 'auto',
-            margin: '20px',
+            height: '500px',
             width: '300px',
             textAlign: 'left',
-            display: 'inline-block',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            margin: '20px 20px 20px 0'
         };
+        
+        const commentatorStyle = {
+            height: '150px',
+            width: '300px',
+            textAlign: 'left',
+            boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
+            borderRadius: '2px',
+            margin: '20px 20px 20px 0'
+        };
+        
         // <div>Day:{comment[article].group[0] } Source:</div>
     
         return (
@@ -196,27 +193,34 @@ class Intro extends Component {
                         {"name": "description", "content": "Welcome to Comentarismo"},
                         {"property": "og:type", "content": "article"}
                     ]}
-                />
+                >
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/portuguese" hreflang="pt" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/spanish" hreflang="es" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/italian" hreflang="it" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/french" hreflang="fr" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/russian" hreflang="russian" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/youtube/croatian" hreflang="croatian" />
+                </Helmet>
                 <Tabs style={{height: '135px', paddingBottom: '75px'}} initialSelectedIndex={2}>
                     <Tab label="News" onActive={function () {
                         document.location.href = "/";
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"}/>
+                        <Autocomplete key="autoc1" id="autoc1" placeHolder={"News"} hintText={"Recommend me latest news"}/>
                     </Tab>
                 
-                    <Tab onActive={function () {
+                    <Tab label="Products" onActive={function () {
                         document.location.href = "/home/product/"+targetLang;
-                    }} label="Products" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
-                    </Tab>
-                    <Tab label="YouTube" onActive={function () {
-                        document.location.href = "/home/youtube/"+targetLang;
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
+                        <Autocomplete key="autoc2" id="autoc2" placeHolder={"Products"} hintText={"Recommend me products"}/>
+                    </Tab>
+                    <Tab onActive={function () {
+                        document.location.href = "/home/youtube/"+targetLang;
+                    }} label="YouTube" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
+                        <Autocomplete key="autoc3" id="autoc3" placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
                 <Grid fluid={true}>
-                <span className="col-xs-offset-1"
+                <div
                       style={{
                           color: '#656972',
                           paddingTop: '30px',
@@ -224,63 +228,57 @@ class Intro extends Component {
                           fontSize: '14px',
                           fontWeight: 'bold',
                       }}>
-                    Trending Videos</span>
-                    <Row style={{ marginLeft: '2rem'}}>
+                    Trending Videos</div>
+                    <Row style={{ marginLeft: '0rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
-                                var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs box">
+                                    <div key={`news-${article}`}>
                                         {comment[article].reduction.map((news) => {
+                                            let content = <a href={this.getArticleLink(news)}>
+                                                <Card style={style}>
+                                                    <CardHeader title={comment[article].group[1]}
+                                                                subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.metadata.channeltitle}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
+                                                                avatar={<img style={{height: '24px', width: '24px'}}
+                                                                             src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
+                                                    <CardMedia
+                                                        overlay={<CardTitle
+                                                            style={{height: '45px', padding: '0 10px'}} title={<span
+                                                            style={{
+                                                                fontSize: '14px !important',
+                                                                lineHeight: '1.5'
+                                                            }}>{news.title}</span>}/>}>
+                                                        <div
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                left: '0px',
+                                                                top: '0px',
+                                                                zIndex: -1
+                                                            }}
+                                                            id={"img-" + news.id}>
+                                                            <img style={{width: '100%', height: '100%'}}
+                                                                 id={news.id}/>
+                                                            {this.getImageElement(news.metadata.thumbnail, news.id)}
+                                                        </div>
+                                                    </CardMedia>
+                                                    <CardTitle
+                                                        title={<span
+                                                            style={{padding: '3px', background: '#656972', color: '#fff', fontSize: '12px !important', textTransform: 'uppercase'}}>{`${news.metadata.totalcomments} Comments`}</span>}
+                                                        subtitle={<span
+                                                            style={{fontSize: '12px !important'}}>{this.getTitle(Object.keys(news.keywords).join(" "))}</span>}/>
+                                                </Card>
+                                            </a>
                                         
-                                            let content = "";
-                                                count = count + 1;
-                                                content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style} className="box">
-                                                        <CardHeader title={comment[article].group[1]}
-                                                                    subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.metadata.channeltitle}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
-                                                                    avatar={<img style={{height: '24px', width: '24px'}}
-                                                                                 src={`/static/img/sources/${comment[article].group[1]}.png`}/>}/>
-                                                        <CardMedia
-                                                            overlay={<CardTitle
-                                                                style={{height: '45px', padding: '0 10px'}} title={<span
-                                                                style={{
-                                                                    fontSize: '14px !important',
-                                                                    lineHeight: '1.5'
-                                                                }}>{news.title}</span>}/>}>
-                                                            <div
-                                                                style={{
-                                                                    width: '100%',
-                                                                    height: '100%',
-                                                                    left: '0px',
-                                                                    top: '0px',
-                                                                    zIndex: -1
-                                                                }}
-                                                                id={"img-" + news.id}>
-                                                                <img style={{width: '100%', height: '100%'}}
-                                                                     id={news.id}/>
-                                                                {this.getImageElement(news.metadata.thumbnail, news.id)}
-                                                            </div>
-                                                        </CardMedia>
-                                                        <CardTitle
-                                                            title={<span
-                                                                style={{padding: '3px', background: '#656972', color: '#fff', fontSize: '12px !important', textTransform: 'uppercase'}}>{`${news.metadata.totalcomments} Comments`}</span>}
-                                                            subtitle={<span
-                                                                style={{fontSize: '12px !important'}}>{this.getTitle(Object.keys(news.keywords).join(" "))}</span>}/>
-                                                    </Card>
-                                                </a>
-                                            
-                                                return <Col key={news.id}>{content}</Col>
+                                            return <Col key={`n-${news.id}`}>{content}</Col>
                                         })}
                                     </div>
                                 );
                             })
                         }
                     </Row>
-
-
-                    <div className="col-xs-offset-1"
+                <div
                           style={{
                               color: '#656972',
                               lineHeight: '60px !important',
@@ -290,13 +288,13 @@ class Intro extends Component {
                           }}>
                     Trending  comments</div>
                 
-                    <Row style={{ marginLeft: '2rem', marginRight: '2rem' }}>
+                    <Row style={{ marginLeft: '0rem', marginRight: '0rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs-12 box">
+                                    <div key={`co-${article}`}>
                                         {comment[article].reduction.map((news) => {
                                             let c = {
                                                 nick: news.topcomments[0].authorname,
@@ -306,7 +304,7 @@ class Intro extends Component {
                                             }
                                             let content =  <ExpandableComment comment={c}/>;
                                             
-                                                return <Col className="box" key={`${news.id}`}>{content}</Col>
+                                                return <Col key={`c-${news.id}`}>{content}</Col>
                                         })}
                                     </div>
                                 );
@@ -314,7 +312,7 @@ class Intro extends Component {
                         }
                     </Row>
                 
-                    <div className="col-xs-offset-1"
+                <div
                           style={{
                               color: '#656972',
                               lineHeight: '66px !important',
@@ -326,12 +324,12 @@ class Intro extends Component {
                           }}>
                     Active commentators</div>
                 
-                    <Row>
+                    <Row style={{ marginLeft: '0rem'}}>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div className="col-xs box">
+                                    <div key={`co-${article}`}>
                                         {commentators[article].reduction.map((news) => {
                                         
                                             let content = "";
@@ -352,7 +350,7 @@ class Intro extends Component {
                                                     </Card>
                                                 </a>
                                             
-                                                return <Col key={news.id} >{content}</Col>
+                                                return <Col key={`co-${news.id}`} >{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -362,7 +360,8 @@ class Intro extends Component {
                         }
                     </Row>
                 
-                    <Row style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
+                    <Row
+                        style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '40px'}}>
                         <img
                             style={{
                                 width: '30%',

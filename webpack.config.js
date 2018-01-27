@@ -5,9 +5,11 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const OfflinePlugin = require('offline-plugin')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var ManifestPlugin = require('webpack-manifest-plugin')
-var InlineManifestWebpackPlugin = require('inline-manifest-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin')
+const InlineManifestWebpackPlugin = require('inline-manifest-webpack-plugin')
+const ProgressBarPlugin = require('progress-bar-webpack-plugin')
+const chalk = require('chalk')
 
 const BUILD_DIR = path.resolve(__dirname, '../', 'dist')
 const APP_DIR = path.resolve(__dirname, 'app/app')
@@ -58,6 +60,12 @@ var config = {
         // publicPath: '/',
     },
     plugins: [
+        new ProgressBarPlugin({
+                format: '  build [:bar] ' + chalk.green.bold(':percent') +
+                ' (:elapsed seconds)',
+                clear: false,
+            },
+        ),
         new ExtractTextPlugin('theme.css', {allChunks: true}),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.ModuleConcatenationPlugin(),
@@ -91,7 +99,7 @@ var config = {
                 include: __dirname,
             },
             {
-                test: /\.scss$/,
+                test: /\.(scss|css)$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -166,7 +174,7 @@ if (DEBUG) {
     config.plugins = config.plugins.concat([
         new webpack.HotModuleReplacementPlugin(),
     ])
-    config.output.publicPath = `http://localhost:${WEBPACK_PORT}/static/`
+    config.output.publicPath = `http://localhost:${WEBPACK_PORT}/`
     config.module.loaders[0].query = {
         'env': {
             'development': {
@@ -224,7 +232,7 @@ if (DEBUG) {
                 /asset-manifest\.json$/],
             runtimeCaching: [
                 {
-                    handler: 'fastest',
+                    handler: 'networkFirst',
                     urlPattern: /^https:\/\/(www\.)?comentarismo.com$/,
                 }],
             dontCacheBustUrlsMatching: /\.\w{8}\./,
@@ -281,11 +289,11 @@ if (DEBUG) {
         //     inject: 'body',
         //     filename: 'index.html',
         //     template: '!!raw-loader!app/server/views/index.ejs',
-            // minify: {
-                // collapseBooleanAttributes: true,
-                // removeComments: true,
-                // collapseWhitespace: true,
-            // },
+        // minify: {
+        // collapseBooleanAttributes: true,
+        // removeComments: true,
+        // collapseWhitespace: true,
+        // },
         // }),
     ])
 }

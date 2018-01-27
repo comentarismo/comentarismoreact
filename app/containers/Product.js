@@ -167,6 +167,7 @@ class Product extends Component {
             var targetText = article.summary;
             if (!targetText) {
                 if (!article.resume){
+                    targetText = article.summary
                     return
                 }else {
                     targetText = article.resume;
@@ -449,7 +450,9 @@ class Product extends Component {
                                         return i < 4 && (
                                                 <Chip style={stylesTag.chip}>
                                                     <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
-                                                    {tag}
+                                                     <a href={`/search?q=${tag}`}>
+                                                        {tag}
+                                                     </a>
                                                 </Chip>
                                             )
                                     })

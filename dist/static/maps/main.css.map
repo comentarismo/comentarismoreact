@@ -1,1 +1,0 @@
-{"version":3,"file":"../main.css","sources":["main.scss","_intro.scss"],"sourcesContent":["@import \"_intro\";\n",".intro {\n  text-align: center;\n}\n"],"names":[],"mappings":"ACAA,AAAA,MAAM,CAAC;EACL,UAAU,EAAE,MAAM,GACnB"}

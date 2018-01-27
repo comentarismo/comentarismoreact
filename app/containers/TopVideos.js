@@ -1,21 +1,22 @@
 import React, {Component} from 'react'
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux'
-import {loadArticles} from 'actions/articles'
+import Helmet from "react-helmet";
+import PropTypes from 'prop-types';
+
 import _ from 'lodash'
 
 import {Tabs, Tab} from 'material-ui/Tabs';
 import Autocomplete from 'components/Autocomplete'
+import CircularProgress from 'material-ui/CircularProgress';
 
-
-import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
 
 var Video = require('components/Video');
-
-var InfiniteScroll = require('./InfiniteScroll')(React);
-import Helmet from "react-helmet";
-import {YoutubeReportRun} from "containers/YoutubeReportRun";
 import {Grid,Row} from 'react-styled-flexboxgrid';
+
+import {getAllByRangeIndexOrderByFilterSkipLimit} from '../middleware/sa'
+var InfiniteScroll = require('./InfiniteScroll')(React);
+import {YoutubeReportRun} from "containers/YoutubeReportRun";
+import {loadArticles} from 'actions/articles'
 
 
 class ArticleContainer extends Component {
@@ -62,8 +63,8 @@ class ArticleContainer extends Component {
     
     getLoaderElement () {
         return (
-            <div className='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-                <div className='thumbnail article text-center'>Loading <i className='fa fa-cog fa-spin'/></div>
+            <div>
+                <CircularProgress size={80} thickness={5} />
             </div>
         )
     }
@@ -105,7 +106,7 @@ class ArticleContainer extends Component {
                         color: '#333',
                         height: '84px',
                     }}>
-                        <Autocomplete placeHolder={'Commentators'}
+                        <Autocomplete placeHolder={'Videos'}
                                       hintText={'Recommend me latest videos'}/>
                     </Tab>
                     

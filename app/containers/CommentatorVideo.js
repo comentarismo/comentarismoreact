@@ -204,7 +204,7 @@ class Commentator extends Component {
                                 color: '#656972',
                                 textTransform: 'uppercase',
                             }}>
-                                <LinearProgress mode="determinate" value="100"/>
+                                <LinearProgress mode="determinate" value={100}/>
                                 <div
                                     className="progress-bar progress-bar-success"
                                     role="progressbar"
@@ -213,7 +213,7 @@ class Commentator extends Component {
                                     aria-valuemax="100"
                                     style={{width: '0%'}}>
                                     
-                                    <b>Comments Analyzed: 0%</b>
+                                    <b>Comments Analyzed: 100%</b>
                                 </div>
                             </div>
                             <ImageResized src={commentator.image}
@@ -239,7 +239,7 @@ class Commentator extends Component {
                                
                                 
                                 return (
-                                    <CommentSingle key={q.id} comment={q} />
+                                    <CommentSingle key={`c-${i}`} comment={q} />
                                 )
                             })
                         }

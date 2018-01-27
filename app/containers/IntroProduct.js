@@ -168,19 +168,12 @@ class IntroProduct extends Component {
             textAlign: 'left',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
             borderRadius: '2px',
-            margin: '20px 20px 20px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'left',
+            margin: '20px 20px 20px 0'
         };
         
         const commentatorStyle = {
             height: '150px',
             width: '300px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             textAlign: 'left',
             boxShadow: 'rgba(0, 0, 0, 0.0980392) 0px 1px 4px',
             borderRadius: '2px',
@@ -198,27 +191,34 @@ class IntroProduct extends Component {
                         {"name": "description", "content": "Welcome to Comentarismo"},
                         {"property": "og:type", "content": "article"}
                     ]}
-                />
+                >
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/portuguese" hreflang="pt" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/spanish" hreflang="es" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/italian" hreflang="it" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/french" hreflang="fr" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/russian" hreflang="russian" />
+                    <link rel="alternate" href="https://www.comentarismo.com/home/product/croatian" hreflang="croatian" />
+                </Helmet>
                 <Tabs style={{height: '135px', paddingBottom: '75px'}} initialSelectedIndex={1}>
                     <Tab label="News" onActive={function () {
                         document.location.href = "/";
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"}/>
+                        <Autocomplete key="autoc1" id="autoc1" placeHolder={"News"} hintText={"Recommend me latest news"}/>
                     </Tab>
                     
                     <Tab label="Products" onActive={function () {
                         document.location.href = "/home/product/"+targetLang;
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
+                        <Autocomplete key="autoc2" id="autoc2" placeHolder={"Products"} hintText={"Recommend me products"}/>
                     </Tab>
                     <Tab onActive={function () {
                         document.location.href = "/home/youtube/"+targetLang;
                     }} label="YouTube" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
+                        <Autocomplete key="autoc3" id="autoc3" placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
                 <Grid fluid={true}>
-                <div className="col-xs-offset-1"
+                <div 
                       style={{
                           color: '#656972',
                           paddingTop: '30px',
@@ -227,20 +227,20 @@ class IntroProduct extends Component {
                           fontWeight: 'bold',
                       }}>
                     Trending  Products</div>
-                    <Row style={{ marginLeft: '2rem'}}>
+                    <Row style={{ marginLeft: '0rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <Row>
+                                    <div key={`news-${article}`}>
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
                                             if (news.languages === targetLang && count < 10) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style}>
+                                                    <Card style={style}>
                                                         <CardHeader title={comment[article].group[1]}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
@@ -274,16 +274,16 @@ class IntroProduct extends Component {
                                                     </Card>
                                                 </a>
                                                 
-                                                return <Col key={news.id}>{content}</Col>
+                                                return <Col key={`n-${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
-                                    </Row>
+                                    </div>
                                 );
                             })
                         }
                     </Row>
-                    <div className="col-xs-offset-1"
+                <div
                           style={{
                               color: '#656972',
                               lineHeight: '60px !important',
@@ -293,13 +293,13 @@ class IntroProduct extends Component {
                           }}>
                     Trending  comments</div>
                     
-                    <Row style={{ marginLeft: '2rem', marginRight: '2rem' }}>
+                    <Row style={{ marginLeft: '0rem', marginRight: '0rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs-12 box">
+                                    <div key={`co-${article}`}>
                                         {comment[article].reduction.map((news) => {
                                             
                                             let content = "";
@@ -307,7 +307,7 @@ class IntroProduct extends Component {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
                                                 
-                                                return <Col className="box" key={`${news.id}`}>{content}</Col>
+                                                return <Col key={`c-${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -317,7 +317,7 @@ class IntroProduct extends Component {
                         }
                     </Row>
                     
-                    <div className="col-xs-offset-1"
+                <div
                           style={{
                               color: '#656972',
                               lineHeight: '66px !important',
@@ -329,13 +329,13 @@ class IntroProduct extends Component {
                           }}>
                     Active commentators</div>
                     
-                    <Row style={{ marginLeft: '2rem'}} >
+                    <Row style={{ marginLeft: '0rem'}}>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div className="col-xs box" style={{display: 'flex !important', flexWrap: 'wrap'}}>
+                                    <div key={`co-${article}`}>
                                         {commentators[article].reduction.map((news) => {
                                             
                                             let content = "";
@@ -355,7 +355,7 @@ class IntroProduct extends Component {
                                                     </Card>
                                                 </a>
                                                 
-                                                return <Col key={news.id} >{content}</Col>
+                                                return <Col key={`co-${news.id}`} >{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -366,7 +366,7 @@ class IntroProduct extends Component {
                     </Row>
 
                     <Row
-                         style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '30px'}}>
+                        style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '40px'}}>
                         <img
                             style={{
                                 width: '30%',

@@ -97,7 +97,7 @@ class Commentator extends Component {
                             fontFamily: 'Open Sans, sans-serif',
                             color: '#656972',
                         }}>
-                        <Row className="col-lg-6" style={{}}>
+                        <Row>
                             <CardHeader style={{
                                 paddingTop: '0px !important',
                                 paddingBottom: '0px',
@@ -134,7 +134,7 @@ class Commentator extends Component {
                                            dangerouslySetInnerHTML={{__html: ''}}/></a>}
                             />
                         </Row>
-                        <Col key={commentator.id}>
+                        <Col>
                             <Row>
                                 
                                 <CardText style={{
@@ -142,7 +142,7 @@ class Commentator extends Component {
                                     paddingBottom: '0px',
                                 }}>
                                     
-                                    <Col key={commentator.id} style={{
+                                    <Col style={{
                                         fontSize: '14px',
                                         textTransform: 'uppercase',
                                     }}>
@@ -161,7 +161,7 @@ class Commentator extends Component {
                                                 : ''}</span></b>
                                         </Row>
                                     </Col>
-                                    <Col key={commentator.id} style={{
+                                    <Col style={{
                                         fontSize: '14px',
                                         textTransform: 'uppercase',
                                     }}>
@@ -198,12 +198,12 @@ class Commentator extends Component {
                                 </CardActions>
                             </Row>
                         </Col>
-                        <Col key={commentator.id}>
+                        <Col>
                             <div className="progress" style={{
                                 color: '#656972',
                                 textTransform: 'uppercase',
                             }}>
-                                <LinearProgress mode="determinate" value="100"/>
+                                <LinearProgress mode="determinate" value={100}/>
                                 <div
                                     className="progress-bar progress-bar-success"
                                     role="progressbar"
@@ -212,7 +212,7 @@ class Commentator extends Component {
                                     aria-valuemax="100"
                                     style={{width: '0%'}}>
                                     
-                                    <b>Comments Analyzed: 0%</b>
+                                    <b>Comments Analyzed: 100%</b>
                                 </div>
                             </div>
                             <ImageResized src={commentator.image}
@@ -220,13 +220,8 @@ class Commentator extends Component {
                                           id={commentator.id}
                                           width="520" height="395"
                                           quality="50"/>
-                        
-                        
                         </Col>
-                        
-                        
                         <Row>
-                            
                             <Row>
                                 <div style={{
                                     color: '#656972',
@@ -239,7 +234,7 @@ class Commentator extends Component {
                                 {
                                     commentator.genre &&
                                     commentator.genre.map((tag, i) => {
-                                        return (<Chip>
+                                        return (<Chip key={`chip-${i}`}>
                                             <Avatar size={32}>{tag.slice(0,
                                                 1).toUpperCase()}</Avatar>
                                             {tag}
@@ -262,7 +257,7 @@ class Commentator extends Component {
                                
                                 
                                 return (
-                                    <CommentSingle comment={q} />
+                                    <CommentSingle key={`c-${i}`} comment={q} />
                                 )
                             })
                         }

@@ -13,7 +13,17 @@ import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
 import moment from 'moment';
-import Divider from 'material-ui/Divider';
+// import Divider from 'material-ui/Divider';
+
+// import OnVisible, { setDefaultProps } from 'react-on-visible';
+//
+// setDefaultProps({
+//     bounce: true,
+//     percent: 100
+// });
+
+// import ReactPlaceholder from 'react-placeholder';
+// import "file-loader!extract-loader!css-loader!./react-placeholder/lib/reactPlaceholder.css";
 
 
 var Article = require('components/Article');
@@ -206,22 +216,21 @@ class Intro extends Component {
                     <Tab label="News" onActive={function () {
                         document.location.href = "/";
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"News"} hintText={"Recommend me latest news"}/>
+                        <Autocomplete key="autoc1" id="autoc1"  placeHolder={"News"} hintText={"Recommend me latest news"}/>
                     </Tab>
 
                     <Tab onActive={function () {
                         document.location.href = "/home/product/"+targetLang;
                     }} label="Products" style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"Products"} hintText={"Recommend me products"}/>
-                    </Tab>
+                        <Autocomplete key="autoc2" id="autoc2"  placeHolder={"Products"} hintText={"Recommend me products"}/>                    </Tab>
                     <Tab label="YouTube" onActive={function () {
                         document.location.href = "/home/youtube/"+targetLang;
                     }} style={{background: '#f5f5f5', color: '#333', height: '84px'}}>
-                        <Autocomplete placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
+                        <Autocomplete key="autoc3" id="autoc3" placeHolder={"YouTube"} hintText={"Recommend me YouTube Videos"}/>
                     </Tab>
                 </Tabs>
                 <Grid fluid={true}>
-                <div className="col-xs-offset-1"
+                <div
                     style={{
                         color: '#656972',
                         paddingTop: '30px',
@@ -230,20 +239,20 @@ class Intro extends Component {
                         fontWeight: 'bold',
                     }}>
                     Trending  News</div>
-                    <Row  style={{ marginLeft: '2rem'}}>
+                    <Row  style={{ marginLeft: '0rem'}}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs box">
+                                    <div key={`news-${article}`} className="col-xs box">
                                         {comment[article].reduction.map((news) => {
 
                                             let content = "";
                                             if (news.languages === targetLang && count < 1) {
                                                 count = count + 1;
                                                 content = <a href={this.getArticleLink(news)}>
-                                                    <Card key={news.id} style={style} className="box">
+                                                    <Card style={style}>
                                                         <CardHeader title={comment[article].group[1]}
                                                                     subtitle={<span style={{fontSize: '12px !important'}}>by <b>{news.author}</b> {moment(news.date).format('MMMM Do YYYY, h:mm')}</span>}
                                                                     avatar={<img style={{height: '24px', width: '24px'}}
@@ -277,7 +286,7 @@ class Intro extends Component {
                                                     </Card>
                                                 </a>
 
-                                                return <Col key={news.id}>{content}</Col>
+                                                return <Col key={`n-${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -286,8 +295,7 @@ class Intro extends Component {
                             })
                         }
                     </Row>
-
-                <div className="col-xs-offset-1"
+                <div
                     style={{
                        color: '#656972',
                         lineHeight: '60px !important',
@@ -297,13 +305,13 @@ class Intro extends Component {
                     }}>
                     Trending  comments</div>
 
-                    <Row style={{ marginLeft: '2rem', marginRight: '2rem' }}>
+                    <Row style={{ marginLeft: '0rem', marginRight: '0rem' }}>
                         {
                             comment && Object.keys(comment).map(article => {
                                 var count = 0;
                                 return (
                                     comment[article].group && comment[article].reduction &&
-                                    <div className="col-xs-12 box">
+                                    <div key={`co-${article}`}>
                                         {comment[article].reduction.map((news) => {
 
                                             let content = "";
@@ -311,7 +319,7 @@ class Intro extends Component {
                                                 count = count + 1;
                                                 content =  <ExpandableComment comment={news.comment}/>;
 
-                                                return <Col className="box" key={`${news.id}`}>{content}</Col>
+                                                return <Col key={`c-${news.id}`}>{content}</Col>
                                             }
                                             return ""
                                         })}
@@ -321,7 +329,7 @@ class Intro extends Component {
                         }
                     </Row>
 
-                <div className="col-xs-offset-1"
+                <div
                     style={{
                         color: '#656972',
                         lineHeight: '66px !important',
@@ -333,13 +341,13 @@ class Intro extends Component {
                     }}>
                     Active commentators</div>
 
-                    <Row style={{ marginLeft: '2rem'}}>
+                    <Row style={{ marginLeft: '0rem'}}>
                         {
                             commentators && Object.keys(commentators).map(article => {
                                 var count = 0;
                                 return (
                                     commentators[article].group && commentators[article].reduction &&
-                                    <div className="col-xs box">
+                                    <div key={`co-${article}`}>
                                         {commentators[article].reduction.map((news) => {
 
                                             let content = "";
@@ -359,7 +367,7 @@ class Intro extends Component {
                                                     </Card>
                                                 </a>
 
-                                                return <Col key={news.id} >{content}</Col>
+                                                return <Col key={`co-${news.id}`} >{content}</Col>
                                             }
                                             return ""
                                         })}

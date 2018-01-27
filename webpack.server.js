@@ -4,6 +4,7 @@ var config = require('./webpack.config');
 var WEBPACK_PORT = process.env.WEBPACK_PORT || 3001;
 
 new WebpackDevServer(webpack(config), {
+  headers: { 'Access-Control-Allow-Origin': '*' },
   publicPath: config.output.publicPath,
   hot: true,
   historyApiFallback: true,
