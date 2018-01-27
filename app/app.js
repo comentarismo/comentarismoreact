@@ -16,7 +16,7 @@ delete window.__PRELOADED_STATE__
 
 const store = configureStore(preloadedState)
 
-ReactDOM.render((
+ReactDOM.hydrate((
     <Provider store={store}>
         {createRoutes(browserHistory)}
     </Provider>

@@ -39,6 +39,15 @@ class Intro extends Component {
     
     componentDidMount() {
         
+        if(typeof window !== 'undefined' && !this.props.news || !this.props.news.length) {
+            var index = this.props.params.index ||"youtube";
+            var value = this.props.params.value ||"english";
+            var skip = this.props.params.skip || "0";
+            var limit = this.props.params.limit || "50";
+            console.log("ERROR: COULD NOT HYDRATE REACT STATE, WILL RETRY on client-side")
+            this.props.loadIntroDetail({index, value, skip, limit})
+        }
+        
         if (typeof window !== 'undefined') {
             console.log("navigator.language: " + navigator.language);
             console.log("navigator.userLanguage: " + navigator.userLanguage);

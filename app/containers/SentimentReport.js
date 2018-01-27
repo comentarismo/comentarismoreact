@@ -53,7 +53,7 @@ import YouTube from 'react-youtube'
 import BubbleChart from 'components/BubbleChart'
 
 import { XScript } from 'components/XScriptYoutube'
-import {YoutubeReportRun} from "containers/YoutubeReportRun";
+import { YoutubeReportRun } from 'containers/YoutubeReportRun'
 
 class SentimentReport extends Component {
     static fetchData ({store, params}) {
@@ -129,7 +129,10 @@ class SentimentReport extends Component {
                         },
                     ]}
                 />
-                <Sentiment comment={comment} url={url} lang={comment && comment.metadata ? comment.metadata.language: null}
+                <Sentiment comment={comment} url={url}
+                           lang={comment && comment.metadata
+                               ? comment.metadata.language
+                               : null}
                            refresh={refresh}/>
                 
                 <XScript operator={comment.operator} page={comment.id}
@@ -509,7 +512,7 @@ var Sentiment = createReactClass({
                       style={{padding: '4rem 0 6rem 4rem'}}>
                     <Row>
                         <YoutubeReportRun/>
-
+                        
                         <Row style={{
                             paddingTop: '5px !important',
                             background: '#fff',
@@ -552,7 +555,7 @@ var Sentiment = createReactClass({
                                         ? comment.metadata.totalcomments
                                         : ''}</b></span>
                                     <span
-                                        > Comments</span>
+                                    > Comments</span>
                                 </div>
                                 <div>
                                     <span><b>{comment.metadata
@@ -565,7 +568,7 @@ var Sentiment = createReactClass({
                                         id="comments_per_day"><b>{comment.commentavgperday
                                         ? comment.commentavgperday.toFixed(2)
                                         : '0'}</b></span>
-                                    <span > Comments per day</span>
+                                    <span> Comments per day</span>
                                 </div>
                             </div>
                         </Row>
@@ -583,15 +586,18 @@ var Sentiment = createReactClass({
                                 comment.keywords &&
                                 Object.keys(comment.keywords).
                                     map((tag, i) => {
-                                        return i < 4 && (
+                                        if (i > 15 || (tag && tag.length < 2)) {
+                                            return ''
+                                        }
+                                        return (
                                             <Chip key={`${tag}-${i}`}>
                                                 <Avatar
                                                     size={32}>{tag.slice(0,
                                                     1).
                                                     toUpperCase()}</Avatar>
-                                                 <a href={`/search?q=${tag}`}>
+                                                <a href={`/search?q=${tag}`}>
                                                     {tag}
-                                                 </a>
+                                                </a>
                                             </Chip>
                                         )
                                     })
@@ -614,7 +620,7 @@ var Sentiment = createReactClass({
                     <Tab label="BubbleChart"
                          style={{background: '#f5f5f5', color: '#333'}}>
                         {bubblechartComponent}
-                        <div style={{'justify-content':'center'}}>
+                        <div style={{'justify-content': 'center'}}>
                             <div className="">{numBubbles +
                             (numBubbles === 1 ? ' Circle' : ' Circles')}</div>
                             <input

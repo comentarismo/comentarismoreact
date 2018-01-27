@@ -60,6 +60,14 @@ class Article extends Component {
         return store.dispatch(loadArticleDetail({id}))
     }
     
+    componentDidMount () {
+        let {id} = this.props.params
+        if(typeof window !== 'undefined' && !this.props.article || !this.props.article.operator) {
+            console.log("ERROR: COULD NOT HYDRATE REACT STATE, WILL RETRY on client-side")
+            this.props.loadArticleDetail({id})
+        }
+    }
+    
     viewMoreImagesButton () {
         if (typeof window !== 'undefined' && this.props.article.search &&
             this.props.article.search.length > 0) {
@@ -183,29 +191,6 @@ class Article extends Component {
                 </div>
                 <div id='content'
                      dangerouslySetInnerHTML={{__html: targetText}}/>
-                <div style={{
-                    marginLeft: '10px',
-                    paddingTop: '20px',
-                    paddingBottom: '10px',
-                    color: '#656972',
-                    textTransform: 'uppercase',
-                    fontSize: '14px',
-                }}>News Length:
-                    <div id='content' dangerouslySetInnerHTML={{
-                        __html: (article.title.length + article.resume.length),
-                    }}/>
-                </div>
-                <div style={{
-                    marginLeft: '10px',
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                    color: '#656972',
-                    textTransform: 'uppercase',
-                    fontSize: '14px',
-                }}>Summary Length:
-                    <div id='content'
-                         dangerouslySetInnerHTML={{__html: targetText.length}}/>
-                </div>
                 <div style={{
                     marginLeft: '10px',
                     paddingTop: '10px',
@@ -496,6 +481,9 @@ class Article extends Component {
                                 {
                                     this.props.article.tags &&
                                     this.props.article.tags.map((tag, i) => {
+                                        if(i>15 || (tag && tag.length < 2)){
+                                            return ""
+                                        }
                                         return (
                                             <Chip key={`${tag}-${i}`}
                                                   style={stylesTag.chip}>
