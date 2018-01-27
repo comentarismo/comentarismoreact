@@ -253,7 +253,7 @@ class Commentator extends Component {
                     <Tab label="Comments"
                          style={{background: '#f5f5f5', color: '#333'}}>
                         {
-                            commentator.comments.map((q) => {
+                            commentator.comments.map((q,i) => {
                                
                                 
                                 return (

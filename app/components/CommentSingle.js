@@ -14,7 +14,7 @@ export default class CommentSingle extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            expanded: false,
+            expanded: true,
         }
     }
     
@@ -38,8 +38,7 @@ export default class CommentSingle extends React.Component {
                     showExpandableButton={true}
                 />
                 <CardTitle style={{textTransform: 'uppercase'}}
-                           title={q.genre ? `GENRE: ${q.genre}`: ''}
-                           subtitle={date} expandable={true}/>
+                           subtitle={<div>{q.genre ? q.genre: ''} | {date}</div>} expandable={true}/>
                 
                 <CardText expandable={true}>
                     <span dangerouslySetInnerHTML={{__html: q.comment}}/>
