@@ -225,6 +225,7 @@ class Search extends Component {
                                   'comment',
                                   'nick',
                                   'title',
+                                  'sentiment',
                                   'date']}
                               sourceFilter={[
                                   'title',

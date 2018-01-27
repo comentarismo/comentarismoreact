@@ -49,13 +49,30 @@ table {
     font-size: $sk-heading-font-size;
   }
 
+  th {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.0980392);
+    color: $comentarismo-black-text;
+    font-weight: $sk-bold-weight !important;
+    font-family: $comentarismo-font-family;
+    font-size: $sk-heading-font-size;
+  }
+
   tr {
     border-bottom: 1px solid rgba(0, 0, 0, 0.0980392);
     color: $comentarismo-black-text;
-    font-weight: $sk-medium-weight !important;
     font-family: $sk-font-family;
     font-size: $sk-list-font-size;
+    font-weight: $sk-medium-weight;
+    &:last-child {
+      border-bottom: none;
+    }
   }
+
+   td a {
+     font-size: $sk-list-font-size;
+     color: $comentarismo-black-text;
+     font-weight: $sk-bold-weight;
+}
 
   /* HORIZONTAL BORDERED TABLES */
 

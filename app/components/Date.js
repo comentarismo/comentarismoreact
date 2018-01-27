@@ -6,6 +6,6 @@ var moment = require("moment");
 module.exports = createReactClass({
     render: function () {
         var date = moment.utc(this.props.date).format("MMMM DD, YYYY");
-        return <b>{date}</b>
+        return <span>{date}</span>
     }
 });
