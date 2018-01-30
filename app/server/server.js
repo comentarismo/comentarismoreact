@@ -99,7 +99,7 @@ if (process.env.NODE_ENV === 'production') {
         // `/assets/${GIT_HASH}/app.js`,
         `/${assets.manifest.js}?hash=${GIT_HASH}`,
         `/${assets.app.js}?hash=${GIT_HASH}`,
-        '/static/all.js',
+        // '/static/all.js',
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
@@ -112,7 +112,7 @@ if (process.env.NODE_ENV === 'production') {
         `http://localhost:${WEBPACK_PORT}/vendor.js`,
         `http://localhost:${WEBPACK_PORT}/dev.js`,
         `http://localhost:${WEBPACK_PORT}/app.js`,
-        '/static/all.js',
+        // '/static/all.js',
     ];
     styleSrc = [
         `//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800`,
@@ -135,7 +135,7 @@ var conn = r({
     ]
 });
 
-console.log(`REDIS_HOST:${REDIS_HOST}, REDIS_PORT:${REDIS_PORT}, REDIS_PASSWORD:${REDIS_PASSWORD}, REDIS_EXPIRE:${REDIS_EXPIRE}`);
+console.log(`REDIS_HOST:${REDIS_HOST}, REDIS_PORT:${REDIS_PORT}, REDIS_PASSWORD:${REDIS_PASSWORD}, REDIS_EXPIRE:${REDIS_EXPIRE}, scriptSrcs=${JSON.stringify(scriptSrcs)}, styleSrc=${JSON.stringify(styleSrc)}`);
 
 var client = redis.createClient({
     host: REDIS_HOST, port: REDIS_PORT, password: REDIS_PASSWORD,

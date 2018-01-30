@@ -56,7 +56,7 @@ var config = {
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: DEBUG ? '[name].js' : '[name].[hash].js',
+        filename: DEBUG ? '[name].js' : '[name].js',
         // publicPath: '/',
     },
     plugins: [
@@ -235,24 +235,30 @@ if (DEBUG) {
                     handler: 'networkFirst',
                     urlPattern: /^https:\/\/(www\.)?comentarismo.com$/,
                 }],
-            dontCacheBustUrlsMatching: /\.\w{8}\./,
+            // dontCacheBustUrlsMatching: /\.\w{8}\./,
             minify: true,
-            navigateFallback: PUBLIC_PATH + 'index.html',
+            navigateFallback: PUBLIC_PATH,
         }),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'meta',
-            chunks: ['vendor'],
-            filename: 'vendor.[hash].js',
-            path: path.join(__dirname, 'dist'),
-        }),
-        // new webpack.NamedModulesPlugin(),
+        new webpack.NamedModulesPlugin(),
         new OfflinePlugin({
             // externals: ['index.html'],
             // AppCache: false,
-            
-            caches: 'all',
+            caches: {
+                main: [
+                    'app.js',
+                    'manifest.js',
+                    'static/all.js',
+                ],
+                additional: [
+                    ':externals:',
+                ],
+                optional: [
+                    ':rest:',
+                ],
+            },
+            // caches: 'all',
             relativePaths: false,
-            publicPath: '/pwa/',
+            publicPath: '/',
             ServiceWorker: {
                 events: true,
                 entry: './pwa/sw-handler.js',

@@ -1,4 +1,24 @@
-require('offline-plugin/runtime').install();
+var runtime = require('offline-plugin/runtime');
+runtime.install({
+  onUpdating: () => {
+    console.log('*&*&*& Comentarismo SW Event:', 'onUpdating');
+  },
+  onUpdateReady: () => {
+    console.log('*&*&*& Comentarismo SW Event:', 'onUpdateReady');
+    // Tells to new SW to take control immediately
+    runtime.applyUpdate();
+  },
+  onUpdated: () => {
+    console.log('*&*&*& Comentarismo SW Event:', 'onUpdated');
+    // Reload the webpage to load into the new version
+    window.location.reload();
+  },
+
+  onUpdateFailed: () => {
+    console.log('*&*&*& Comentarismo SW Event:', 'onUpdateFailed');
+  }
+});
+
 import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -10,7 +30,7 @@ import { Provider } from 'react-redux'
 
 const preloadedState = window.__PRELOADED_STATE__
 if (!preloadedState) {
-    console.log('REACT FAILED TO HYDRATE STATE!! ', window.__PRELOADED_STATE__)
+    console.log('*&*&*& ERROR: REACT FAILED TO HYDRATE STATE!! ', window.__PRELOADED_STATE__)
 }
 delete window.__PRELOADED_STATE__
 
