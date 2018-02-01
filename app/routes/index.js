@@ -35,6 +35,8 @@ import SentimentReport from 'containers/SentimentReport';
 import TopVideos from 'containers/TopVideos';
 
 import Search from 'containers/SearchComponent';
+import SearchProduct from 'containers/SearchComponentProduct';
+
 import SearchComponentJCP from 'containers/SearchComponentJCP';
 
 import CommentatorsNews from 'containers/CommentatorsNews';
@@ -52,7 +54,10 @@ export default function (history) {
 
 
             <Route path="/" component={Layout}>
+
                 <Route path="search" component={Search}/>
+                <Route path="search/product" component={SearchProduct}/>
+
     
                 <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="report/:url" component={SentimentReport}/>

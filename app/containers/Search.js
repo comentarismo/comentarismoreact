@@ -4,10 +4,10 @@ import { connect } from 'react-redux'
 
 import { loadIntroDetail } from 'actions/intro'
 
-import { SearchNewsCommentsList } from 'components/SearchNewsCommentsList'
+import { SearchNewsCommentsList } from 'components/SearchCommentsList'
 
 var analytics = require('ga-browser')()
-import Sentiment from 'components/Sentiment'
+ import Sentiment from 'components/Sentiment'
 
 import {
     SearchBox,
@@ -76,9 +76,11 @@ const customHitStats = (props) => {
 }
 
 function gup (name, url) {
+    // console.log('GUP typeof window ', typeof window);
     if (typeof window === 'undefined') {
         return null
     }
+
     if (!url) url = location.href
     name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]')
     var regexS = '[\\?&]' + name + '=([^&#]*)'
@@ -97,6 +99,8 @@ class Search extends Component {
     }
     
     render () {
+
+
         
         var searcbox = ''
         let isServer = typeof window === 'undefined'
@@ -107,20 +111,43 @@ class Search extends Component {
         if (q) {
             searchOnLoad = true
         }
-        
-        // const searchkit = new SearchkitManager('//localhost:9000/elk/_all', {
-        const searchkit = new SearchkitManager(
-            'https://apis.comentarismo.com/elk/_all', {
-                searchOnLoad: searchOnLoad,
-                useHistory: !isServer,
-                httpHeaders: {
-                    // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
-                },
-            })
-        
+        var  type = this.props.type;
+        // console.log('type', type)
+
+        var searchOnTypeUrl = ''
+        switch (type) {
+            case 'news':
+                //searchOnTypeUrl = 'http://localhost:9000/elk/_all/commentaries';
+
+                searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/commentaries';
+                break
+            case 'product':
+                //searchOnTypeUrl = 'http://localhost:9000/elk/_all/commentaries_product';
+
+                searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/commentaries_product';
+                break
+            default:
+                // searchOnTypeUrl = 'http://localhost:9000/elk/_all/';
+
+               searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/';
+                break
+
+        }
+
+        // console.log('let searchOnTypeUrl = ',searchOnTypeUrl);
+        const searchkit = new SearchkitManager(searchOnTypeUrl, {
+            // const searchkit = new SearchkitManager(
+            //     'https://apis.comentarismo.com/elk/_all', {
+            searchOnLoad: searchOnLoad,
+            useHistory: !isServer,
+            httpHeaders: {
+                // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
+            },
+        })
+
+
         searchkit.setQueryProcessor((plainQueryObject) => {
-            console.log('queryProcessor, ', plainQueryObject)
-            
+            // console.log('queryProcessor, ', plainQueryObject)
             if (plainQueryObject.filter) {
                 // hot fix for ES5
                 plainQueryObject.post_filter = plainQueryObject.filter
@@ -162,6 +189,11 @@ class Search extends Component {
                             field="nick"
                             operator="AND"
                             size={5}/>
+
+                        <HierarchicalMenuFilter
+                            fields={['categories']}
+                            title="Categories"
+                            id="categories"/>
                         
                         <HierarchicalMenuFilter
                             fields={['operator']}
@@ -219,8 +251,9 @@ class Search extends Component {
                         
                         </ActionBar>
 
-                        <Hits mod="sk-hits-list" hitsPerPage={10}
+                        <Hits mod="" hitsPerPage={10}
                               listComponent={SearchNewsCommentsList}
+                              itemComponent={this.props.type}
                               highlightFields={[
                                   'comment',
                                   'nick',
@@ -257,6 +290,7 @@ function mapStateToProps (state) {
 
 Search.propTypes = {
     comment: PropTypes.object,
+
 }
 
 export { Search }

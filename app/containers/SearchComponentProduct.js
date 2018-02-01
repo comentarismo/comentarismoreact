@@ -8,17 +8,17 @@ import { loadIntroDetail } from 'actions/intro'
 
 import {Search} from './Search'
 
-class SearchComponent extends Component {
+class SearchComponentProduct extends Component {
 
     render() {
 
-        var searcbox = <Search  type="news"/>
+        var searcbox = <Search type="product" />
 
         return (
             <div>
                 <Helmet
                     htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title="Comentarismo Search Engine - Search Any news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
+                    title="Comentarismo Search Engine - Search Any Product, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Search Comentarismo.com - %s"
                     meta={[
                     {"name": "description", "content": "Welcome to Search Comentarismo"},
@@ -47,10 +47,10 @@ function mapStateToProps(state) {
     return {comment: state.introDetail}
 }
 
-SearchComponent.propTypes = {
+SearchComponentProduct.propTypes = {
     comment: PropTypes.object.isRequired,
 };
 
 
-export { SearchComponent }
-export default connect(mapStateToProps, {loadIntroDetail})(SearchComponent)
+export { SearchComponentProduct }
+export default connect(mapStateToProps, {loadIntroDetail})(SearchComponentProduct)
