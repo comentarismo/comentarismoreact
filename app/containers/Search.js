@@ -1,5 +1,5 @@
-import React, { Component, ReactClass} from 'react'
-import PropTypes from 'prop-types';
+import React, { Component, ReactClass } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { loadIntroDetail } from 'actions/intro'
@@ -7,7 +7,7 @@ import { loadIntroDetail } from 'actions/intro'
 import { SearchNewsCommentsList } from 'components/SearchCommentsList'
 
 var analytics = require('ga-browser')()
- import Sentiment from 'components/Sentiment'
+import Sentiment from 'components/Sentiment'
 
 import {
     SearchBox,
@@ -33,10 +33,10 @@ import {
     ResetFilters,
     ViewSwitcherToggle,
     SortingSelector,
-    ViewSwitcherHits
+    ViewSwitcherHits,
 } from 'searchkit'
 
-
+import {getSearchHost} from 'util/searchutils'
 
 const RefinementOption = (props) => (
     <div className={props.bemBlocks.option().
@@ -75,20 +75,6 @@ const customHitStats = (props) => {
     )
 }
 
-function gup (name, url) {
-    // console.log('GUP typeof window ', typeof window);
-    if (typeof window === 'undefined') {
-        return null
-    }
-
-    if (!url) url = location.href
-    name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]')
-    var regexS = '[\\?&]' + name + '=([^&#]*)'
-    var regex = new RegExp(regexS)
-    var results = regex.exec(url)
-    return results == null ? null : results[1]
-}
-
 class Search extends Component {
     
     componentDidMount () {
@@ -99,72 +85,17 @@ class Search extends Component {
     }
     
     render () {
-
-
-        
-        var searcbox = ''
-        let isServer = typeof window === 'undefined'
-        
-        var searchOnLoad = false
-        var q = gup('q')
-        // console.log("Arguments -> ", q);
-        if (q) {
-            searchOnLoad = true
-        }
-        var  type = this.props.type;
-        // console.log('type', type)
-
-        var searchOnTypeUrl = ''
-        switch (type) {
-            case 'news':
-                //searchOnTypeUrl = 'http://localhost:9000/elk/_all/commentaries';
-
-                searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/commentaries';
-                break
-            case 'product':
-                //searchOnTypeUrl = 'http://localhost:9000/elk/_all/commentaries_product';
-
-                searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/commentaries_product';
-                break
-            default:
-                // searchOnTypeUrl = 'http://localhost:9000/elk/_all/';
-
-               searchOnTypeUrl = 'https://apis.comentarismo.com/elk/_all/';
-                break
-
-        }
-
-        // console.log('let searchOnTypeUrl = ',searchOnTypeUrl);
-        const searchkit = new SearchkitManager(searchOnTypeUrl, {
-            // const searchkit = new SearchkitManager(
-            //     'https://apis.comentarismo.com/elk/_all', {
-            searchOnLoad: searchOnLoad,
-            useHistory: !isServer,
-            httpHeaders: {
-                // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
-            },
-        })
-
-
-        searchkit.setQueryProcessor((plainQueryObject) => {
-            // console.log('queryProcessor, ', plainQueryObject)
-            if (plainQueryObject.filter) {
-                // hot fix for ES5
-                plainQueryObject.post_filter = plainQueryObject.filter
-                delete plainQueryObject.filter
-            }
-            return plainQueryObject
-        })
         
         const style = {
             background: 'hsla(0, 0%, 100%, 1.15) !important', color: 'black',
         }
         
-        searcbox = <SearchkitProvider searchkit={searchkit}>
+        const searcbox = <SearchkitProvider searchkit={this.props.searchkit}>
             <Layout>
-                <SearchBox style={style}
+                <SearchBox placeholder={this.props.placeholder}
+                           style={style}
                            autofocus={true}
-                           searchThrottleTime={1500}
+                           searchThrottleTime={2500}
                            searchOnChange={true}
                            prefixQueryFields={[
                                'nick',
@@ -189,7 +120,7 @@ class Search extends Component {
                             field="nick"
                             operator="AND"
                             size={5}/>
-
+                        
                         <HierarchicalMenuFilter
                             fields={['categories']}
                             title="Categories"
@@ -250,8 +181,8 @@ class Search extends Component {
                             </ActionBarRow>
                         
                         </ActionBar>
-
-                        <Hits mod="" hitsPerPage={10}
+                        
+                        <Hits scrollTo={false} mod="" hitsPerPage={10}
                               listComponent={SearchNewsCommentsList}
                               itemComponent={this.props.type}
                               highlightFields={[
@@ -289,8 +220,7 @@ function mapStateToProps (state) {
 }
 
 Search.propTypes = {
-    comment: PropTypes.object,
-
+    searchResults: PropTypes.object
 }
 
 export { Search }

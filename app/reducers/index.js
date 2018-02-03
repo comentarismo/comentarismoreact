@@ -12,6 +12,7 @@ import suggestCommentDetail from 'reducers/suggestCommentDetail'
 import introDetail from 'reducers/introDetail'
 import introProductDetail from 'reducers/introProductDetail'
 import adminDetail from 'reducers/adminDetail'
+import loadSearchResults from 'reducers/loadSearchResults'
 
 const rootReducer = combineReducers({
     commentators,
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
     productDetail,
     introDetail,
     introProductDetail,
-    adminDetail
+    adminDetail,
+    loadSearchResults
 });
 
 export default rootReducer;

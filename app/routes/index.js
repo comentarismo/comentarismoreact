@@ -37,7 +37,6 @@ import TopVideos from 'containers/TopVideos';
 import Search from 'containers/SearchComponent';
 import SearchProduct from 'containers/SearchComponentProduct';
 
-import SearchComponentJCP from 'containers/SearchComponentJCP';
 
 import CommentatorsNews from 'containers/CommentatorsNews';
 import CommentatorsProduct from 'containers/CommentatorsProduct';
@@ -85,8 +84,6 @@ export default function (history) {
                 <Route path="c/:id" component={Comment}/>
                 <Route path="play/:index/:value/:skip/:limit" component={SuggestComment}/>
 
-                <Route path="jcp" component={SearchComponentJCP}/>
-    
                 <Route path="home/product/:value" component={IntroProduct} />
                 <Route path="home/youtube/:value" component={IntroYoutube} />
                 <Route path="home/news/:value" component={Intro} />

@@ -28,16 +28,17 @@ import configureStore from 'store/configureStore'
 import createRoutes from 'routes/index'
 import { Provider } from 'react-redux'
 
-const preloadedState = window.__PRELOADED_STATE__
+const preloadedState = window.__INITIAL_APP_STATE__
 if (!preloadedState) {
-    console.log('*&*&*& ERROR: REACT FAILED TO HYDRATE STATE!! ', window.__PRELOADED_STATE__)
+    console.log('*&*&*& ERROR: REACT FAILED TO HYDRATE STATE!! ', window.__INITIAL_APP_STATE__)
 }
-delete window.__PRELOADED_STATE__
+delete window.__INITIAL_APP_STATE__
 
 const store = configureStore(preloadedState)
 
-ReactDOM.hydrate((
+ReactDOM.hydrate(
     <Provider store={store}>
         {createRoutes(browserHistory)}
-    </Provider>
-), document.getElementById('root'))
+    </Provider>,
+ document.getElementById('root')
+)

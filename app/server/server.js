@@ -1469,6 +1469,13 @@ server.get('*', limiter, (req, res, next) => {
             }
 
             let [getCurrentUrl, unsubscribe] = subscribeUrl();
+            
+            var searchCss = [];
+            if (reqUrl.indexOf("/search") !== -1) {
+                    var q = req.query.q;
+                    // console.log("SERVER QUERY -> ", q)
+                    renderProps.query = q;
+            }
 
             getReduxPromise().then(() => {
                 let html = ReactDOMServer.renderToString(
@@ -1497,10 +1504,6 @@ server.get('*', limiter, (req, res, next) => {
                     head.title = "<title data-react-helmet=\"true\">Loading ... </title>";
                 }
 
-                var searchCss = [];
-                // if (reqUrl.indexOf("/report/") !== -1) {
-                //     searchCss.push("/static/all.min.css")
-                // }
 
                 if (getCurrentUrl() === reqUrl) {
                     res.render('index', {html, head, scriptSrcs, reduxState, styleSrc, searchCss});
@@ -1521,7 +1524,8 @@ server.get('*', limiter, (req, res, next) => {
                     return Promise.resolve()
                 }
                 let comp = renderProps.components[renderProps.components.length - 1].WrappedComponent;
-                let promise = comp.fetchData ?
+                // console.log("getReduxPromise, ",(comp && comp.fetchData), {query})
+                let promise = comp && comp.fetchData ?
                     comp.fetchData({query, params, store, history}) :
                     Promise.resolve();
 
