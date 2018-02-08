@@ -68,11 +68,21 @@ function startState () {
     
 }
 
-var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-    webkitRequestAnimationFrame || msRequestAnimationFrame
-if (raf) {
-    raf(function () { window.setTimeout(startState, 0) })
-} else {
-    window.addEventListener('load', startState)
-}
-
+const intervalId = window.setInterval(() => {
+    const preloadedState = localStorage.getItem('__INITIAL_APP_STATE__' +
+            window.location.href)
+    
+    if (window.__INITIAL_APP_STATE__ || preloadedState){
+        try {
+            startState();
+        } catch (e){
+            console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE,  will retry, ",e);
+        } finally {
+            console.log("*&*&*& INFO: REACT HYDRATED STATE ?", !(window.__INITIAL_APP_STATE__));
+            // Clear the intervalId
+            window.clearInterval(intervalId);
+        }
+    }else {
+        console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE, will retry, ",e);
+    }
+}, 10);
