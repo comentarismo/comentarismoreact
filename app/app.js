@@ -83,6 +83,6 @@ const intervalId = window.setInterval(() => {
             window.clearInterval(intervalId);
         }
     }else {
-        console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE, will retry, ",e);
+        console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE, will retry, ");
     }
 }, 10);
