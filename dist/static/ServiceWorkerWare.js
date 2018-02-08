@@ -304,7 +304,8 @@ module.exports = StaticCacher;
 /* global fetch, BroadcastChannel, clients, Promise, Request, Response */
 'use strict';
 
-var debug = 1 ? console.log.bind(console, '[ServiceWorkerWare]') : function(){};
+// var debug = 1 ? console.log.bind(console, '[ServiceWorkerWare]') : function(){};
+var debug = function(){};
 
 var StaticCacher = require('./staticcacher.js');
 var SimpleOfflineCache = require('./simpleofflinecache.js');

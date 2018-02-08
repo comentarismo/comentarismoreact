@@ -14,13 +14,6 @@
             text-decoration: none;
         }
     </style>
-    <!-- Start __INITIAL_APP_STATE__ Javascript -->
-    <script>
-    //<![CDATA[
-        window.__INITIAL_APP_STATE__ = <%- reduxState %>;
-    //]]>
-    </script>
-    <!-- End __INITIAL_APP_STATE__ Javascript -->
 </head>
 <body>
 
@@ -36,6 +29,24 @@
     <link rel="stylesheet" href="<%= src %>" type="text/css" media="screen" charset="utf-8">
     <% }) %>
 </noscript>
+
+<!-- Start __INITIAL_APP_STATE__ Javascript -->
+<script>
+//<![CDATA[
+ var loadDeferredState = function() {
+     window.__INITIAL_APP_STATE__ = <%- reduxState %>;
+     console.log("*&*&*& REACT __INITIAL_APP_STATE__ is null ? ", !(window.__INITIAL_APP_STATE__) );
+ }
+ var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
+ if(raf) {
+     raf(function() { window.setTimeout(loadDeferredState, 0); });
+ }else{
+     window.addEventListener('load', loadDeferredState);
+ }
+//]]>
+</script>
+<!-- End __INITIAL_APP_STATE__ Javascript -->
+
 <script>
   var loadDeferredStyles = function() {
     var addStylesNode = document.getElementById("deferred-styles");
