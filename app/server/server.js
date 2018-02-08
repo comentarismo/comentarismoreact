@@ -4,7 +4,7 @@ import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {RouterContext, match} from 'react-router';
-// import {GoogleSearchScript} from "components/GoogleSearchScript"
+import { syncHistoryWithStore } from 'react-router-redux';
 import favicon from 'serve-favicon';
 import redis from "redis";
 import {createMemoryHistory,createLocation} from 'history';
@@ -21,11 +21,6 @@ import Helmet from "react-helmet";
 
 const Wreck = require('wreck');
 var serialize = require('serialize-javascript');
-
-// Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
-// user agent is not known.
-global.navigator = global.navigator || {};
-global.navigator.userAgent = global.navigator.userAgent || 'all';
 
 // var DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script;
 
@@ -1330,19 +1325,8 @@ server.get("/random", limiter, (req, res) => {
 //TODO: cache sitemap with redis
 
 server.get('*', limiter, (req, res, next) => {
-    let history = createMemoryHistory({
-      initialEntries: [ '/' ],  // The initial URLs in the history stack
-      initialIndex: 0,          // The starting index in the history stack
-      keyLength: 6,             // The length of location.key
-      // A function to use to confirm navigation with the user. Required
-      // if you return string prompts from transition hooks (see below)
-      getUserConfirmation: null
-    });
     let location = createLocation(req.url);
     let reqUrl = location.pathname + location.search;
-
-    let store = configureStore();
-    let routes = createRoutes(history);
 
     //sitemap
     if (reqUrl.indexOf("sitemap.xml") !== -1) {
@@ -1457,6 +1441,24 @@ server.get('*', limiter, (req, res, next) => {
         }
 
     } else {
+        
+        
+        // const client = new ApiClient(req);
+
+        let memoryHistory = createMemoryHistory({
+            initialEntries: [ '/' ],  // The initial URLs in the history stack
+            initialIndex: 0,          // The starting index in the history stack
+            keyLength: 6,             // The length of location.key
+            // A function to use to confirm navigation with the user. Required
+            // if you return string prompts from transition hooks (see below)
+            getUserConfirmation: null
+        });
+        
+        let store = configureStore();
+        let routes = createRoutes(history);
+        const history = syncHistoryWithStore(memoryHistory, store, {
+            selectLocationState: ()=>(state => state.routing)
+        });
 
         //logger.info(location);
         // console.log("React Render ", location.pathname)
@@ -1478,24 +1480,20 @@ server.get('*', limiter, (req, res, next) => {
             }
 
             getReduxPromise().then(() => {
+                
+                // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
+                // user agent is not known.
+                global.navigator = {userAgent: req.headers['user-agent']};
+                
                 let html = ReactDOMServer.renderToString(
-                    <Provider store={store}>
+                    <Provider store={store}  key="provider">
                         { <RouterContext {...renderProps}/> }
                     </Provider>
                 );
 
-                //let html = ReactDOMServer.renderToStaticMarkup(body(null,
-                //    div({id: 'content', dangerouslySetInnerHTML: {__html:
-                //        //ReactDOMServer.renderToString(App(props))
-                //        ReactDOMServer.renderToString(
-                //            <Provider store={store}>
-                //                { <RoutingContext {...renderProps}/> }
-                //            </Provider>)
-                //    }})
-                //    //script({src: '/bundle.js'})
-                //));
-                
                 let reduxState = serialize(store.getState(),{isJSON: true});
+                
+                
 
 
                 let head = Helmet.rewind();
@@ -1503,7 +1501,6 @@ server.get('*', limiter, (req, res, next) => {
                 if (head.title.toString() === "<title data-react-helmet=\"true\"></title>") {
                     head.title = "<title data-react-helmet=\"true\">Loading ... </title>";
                 }
-
 
                 if (getCurrentUrl() === reqUrl) {
                     res.render('index', {html, head, scriptSrcs, reduxState, styleSrc, searchCss});
@@ -1535,7 +1532,7 @@ server.get('*', limiter, (req, res, next) => {
         function subscribeUrl() {
             let currentUrl = location.pathname + location.search;
             let unsubscribe = history.listen((newLoc) => {
-                if (newLoc.action === 'PUSH') {
+                if (newLoc && newLoc.action === 'PUSH') {
                     currentUrl = newLoc.pathname + newLoc.search;
                 }
             });
@@ -1549,7 +1546,7 @@ server.get('*', limiter, (req, res, next) => {
 
 server.on('error', (err) => {
     // console.error("server.on('error' --> ", err);
-    console.log("Got error on server level, something may be really wrong!!! ")
+    console.log("Got error on server level, something may be really wrong!!! ", err.stack)
 });
 
 server.use((err, req, res, next) => {

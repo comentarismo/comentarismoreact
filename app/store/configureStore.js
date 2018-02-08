@@ -1,5 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { routerMiddleware } from 'react-router-redux';
+// import { fromJS } from 'immutable';
+
 import apiMiddleware from '../middleware/api';
 import {createLogger} from 'redux-logger';
 import rootReducer from '../reducers';
@@ -12,13 +15,16 @@ const logger = createLogger({
   predicate: (getState, action) => false
 });
 
-const createStoreWithMiddleware = applyMiddleware(
-  thunkMiddleware,
-  apiMiddleware,
-  logger
-)(createStore);
+export default function configureStore(_browserHistory,initialState) {
+  const routing = routerMiddleware(_browserHistory);
+  
+  const createStoreWithMiddleware = applyMiddleware(
+    routing,
+    thunkMiddleware,
+    apiMiddleware,
+    logger
+  )(createStore);
 
-export default function configureStore(initialState) {
   const store = createStoreWithMiddleware(rootReducer, initialState);
 
   if (module.hot) {
