@@ -31,10 +31,19 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 function startState () {
-    const preloadedState = window.__INITIAL_APP_STATE__
+    let preloadedState = window.__INITIAL_APP_STATE__
     if (!preloadedState) {
         console.log('*&*&*& ERROR: REACT FAILED TO HYDRATE STATE!! ',
             window.__INITIAL_APP_STATE__)
+        console.log(
+            '*&*&*& ERROR: REACT FALLBACK HYDRATE STATE on localStorage!! ')
+        
+        preloadedState = localStorage.getItem('__INITIAL_APP_STATE__' +
+            window.location.href)
+        if (!preloadedState) {
+            console.log(
+                '*&*&*& ERROR: REACT FAILED TO HYDRATE STATE from localStorage !! ')
+        }
     }
     
     const store = configureStore(browserHistory, preloadedState)
@@ -61,7 +70,7 @@ function startState () {
 
 var raf = requestAnimationFrame || mozRequestAnimationFrame ||
     webkitRequestAnimationFrame || msRequestAnimationFrame
-if (raf && !window.__INITIAL_APP_STATE__) {
+if (raf) {
     raf(function () { window.setTimeout(startState, 0) })
 } else {
     window.addEventListener('load', startState)

@@ -35,6 +35,7 @@
 //<![CDATA[
  var loadDeferredState = function() {
      window.__INITIAL_APP_STATE__ = <%- reduxState %>;
+     localStorage.setItem("__INITIAL_APP_STATE__"+window.location.href, window.__INITIAL_APP_STATE_);
      console.log("*&*&*& REACT __INITIAL_APP_STATE__ is null ? ", !(window.__INITIAL_APP_STATE__) );
  }
  var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
