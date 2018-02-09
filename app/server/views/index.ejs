@@ -31,28 +31,9 @@
 </noscript>
 
 <!-- Start __INITIAL_APP_STATE__ Javascript -->
-<script>
-    const initialState = <%- reduxState %>;
-
-    const intervalId = window.setInterval(() => {
-        if (!window.__INITIAL_APP_STATE__){
-            try {
-                console.log("*&*&*& INFO: try, REACT __INITIAL_APP_STATE__ is null ? ", !(window.__INITIAL_APP_STATE__) );
-                window.__INITIAL_APP_STATE__ = initialState;
-                localStorage.setItem("__INITIAL_APP_STATE__"+window.location.href, initialState);
-            } catch (e){
-                console.log("*&*&*& ERROR: catch, REACT FAILED TO set __INITIAL_APP_STATE__ STATE,  will retry, ",e);
-            } finally {
-                console.log("*&*&*& INFO: finally, REACT __INITIAL_APP_STATE__ is null ?", !(window.__INITIAL_APP_STATE__));
-            }
-        }else {
-            // Clear the intervalId
-            console.log("*&*&*& INFO: Clear the intervalId, __INITIAL_APP_STATE__ is null ? ", !(window.__INITIAL_APP_STATE__));
-            window.clearInterval(intervalId);
-        }
-    }, 10);
-
-</script>
+<noscript id="deferred-state">
+    <%- reduxState %>
+</noscript>
 <!-- End __INITIAL_APP_STATE__ Javascript -->
 
 <script>

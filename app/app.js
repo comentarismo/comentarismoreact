@@ -30,22 +30,10 @@ import { Provider } from 'react-redux'
 
 import { syncHistoryWithStore } from 'react-router-redux'
 
-function startState () {
-    let preloadedState = window.__INITIAL_APP_STATE__
-    if (!preloadedState) {
-        console.log('*&*&*& ERROR: REACT FAILED TO HYDRATE STATE!! ',
-            window.__INITIAL_APP_STATE__)
-        console.log(
-            '*&*&*& ERROR: REACT FALLBACK HYDRATE STATE on localStorage!! ')
-        
-        preloadedState = localStorage.getItem('__INITIAL_APP_STATE__' +
-            window.location.href)
-        if (!preloadedState) {
-            console.log(
-                '*&*&*& ERROR: REACT FAILED TO HYDRATE STATE from localStorage !! ')
-        }
-    }
-    
+let RETRY_COUNT = 0
+let stateLoaded = false
+
+function loadState (preloadedState) {
     const store = configureStore(browserHistory, preloadedState)
     
     const history = syncHistoryWithStore(browserHistory, store, {
@@ -59,30 +47,39 @@ function startState () {
         document.getElementById('root'),
     )
     
-    delete window.__INITIAL_APP_STATE__
+    stateLoaded = true
     
     if (process.env.NODE_ENV !== 'production') {
         window.React = React // enable debugger
         
     }
-    
 }
 
 const intervalId = window.setInterval(() => {
-    const preloadedState = localStorage.getItem('__INITIAL_APP_STATE__' +
-            window.location.href)
+    let preloadedState = document.getElementById('deferred-state').textContent
     
-    if (window.__INITIAL_APP_STATE__ || preloadedState){
+    if (stateLoaded) {
+        console.log('*&*&*& INFO: REACT HYDRATED STATE ', stateLoaded)
+        // Clear the intervalId
+        window.clearInterval(intervalId)
+    } else if (RETRY_COUNT > 10000) {
+        console.log(
+            '*&*&*& ERROR: RETRY_COUNT LIMIT REACHED! - REACT FAILED TO HYDRATE STATE ')
+        //pass empty string so it continues, leave for the client to re-render the app then!
+        loadState({})
+        // Clear the intervalId
+        window.clearInterval(intervalId)
+    } else if (preloadedState) {
         try {
-            startState();
-        } catch (e){
-            console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE,  will retry, ",e);
-        } finally {
-            console.log("*&*&*& INFO: REACT HYDRATED STATE ?", !(window.__INITIAL_APP_STATE__));
-            // Clear the intervalId
-            window.clearInterval(intervalId);
+            const preloadedStateJSON = JSON.parse(preloadedState.trim())
+            loadState(preloadedStateJSON)
+        } catch (e) {
+            console.log(
+                '*&*&*& ERROR: REACT FAILED TO HYDRATE STATE,  will retry, ', e)
         }
-    }else {
-        console.log("*&*&*& ERROR: REACT FAILED TO HYDRATE STATE, will retry, ");
+    } else {
+        console.log(
+            '*&*&*& ERROR: REACT FAILED TO HYDRATE STATE, will retry, ')
+        RETRY_COUNT = RETRY_COUNT + 1
     }
-}, 10);
+}, 10)
