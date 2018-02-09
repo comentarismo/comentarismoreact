@@ -374,41 +374,6 @@ class IntroProduct extends Component {
                         }
                     </Row>
 
-                    <Row
-                        style={{background: 'rgba(101,105,114, 0.9)', height: '330px', marginTop: '40px'}}>
-                        <img
-                            style={{
-                                width: '30%',
-                                height: '300px',
-                                margin: '30px 30px 0px 0px' }}
-                            src={`/static/img/avatar/comentarismo-bot.svg`}/>
-                        <Tabs style={{height: '135px', paddingBottom: '75px', width: '55%'}}>
-                            <Tab label="WHO AM I?" style={{background: '#656972', color: '#fff', height: '84px'}}>
-                                <h3 style={{ paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >I'm Linda!</h3>
-                                <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>I provide recommendations and help you discover news, products, videos and associated comments based on what you like.</p>
-                            </Tab>
-                            <Tab label="WHY SIGN IN?" style={{background: '#656972', color: '#fff', height: '84px'}}>
-                                <h3 style={{paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >Get more from comments around the web</h3>
-                                <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>Once signed in, you'll receive better, personalized recommendations. Navigate through comments and likes, comment or share them. Filter through comments and users's profiles.
-                                    Interact with all users from one place. Find other people with shared interests and keep up with their discoveries.
-                                </p>                            </Tab>
-                            <Tab label="AM I IMPROVING?" style={{background: '#656972', color: '#fff', height: '84px'}}>
-                                <h3 style={{paddingTop:'20px', fontFamily:'Open Sans, sans-serif', fontSize: '16px', color: '#fff'}} >I am always improving</h3>
-                                <p style={{fontFamily:'Open Sans, sans-serif', fontSize: '14px', color: '#fff'}}>My knowledge is constantly growing. I'm learning from you, the people who use my service.
-                                    If you want to help, sign up now!</p>
-                            </Tab>
-                        </Tabs>
-                    
-                    </Row>
-                    <Row  style={{ padding: '5rem'}}>
-                        <ul style={{listStyle: 'none', display: 'inline-flex', margin: 'auto'}}>
-                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="//api.comentarismo.com/about.html">About</a></li>
-                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">API</a></li>
-                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Contact</a></li>
-                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Terms of Use</a></li>
-                            <li><a style={{color: '#656972 !important', marginRight: '2rem', textTransform: 'uppercase', fontFamily:'Open Sans, sans-serif', fontWeight: '600'}} href="">Privacy Policy</a></li>
-                        </ul>
-                    </Row>
                 </Grid>
             </div>
         
