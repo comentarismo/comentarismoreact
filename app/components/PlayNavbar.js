@@ -3,11 +3,11 @@
 var React = require('react');
 var createReactClass = require('create-react-class');
 
-import { Navbar,Nav,NavItem,NavDropdown,MenuItem } from 'react-bootstrap';
+import { Navbar,Nav,NavItem,NavDropdown,MenuItem, Button } from 'react-bootstrap';
 var analytics = require('ga-browser')();
 
 module.exports = createReactClass({
-    displayName: 'MainNavbar',
+    displayName: 'PlayNavBar',
 
     onError: function () {
         console.log('MainNavbar error - removing');
@@ -23,17 +23,16 @@ module.exports = createReactClass({
 
     render: function () {
         return (
-            <Navbar inverse>
+            <Navbar>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a className="navbar-brand" href="/"><img src="/static/img/comentarismo-extra-mini-logo.png"
-                                                                  className="logo" alt="logo"/></a>
+                        Comentarismo Play
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>
-                        <NavDropdown eventKey={3} title="Play World News & Headlines" id="basic-nav-dropdown">
+                        <NavDropdown eventKey={3} title="NEWS" id="basic-nav-dropdown">
                             <NavDropdown eventKey={3} title="English" id="basic-nav-dropdown">
                                 <NavDropdown eventKey={3} title="Categories" id="basic-nav-dropdown">
                                     <MenuItem eventKey={3.1} href="/play/genre/business/0/50/">Play Business</MenuItem>
@@ -149,8 +148,12 @@ module.exports = createReactClass({
 
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={9} href="/"><span
-                            className="mobile-show">Exit Play Mode</span></NavItem>
+                        <NavItem eventKey={9} href="/">
+                            <Button bsStyle="info">
+                                <span className="mobile-show">Exit Play Mode</span>
+                            </Button>
+                        </NavItem>
+                        
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

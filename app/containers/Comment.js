@@ -1,156 +1,124 @@
-import React, { Component} from 'react';
-var createReactClass = require('create-react-class');
+import React, { Component } from 'react'
 
-import PropTypes from 'prop-types';
+var createReactClass = require('create-react-class')
 
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import PropTypes from 'prop-types'
 
-import Helmet from "react-helmet";
+import { connect } from 'react-redux'
 
+import Helmet from 'react-helmet'
 
 import { loadCommentDetail } from 'actions/commentators'
 
+import { CommentSlide } from 'components/CommentSlide'
 
-import Like from 'components/Like';
-import DisLike from 'components/DisLike';
-import {CommentSlide} from 'components/CommentSlide';
-var analytics = require('ga-browser')();
-
+var analytics = require('ga-browser')()
+import {
+    Panel,
+} from 'react-bootstrap'
 
 var Slide = createReactClass({
     render: function () {
-        let { comment } = this.props;
-
+        let {comment} = this.props
+        
         return (
             <div className="container">
-                <div className="row">
-                    <div className="col-sm-8">
-                        <a href="/" target="_blank">
-                            <img src="/static/img/comentarismo-extra-mini-logo.png"/>
-                            <span className="btn-default">
-                            Comentarismo </span>
-                        </a>
-                    </div>
-
-
-                    <div className="col-sm-4 btn-default">
-                        <a href="/r/2F"> Skip Ad </a>
-                    </div>
-                </div>
-
-
-                <div className="col-xs-12" style={{height: "45px"}}></div>
-
                 <CommentSlide key={comment.id} comment={comment}/>
-
-                <div className="row">
-
-                    <Like id={comment.id}/>
-                    <DisLike id={comment.id}/>
-                </div>
-
-                <div className="col-xs-12" style={{height: "45px"}}></div>
-
-                <div className="row">
-                    <div className="col-md-10 col-md-offset-1">
-                        <div className="facts-box testimonial-cta">
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
-                                         className="img-circle img-thumbnail"/>
-                                    <p>"By Reading Comments You Help people to be heard; Sharing ideas we'll make a
-                                        better world." <span className="btn-default"> <a
-                                            className="text-colored">@Comentarismo</a></span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         )
-    }
-});
+    },
+})
 
 var Slideshow = createReactClass({
-
+    
     getInitialState: function () {
-        let { comment } = this.props
+        let {comment} = this.props
         return {
             currentSlide: comment,
             counter: 0,
-            playing: false
+            playing: false,
         }
     },
     render: function () {
-
-        var slide = <Slide key={this.props.comment.id} comment={this.props.comment}/>;
-
+        
         return (
-            <div className="slideshow">
-                <div className="slides">
-                    {slide}
-                </div>
-            </div>
-        );
-    }
-});
-
+            <Slide key={this.props.comment.id} comment={this.props.comment}/>
+        )
+    },
+})
 
 class Comment extends Component {
-    static fetchData({ store, params }) {
-        let { id } = params;
+    static fetchData ({store, params}) {
+        let {id} = params
         // console.log(id);
         return store.dispatch(loadCommentDetail({id}))
     }
-
-    componentDidMount() {
-        analytics('create', 'UA-51773618-1', 'auto');
+    
+    componentDidMount () {
+        analytics('create', 'UA-51773618-1', 'auto')
         setInterval(function () {
             ga('send', 'event', 'ping', window.location.href, {}, 0)
-        }, 20000);
+        }, 20000)
     }
-
-    render() {
-        let { comment } = this.props;
-
+    
+    render () {
+        let {comment} = this.props
+        
         return (
             <div>
                 <Helmet
-                    htmlAttributes={{"lang": "en"}} // amp takes no value
+                    htmlAttributes={{'lang': 'en'}} // amp takes no value
                     title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": "Welcome to Comentarismo"},
-                    {"property": "og:type", "content": "article"}
-                ]}
+                        {
+                            'name': 'description',
+                            'content': 'Welcome to Comentarismo',
+                        },
+                        {
+                            'property': 'og:type',
+                            'content': 'article',
+                        },
+                    ]}
+                    link={[
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+                        },
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css',
+                        },
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://use.fontawesome.com/releases/v5.0.6/css/all.css',
+                        },
+                    
+                    ]}
                 />
-
-                <Slideshow comment={comment}/>
-
-                <div className="clearfix"></div>
-                <footer className="footer bg-dark">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-sm-12 text-center">
-                                <p className="copyright">© 2017 Comentarismo.com</p>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                
+                <Panel bsStyle="primary">
+                    <Panel.Heading>
+                        <Panel.Title componentClass="h3">
+                        
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Body>
+                        <Slideshow comment={comment}/>
+                    </Panel.Body>
+                </Panel>
+            
             </div>
-        );
+        )
     }
 }
 
-
-function mapStateToProps(state) {
+function mapStateToProps (state) {
     return {comment: state.commentDetail}
 }
 
 Comment.propTypes = {
-    comment: PropTypes.object.isRequired
+    comment: PropTypes.object.isRequired,
 }
 
 export { Comment }

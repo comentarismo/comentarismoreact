@@ -1,65 +1,67 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-var createReactClass = require('create-react-class');
+import React, { Component } from 'react'
+
+var createReactClass = require('create-react-class')
+import { ButtonGroup,ButtonToolbar, Button, Alert, Panel, Label } from 'react-bootstrap'
 
 
-import Like from 'components/Like';
-import DisLike from 'components/DisLike';
-import {CommentSlide} from 'components/CommentSlide';
+import { CommentSlide } from 'components/CommentSlide'
+import $ from 'jquery'
 
 var Empty = createReactClass({
     render: function () {
         return (
-            <div>Bad Server, no donuts for you.</div>
+            <div>
+                <Alert bsStyle="warning">
+                    Bad Server, no donuts for you.
+                </Alert>
+            </div>
+        
         )
-    }
-});
+    },
+})
 
 var PlayButton = createReactClass({
     render: function () {
         return (
-            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
-                <span className="fa fa-play" data-text="play"/>
-            </div>
+            <Button onClick={this.props.onClick}><span className="fa fa-play"
+                                                       data-text="play"/></Button>
         )
-    }
-});
+    },
+})
 
 var PauseButton = createReactClass({
     render: function () {
         return (
-            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
-                <span className="fa fa-pause" data-text="play"/>
-            </div>
+            <Button onClick={this.props.onClick}><span className="fa fa-pause"
+                                                       data-text="play"/></Button>
         )
-    }
-});
+    },
+})
 
 var PreviousButton = createReactClass({
     render: function () {
         return (
-            <div className="col-xs-4 btn btn-custom" onClick={this.props.onClick}>
-                <span className="fa fa-step-backward" data-text="left-open-mini"/>
-            </div>
+            <Button onClick={this.props.onClick}><span
+                className="fa fa-step-backward"
+                data-text="left-open-mini"/></Button>
         )
-    }
-});
+    },
+})
 
 var NextButton = createReactClass({
     render: function () {
         return (
-            <div className="col-xs-4 next btn btn-custom" onClick={this.props.onClick}>
-                <span className="fa fa-step-forward" data-text="right-open-mini"/>
-            </div>
+            <Button onClick={this.props.onClick}><span
+                className="fa fa-step-forward"
+                data-text="right-open-mini"/></Button>
         )
-    }
-});
-
+    },
+})
 
 var PlayComment = createReactClass({
-
+    
     getInitialState: function () {
-        let { comment,skip } = this.props;
+        let {comment, skip} = this.props
         if (!comment) {
             return {
                 comment: {},
@@ -68,9 +70,9 @@ var PlayComment = createReactClass({
                 playing: this.props.playing || false,
                 loading: false,
                 skip: skip,
-                currentSlideId: "",
+                currentSlideId: '',
                 currentSlideLike: false,
-                currentSlideDisLike: false
+                currentSlideDisLike: false,
             }
         }
         return {
@@ -80,66 +82,71 @@ var PlayComment = createReactClass({
             playing: this.props.playing || false,
             loading: false,
             skip: skip,
-            currentSlideId: comment[0] ? comment[0].id : "",
+            currentSlideId: comment[0] ? comment[0].id : '',
             currentSlideLike: false,
-            currentSlideDisLike: false
+            currentSlideDisLike: false,
         }
     }
     ,
-
+    
     goToPage: function (index) {
-        this.setState({counter: index, currentSlide: data[index]});
-        this.pauseRotation();
+        this.setState({counter: index, currentSlide: data[index]})
+        this.pauseRotation()
     }
     ,
     componentWillUnmount: function () {
-        clearInterval(this.interval);
+        clearInterval(this.interval)
+    }
+    ,
+    componentDidMount: function () {
+        $('a#inifiniteLoaderPlay').hide()
     }
     ,
     startRotation: function () {
-        console.log("play");
-        this.interval = setInterval(this.rotate, (this.props.playingtimeout || 10000));
-        this.setState({playing: true});
+        console.log('play')
+        this.interval = setInterval(this.rotate,
+            (this.props.playingtimeout || 10000))
+        this.setState({playing: true})
     }
     ,
     pauseRotation: function () {
-        console.log("pause");
-        clearInterval(this.interval);
-        this.setState({playing: false});
+        console.log('pause')
+        clearInterval(this.interval)
+        this.setState({playing: false})
     }
     ,
     rotate: function () {
-        var data = this.state.comment;
-        var slidesCount = this.state.comment.length;
-        var counter = this.state.counter;
-        var loading = this.state.loading;
-
+        var data = this.state.comment
+        var slidesCount = this.state.comment.length
+        var counter = this.state.counter
+        var loading = this.state.loading
+        
         if (counter < slidesCount - 1) {
-            ++counter;
+            ++counter
         } else if (!loading) {
-            this.setState({loading: true});
-            console.log(counter);
-            var index = this.props.index;
-            var value = this.props.value;
-            var skip = parseInt(this.state.skip) + counter + 1;
-            var limit = parseInt(this.props.limit);
-
-            var url = `/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`;
-            console.log(url);
-
-            $(".slideshow").hide();
-            $('a#inifiniteLoaderPlay').show('fast');
-
-            var that = this;
-            var request = $.getJSON(url);
+            this.setState({loading: true})
+            console.log(counter)
+            var index = this.props.index
+            var value = this.props.value
+            var skip = parseInt(this.state.skip) + counter + 1
+            var limit = parseInt(this.props.limit)
+            
+            var url = `/commentsapi/commentaries/${index}/${value}/${skip}/${limit}/`
+            console.log(url)
+            
+            $('.slideshow').hide()
+            $('a#inifiniteLoaderPlay').show('fast')
+            
+            var that = this
+            var request = $.getJSON(url)
             request.then(function (data) {
                 if (!data) {
                     //redirect user
-                    url = `/play/${index}/${value}/${skip}/${limit}/`;
-                    window.location.href = url;
-                    return;
+                    url = `/play/${index}/${value}/${skip}/${limit}/`
+                    window.location.href = url
+                    return
                 }
-                counter = 0;
+                counter = 0
                 that.setState({
                     loading: false,
                     counter: counter,
@@ -148,114 +155,97 @@ var PlayComment = createReactClass({
                     currentSlide: data[0],
                     currentSlideId: data[0].id,
                     currentSlideLike: false,
-                    currentSlideDisLike: false
-                });
-                $("a#inifiniteLoaderPlay").hide();
-                $(".slideshow").show();
-                return;
-            });
+                    currentSlideDisLike: false,
+                })
+                $('a#inifiniteLoaderPlay').hide()
+                $('.slideshow').show()
+                return
+            })
         } else {
-            console.log("skip already loading event");
-            return;
+            console.log('skip already loading event')
+            return
         }
-
-        this.setState({counter: counter, currentSlide: data[counter], currentSlideId: data[counter].id});
+        
+        this.setState({
+            counter: counter,
+            currentSlide: data[counter],
+            currentSlideId: data[counter].id,
+        })
     }
     ,
     goToPrevious: function () {
-        console.log("previous");
-        var data = this.state.comment;
-        var slidesCount = this.state.comment.length;
-        var counter = this.state.counter;
-
+        console.log('previous')
+        var data = this.state.comment
+        var slidesCount = this.state.comment.length
+        var counter = this.state.counter
+        
         if (counter > 0) {
-            --counter;
+            --counter
         } else {
-            counter = slidesCount - 1;
+            counter = slidesCount - 1
         }
-        this.setState({counter: counter, currentSlide: data[counter]});
-        this.pauseRotation();
+        this.setState({counter: counter, currentSlide: data[counter]})
+        this.pauseRotation()
     }
     ,
     goToNext: function () {
-        console.log("next");
-        this.rotate();
-        this.pauseRotation();
+        console.log('next')
+        this.rotate()
+        this.pauseRotation()
     }
     ,
-    changeFlag(props)
-    {
+    changeFlag (props) {
         this.setState({
-            selectedFlag: props.flag
+            selectedFlag: props.flag,
         }, () => {
             //if(props.locale === 'ar')
             //    $('html').addClass('arabic');
             //else
             //    $('html').removeClass('arabic');
-        });
+        })
     }
     ,
-
-
+    
     render: function () {
-
-        var playButton = <PlayButton onClick={this.startRotation}/>;
-        var pauseButton = <PauseButton onClick={this.pauseRotation}/>;
-        var previousButton = <PreviousButton onClick={this.goToPrevious}/>;
-        var nextButton = <NextButton onClick={this.goToNext}/>;
-
+        
+        var playButton = <PlayButton onClick={this.startRotation}/>
+        var pauseButton = <PauseButton onClick={this.pauseRotation}/>
+        var previousButton = <PreviousButton onClick={this.goToPrevious}/>
+        var nextButton = <NextButton onClick={this.goToNext}/>
+        
         if (!this.state.currentSlide) {
-            this.state.currentSlide = this.state.comment["0"];
+            this.state.currentSlide = this.state.comment['0']
         }
-
-        var slide = <CommentSlide key={this.state.currentSlide ? this.state.currentSlide.id : 0} comment={this.state.currentSlide}/>;
-
+        
+        var slide = <CommentSlide
+            key={this.state.currentSlide ? this.state.currentSlide.id : 0}
+            comment={this.state.currentSlide}/>
+        
         return (
             <div className="container">
-
-                <div className="row">
-
-                    {previousButton} {this.state.playing ? pauseButton : playButton} {nextButton}
-                </div>
-
-                <div className="col-xs-12" style={{height: "45px"}}></div>
-
-                <a id="inifiniteLoaderPlay"><img src="/static/img/ajax-loader.gif"/></a>
-                <div className="slideshow">
-
-                    <div className="slides">
+                
+                <a id="inifiniteLoaderPlay"><img
+                    src="/static/img/ajax-loader.gif"/></a>
+                
+                <Panel bsStyle="primary">
+                    <Panel.Heading>
+                        <Panel.Title componentClass="h3">
+                            {previousButton} {this.state.playing
+                            ? pauseButton
+                            : playButton} {nextButton} -
+                            Press a button to read the next comment                        
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Body>
                         {slide}
-                    </div>
-                    <div className="row">
-
-                        <Like id={this.state.currentSlideId} liked={this.state.currentSlideLike}/>
-                        <DisLike id={this.state.currentSlideId} liked={this.state.currentSlideDisLike}/>
-                    </div>
-                </div>
-
-
-                <div className="col-xs-12" style={{height: "45px"}}></div>
-
-                <div className="row">
-                    <div className="col-md-10 col-md-offset-1">
-                        <div className="facts-box testimonial-cta">
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <img src="/static/img/comentarismo-extra-mini-logo.png" alt="img"
-                                         className="img-circle img-thumbnail"/>
-                                    <p>"By Reading Comments You Help people to be heard; Sharing ideas we'll make a
-                                        better world." <span className="btn-default"> <a
-                                            className="text-colored">@Comentarismo</a></span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </Panel.Body>
+                </Panel>
+                
+             
             </div>
-        );
-    }
-
-});
+        )
+    },
+    
+})
 
 export { PlayComment }

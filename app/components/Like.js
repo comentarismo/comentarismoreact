@@ -8,6 +8,9 @@ var createReactClass = require('create-react-class');
 
 var analytics = require('ga-browser')();
 
+import { Button } from 'react-bootstrap'
+import $ from 'jquery'
+
 module.exports = createReactClass({
     displayName: 'Like',
 
@@ -89,13 +92,13 @@ module.exports = createReactClass({
         var text = this.state.liked ? 'Liked' : '';
 
         return (
-            <div>
-                <div id={this.props.id + '-success'} className='success' style={{display: "none"}}></div>
-                <div id={this.props.id + '-error'} className='error' style={{display: "none"}}></div>
-                <div className="col-xs-6 btn btn-custom" onClick={this.handleClick}>
+            <Button bsStyle="success">
+                <div id={this.props.id + '-success'} style={{display: "none"}}></div>
+                <div id={this.props.id + '-error'} style={{display: "none"}}></div>
+                <div className="" onClick={this.handleClick}>
                     <p><img src="/static/img/thumbs-up.png" style={{width: '50px',height: "50px"}}/>{text}</p>
                 </div>
-            </div>
+            </Button>
         );
     }
 });

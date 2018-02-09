@@ -34,24 +34,20 @@ class SuggestComment extends Component {
                     title="Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website."
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": "Welcome to Comentarismo"},
-                    {"property": "og:type", "content": "article"}
-                ]}
+                        {"name": "description", "content": "Welcome to Comentarismo"},
+                        {"property": "og:type", "content": "article"}
+                    ]}
+                    link={[
+                        {"rel":"stylesheet","href":"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"},
+                        {"rel":"stylesheet","href":"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"},
+                        {"rel":"stylesheet","href":"https://use.fontawesome.com/releases/v5.0.6/css/all.css"},
+                        
+                    ]}
                 />
                 <PlayNavbar/>
 
                 <PlayComment comment={comment} index={index} value={value} skip={skip} limit={limit} />
-
-                <div className="clearfix"></div>
-                <footer className="footer bg-dark">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-sm-12 text-center">
-                                <p className="copyright">© 2017 Comentarismo.com</p>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+               
             </div>
         );
     }

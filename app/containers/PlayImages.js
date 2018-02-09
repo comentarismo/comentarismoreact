@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
 var createReactClass = require('create-react-class');
 
-import PropTypes from 'prop-types';
-import Like from 'components/Like';
-import DisLike from 'components/DisLike';
 import {ImageSlide} from 'components/ImageSlide';
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import $ from 'jquery'
 
 var Empty = createReactClass({
     render: function () {
@@ -84,6 +82,9 @@ var PlayImages = createReactClass({
             currentSlideLike: false,
             currentSlideDisLike: false
         }
+    },
+    componentDidMount: function () {
+        $('a#inifiniteLoaderPlay').hide()
     },
     startRotation: function () {
         console.log("play");

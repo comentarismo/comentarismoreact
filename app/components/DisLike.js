@@ -6,6 +6,8 @@ var createReactClass = require('create-react-class');
 import config from 'config'
 var host = config.API_URL;
 var analytics = require('ga-browser')();
+import { Button } from 'react-bootstrap'
+import $ from 'jquery'
 
 module.exports = createReactClass({
     displayName: 'DisLike',
@@ -83,9 +85,9 @@ module.exports = createReactClass({
         var text = this.state.disliked ? 'DisLiked' : '';
 
         return (
-            <div className="col-xs-6 btn btn-yellow" onClick={this.handleClick}>
+            <Button bsStyle="danger" onClick={this.handleClick}>
                 <p><img src="/static/img/thumbs-down.png" style={{width: '50px',height: "50px"}}/>{text}</p>
-            </div>
+            </Button>
         );
     }
 });

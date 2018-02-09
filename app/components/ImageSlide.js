@@ -10,6 +10,7 @@ import {
 var Drift
 
 import $ from 'jquery'
+import Helmet from 'react-helmet'
 
 var ImageSlide = createReactClass({
     render: function () {
@@ -59,6 +60,23 @@ class MyImgZoom extends Component {
     render () {
         
         return <Card>
+            <Helmet
+                    link={[
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+                        },
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css',
+                        },
+                        {
+                            'rel': 'stylesheet',
+                            'href': 'https://use.fontawesome.com/releases/v5.0.6/css/all.css',
+                        },
+                    
+                    ]}
+                />
             <img id="imgZoom" className="imgZoom img-responsive"
                  src={this.props.img} data-zoom={this.props.imgzoom}/>
             <div id="mycontainer" className="mycontainer"></div>

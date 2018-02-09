@@ -1,101 +1,108 @@
-import superAgent from 'superagent';
-import Promise, {using} from 'bluebird';
-import _ from 'lodash';
+import superAgent from 'superagent'
+import Promise, { using } from 'bluebird'
+import _ from 'lodash'
 
-export const CALL_API = Symbol('CALL_API');
-export const CHAIN_API = Symbol('CHAIN_API');
+export const CALL_API = Symbol('CALL_API')
+export const CHAIN_API = Symbol('CHAIN_API')
 
 export default ({dispatch, getState}) => next => action => {
     if (action[CALL_API]) {
         return dispatch({
             [CHAIN_API]: [
-                ()=> action
-            ]
+                () => action,
+            ],
         })
     }
-
-    let deferred = Promise.defer();
-
+    
     if (!action[CHAIN_API]) {
         return next(action)
     }
-
-    let promiseCreators = action[CHAIN_API].map((apiActionCreator)=> {
+    
+    let promiseCreators = action[CHAIN_API].map((apiActionCreator) => {
         return createRequestPromise(apiActionCreator, next, getState, dispatch)
-    });
-
-    let overall = promiseCreators.reduce((promise, creator)=> {
-        return promise.then((body)=> {
+    })
+    
+    let overall = promiseCreators.reduce((promise, creator) => {
+        return promise.then((body) => {
             return creator(body)
         })
-    }, Promise.resolve());
-
-    overall.finally((err)=> {
-        return deferred.resolve(err)
-    }).catch((err)=> {
-        console.log("ERROR: api.js, createRequestPromise catch((err)), ", err);
-        return deferred.resolve(err)
-    });
-
-    return deferred.promise
+    }, Promise.resolve())
+    
+    return new Promise(function (resolve, reject) { //Or Q.defer() in Q
+        
+        overall.finally((err) => {
+            return reject(err)
+        }).catch((err) => {
+            console.log('ERROR: api.js, createRequestPromise catch((err)), ',
+                err)
+            return reject(err)
+        })
+        resolve(overall)
+    })
 }
 
-function createRequestPromise(apiActionCreator, next, getState, dispatch) {
-    return (prevBody)=> {
-        let apiAction = apiActionCreator(prevBody);
-        let deferred = Promise.defer();
-
-        let params = extractParams(apiAction[CALL_API]);
-        superAgent[params.method](params.url)
-            .withCredentials()
-            .end((err, res)=> {
-                if (err) {
-                    console.log("ERROR: api.js, createRequestPromise, ", params.url, err);
-                    if (params.errorType) {
+function createRequestPromise (apiActionCreator, next, getState, dispatch) {
+    return (prevBody) => {
+        let apiAction = apiActionCreator(prevBody)
+        
+        let params = extractParams(apiAction[CALL_API])
+        
+        return new Promise(function (resolve, reject) { //Or Q.defer() in Q
+           
+            superAgent[params.method](params.url).
+                withCredentials().
+                end((err, res) => {
+                    
+                    if (err) {
+                        console.log('ERROR: api.js, createRequestPromise, ',
+                            params.url, err)
+                        if (params.errorType) {
+                            dispatch({
+                                type: params.errorType,
+                                error: err,
+                            })
+                        }
+                        
+                        if (_.isFunction(params.afterError)) {
+                            params.afterError({getState})
+                        }
+                        reject(err)
+                    } else {
+                        
+                        //var response = Object.keys(res.body).length == 0 ? res.text : res.body;
+                        
                         dispatch({
-                            type: params.errorType,
-                            error: err
+                            type: params.successType,
+                            response: res.body,
                         })
+                        
+                        if (_.isFunction(params.afterSuccess)) {
+                            params.afterSuccess({getState})
+                        }
+                        
+                        //console.log("res.body",response);
+                        
+                        resolve(res.body)
                     }
-
-                    if (_.isFunction(params.afterError)) {
-                        params.afterError({getState})
-                    }
-                    deferred.reject()
-                } else {
-
-                    //var response = Object.keys(res.body).length == 0 ? res.text : res.body;
-
-                    dispatch({
-                        type: params.successType,
-                        response: res.body
-                    });
-
-                    if (_.isFunction(params.afterSuccess)) {
-                        params.afterSuccess({getState})
-                    }
-
-                    //console.log("res.body",response);
-
-                    deferred.resolve(res.body)
-                }
-            });
-
-        return deferred.promise;
+                    
+                })
+            
+           
+        })
     }
-
+    
 }
 
-function extractParams(callApi) {
-    let {method, path, successType, errorType, afterSuccess, afterError} = callApi;
-    let url = `${path}`;
-
+function extractParams (callApi) {
+    let {method, path, successType, errorType, afterSuccess, afterError} = callApi
+    let url = `${path}`
+    
     return {
         method,
         url,
         successType,
         errorType,
         afterSuccess,
-        afterError
+        afterError,
     }
 }

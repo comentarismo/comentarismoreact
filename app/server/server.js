@@ -1496,7 +1496,7 @@ server.get('*', limiter, (req, res, next) => {
                 
 
 
-                let head = Helmet.rewind();
+                let head = Helmet.renderStatic();
                 //logger.info("Helmet.rewind -> "+head.title.toString());
                 if (head.title.toString() === "<title data-react-helmet=\"true\"></title>") {
                     head.title = "<title data-react-helmet=\"true\">Loading ... </title>";
