@@ -15,7 +15,7 @@ var buildProperties = {
     publicDir: require('path').resolve('./dist'),
     GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID || 'DEVELOP',
     cssFiles: [
-        //'app/styles/main.scss',
+        './dist/static/styles/main.css',
         // './vendor/comentarismo-client.css',
         './vendor/bubblecharts.css',
         // './bower_components/components-font-awesome/css/font-awesome.css',

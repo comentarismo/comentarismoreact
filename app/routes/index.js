@@ -6,6 +6,7 @@ import {Router, Route, IndexRoute} from 'react-router';
 
 // import Layout from 'containers/layout/Layout';
 import Layout from 'containers/layout/Master';
+import LayoutSearch from 'containers/layout/MasterSearch';
 
 import Intro from 'containers/Intro';
 import IntroProduct from 'containers/IntroProduct';
@@ -50,13 +51,14 @@ injectTapEventPlugin();
 export default function (history) {
     return (
         <Router history={history}>
-
-
-            <Route path="/" component={Layout}>
-
+            
+            
+            <Route path="/" component={LayoutSearch}>
                 <Route path="search" component={Search}/>
                 <Route path="search/product" component={SearchProduct}/>
+            </Route>
 
+            <Route path="/" component={Layout}>
     
                 <Route path="sentiment/:url" component={SentimentComment}/>
                 <Route path="report/:url" component={SentimentReport}/>

@@ -55,9 +55,12 @@ table {
     font-weight: $sk-bold-weight !important;
     font-family: $comentarismo-font-family;
     font-size: $sk-heading-font-size;
+    &:hover {
+      background-color: white;
+    }
   }
 
-  tr {
+  tbody tr {
     border-bottom: 1px solid rgba(0, 0, 0, 0.0980392);
     color: $comentarismo-black-text;
     font-family: $sk-font-family;
@@ -66,12 +69,14 @@ table {
     &:last-child {
       border-bottom: none;
     }
+    &:hover {
+      background-color: #d4d4d447;
+    }
   }
 
    td a {
      font-size: $sk-list-font-size;
      color: $comentarismo-black-text;
-     font-weight: $sk-bold-weight;
 }
 
   /* HORIZONTAL BORDERED TABLES */
@@ -86,3 +91,10 @@ table {
   }
 }
 
+.comment {
+  font-style: italic;
+}
+
+.news {
+  font-weight: $sk-bold-weight;
+}

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import { loadIntroDetail } from 'actions/intro'
 
-import { SearchNewsCommentsList } from 'components/SearchCommentsList'
+import { SearchCommentsList } from 'components/SearchCommentsList'
 
 var analytics = require('ga-browser')()
 import Sentiment from 'components/Sentiment'
@@ -183,7 +183,7 @@ class Search extends Component {
                         </ActionBar>
                         
                         <Hits scrollTo={false} mod="" hitsPerPage={10}
-                              listComponent={SearchNewsCommentsList}
+                              listComponent={SearchCommentsList}
                               itemComponent={this.props.type}
                               highlightFields={[
                                   'comment',

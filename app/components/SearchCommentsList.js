@@ -1,11 +1,10 @@
 import React, {Component, ReactClass} from 'react';
-import PropTypes from 'prop-types';
 import * as _ from "lodash";
 
 import Sentiment from "components/Sentiment";
 import Date from "components/Date"
 
-class SearchNewsCommentsList extends React.Component {
+class SearchCommentsList extends React.Component {
 	
 	render() {
 		const {hits, itemComponent} = this.props;
@@ -13,7 +12,7 @@ class SearchNewsCommentsList extends React.Component {
 		if (!hits || hits.length === 0) {
 			return ("")
 		}
-		
+		let counter = 0
 		return (
 			<div>
 				<table className="sk-table sk-table-striped" style={{width: '100%', boxSizing: 'border-box'}}>
@@ -21,7 +20,7 @@ class SearchNewsCommentsList extends React.Component {
 					<tr>
 						<th>Source</th>
 						<th>Author</th>
-						<th>Comment</th>
+						<th>Comment in News</th>
 						<th>Sentiment</th>
 						<th>Date</th>
 					</tr>
@@ -30,21 +29,23 @@ class SearchNewsCommentsList extends React.Component {
 					{_.map(hits, hit => {
 						const _hit = _.extend({}, hit._source, hit.highlight)
                         return (
-							<tr key={_hit._id + _hit.nick}>
+							<tr key={(counter++) + _hit.nick}>
 								<td><img style={{height: '24px', width: '24px'}}
 								         src={`/static/img/sources/${_hit.operator}.png`}/></td>
 								<td>
-									<div
+									<a target="_blank" href={`/${itemComponent}/${_hit.titleurlize}`}
 									   dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.nick", _hit.nick)}}/>
 								</td>
 
 								<td>
-                                    <a target="_blank" href={`/${itemComponent}/${_hit.titleurlize}`}
-                                       dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.title", _hit.title)}}/>
-                                    <div
-                                        dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.comment", _hit.comment)}}/>
+                                    <a className="comment" target="_blank" href={`/${itemComponent}/${_hit.titleurlize}`}
+                                       dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.comment", _hit.comment)}}/>
+									<br/>
+                                    <a className="news" target="_blank" href={`/${itemComponent}/${_hit.titleurlize}`}
+                                        dangerouslySetInnerHTML={{__html: _.get(_hit, "highlight.title", _hit.title)}}/>
 								</td>
 								<td>
+									<a target="_blank" href={`/${itemComponent}/${_hit.titleurlize}`}/>
                                     <Sentiment sentiment={hit && hit._source ? hit._source.sentiment : ""}/>
 								</td>
 								<td>
@@ -59,4 +60,4 @@ class SearchNewsCommentsList extends React.Component {
 	}
 }
 
-export {SearchNewsCommentsList}
+export {SearchCommentsList}
