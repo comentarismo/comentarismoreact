@@ -52,10 +52,9 @@ export default function (history) {
     return (
         <Router history={history}>
             
-            
-            <Route path="/" component={LayoutSearch}>
-                <Route path="search" component={Search}/>
-                <Route path="search/product" component={SearchProduct}/>
+             <Route path="/search" component={LayoutSearch}>
+                <Route path="product" component={SearchProduct}/>
+                <IndexRoute component={Search}/>
             </Route>
 
             <Route path="/" component={Layout}>

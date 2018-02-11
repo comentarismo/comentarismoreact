@@ -28,7 +28,7 @@ const Menu = ({resources}) => (
                           leftIcon={<DashboardIcon/>}/>
             </a>
 
-            <ListItem key="search" containerElement={<Link to={`/search`}/>}
+            <ListItem key="search" containerElement={<a href={`/search`}/>}
                       primaryText="Search"
                       leftIcon={<SearchIcon/>}/>
     
