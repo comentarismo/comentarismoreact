@@ -1,6 +1,7 @@
 import superAgent from 'superagent'
 import Promise, { using } from 'bluebird'
 import _ from 'lodash'
+import StackTrace from 'stacktrace-js'
 
 export const CALL_API = Symbol('CALL_API')
 export const CHAIN_API = Symbol('CHAIN_API')
@@ -33,9 +34,19 @@ export default ({dispatch, getState}) => next => action => {
         overall.finally((err) => {
             resolve(err)
         }).catch((err) => {
-            console.log('ERROR: api.js, createRequestPromise catch((err)), ',
-                err)
-            reject(err)
+            StackTrace.fromError(err).then((stackFrames) => {
+                const errStack = stackFrames.map(sf => sf.toString()).
+                    join('\n')
+                console.log(
+                    'ERROR: api.js, createRequestPromise catch((err)), ',
+                    errStack)
+                reject(err)
+            }).catch(error => {
+                console.log(
+                    'ERROR: api.js, createRequestPromise catch((err)), ', err,
+                    error)
+                reject(err)
+            })
         })
         resolve(overall)
     })
@@ -48,7 +59,7 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
         let params = extractParams(apiAction[CALL_API])
         
         return new Promise(function (resolve, reject) {
-           
+            
             superAgent[params.method](params.url).
                 withCredentials().
                 end((err, res) => {
@@ -87,7 +98,6 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
                     
                 })
             
-           
         })
     }
     

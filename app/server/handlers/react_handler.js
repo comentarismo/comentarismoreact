@@ -115,7 +115,7 @@ module.exports = function (app, REDIS_CONNECTION, RETHINKDB_CONNECTION, limiter)
                     }
                     //-------REDIS CACHE END ------//
                     
-                    generateIndexXml(table, index, value, conn,
+                    generateIndexXml(table, index, value, RETHINKDB_CONNECTION,
                         function (err, xml) {
                             if (err || !xml) {
                                 logger.info(
