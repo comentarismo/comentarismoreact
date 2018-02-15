@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'util/safe-react';
 import {Provider} from 'react-redux';
 import {Router, Route, IndexRoute} from 'react-router';
 

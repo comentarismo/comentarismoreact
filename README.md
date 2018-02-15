@@ -11,7 +11,18 @@ Poor images, bad copy, lack of information, confusing navigation/layout, long fo
 `npm run build`
 
 # Run
-`npm run start`
+`npm run dev-prod`
+
+
+# Webstorm:
+```
+When resolving modules, WebStorm uses NODE_PATH environment variable defined in Default Node.js run configuration:
+ on the main menu "Run | Edit Configurations..."
+ expand "Defaults" node and select Node.js
+ specify NODE_PATH in "Environment variables" field to ./app, so NODE_PATH=./app
+ This will enable the right click feature within webstorm for quick navigation around files
+ https://youtrack.jetbrains.com/issue/WEB-19476
+```
 
 ## Run custom elk + rethinkdb + rethinkdb custom table + redis
 ELASTICSEARCH_HOST=g7-box RETHINKDB_HOS=g7-box RETHINKDB_TABLE=test REDIS_HOST=g7-box npm run start

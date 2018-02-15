@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component} from 'util/safe-react';
 import PropTypes from 'prop-types';
 
 import {connect} from 'react-redux'
@@ -439,9 +439,9 @@ class Product extends Component {
                                             return ""
                                         }
                                         return (
-                                                <Chip style={stylesTag.chip}>
+                                                <Chip key={i} style={stylesTag.chip}>
                                                     <Avatar size={32}>{tag.slice(0, 1).toUpperCase()}</Avatar>
-                                                     <a href={`/search?q=${tag}`}>
+                                                     <a href={`/search/product?q=${tag}`}>
                                                         {tag}
                                                      </a>
                                                 </Chip>

@@ -1,4 +1,4 @@
-import React, {Component, ReactClass} from 'react';
+import React, {Component, ReactClass} from 'util/safe-react';
 import * as _ from "lodash";
 
 import Sentiment from "components/Sentiment";

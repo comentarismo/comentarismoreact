@@ -102,7 +102,7 @@
 
 <!-- Start bundle Javascript -->
 <% scriptSrcs.forEach(function(src){ %>
-<script src="<%= src %>"></script>
+<script defer="defer" crossOrigin="anonymous" src="<%= src %>"></script>
 <% }) %>
 <!-- End bundle Javascript -->
 

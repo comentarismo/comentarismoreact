@@ -1,12 +1,9 @@
-import React from 'react'
+import React from 'util/safe-react';
 
 var createReactClass = require('create-react-class')
 
 import { State, Navigation } from 'react-router'
 
-
-
-import { GoogleSearchScript } from 'components/GoogleSearchScript'
 import {
     CardActions,
     CardHeader,
@@ -34,7 +31,7 @@ var YoutubeReportRun = createReactClass({
     
     runReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/sentiment/' +
+            window.location.href = '/report/' +
                 encodeURIComponent(this.state.vid) + '?' +
                 (this.state.lang ? 'lang=' + this.state.lang : '')
         }
@@ -42,7 +39,7 @@ var YoutubeReportRun = createReactClass({
     
     updateReport: function () {
         if (typeof window !== 'undefined') {
-            window.location.href = '/sentiment/' +
+            window.location.href = '/report/' +
                 encodeURIComponent(this.state.vid) + '?' +
                 (this.state.lang ? 'lang=' + this.state.lang : '') +
                 '&refresh=true'
@@ -56,6 +53,7 @@ var YoutubeReportRun = createReactClass({
     
     handleChangeLang: function (event) {
         var change = event.target.value
+        console.log("handleChangeLang, ", change)
         this.setState({lang: change})
     },
     
@@ -103,6 +101,10 @@ var YoutubeReportRun = createReactClass({
                     <RaisedButton label="Create new Report"
                                   primary={true}
                                   onClick={this.runReport}/>
+                    <RaisedButton label="Update Report"
+                                  primary={false}
+                                  onClick={this.updateReport}/>
+                    
                 </CardActions>
             </div>
         )

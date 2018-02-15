@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'util/safe-react';
 import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
@@ -8,33 +8,19 @@ import Date from 'components/Date'
 import Helmet from 'react-helmet'
 import CommentSingle from 'components/CommentSingle'
 
-import {
-    CardActions,
-    CardHeader,
-    CardTitle,
-    CardText,
-} from 'material-ui/Card'
-import { Tabs, Tab } from 'material-ui/Tabs'
-import { Grid, Row, Col } from 'react-styled-flexboxgrid'
-
-import LinearProgress from 'material-ui/LinearProgress'
 
 import Chip from 'material-ui/Chip'
 
 import Avatar from 'material-ui/Avatar';
-import FileFolder from 'material-ui/svg-icons/file/folder';
-import FontIcon from 'material-ui/FontIcon';
 
 import PersonOutline from 'material-ui/svg-icons/social/person-outline';
 import Place from 'material-ui/svg-icons/maps/place';
 import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
 
-
 var moment = require('moment')
 var table = 'commentator'
 
-var $ = require('jquery')
 var ImageResized = require('components/ImageResized')
 
 class Commentator extends Component {
@@ -77,13 +63,7 @@ class Commentator extends Component {
         } catch (e) {
             console.log('Error when getting commentsavgperday :| ', e, id)
         }
-        
-        if (typeof window !== 'undefined') {
-            $('.progress-bar').
-                attr('aria-valuenow', 100).
-                css({'width': 100 + '%'}).
-                text('Comments Analyzed: ' + 100 + '%')
-        }
+       
         
         return (
             <div>
@@ -177,7 +157,7 @@ class Commentator extends Component {
                                     commentator.genre &&
                                     commentator.genre.map((tag, i) => {
                                         return (
-                                            <div className="commentator-container__chip--wrapper">
+                                            <div key={`c-${i}-${tag}`} className="commentator-container__chip--wrapper">
                                                 <a href={`/commentator_news/${commentator.id}?genre=${tag}`}>
                                                     <Chip className="commentator-container__chip--label"
                                                           key={`chip-${i}`}>

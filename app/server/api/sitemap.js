@@ -1,8 +1,7 @@
 var sm = require('sitemap')
 
 /** LOGGER **/
-var log = require('./logger')
-var logger = log.getLogger()
+import logger from 'server/logger_middleware'
 /** LOGGER **/
 
 import  {
@@ -139,7 +138,7 @@ function generateIndexXml (table, index, value, conn, cb) {
     }
     
     if (!table || !index || !value) {
-        console.log('Error: generateIndexXml, search query is not correct ',
+        logger.debug('Error: generateIndexXml, search query is not correct ',
             table, index, value)
         return ('search query is not correct.')
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'util/safe-react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 

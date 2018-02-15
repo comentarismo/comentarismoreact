@@ -1,0 +1,26 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    "poc",
+    "dist",
+    "vendor/searchkit/dist"
+
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony"
+  },
+
+  "watch": [
+    "app",
+    "vendor",
+    "img",
+    "pwa"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js json"
+}

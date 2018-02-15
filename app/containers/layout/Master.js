@@ -1,6 +1,5 @@
-import React, {Component } from 'react';
+import React, {Component } from 'util/safe-react';
 import PropTypes from 'prop-types';
-// import Title from 'react-title-component';
 import AppBar from 'material-ui/AppBar';
 // import IconButton from 'material-ui/IconButton';
 import spacing from 'material-ui/styles/spacing';
@@ -11,12 +10,13 @@ import AppNavDrawer from './AppNavDrawer';
 import withWidth, {MEDIUM, LARGE} from 'material-ui/utils/withWidth';
 import LoginStore from 'store/LoginStore';
 import config from 'config'
-var host = config.API_URL;
 import FlatButton from 'material-ui/FlatButton';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Link} from 'react-router';
 import Helmet from "react-helmet";
+
 var GIT_HASH = require("../../server/version.js").GIT_HASH;
+var host = config.API_URL;
 
 import {Row} from 'react-styled-flexboxgrid';
 import {Tabs, Tab} from 'material-ui/Tabs';

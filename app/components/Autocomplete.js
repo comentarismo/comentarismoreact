@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component} from 'util/safe-react';
 import {AutoComplete}     from 'material-ui';
 import JSONP                from 'jsonp';
 const googleAutoSuggestURL = '//suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=';

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 import ReactDOM from 'react-dom';
 import { IFrame } from 'components/IFrame';
 import $ from 'jquery';

@@ -32,15 +32,68 @@ var env = {
 }
 
 const VENDOR_LIBS = [
+    'bluebird',
+    'browser-bunyan',
+    'chart.js',
+    'connect-timeout',
+    'cookie-parser',
+    'create-react-class',
+    'd3',
+    'diacritics',
+    'drift-zoom',
+    'emojione',
+    'ga-browser',
+    'history',
+    'isomorphic-fetch',
+    'jdenticon',
+    'jquery',
+    'jsonp',
+    'jwt-decode',
+    'lodash',
+    'material-ui',
+    'md5',
+    'moment',
+    'normalizr',
+    'pos',
+    'prop-types',
     'react',
+    'react-bootstrap',
+    'react-bubble-chart',
     'react-dom',
+    'react-dom-factories',
+    'react-helmet',
+    'react-on-visible',
+    'react-placeholder',
+    'react-redux',
+    'react-router',
+    'react-router-redux',
+    'react-safe-render',
+    'react-sidebar',
+    'react-soundplayer',
+    'react-styled-flexboxgrid',
+    'react-tap-event-plugin',
+    'react-youtube',
+    'redux',
+    'redux-logger',
+    'redux-thunk',
+    'searchkit',
+    'stacktrace-js',
+    'styled-components',
+    'superagent',
+    'xhr',
+    'xml2js'
 ]
+
+if(process.env.PRINT_DEPS) {
+    const packagejson = require('./package.json')
+    console.log(Object.keys(packagejson.dependencies))
+}
 
 var config = {
     devtool: DEBUG ? 'cheap-module-eval-source-map' : 'cheap-module-source-map',
     entry: {
         app: APP_DIR,
-        // vendor: VENDOR_LIBS
+        vendor: VENDOR_LIBS,
     },
     resolve: {
         extensions: ['.js', '.scss'],
@@ -245,16 +298,16 @@ if (DEBUG) {
             // AppCache: false,
             caches: {
                 main: [
-                    'app.js',
                     'manifest.js',
-                    'static/all.js',
+                    'vendor.js',
+                    'app.js',
                 ],
-                additional: [
-                    ':externals:',
-                ],
-                optional: [
-                    ':rest:',
-                ],
+                // additional: [
+                //     ':externals:',
+                // ],
+                // optional: [
+                //     ':rest:',
+                // ],
             },
             // caches: 'all',
             relativePaths: false,

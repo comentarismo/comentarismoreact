@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'util/safe-react';
 
 import { connect } from 'react-redux'
 import { loadCommentators } from 'actions/commentators'

@@ -5,8 +5,7 @@ var xml2js = require("xml2js");
 var ELK_URL = process.env.ELASTICSEARCH_HOST || "http://147.75.100.173:8080";
 
 /** LOGGER **/
-var log = require("./logger");
-var logger = log.getLogger();
+import logger from 'server/logger_middleware'
 /** LOGGER **/
 
 var elasticsearch = require('elasticsearch');
@@ -26,7 +25,7 @@ export function getElkByQuery(index, type, query, cb) {
         }
     }, function (err, resp) {
         if (err) {
-            console.trace(err.message);
+            logger.error(err.message);
             cb(err);
         } else {
             var hits = resp.hits.hits;
@@ -50,7 +49,7 @@ function filterArray(hits, i, target, cb) {
             var r = row["_source"];
             target.push(r);
         }catch(e){
-            // console.log("Error: filterArray err: ",e);
+            logger.error("Error: filterArray err: ",e);
         }
         i = i + 1;
         filterArray(hits, i, target, cb);

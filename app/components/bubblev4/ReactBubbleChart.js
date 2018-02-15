@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 
 import ReactBubbleChartD3 from 'components/bubble/ReactBubbleChartD3'
-import React from 'react'
+import React from 'util/safe-react';
 import ReactDOM from 'react-dom'
 
 

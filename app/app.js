@@ -20,7 +20,7 @@ runtime.install({
 })
 
 import 'babel-polyfill'
-import React from 'react'
+import React from 'util/safe-react';
 import ReactDOM from 'react-dom'
 import { browserHistory } from 'react-router'
 

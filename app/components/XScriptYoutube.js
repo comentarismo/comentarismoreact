@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 import ReactDOM from 'react-dom';
 import { IFrame } from 'components/IFrame';
 import $ from 'jquery';
@@ -119,7 +119,7 @@ class XScript extends React.Component {
     
         var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
     
-        return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'100vh', left:'0px;'}}>
+        return <IFrame initialContent={body} style={{border:0,position:'inherit', width:'100%', height:'100vh', left:'0px'}}>
         </IFrame>
         
     }

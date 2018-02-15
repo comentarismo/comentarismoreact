@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'util/safe-react';
 import PropTypes from 'prop-types';
 
 import Drawer from 'material-ui/Drawer'

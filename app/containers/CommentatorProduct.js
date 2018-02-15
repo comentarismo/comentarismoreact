@@ -1,287 +1,203 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types';
+import React, { Component } from 'util/safe-react'
+import PropTypes from 'prop-types'
+
 import { connect } from 'react-redux'
 import { loadCommentatorDetail } from 'actions/commentators'
 
-import Date from "components/Date"
-import Helmet from "react-helmet";
-var moment = require("moment");
+import Date from 'components/Date'
+import Helmet from 'react-helmet'
 
-const table = "commentator_product";
-const  $ = require("jquery");
+var moment = require('moment')
+
+const table = 'commentator_product'
 
 import CommentSingle from 'components/CommentSingle'
 
-import {
-    CardActions,
-    CardHeader,
-    CardTitle,
-    CardText,
-} from 'material-ui/Card'
-import { Tabs, Tab } from 'material-ui/Tabs'
-import { Grid, Row, Col } from 'react-styled-flexboxgrid'
-
-import LinearProgress from 'material-ui/LinearProgress'
 
 import Chip from 'material-ui/Chip'
-import Avatar from 'material-ui/Avatar'
 
-var ImageResized = require('components/ImageResized')
+import Avatar from 'material-ui/Avatar';
+
+import PersonOutline from 'material-ui/svg-icons/social/person-outline';
+import Place from 'material-ui/svg-icons/maps/place';
+import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
 class Commentator extends Component {
-    static fetchData({ store, params }) {
-        let { id } = params;
-        return store.dispatch(loadCommentatorDetail({id,table}))
+    static fetchData ({store, params}) {
+        let {id} = params
+        return store.dispatch(loadCommentatorDetail({id, table}))
     }
-
-    componentDidMount() {
+    
+    componentDidMount () {
         // let { id } = this.props.params;
         // this.props.loadCommentatorDetail({id,table})
     }
-
-    render() {
-        let { commentator } = this.props;
-        if (!commentator.comments){
-            commentator.comments = [];
+    
+    render () {
+        let {commentator} = this.props
+        if (!commentator.comments) {
+            commentator.comments = []
         }
-        let { id } = this.props.params;
-
-        var commentsavgperday = 0.0;
-
+        let {id} = this.props.params
+        
+        var commentsavgperday = 0.0
+        
         try {
-            var targetDate = moment();
-            if(commentator.minDate){
-                targetDate = moment(commentator.minDate);
+            var targetDate = moment()
+            if (commentator.minDate) {
+                targetDate = moment(commentator.minDate)
             }
-            var today = moment();
-
-            var diffInDays = today.diff(targetDate, 'days'); // x days
-
-            console.log("commentsavgperday, diffInDays, ",diffInDays)
-
-            if(diffInDays > 0) {
-                commentsavgperday = parseFloat(commentator.totalComments) / (parseFloat(diffInDays) / parseFloat(24))
+            var today = moment()
+            
+            var diffInDays = today.diff(targetDate, 'days') // x days
+            
+            console.log('commentsavgperday, diffInDays, ', diffInDays)
+            
+            if (diffInDays > 0) {
+                commentsavgperday = parseFloat(commentator.totalComments) /
+                    (parseFloat(diffInDays) / parseFloat(24))
             }
-        }catch(e){
-            console.log("Error when getting commentsavgperday :| ",e, id);
+        } catch (e) {
+            console.log('Error when getting commentsavgperday :| ', e, id)
         }
-
-        if (typeof window !== 'undefined') {
-            $(".progress-bar").attr('aria-valuenow', 100)
-                .css({'width': 100 + '%'})
-                .text('Comments Analyzed: ' + 100 + '%');
-        }
-
+        
         return (
             <div>
                 <Helmet
-                    htmlAttributes={{"lang": "en"}} // amp takes no value
-                    title={`Latest Comments - Commentator Profile -> @${commentator.slug && typeof commentator.slug.toUpperCase === "function" ? commentator.slug.toUpperCase() : commentator.nick} `}
+                    htmlAttributes={{'lang': 'en'}} // amp takes no value
+                    title={`Latest Comments - Commentator Profile -> @${commentator.slug &&
+                    typeof commentator.slug.toUpperCase === 'function'
+                        ? commentator.slug.toUpperCase()
+                        : commentator.nick} `}
                     titleTemplate="Comentarismo.com - %s"
                     meta={[
-                    {"name": "description", "content": `Find all comments for @${commentator.slug && typeof commentator.slug.toUpperCase === "function" ? commentator.slug.toUpperCase() : commentator.nick} - the world's leading liberal comments website.`},
-                    {"property": "og:type", "content": "comments"},
-                    {"property": "og:image", "content": 'https://unsplash.it/1400/350?random'},
-                    {"property": "og:title", "content": `${commentator && commentator.nick ? commentator.nick : id}`}
+                        {
+                            'name': 'description',
+                            'content': `Find all comments for @${commentator.slug &&
+                            typeof commentator.slug.toUpperCase === 'function'
+                                ? commentator.slug.toUpperCase()
+                                : commentator.nick} - the world's leading liberal comments website.`,
+                        },
+                        {
+                            'property': 'og:type',
+                            'content': 'comments',
+                        },
+                        {
+                            'property': 'og:image',
+                            'content': 'https://unsplash.it/1400/350?random',
+                        },
+                        {
+                            'property': 'og:title',
+                            'content': `${commentator && commentator.nick
+                                ? commentator.nick
+                                : id}`,
+                        },
                     ]}
                 />
                 
                 
-                 <Grid fluid={false}
-                      style={{padding: '4rem', paddingBottom: '6rem'}}>
-                    
-                    <Row
-                        style={{
-                            background: '#fff',
-                            height: 'auto',
-                            fontFamily: 'Open Sans, sans-serif',
-                            color: '#656972',
-                        }}>
-                        <Row>
-                            <CardHeader style={{
-                                paddingTop: '0px !important',
-                                paddingBottom: '0px',
-                            }}
-                                        title={<span style={{
-                                            fontSize: '14px',
-                                            textTransform: 'uppercase',
-                                        }}>{commentator.operator
-                                            ? commentator.operator + ' '
-                                            : ' '}</span>}
-                                        avatar={<a
-                                            href={`/news/operator/${commentator.operator}`}><img
-                                            style={{
-                                                height: '24px',
-                                                width: '24px',
-                                                marginTop: '8px',
-                                            }}
-                                            src={`/static/img/sources/${commentator.operator}.png`}/></a>}
-                                        subtitle={<Date
-                                            style={{fontSize: '14px'}}
-                                            date={this.props.commentator.date}/>}
-                            />
-                            
-                            <CardTitle style={{
-                                paddingTop: '0px !important',
-                                paddingBottom: '0px',
-                            }}
-                                       title={<a target="_blank"
-                                                 href={commentator.link}><span
-                                           dangerouslySetInnerHTML={{__html: commentator.title}}/></a>}
-                                       titleStyle={{}}
-                                       subtitle={<a target="_blank"
-                                                    href={`/html/news.html?table=commentaries&skip=0&limit=50&operator=${commentator.operator}&key=operator_titleurlize&value=${commentator.titleurlize}`}><span
-                                           dangerouslySetInnerHTML={{__html: ''}}/></a>}
-                            />
-                        </Row>
-                        <Col>
-                            <Row>
-                                
-                                <CardText style={{
-                                    paddingTop: '0px',
-                                    paddingBottom: '0px',
-                                }}>
-                                    
-                                    <Col style={{
-                                        fontSize: '14px',
-                                        textTransform: 'uppercase',
-                                    }}>
-                                        <Row>
-                                            <span>NICK: <b>{commentator.nick}</b></span>
-                                        </Row>
-                                        <Row>
-                                            <span>HANDLE: <b>@{commentator.slug}</b></span>
-                                        </Row>
-                                        
-                                        <Row>
-                                            Total Comments: <b>
-                                            <span
-                                                id="total_comments">{commentator.totalComments
-                                                ? commentator.totalComments
-                                                : ''}</span></b>
-                                        </Row>
-                                    </Col>
-                                    <Col style={{
-                                        fontSize: '14px',
-                                        textTransform: 'uppercase',
-                                    }}>
-                                        
-                                        <Row>
-                                            Average comments per day: <b> <span
-                                            id="comments_per_day"> {commentsavgperday &&
-                                        commentsavgperday !== '0'
-                                            ? commentsavgperday.toFixed(2)
-                                            : '0'}</span></b>
-                                        </Row>
-                                        
-                                        <Row><span> FIRST SEEN: <Date
-                                            date={commentator.minDate}/></span>
-                                        </Row>
-                                        <Row><span> LAST SEEN: <Date
-                                            date={commentator.maxDate}/></span>
-                                        </Row>
-                                        
-                                        <Row>
-                                            <span>COUNTRY: <b>{commentator.countries}</b></span>
-                                        </Row>
-                                        
-                                        <Row>
-                                            <span>LANGUAGE: <b>{commentator.languages}</b></span>
-                                        
-                                        </Row>
-                                    </Col>
-                                
-                                </CardText>
-                                <CardActions>
-                                
-                                
-                                </CardActions>
-                            </Row>
-                        </Col>
-                        <Col>
-                            <div className="progress" style={{
-                                color: '#656972',
-                                textTransform: 'uppercase',
-                            }}>
-                                <LinearProgress mode="determinate" value={100}/>
-                                <div
-                                    className="progress-bar progress-bar-success"
-                                    role="progressbar"
-                                    aria-valuenow="0"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                    style={{width: '0%'}}>
-                                    
-                                    <b>Comments Analyzed: 100%</b>
+               <div className="commentator-container">
+
+                        <div className="commentator-container__user">
+                            <Avatar
+                                icon={<PersonOutline/>}
+                                size={120} />
+                            <div className="commentator-container__panel-wrapper">
+                                <div className="commentator-container__panel">
+                                    <span className="commentator-container__panel--header">About me</span>
+                                    <ul>
+                                        <li>
+                                            <span>{<AccountCircle/>}</span>
+                                            <span className="commentator-container__user--nick"> @{commentator.slug}</span>
+                                        </li>
+                                        <li className="commentator-container__place">
+                                            <span>{<Place/>}</span>
+                                            <span className="commentator-container__place--state">{commentator.countries.toUpperCase()}</span>
+                                        </li>
+                                        <li><div className="padding-small"><b> Language </b> </div>
+                                            <div>{commentator.languages}</div>
+                                        </li>
+                                        <li>
+                                            <div className="padding-small"><b>Avg. comments per day</b></div>
+                                            <div id="comments_per_day"> {commentsavgperday &&
+                                            commentsavgperday !== '0'
+                                            ? commentsavgperday.toFixed(0)
+                                            : '0'}</div>
+                                        </li>
+                                        <li>
+                                            <div className="padding-small"><b> Member since </b></div>
+                                            <Date date={commentator.minDate}/>
+                                        </li>
+                                        <li>
+                                            <div className="padding-small"><b>Last comment on</b></div>
+                                            <div> <Date date={commentator.maxDate}/> </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <ImageResized src={commentator.image}
-                                          srcfallback={'https://unsplash.it/1400/350?random'}
-                                          id={commentator.id}
-                                          width="520" height="395"
-                                          quality="50"/>
-                        </Col>
-                        <Row>
-                            <Row>
-                                <div style={{
-                                    color: '#656972',
-                                    textTransform: 'uppercase',
-                                }}>
-                                    <b>Interests</b>
-                                </div>
-                            </Row>
-                            <Row>
+                        </div>
+
+                        <div  className="commentator-container__comments">
+                            <span className="triangle-isosceles"> We have found
+                                <span
+                                    id="total_comments"> {commentator.totalComments
+                                    ? commentator.totalComments
+                                    : ''} </span> comments from  @{commentator.slug} on <a href="" target="_blank">
+                                    {commentator.operator}</a>!
+                            </span>
+                            <div className="commentator-container__chip">
+                                <span className="commentator-container__chip--headline">
+                                     @{commentator.slug} is also commenting on this topics:
+                                </span>
                                 {
                                     commentator.genre &&
                                     commentator.genre.map((tag, i) => {
-                                        return (<Chip key={`chip-${i}`}>
-                                            <Avatar size={32}>{tag.slice(0,
-                                                1).toUpperCase()}</Avatar>
-                                            {tag}
-                                        </Chip> )
+                                        return (
+                                            <div key={`c-${i}-${tag}`} className="commentator-container__chip--wrapper">
+                                                <a href={`/commentator_product/${commentator.id}?genre=${tag}`}>
+                                                    <Chip className="commentator-container__chip--label"
+                                                          key={`chip-${i}`}>
+                                                        <Avatar size={32}>{tag.slice(0,
+                                                            1).toUpperCase()}</Avatar>
+                                                        {tag}
+                                                    </Chip>
+                                                </a>
+                                            </div>
+                                        )
                                     })
                                 }
-                            </Row>
-                        </Row>
-                    </Row>
-                
-                
-                </Grid>
-                
-                <Tabs style={{width: '100%'}}>
-                    
-                    <Tab label="Comments"
-                         style={{background: '#f5f5f5', color: '#333'}}>
-                        {
-                            commentator.comments.map((q,i) => {
-                               
-                                
-                                return (
-                                    <CommentSingle key={`c-${i}`} comment={q} />
-                                )
-                            })
-                        }
-                    
-                    </Tab>
-                    <Tab label="Report"
-                         style={{background: '#f5f5f5', color: '#333'}}>
-                    
-                    </Tab>
-                
-                </Tabs>
-                
-                
+                            </div>
+
+
+                            <div  className="commentator-container__commentslist">
+                            {
+                                commentator.comments.map((comment,i) => {
+                                    if (!this.props.location.query.genre || this.props.location.query.genre === comment.genre) {
+                                        return (
+                                            <CommentSingle key={`c-${i}`} comment={comment}/>
+                                        )
+                                    }
+                                    return (
+                                        ""
+                                    )
+                                })
+                            }
+                            </div>
+                        </div>
+                </div>
+            
+            
             </div>
         )
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps (state) {
     return {commentator: state.commentatorDetail}
 }
 
 Commentator.propTypes = {
-    commentator: PropTypes.object.isRequired
+    commentator: PropTypes.object.isRequired,
 }
 
 export { Commentator }

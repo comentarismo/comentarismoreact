@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'util/safe-react';
 import PropTypes from 'prop-types';
 var createReactClass = require('create-react-class');
 

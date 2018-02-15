@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'util/safe-react';
 var createReactClass = require('create-react-class');
 
 var _ = require("underscore");

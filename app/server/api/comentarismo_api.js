@@ -7,8 +7,8 @@ let _ = require('lodash')
 
 //r.db('test').table('commentaries').between(new Date().getDate()-5, r.maxval, {index: 'updatedAt'})
 /** LOGGER **/
-var log = require('./logger')
-var logger = log.getLogger()
+import logger from 'server/logger_middleware'
+
 /** LOGGER **/
 
 var elk_api = require('./elk_api')
@@ -44,8 +44,6 @@ if (MAX_SITEMAP_LIMIT) {
     MAX_SITEMAP_LIMIT = 50000
 }
 
-var IS_DEBUG = (process.env.DEBUG === 'true')
-
 export function getLatestNewsGroupDay (conn, cb) {
     
     var query = conn.table('news', {readMode: 'outdated'}).
@@ -73,23 +71,18 @@ export function getLatestNewsGroupDay (conn, cb) {
             }
         })
     
-    if (IS_DEBUG) {
-        console.log('getLatestNewsGroupDay query -> ', query)
-    }
-    
-    // console.log("getLatestNewsGroupDay, query, ", query);
+    logger.debug('getLatestNewsGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestNewsGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestNewsGroupDay result -> ', results.length)
-            }
+            logger.debug('getLatestNewsGroupDay result -> ', results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestNewsGroupDay, ', err)
+        logger.error('Error: getLatestNewsGroupDay, ', err)
         cb(err)
     })
     
@@ -112,25 +105,23 @@ export function getLatestNewsCommentatorsGroupDay (index, value, conn, cb) {
                 }).limit(5),
             }
         })
-    if (IS_DEBUG) {
-        console.log('getLatestNewsCommentatorsGroupDay query -> ', query)
-    }
+    logger.debug('getLatestNewsCommentatorsGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestNewsCommentatorsGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestNewsCommentatorsGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestNewsCommentatorsGroupDay result -> ',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestNewsCommentatorsGroupDay, ', err)
+        logger.debug('Error: getLatestNewsCommentatorsGroupDay, ', err)
         cb(err)
     })
 }
+
 export function getLatestNewsWithCommentGroupDay (index, value, conn, cb) {
     var query = conn.table('news', {readMode: 'outdated'}).
         between(conn.now().sub(LATEST_NEWS_DAYS * 86400), conn.now(),
@@ -168,22 +159,19 @@ export function getLatestNewsWithCommentGroupDay (index, value, conn, cb) {
             }
         })
     
-    if (IS_DEBUG) {
-        console.log('getLatestNewsWithCommentGroupDay query -> ', query)
-    }
+    logger.debug('getLatestNewsWithCommentGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestNewsWithCommentGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestNewsWithCommentGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestNewsWithCommentGroupDay result -> ',
+                results.length)
             cb(null, results)
+            return results
         }
     }).catch(function (err) {
-        console.log('Error: getLatestNewsWithCommentGroupDay, ', err)
+        logger.error('Error: getLatestNewsWithCommentGroupDay, ', err)
         cb(err)
     })
     
@@ -193,12 +181,13 @@ export function getLatestYoutubeCommentatorsGroupDay (index, value, conn, cb) {
     
     var query = conn.table('commentator_sentiment_report',
         {readMode: 'outdated'})
-        // between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
-        //     {index: 'maxDate'}).
-        // orderBy({index: conn.desc('maxDate')}).
-        .limit(5000)
-        .orderBy("maxDate")
-        .group([conn.row('maxDate'), conn.row('operator'), conn.row('languages')]).
+    // between(conn.now().sub(LATEST_YOUTUBE_DAYS * 86400), conn.now(),
+    //     {index: 'maxDate'}).
+    // orderBy({index: conn.desc('maxDate')}).
+        .limit(5000).
+        orderBy('maxDate').
+        group(
+            [conn.row('maxDate'), conn.row('operator'), conn.row('languages')]).
         ungroup().
         map(function (row) {
             return {
@@ -208,21 +197,20 @@ export function getLatestYoutubeCommentatorsGroupDay (index, value, conn, cb) {
                 }).limit(5),
             }
         })
-        // .limit(50)
-    if (IS_DEBUG) {
-        console.log('getLatestYoutubeCommentatorsGroupDay query -> ', query)
-    }
+    // .limit(50)
+    logger.debug('getLatestYoutubeCommentatorsGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestYoutubeCommentatorsGroupDay')
         } else {
-            console.log('getLatestYoutubeCommentatorsGroupDay result -> ',
+            logger.debug('getLatestYoutubeCommentatorsGroupDay result -> ',
                 results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestYoutubeCommentatorsGroupDay, ', err)
+        logger.error('Error: getLatestYoutubeCommentatorsGroupDay, ', err)
         cb(err)
     })
 }
@@ -247,22 +235,18 @@ export function getLatestYoutubeWithCommentGroupDay (index, value, conn, cb) {
             }
         })
     
-    if (IS_DEBUG) {
-        console.log('getLatestYoutubeWithCommentGroupDay query -> ', query)
-    }
-    
+    logger.debug('getLatestYoutubeWithCommentGroupDay query -> ', query)
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestYoutubeWithCommentGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestYoutubeWithCommentGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestYoutubeWithCommentGroupDay result -> ',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestYoutubeWithCommentGroupDay, ', err)
+        logger.error('Error: getLatestYoutubeWithCommentGroupDay, ', err)
         cb(err)
     })
     
@@ -285,22 +269,19 @@ export function getLatestProductsCommentatorsGroupDay (index, value, conn, cb) {
                 }).limit(5),
             }
         })
-    if (IS_DEBUG) {
-        console.log('getLatestProductsCommentatorsGroupDay query -> ', query)
-    }
+    logger.debug('getLatestProductsCommentatorsGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestProductsCommentatorsGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestProductsCommentatorsGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestProductsCommentatorsGroupDay result -> ',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestProductsCommentatorsGroupDay, ', err)
+        logger.error('Error: getLatestProductsCommentatorsGroupDay, ', err)
         cb(err)
     })
 }
@@ -331,22 +312,19 @@ export function getLatestProductsWithCommentGroupDay (index, value, conn, cb) {
             }
         })
     
-    if (IS_DEBUG) {
-        console.log('getLatestProductsWithCommentGroupDay query -> ', query)
-    }
+    logger.debug('getLatestProductsWithCommentGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestProductsWithCommentGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestProductsWithCommentGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestProductsWithCommentGroupDay result -> ',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestProductsWithCommentGroupDay, ', err)
+        logger.error('Error: getLatestProductsWithCommentGroupDay, ', err)
         cb(err)
     })
     
@@ -370,31 +348,26 @@ export function getLatestCommentsGroupDay (conn, cb) {
             }
         })
     
-    if (IS_DEBUG) {
-        console.log('getLatestCommentsGroupDay query -> ', query)
-    }
+    logger.debug('getLatestCommentsGroupDay query -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getLatestCommentsGroupDay')
         } else {
-            if (IS_DEBUG) {
-                console.log('getLatestCommentsGroupDay result -> ',
-                    results.length)
-            }
+            logger.debug('getLatestCommentsGroupDay result -> ',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getLatestCommentsGroupDay, ', err)
+        logger.error('Error: getLatestCommentsGroupDay, ', err)
         cb(err)
     })
 }
 
 export function getAllPluckDistinct (conn, table, pluck, cb) {
     if (!table || !pluck) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' pluck --> ' + pluck)
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' pluck --> ' + pluck)
         return cb(
             errMsg + 'getAllPluckDistinct --> search query is not correct.')
     }
@@ -402,21 +375,18 @@ export function getAllPluckDistinct (conn, table, pluck, cb) {
     var query = conn.table(table, {readMode: 'outdated'}).
         distinct({index: pluck})
     
-    if (IS_DEBUG) {
-        console.log('getAllPluckDistinct -> ', query)
-    }
+    logger.debug('getAllPluckDistinct -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('Error: Could not get getAllPluckDistinct')
         } else {
-            if (IS_DEBUG) {
-                console.log('getAllPluckDistinct result -> ', results)
-            }
+            logger.debug('getAllPluckDistinct result -> ', results)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllPluckDistinct, ', err)
+        logger.error('Error: getAllPluckDistinct, ', err)
         cb(err)
     })
 }
@@ -424,45 +394,40 @@ export function getAllPluckDistinct (conn, table, pluck, cb) {
 export function getAllByIndexPluckDistinct (
     table, index, value, pluck, conn, cb) {
     if (!table || !index || !value || !pluck) {
-        if (IS_DEBUG) {
-            logger.error(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value + ' pluck --> ' + pluck)
-        }
+        logger.error(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value + ' pluck --> ' + pluck)
         return cb(errMsg +
             'getAllByIndexPluckDistinct --> search query is not correct.')
     }
-    if (IS_DEBUG) {
-        logger.log('debug',
-            'getAllByIndexPluckDistinct --> table: ' + table + ' index: ' +
-            index +
-            ' value: ' + value + ' pluck: ' + pluck)
-    }
+    logger.log('debug',
+        'getAllByIndexPluckDistinct --> table: ' + table + ' index: ' +
+        index +
+        ' value: ' + value + ' pluck: ' + pluck)
     var q = conn.table(table, {readMode: 'outdated'}).
         getAll(value, {index: index}).
         limit(MAX_SITEMAP_LIMIT).
         pluck('titleurlize', 'id', 'title', 'languages', 'tags', 'date').
         distinct()
-    if (IS_DEBUG) {
-        console.log('getAllByIndexPluckDistinct -> ', q)
-    }
+    
+    logger.debug('getAllByIndexPluckDistinct -> ', q)
+    
     q.run().then(function (results) {
         if (!results) {
             cb('')
         } else {
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByIndexPluckDistinct, ', err)
+        logger.error('Error: getAllByIndexPluckDistinct, ', err)
         cb(err)
     })
 }
 
 export function getByID (table, id, conn, cb) {
     if (!table || !id) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' id -> ' + id)
-            logger.warn(errMsg + 'getByID --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' id -> ' + id)
+        logger.warn(errMsg + 'getByID --> search query is not correct.')
         return cb()
     }
     if (!id) {
@@ -471,20 +436,17 @@ export function getByID (table, id, conn, cb) {
     }
     var q = conn.table(table, {readMode: 'outdated'}).get(id)
     
-    if (IS_DEBUG) {
-        console.log('getByID -> ', q)
-    }
+    logger.debug('getByID -> ', q)
     q.run().then(function (result) {
         if (!result) {
-            if (IS_DEBUG) {
-                logger.info('Error: getByID returns nothing :( ')
-            }
+            logger.info('Error: getByID returns nothing :( ')
             cb('Error: getByID returns nothing :( ')
         } else {
             cb(null, result)
         }
+        return result
     }).catch(function (err) {
-        console.log('Error: getByID, ', err)
+        logger.error('Error: getByID, ', err)
         cb(err)
     })
 }
@@ -492,54 +454,43 @@ export function getByID (table, id, conn, cb) {
 export function getCommentariesByCommentariesIds (
     commentsTable, commentariesIds, conn, cb) {
     if (!commentariesIds || commentariesIds.length === 0) {
-        if (IS_DEBUG) {
-            logger.info('getCommentariesByCommentariesIds EOF ')
-        }
+        logger.info('getCommentariesByCommentariesIds EOF ')
         return cb()
     }
     var query = conn.table(commentsTable, {readMode: 'outdated'}).
         getAll(conn.args(commentariesIds))
     
-    if (IS_DEBUG) {
-        console.log('getCommentariesByCommentariesIds, query -> ', query)
-    }
+    logger.debug('getCommentariesByCommentariesIds, query -> ', query)
     
     query.run().then(function (result) {
         if (!result) {
-            if (IS_DEBUG) {
-                logger.info(
-                    'Error: getCommentariesByCommentariesIds returns no results :( ')
-            }
+            logger.info(
+                'Error: getCommentariesByCommentariesIds returns no results :( ')
             cb('Error: getCommentariesByCommentariesIds returns no results :( ')
         } else {
-            if (IS_DEBUG) {
-                console.log('getCommentariesByCommentariesIds, ', result.length)
-            }
+            logger.debug('getCommentariesByCommentariesIds, ', result.length)
             cb(null, result)
         }
+        return result
     }).catch(function (err) {
-        console.log('Error: getCommentariesByCommentariesIds, ', err)
+        logger.error('Error: getCommentariesByCommentariesIds, ', err)
         cb(err)
     })
 }
 
 export function getOneBySecondaryIndex (table, index, value, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ', index -> ' + index +
-                ', value --> ' + value)
-            logger.warn(
-                errMsg +
-                'getOneBySecondaryIndex --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ', index -> ' + index +
+            ', value --> ' + value)
+        logger.warn(
+            errMsg +
+            'getOneBySecondaryIndex --> search query is not correct.')
         return cb()
     }
-    if (IS_DEBUG) {
-        logger.log('getOneBySecondaryIndex',
-            'table --> ' + table + ', index -> ' + index + ', value --> ' +
-            value)
-    }
-    conn.table(table, {readMode: 'outdated'}).
+    logger.debug('getOneBySecondaryIndex',
+        'table --> ' + table + ', index -> ' + index + ', value --> ' +
+        value)
+    return conn.table(table, {readMode: 'outdated'}).
         getAll(value, {index: index}).
         limit(1).
         run().
@@ -547,35 +498,34 @@ export function getOneBySecondaryIndex (table, index, value, conn, cb) {
             if (!results) {
                 cb('')
             } else {
-                if (IS_DEBUG) {
-                    logger.info('getOneBySecondaryIndex, ',results.length)
-                }
+                logger.debug('getOneBySecondaryIndex, ', results.length)
                 cb(null, results[0])
             }
+            return results
         }).
         catch(function (err) {
-            if (IS_DEBUG) {
-                console.log('Error: getOneBySecondaryIndex, ', err)
-            }
-            cb(err)
+            logger.error('Error: getOneBySecondaryIndex, ', err)
+            return cb(err)
         })
 }
 
 export function getSample (
     table, index, value, skip, limit, sort, sample, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value)
-            logger.warn(errMsg + 'getSample --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value)
+        logger.warn(errMsg + 'getSample --> search query is not correct.')
         return cb()
     }
     var indexSort = 'date'
     if (sort) {
         indexSort = sort
     }
-    // console.log("getSample, ", " conn.table('" + table + "').orderBy({'index': conn.desc('" + indexSort + "')}).filter({'" + index + "': '" + value + "'}).skip(" + skip + ").limit(" + limit + ")");
+    logger.debug('getSample, ', ' conn.table(\'' + table +
+        '\').orderBy({\'index\': conn.desc(\'' + indexSort +
+        '\')}).filter({\'' +
+        index + '\': \'' + value + '\'}).skip(' + skip + ').limit(' + limit +
+        ')')
     
     var query = conn.table(table, {readMode: 'outdated'}).
         orderBy({'index': conn.desc(indexSort)}).
@@ -584,9 +534,7 @@ export function getSample (
         limit(limit).
         sample(sample)
     
-    if (IS_DEBUG) {
-        console.log('getSample -> ', query)
-    }
+    logger.debug('getSample -> ', query)
     
     query.run().then(function (results) {
         if (!results) {
@@ -594,8 +542,9 @@ export function getSample (
         } else {
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getSample, ', err)
+        logger.error('Error: getSample, ', err)
         cb(err)
     })
 }
@@ -604,12 +553,10 @@ export function getSample (
 export function getAllByIndexOrderBySkipLimit (
     table, index, value, skip, limit, sort, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value)
-            logger.warn(errMsg +
-                'getAllByIndexOrderBySkipLimit --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value)
+        logger.warn(errMsg +
+            'getAllByIndexOrderBySkipLimit --> search query is not correct.')
         return cb()
     }
     var indexSort = 'date'
@@ -623,22 +570,18 @@ export function getAllByIndexOrderBySkipLimit (
         skip(skip).
         limit(limit)
     
-    if (IS_DEBUG) {
-        console.log('getAllByIndexOrderBySkipLimit, ', query)
-    }
-    
-    query.run().then(function (results) {
+    logger.debug('getAllByIndexOrderBySkipLimit, ', query)
+    return query.run().then(function (results) {
         if (!results) {
             cb('')
         } else {
-            if (IS_DEBUG) {
-                console.log('getAllByIndexOrderBySkipLimit', results.length)
-            }
+            logger.debug('getAllByIndexOrderBySkipLimit', results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByIndexOrderBySkipLimit, ', err)
-        cb(err)
+        logger.debug('Error: getAllByIndexOrderBySkipLimit, ', err)
+        return cb(err)
     })
 }
 
@@ -649,25 +592,22 @@ export function getAllByMultipleIndexCount (params, conn, cb) {
     var operator = params.operator
     
     if (!table || !index || !value || !operator) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'Invalid INPUT --> ', JSON.stringify(params))
-            logger.warn(errMsg +
-                'getAllByMultipleIndexCount --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'Invalid INPUT --> ', JSON.stringify(params))
+        logger.warn(errMsg +
+            'getAllByMultipleIndexCount --> search query is not correct.')
         return cb()
     }
     
     var query = conn.table(table, {readMode: 'outdated'}).
         getAll([operator, value], {index: index}).
         count()
-    if (IS_DEBUG) {
-        console.log('getAllByMultipleIndexCount -> ', query)
-    }
+    logger.debug('getAllByMultipleIndexCount -> ', query)
     
     query.run().then(function (results) {
         cb(null, results)
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByMultipleIndexCount, ', err)
+        logger.error('Error: getAllByMultipleIndexCount, ', err)
         cb(err)
     })
 }
@@ -684,11 +624,9 @@ export function getAllByMultipleIndexOrderBySkipLimit (params, conn, cb) {
     
     if (!table || !index || !value || !operator || (!skip && skip !== 0) ||
         !limit || !sort) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'Invalid INPUT --> ', JSON.stringify(params))
-            logger.warn(errMsg +
-                'getAllByMultipleIndexOrderBySkipLimit --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'Invalid INPUT --> ', JSON.stringify(params))
+        logger.warn(errMsg +
+            'getAllByMultipleIndexOrderBySkipLimit --> search query is not correct.')
         return cb()
     }
     
@@ -701,14 +639,13 @@ export function getAllByMultipleIndexOrderBySkipLimit (params, conn, cb) {
     }
     query = query.skip(skip).limit(limit)
     
-    if (IS_DEBUG) {
-        console.log('getAllByMultipleIndexOrderBySkipLimit -> ', query)
-    }
+    logger.debug('getAllByMultipleIndexOrderBySkipLimit -> ', query)
     
     query.run().then(function (results) {
         cb(null, results)
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByMultipleIndexOrderBySkipLimit, ', err)
+        logger.error('Error: getAllByMultipleIndexOrderBySkipLimit, ', err)
         cb(err)
     })
 }
@@ -716,12 +653,10 @@ export function getAllByMultipleIndexOrderBySkipLimit (params, conn, cb) {
 export function getAllByDateRangeIndexOrderByFilterSkipLimit (
     table, index, value, skip, limit, sort, order, range, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value)
-            logger.warn(errMsg +
-                'getAllByDateRangeIndexOrderByFilterSkipLimit --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value)
+        logger.warn(errMsg +
+            'getAllByDateRangeIndexOrderByFilterSkipLimit --> search query is not correct.')
         return cb()
     }
     
@@ -753,27 +688,22 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit (
         skip(skip).
         limit(limit)
     
-    if (IS_DEBUG) {
-        console.log('getAllByDateRangeIndexOrderByFilterSkipLimit, ', query)
-    }
+    logger.debug('getAllByDateRangeIndexOrderByFilterSkipLimit, ', query)
     
     query.run().then(function (results) {
         if (!results) {
-            if (IS_DEBUG) {
-                logger.info(
-                    'Error: getAllByDateRangeIndexOrderByFilterSkipLimit could not find anyting  -> ',
-                    query)
-            }
+            logger.info(
+                'Error: getAllByDateRangeIndexOrderByFilterSkipLimit could not find anyting  -> ',
+                query)
             cb('')
         } else {
-            if (IS_DEBUG) {
-                console.log('getAllByDateRangeIndexOrderByFilterSkipLimit',
-                    results.length)
-            }
+            logger.debug('getAllByDateRangeIndexOrderByFilterSkipLimit',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByDateRangeIndexOrderByFilterSkipLimit, ',
+        logger.error('Error: getAllByDateRangeIndexOrderByFilterSkipLimit, ',
             err)
         cb(err)
     })
@@ -782,12 +712,10 @@ export function getAllByDateRangeIndexOrderByFilterSkipLimit (
 export function getAllByIndexOrderByFilterSkipLimit (
     table, index, value, skip, limit, sort, order, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value)
-            logger.warn(errMsg +
-                'getAllByIndexOrderByFilterSkipLimit --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value)
+        logger.warn(errMsg +
+            'getAllByIndexOrderByFilterSkipLimit --> search query is not correct.')
         return cb()
     }
     var indexSort = 'date'
@@ -796,22 +724,18 @@ export function getAllByIndexOrderByFilterSkipLimit (
     }
     if (order == 'asc') {
         order = conn.asc(indexSort)
-        if (IS_DEBUG) {
-            console.log('getAllByIndexOrderByFilterSkipLimit, ',
-                ' conn.table(\'' + table +
-                '\').orderBy({\'index\': conn.asc(\'' +
-                indexSort + '\')}).filter({\'' + index + '\': \'' + value +
-                '\'}).skip(' + skip + ').limit(' + limit + ')')
-        }
+        logger.debug('getAllByIndexOrderByFilterSkipLimit, ',
+            ' conn.table(\'' + table +
+            '\').orderBy({\'index\': conn.asc(\'' +
+            indexSort + '\')}).filter({\'' + index + '\': \'' + value +
+            '\'}).skip(' + skip + ').limit(' + limit + ')')
     } else {
         order = conn.desc(indexSort)
-        if (IS_DEBUG) {
-            console.log('getAllByIndexOrderByFilterSkipLimit, ',
-                ' conn.table(\'' + table +
-                '\').orderBy({\'index\': conn.desc(\'' +
-                indexSort + '\')}).filter({\'' + index + '\': \'' + value +
-                '\'}).skip(' + skip + ').limit(' + limit + ')')
-        }
+        logger.debug('getAllByIndexOrderByFilterSkipLimit, ',
+            ' conn.table(\'' + table +
+            '\').orderBy({\'index\': conn.desc(\'' +
+            indexSort + '\')}).filter({\'' + index + '\': \'' + value +
+            '\'}).skip(' + skip + ').limit(' + limit + ')')
     }
     
     var query = conn.table(table, {readMode: 'outdated'}).
@@ -820,22 +744,19 @@ export function getAllByIndexOrderByFilterSkipLimit (
         skip(skip).
         limit(limit)
     
-    if (IS_DEBUG) {
-        console.log('getAllByIndexOrderByFilterSkipLimit', query)
-    }
+    logger.debug('getAllByIndexOrderByFilterSkipLimit', query)
     
     query.run().then(function (results) {
         if (!results) {
             cb('')
         } else {
-            if (IS_DEBUG) {
-                console.log('getAllByIndexOrderByFilterSkipLimit',
-                    results.length)
-            }
+            logger.debug('getAllByIndexOrderByFilterSkipLimit',
+                results.length)
             cb(null, results)
         }
+        return results
     }).catch(function (err) {
-        console.log('Error: getAllByIndexOrderByFilterSkipLimit, ', err)
+        logger.error('Error: getAllByIndexOrderByFilterSkipLimit, ', err)
         cb(err)
     })
 }
@@ -843,21 +764,17 @@ export function getAllByIndexOrderByFilterSkipLimit (
 export function getAllByIndexSkipLimit (
     table, index, value, skip, limit, conn, cb) {
     if (!table || !index || !value) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
-                ' value --> ' + value)
-            logger.warn(
-                errMsg +
-                'getAllByIndexSkipLimit --> search query is not correct.')
-        }
+        logger.warn(errMsg + 'table --> ' + table + ' index -> ' + index +
+            ' value --> ' + value)
+        logger.warn(
+            errMsg +
+            'getAllByIndexSkipLimit --> search query is not correct.')
         return cb()
     }
-    if (IS_DEBUG) {
-        console.log('getAllByIndexSkipLimit, ',
-            ' conn.table(\'' + table + '\').getAll(\'' + value +
-            '\', {index: \'' +
-            index + '\'}).skip(' + skip + ').limit(' + limit + ')')
-    }
+    logger.debug('getAllByIndexSkipLimit, ',
+        ' conn.table(\'' + table + '\').getAll(\'' + value +
+        '\', {index: \'' +
+        index + '\'}).skip(' + skip + ').limit(' + limit + ')')
     
     conn.table(table, {readMode: 'outdated'}).
         getAll(value, {index: index}).
@@ -870,9 +787,10 @@ export function getAllByIndexSkipLimit (
             } else {
                 cb(null, results)
             }
+            return results
         }).
         catch(function (err) {
-            console.log('Error: getAllByIndexSkipLimit, ', err)
+            logger.debug('Error: getAllByIndexSkipLimit, ', err)
             cb(err)
         })
 }
@@ -888,17 +806,13 @@ function question (id) {
 
 export function getCommentator (id, conn, cb) {
     if (!id) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> commentator ' + ' id --> ' + id)
-        }
+        logger.warn(errMsg + 'table --> commentator ' + ' id --> ' + id)
         return cb(errMsg + 'getCommentator --> search query is not correct.')
     }
     //get commentator by id
     getByID('commentator', id, conn, function (err, commentator) {
         //if (err || !commentator) {
-        if (IS_DEBUG) {
-            console.log(`getByID commentator ${id} not found`)
-        }
+        logger.debug(`getByID commentator ${id} not found`)
         //} else {
         //get all comments by index nick
         //table, index, value, skip, limit, sort, conn, cb
@@ -914,7 +828,7 @@ export function getCommentator (id, conn, cb) {
                     
                     //TODO: create commentator if comments are returned from elk
                     
-                    var commentator = {
+                    var commentatorReturn = {
                         'categories': comments[0].categories,
                         'countries': comments[0].countries,
                         'genre': comments[0].genre,
@@ -926,7 +840,7 @@ export function getCommentator (id, conn, cb) {
                         'totalComments': comments.length,
                     }
                     
-                    cb(null, commentator)
+                    cb(null, commentatorReturn)
                     //cb(`getAllByIndexOrderBySkipLimit commentator nick ${commentator.nick} not found`);
                 } else {
                     if (commentator) {
@@ -941,9 +855,7 @@ export function getCommentator (id, conn, cb) {
 
 export function getCommentatorByNick (id, conn, cb) {
     if (!id) {
-        if (IS_DEBUG) {
-            logger.warn(errMsg + 'table --> commentator ' + ' id --> ' + id)
-        }
+        logger.warn(errMsg + 'table --> commentator ' + ' id --> ' + id)
         return cb(errMsg + 'getCommentator --> search query is not correct.')
     }
     //get commentator by id
@@ -952,11 +864,9 @@ export function getCommentatorByNick (id, conn, cb) {
             var nick = commentator ? commentator.nick : id
             var index = commentator ? commentator.operator : '_all'
             if (err || !commentator) {
-                if (IS_DEBUG) {
-                    logger.warn(
-                        'Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ',
-                        nick, err)
-                }
+                logger.warn(
+                    'Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ',
+                    nick, err)
             }
             //get all comments by index nick
             
@@ -994,9 +904,7 @@ export function getCommentatorByNick (id, conn, cb) {
                     }
                     commentator.comments = []
                     
-                    if (IS_DEBUG) {
-                        console.log('Got no comments :(')
-                    }
+                    logger.debug('Got no comments :(')
                     cb(null, commentator)
                 } else {
                     
@@ -1015,9 +923,7 @@ export function getCommentatorByNick (id, conn, cb) {
                     }
                     
                     commentator.comments = resp
-                    if (IS_DEBUG) {
-                        console.log('Got comments :D ', resp.length)
-                    }
+                    logger.debug('Got comments :D ', resp.length)
                     cb(null, commentator)
                 }
             })
@@ -1055,9 +961,7 @@ export function allcommentators (conn, cb) {
     ]
     
     iterate(0, operators, conn, 'commentator', [], function (commentatorList) {
-        if (IS_DEBUG) {
-            logger.info('iterate commentator finished')
-        }
+        logger.info('iterate commentator finished')
         
         _.uniq(commentatorList, 'nick')
         
@@ -1067,16 +971,12 @@ export function allcommentators (conn, cb) {
     function iterate (count, operators, conn, table, commentatorList, cb) {
         var operator = operators[count]
         if (!operator) {
-            if (IS_DEBUG) {
-                logger.info('finish processing all operators')
-            }
+            logger.info('finish processing all operators')
             return cb(commentatorList)
         }
         count = count + 1
-    
-        if (IS_DEBUG) {
-            logger.info('going to get more comments for operator ' + operator)
-        }
+        
+        logger.info('going to get more comments for operator ' + operator)
         conn.table(table, {readMode: 'outdated'}).
             getAll(operator, {index: 'operator'}).
             run().
@@ -1099,9 +999,7 @@ export function allcommentators (conn, cb) {
                                     if (hasNextRow) {
                                         consoleRow(row)
                                     } else {
-                                        if (IS_DEBUG) {
-                                            logger.info('hasNextRow :(')
-                                        }
+                                        logger.info('hasNextRow :(')
                                         return iterate(count, operators, conn,
                                             table, commentatorList, cb)
                                     }
@@ -1112,10 +1010,8 @@ export function allcommentators (conn, cb) {
                             if (hasNextRow) {
                                 consoleRow(row)
                             } else {
-                                if (IS_DEBUG) {
-                                    logger.info(
-                                        'hasNextRow returned no rows and hasNextRow was false :(')
-                                }
+                                logger.debug(
+                                    'hasNextRow returned no rows and hasNextRow was false :(')
                                 return iterate(count, operators, conn, table,
                                     commentatorList, cb)
                             }
@@ -1129,16 +1025,12 @@ export function allcommentators (conn, cb) {
     function geCommentator (count, result, operator, cb) {
         var n = result[count]
         if (!n) {
-            if (IS_DEBUG) {
-                logger.info('ERROR: fixNick EOF')
-            }
+            logger.error('ERROR: fixNick EOF')
             return cb()
         }
         var nick = n
         if (!nick) {
-            if (IS_DEBUG) {
-                logger.info('ERROR: fixNick EOF')
-            }
+            logger.error('ERROR: fixNick EOF')
             return cb()
         } else {
             return cb(nick)
@@ -1152,6 +1044,7 @@ export function getAllDistinctByIndex (conn, table, index, value) {
     var query = conn.table(table, {readMode: 'outdated'}).
         between([value, conn.minval], [value, conn.maxval], {index: index}).
         distinct({index: index})
+    logger.debug('getAllDistinctByIndex, ', query)
     return query.run()
 }
 
@@ -1161,6 +1054,7 @@ export function getUser (id) {
         name: `user name - ${id}`,
     }
 }
+
 export function getQuestion (id) {
     return question(id)
 }

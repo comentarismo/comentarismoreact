@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'util/safe-react';
 
 var S = require('jquery')
 
@@ -12,22 +12,13 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import Icon from 'components/Icon'
 
-import { FormControl } from 'react-bootstrap'
-import { loadArticleDetail } from 'actions/articles'
-
 import { loadSentimentCommentDetail } from 'actions/commentators'
 import { Grid, Row, Col } from 'react-styled-flexboxgrid'
 import Chip from 'material-ui/Chip'
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
 
 import {
-    Card,
-    CardActions,
     CardHeader,
-    CardMedia,
     CardTitle,
-    CardText,
 } from 'material-ui/Card'
 import Avatar from 'material-ui/Avatar'
 
@@ -36,15 +27,6 @@ import Date from 'components/Date'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import CircularProgress from 'material-ui/CircularProgress'
 
-// import TextField from 'material-ui/TextField'
-//
-// import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
-// import Checkbox from 'material-ui/Checkbox'
-
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
-
-import { GoogleSearchScript } from 'components/GoogleSearchScript'
 
 import { saSentimentCommentDetail } from '../middleware/sa'
 
@@ -511,7 +493,7 @@ var Sentiment = createReactClass({
                 <Grid fluid={true}
                       style={{padding: '4rem 0 6rem 4rem'}}>
                     <Row>
-                        <YoutubeReportRun/>
+                        <YoutubeReportRun url={comment.url} lang={comment.metadata.language} />
                         
                         <Row style={{
                             paddingTop: '5px !important',
@@ -620,7 +602,7 @@ var Sentiment = createReactClass({
                     <Tab label="BubbleChart"
                          style={{background: '#f5f5f5', color: '#333'}}>
                         {bubblechartComponent}
-                        <div style={{'justify-content': 'center'}}>
+                        <div style={{'justifyContent': 'center'}}>
                             <div className="">{numBubbles +
                             (numBubbles === 1 ? ' Circle' : ' Circles')}</div>
                             <input

@@ -31,11 +31,11 @@ export default ({dispatch, getState}) => next => action => {
     return new Promise(function (resolve, reject) { //Or Q.defer() in Q
         
         overall.finally((err) => {
-            return reject(err)
+            resolve(err)
         }).catch((err) => {
             console.log('ERROR: api.js, createRequestPromise catch((err)), ',
                 err)
-            return reject(err)
+            reject(err)
         })
         resolve(overall)
     })
@@ -47,7 +47,7 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
         
         let params = extractParams(apiAction[CALL_API])
         
-        return new Promise(function (resolve, reject) { //Or Q.defer() in Q
+        return new Promise(function (resolve, reject) {
            
             superAgent[params.method](params.url).
                 withCredentials().

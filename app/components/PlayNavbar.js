@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react');
+import React from 'util/safe-react';
 var createReactClass = require('create-react-class');
 
 import { Navbar,Nav,NavItem,NavDropdown,MenuItem, Button } from 'react-bootstrap';

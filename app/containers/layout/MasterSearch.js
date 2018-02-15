@@ -1,6 +1,5 @@
-import React, {Component } from 'react';
+import React, {Component } from 'util/safe-react';
 import PropTypes from 'prop-types';
-// import Title from 'react-title-component';
 import AppBar from 'material-ui/AppBar';
 // import IconButton from 'material-ui/IconButton';
 import spacing from 'material-ui/styles/spacing';

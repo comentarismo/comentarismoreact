@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 import {
     Card,
     CardHeader,
@@ -25,13 +25,13 @@ export default class CommentSingle extends React.Component {
     render () {
         var q = this.props.comment
         
-        var date = q.date ? <Date date={q.date}/> : ""
+        var date = q.date ? <Date date={q.date}/> : (q.published ? <Date date={q.published}/> : '' )
         
         return (
             <Card expanded={this.state.expanded}
                   onExpandChange={this.handleExpandChange}>
                 <CardHeader
-                    title={<b><span dangerouslySetInnerHTML={{__html:q.title}}/></b>}
+                    title={<b><span dangerouslySetInnerHTML={{__html:q.title ? q.title: q.nick}}/></b>}
                     subtitle={<Sentiment sentiment={q.sentiment}/>}
                     avatar={<Icon nick={q.nick} size={50}/>}
                     actAsExpander={true}

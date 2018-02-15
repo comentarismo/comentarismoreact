@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 
 import ReactBubbleChartD3 from './ReactBubbleChartD3';
-import React              from 'react';
+import React              from 'util/safe-react';
 import ReactDOM           from 'react-dom';
 
 // Description of props!

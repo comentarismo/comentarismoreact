@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 
 import { SoundPlayerContainer } from 'react-soundplayer/addons';
 import { PlayButton, Progress } from 'react-soundplayer/components';

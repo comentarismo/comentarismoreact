@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 import ReactBubbleChart from 'components/bubblev3/ReactBubbleChart'
 // import ReactBubbleChart from 'react-bubble-chart';
 // import ReactBubbleChart from 'components/bubblev4/ReactBubbleChart';

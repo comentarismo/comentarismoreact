@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from 'util/safe-react';
 import PropTypes from 'prop-types';
 import ClearFix from 'material-ui/internal/ClearFix';
 import spacing from 'material-ui/styles/spacing';

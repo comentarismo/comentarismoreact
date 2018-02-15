@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react');
+import React from 'util/safe-react';
 import Date from "components/Date";
 import Image from "components/Image";
 

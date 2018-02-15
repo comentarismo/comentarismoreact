@@ -1,4 +1,4 @@
-import React, { Component,ReactClass } from 'react';
+import React, { Component,ReactClass } from 'util/safe-react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 

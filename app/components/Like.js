@@ -1,9 +1,9 @@
 'use strict';
 
+import React from 'util/safe-react';
 import config from 'config'
 var host = config.API_URL;
 
-var React = require('react');
 var createReactClass = require('create-react-class');
 
 var analytics = require('ga-browser')();

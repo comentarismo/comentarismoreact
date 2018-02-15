@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'util/safe-react';
 
 var createReactClass = require('create-react-class')
 

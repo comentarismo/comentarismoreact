@@ -1,25 +1,10 @@
-//License 2016 MIT Nathan Friedly
-
 'use strict';
 var defaults = require('defaults');
 var url = require("url");
-
-const Queue = require('rethinkdb-job-queue');
+import logger from 'server/logger_middleware'
 
 function RateLimit(options) {
     
-    const analyticsQueueOptions = {
-        name: "analyticsQueue"
-    };
-    
-    const analyticsQueue = new Queue(options.RETHINKDB_CONNECTION, analyticsQueueOptions);
-    analyticsQueue.jobOptions = {
-        priority: 'highest',
-        timeout: 300000,
-        retryMax: 5,
-        retryDelay: 60000
-    };
-
     options = defaults(options, {
         // window, delay, and max apply per-key unless global is set to true
         windowMs: 60 * 1000, // milliseconds - how long to keep records of requests in memory
@@ -92,7 +77,7 @@ function RateLimit(options) {
             }
             var limit = 0;
             if (!req.rateLimit.remaining) {
-                console.log("WARN: RateLimit -> ", req.rateLimit.remaining, ip, pathname);
+                logger.error("WARN: RateLimit -> ", req.rateLimit.remaining, ip, pathname);
                 limit = 1;
             } else {
                 // console.log("INFO: Remaining -> ", req.rateLimit.remaining, ip, pathname);
@@ -108,15 +93,6 @@ function RateLimit(options) {
                 limit: parseInt(limit || 0),
                 time: new Date()
             };
-
-            // console.log("log view to influxdb, ", v);
-            const job = analyticsQueue.createJob({
-                view: v
-            });
-
-            analyticsQueue.addJob(job).catch((err) => {
-                console.error("analyticsQueue.addJob -> ",err);
-            });
 
             if (options.max && current > options.max) {
                 return options.handler(req, res, next);

@@ -1,4 +1,4 @@
-import React, {Component, ReactClass } from 'react';
+import React, {Component, ReactClass } from 'util/safe-react';
 import PropTypes from 'prop-types';
 
 import {connect} from 'react-redux';
