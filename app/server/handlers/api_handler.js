@@ -728,8 +728,8 @@ module.exports = function (
     
     app.get('/apihomepage/', limiter, (req, res) => {
         
-        var index = req.query.index
-        var value = req.query.value
+        var index = req.query.index || "news"
+        var value = req.query.value || "english"
         
         var urlTag = `apihomepage?index=${index}&value=${value}`
         

@@ -106,6 +106,9 @@ require('server/handlers/error_handler')(app, REDIS_CONNECTION,
 // ******************* END ROUTES ******************* //
 
 
-app.listen(PORT, () => {
+var server = app.listen(PORT, () => {
   logger.info(`Express started PORT=${PORT}, HOSTNAME=${os.hostname()} `);
 });
+
+
+module.exports = server;
