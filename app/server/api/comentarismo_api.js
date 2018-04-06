@@ -399,7 +399,7 @@ export function getAllByIndexPluckDistinct (
         return cb(errMsg +
             'getAllByIndexPluckDistinct --> search query is not correct.')
     }
-    logger.log('debug',
+    logger.info('debug',
         'getAllByIndexPluckDistinct --> table: ' + table + ' index: ' +
         index +
         ' value: ' + value + ' pluck: ' + pluck)

@@ -37,7 +37,7 @@ module.exports = function (app, REDIS_CONNECTION, RETHINKDB_CONNECTION) {
             then(function (dbresult) {
                 if (dbresult.skipped > 0) {
                     //nothing found, so lets insert
-                    RETHINKDB_CONNECTION.table('ratelimit').
+                    RETHINKDB_CONNECTION.table('ratelimit', {readMode: 'outdated'}).
                         insert({id: ip, blocks: 0, pathname: [pathname]}, {
                             returnChanges: false,
                             conflict: 'replace',

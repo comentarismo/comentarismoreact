@@ -35,11 +35,6 @@ function RateLimit(options) {
         throw new Error('The store is not valid.');
     }
 
-    if (options.global) {
-        throw new Error('The global option was removed from express-rate-limit v2.');
-    }
-
-
     function rateLimit(req, res, next) {
         var pathname = url.parse(req.url).pathname;
 
