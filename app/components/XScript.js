@@ -1,5 +1,4 @@
 import React, { Component} from 'util/safe-react';
-import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { IFrame } from 'components/IFrame';
@@ -116,7 +115,7 @@ class XScript extends React.Component {
     
         var body = `<html><head>${head}</head><body><div class="container comentarismo-container" id="comentarismo-container"></div></body></html>`;
       
-        return <IFrame initialContent={body} style={{marginTop: '4rem', border:0,position:'inherit', width:'100%', height:'100vh', left:'0px'}}>
+        return <IFrame id="comentarismo-iframe" initialContent={body} style={{marginTop: '4rem', border:0,position:'inherit', width:'100%', height:'100vh', left:'0px'}}>
         </IFrame>
     }
 }
