@@ -1483,14 +1483,14 @@ var container = require("./container");
 function loadArticleV1(opts, cb) {
     var that = opts.that,
         table = opts.table,
-        key= opts.key,
-        list= opts.list,
-        page= opts.page,
-        skip= opts.skip,
-        limit= opts.limit,
-        user= opts.user;
+        key = opts.key,
+        list = opts.list,
+        page = opts.page,
+        skip = opts.skip,
+        limit = opts.limit,
+        user = opts.user;
 
-    var urlstr = that.host +  "/v1/listbykeyskiplimit?operator=" + that.operator + "&table=" + table + "&key=" + key + "&value=" + page + "&skip=" + skip + "&limit=" + limit + "&db=" + (that.forum ? that.forum : '');
+    var urlstr = that.host + "/v1/listbykeyskiplimit?operator=" + that.operator + "&table=" + table + "&key=" + key + "&value=" + page + "&skip=" + skip + "&limit=" + limit + "&db=" + (that.forum ? that.forum : '');
     ga('send', 'event', 'loadArticle', urlstr, page, 0);
 
     if (window.debug) {
@@ -1540,7 +1540,7 @@ function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
         headers: {"COMENTARISMO-KEY": that.key},
         type: 'GET',
         success: function (json) {
-    
+
             if (!json || json.length === 0) {
                 if (window.debug && json) {
                     console.log("loadArticle, ", json.length);
@@ -1564,11 +1564,15 @@ function loadArticle(that, table, thekey, list, page, skip, limit, user, cb) {
 
 
 var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, cb) {
-    if (length < limit - skip) {
+    if (length < limit - skip || (skip === 0 && length < limit)) {
         if (window.debug) {
             console.log("afterLoadArticle, scroll loader END <---");
         }
         end = true;
+        var loader = $("#commentsloadmore");
+        if(loader) {
+            loader.hide();
+        }
     }
 
     $('a#inifiniteLoader').hide('1000');
@@ -1586,7 +1590,7 @@ var afterLoadArticle = function afterLoadArticle(err, length, limit, skip, end, 
 
 module.exports = {
     loadArticle: loadArticle,
-    loadArticleV1:loadArticleV1,
+    loadArticleV1: loadArticleV1,
     afterLoadArticle: afterLoadArticle
 }
 
@@ -2195,7 +2199,7 @@ module.exports = {
 
 $ = require('jquery'),
     global.jQuery = $,
-    iFrameResize = require('iframe-resizer').iframeResizerContentWindow,
+    iFrameResize = require('iframe-resizer'),
     require("./vendor/materialize.min.js"),
     Dropkick = require("./vendor/dropkick"),
     rateyo = require('./vendor/jquery.rateyo'),
@@ -2418,10 +2422,7 @@ Comentarismo = function (options) {
     var testpage = options.page;
     if (!testpage) {
         //fallback to indexFromPath
-        testpage = getIndexFromPath(3);
-        if (!testpage) {
-            // throw Error("Could not initialize Comentarismo engine, make sure to provide eg: options:{page:'pageID'} ")
-        }
+        testpage = location.protocol + '//' + location.host + location.pathname + (location.search ? location.search : "");
     }
     var testoperator = options.operator;
     if (!testoperator) {
@@ -3029,7 +3030,10 @@ Comentarismo.prototype.showAlertMessage = function (msg, element) {
         width: 600,
         title: "",
         buttons: {}
-    })).html(msg);
+    })).html(msg, function () {
+        var iframeParent = window.parent.document.getElementById('iFrameResizer0');
+        iFrameResize.iframeResizerContentWindow({log: false, checkOrigin: false}, iframeParent);
+    });
 
 };
 
@@ -3049,13 +3053,15 @@ Comentarismo.prototype.onSubmitCommentForm = function (evt) {
         form = this.commentForm[0];
     }
 
-    var targetPage = ( page ? page : location.protocol + '//' + location.host + location.pathname + (location.search ? location.search : "") )
     //TODO: bind the value here
+    var image = $('meta[property="og:image"]',(parent.document ? parent.document : document)).attr('content');
+    var title = document.title || $('meta[property="og:title"]',(parent.document ? parent.document : document)).attr('content');
     var rating = 0;
     var js = {
-        page: targetPage,
-        titleurlize: urlize(document.title),
-        title: document.title,
+        page: page,
+        titleurlize: urlize(title),
+        title: title,
+        image: image,
         captchasolution: form.captchasolution.value,
         captchaid: form.captchaid.value,
         comment: form.body.value,
