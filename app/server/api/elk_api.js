@@ -22,7 +22,8 @@ export function getElkByQuery(index, type, query, cb) {
         type: type,
         body: {
             query: query.query
-        }
+        },
+        requestTimeout : 5000
     }, function (err, resp) {
         if (err) {
             logger.error(err.message);

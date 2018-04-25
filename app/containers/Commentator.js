@@ -1,4 +1,4 @@
-import React, { Component } from 'util/safe-react';
+import React, { Component } from 'util/safe-react'
 import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
@@ -8,15 +8,16 @@ import Date from 'components/Date'
 import Helmet from 'react-helmet'
 import CommentSingle from 'components/CommentSingle'
 
-
 import Chip from 'material-ui/Chip'
 
-import Avatar from 'material-ui/Avatar';
+import Avatar from 'material-ui/Avatar'
 
-import PersonOutline from 'material-ui/svg-icons/social/person-outline';
-import Place from 'material-ui/svg-icons/maps/place';
-import AccountCircle from 'material-ui/svg-icons/action/account-circle';
+import PersonOutline from 'material-ui/svg-icons/social/person-outline'
+import Place from 'material-ui/svg-icons/maps/place'
+import AccountCircle from 'material-ui/svg-icons/action/account-circle'
+import { GoogleSearchScript } from 'components/GoogleSearchScript'
 
+import GDPR from 'components/GDPR'
 
 var moment = require('moment')
 var table = 'commentator'
@@ -35,15 +36,14 @@ class Commentator extends Component {
     // }
     
     render () {
-
-
-        let {commentator} = this.props;
+        
+        let {commentator} = this.props
         if (!commentator.comments) {
             commentator.comments = []
         }
-        let {id} = this.props.params;
+        let {id} = this.props.params
         
-        var commentsavgperday = 0.0;
+        var commentsavgperday = 0.0
         
         try {
             var targetDate = moment()
@@ -63,7 +63,26 @@ class Commentator extends Component {
         } catch (e) {
             console.log('Error when getting commentsavgperday :| ', e, id)
         }
-       
+        
+        if (!commentator || !commentator.operator) {
+            return (
+                <div>
+                    <div>
+                        <h3>The page you are looking for might have been
+                            removed, had its name changed, or is
+                            temporarily unavailable.</h3>
+                        <div className="image">
+                            <img className="img img-responsive"
+                                 src="/static/img/404notfound.jpeg"/>
+                        </div>
+                        <div className="text-404">
+                            <p>Please Use the Google Search box below and
+                                optimize your search </p>
+                        </div>
+                    </div>
+                    <GoogleSearchScript search={this.props.params}/>
+                </div>)
+        }
         
         return (
             <div>
@@ -97,51 +116,61 @@ class Commentator extends Component {
                                 : id}`,
                         },
                     ]}
-
+                
                 />
-
+                
                 <div className="commentator-container">
-
-                        <div className="commentator-container__user">
-                            <Avatar
-                                icon={<PersonOutline/>}
-                                size={120} />
-                            <div className="commentator-container__panel-wrapper">
-                                <div className="commentator-container__panel">
-                                    <span className="commentator-container__panel--header">About me</span>
-                                    <ul>
-                                        <li>
-                                            <span>{<AccountCircle/>}</span>
-                                            <span className="commentator-container__user--nick"> @{commentator.slug}</span>
-                                        </li>
-                                        <li className="commentator-container__place">
-                                            <span>{<Place/>}</span>
-                                            <span className="commentator-container__place--state">{commentator.countries.toUpperCase()}</span>
-                                        </li>
-                                        <li><div className="padding-small"><b> Language </b> </div>
-                                            <div>{commentator.languages}</div>
-                                        </li>
-                                        <li>
-                                            <div className="padding-small"><b>Avg. comments per day</b></div>
-                                            <div id="comments_per_day"> {commentsavgperday &&
-                                            commentsavgperday !== '0'
+                    
+                    <div className="commentator-container__user">
+                        <Avatar
+                            icon={<PersonOutline/>}
+                            size={120}/>
+                        <div className="commentator-container__panel-wrapper">
+                            <div className="commentator-container__panel">
+                                <span
+                                    className="commentator-container__panel--header">About me</span>
+                                <ul>
+                                    <li>
+                                        <span>{<AccountCircle/>}</span>
+                                        <span
+                                            className="commentator-container__user--nick"> @{commentator.slug}</span>
+                                    </li>
+                                    <li className="commentator-container__place">
+                                        <span>{<Place/>}</span>
+                                        <span
+                                            className="commentator-container__place--state">{commentator.countries.toUpperCase()}</span>
+                                    </li>
+                                    <li>
+                                        <div className="padding-small"><b>
+                                            Language </b></div>
+                                        <div>{commentator.languages}</div>
+                                    </li>
+                                    <li>
+                                        <div className="padding-small"><b>Avg.
+                                            comments per day</b></div>
+                                        <div
+                                            id="comments_per_day"> {commentsavgperday &&
+                                        commentsavgperday !== '0'
                                             ? commentsavgperday.toFixed(0)
                                             : '0'}</div>
-                                        </li>
-                                        <li>
-                                            <div className="padding-small"><b> Member since </b></div>
-                                            <Date date={commentator.minDate}/>
-                                        </li>
-                                        <li>
-                                            <div className="padding-small"><b>Last comment on</b></div>
-                                            <div> <Date date={commentator.maxDate}/> </div>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    </li>
+                                    <li>
+                                        <div className="padding-small"><b>
+                                            Member since </b></div>
+                                        <Date date={commentator.minDate}/>
+                                    </li>
+                                    <li>
+                                        <div className="padding-small"><b>Last
+                                            comment on</b></div>
+                                        <div><Date date={commentator.maxDate}/>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-
-                        <div  className="commentator-container__comments">
+                    </div>
+                    
+                    <div className="commentator-container__comments">
                             <span className="triangle-isosceles"> We have found
                                 <span
                                     id="total_comments"> {commentator.totalComments
@@ -149,47 +178,61 @@ class Commentator extends Component {
                                     : ''} </span> comments from  @{commentator.slug} on <a href="" target="_blank">
                                     {commentator.operator}</a>!
                             </span>
-                            <div className="commentator-container__chip">
-                                <span className="commentator-container__chip--headline">
+                        
+                        <div className="commentator-container__chip">
+                            
+                           <GDPR/>
+                            
+                            <br/>
+                            
+                                <span
+                                    className="commentator-container__chip--headline">
                                      @{commentator.slug} is also commenting on this topics:
                                 </span>
-                                {
-                                    commentator.genre &&
-                                    commentator.genre.map((tag, i) => {
-                                        return (
-                                            <div key={`c-${i}-${tag}`} className="commentator-container__chip--wrapper">
-                                                <a href={`/commentator_news/${commentator.id}?genre=${tag}`}>
-                                                    <Chip className="commentator-container__chip--label"
-                                                          key={`chip-${i}`}>
-                                                        <Avatar size={32}>{tag.slice(0,
-                                                            1).toUpperCase()}</Avatar>
-                                                        {tag}
-                                                    </Chip>
-                                                </a>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-
-
-                            <div  className="commentator-container__commentslist">
                             {
-                                commentator.comments.map((comment,i) => {
-                                    if (!this.props.location.query.genre || this.props.location.query.genre === comment.genre) {
-                                        return (
-                                            <CommentSingle key={`c-${i}`} comment={comment}/>
-                                        )
-                                    }
+                                commentator.genre &&
+                                commentator.genre.map((tag, i) => {
                                     return (
-                                        ""
+                                        <div key={`c-${i}-${tag}`}
+                                             className="commentator-container__chip--wrapper">
+                                            <a href={`/commentator_news/${commentator.id}?genre=${tag}`}>
+                                                <Chip
+                                                    className="commentator-container__chip--label"
+                                                    key={`chip-${i}`}>
+                                                    <Avatar
+                                                        size={32}>{tag.slice(0,
+                                                        1).
+                                                        toUpperCase()}</Avatar>
+                                                    {tag}
+                                                </Chip>
+                                            </a>
+                                        </div>
                                     )
                                 })
                             }
-                            </div>
                         </div>
+                        
+                        
+                        <div className="commentator-container__commentslist">
+                            {
+                                commentator.comments.map((comment, i) => {
+                                    if (!this.props.location.query.genre ||
+                                        this.props.location.query.genre ===
+                                        comment.genre) {
+                                        return (
+                                            <CommentSingle key={`c-${i}`}
+                                                           comment={comment}/>
+                                        )
+                                    }
+                                    return (
+                                        ''
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
                 </div>
-
+            
             </div>
         )
     }

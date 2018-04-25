@@ -462,7 +462,7 @@ export function getCommentariesByCommentariesIds (
     
     logger.debug('getCommentariesByCommentariesIds, query -> ', query)
     
-    query.run().then(function (result) {
+    return query.run().then(function (result) {
         if (!result) {
             logger.info(
                 'Error: getCommentariesByCommentariesIds returns no results :( ')
@@ -474,7 +474,7 @@ export function getCommentariesByCommentariesIds (
         return result
     }).catch(function (err) {
         logger.error('Error: getCommentariesByCommentariesIds, ', err)
-        cb(err)
+        return cb(err)
     })
 }
 
@@ -864,7 +864,7 @@ export function getCommentatorByNick (id, conn, cb) {
             var nick = commentator ? commentator.nick : id
             var index = commentator ? commentator.operator : '_all'
             if (err || !commentator) {
-                logger.warn(
+                logger.error(
                     'Could not find Commentator on Rethinkdb :| We will retry using the query id on elk search o/ ',
                     nick, err)
             }
@@ -887,7 +887,7 @@ export function getCommentatorByNick (id, conn, cb) {
             }, function (err, resp) {
                 if (err) {
                     logger.error(err)
-                    cb(err)
+                    return cb(err)
                 } else if (!resp || resp.length === 0) {
                     if (!commentator) {
                         commentator = {
@@ -904,8 +904,8 @@ export function getCommentatorByNick (id, conn, cb) {
                     }
                     commentator.comments = []
                     
-                    logger.debug('Got no comments :(')
-                    cb(null, commentator)
+                    logger.error('Got no comments :(')
+                    return cb(null, commentator)
                 } else {
                     
                     if (!commentator) {
@@ -924,7 +924,7 @@ export function getCommentatorByNick (id, conn, cb) {
                     
                     commentator.comments = resp
                     logger.debug('Got comments :D ', resp.length)
-                    cb(null, commentator)
+                    return cb(null, commentator)
                 }
             })
             
@@ -1046,6 +1046,27 @@ export function getAllDistinctByIndex (conn, table, index, value) {
         distinct({index: index})
     logger.debug('getAllDistinctByIndex, ', query)
     return query.run()
+}
+
+export function getURL_MAP (conn, id, cb) {
+    var query = conn.db('test').
+        table('url_map', {readMode: 'outdated'}).
+        getAll(conn.uuid(id), {index: 'uuid'})
+    
+    logger.debug('getURL_MAP, query, ', query)
+    query.run().
+        then(function (results) {
+            if (!results) {
+                cb(null, [])
+            } else {
+                return cb(null, results)
+            }
+        }).
+        catch(function (err) {
+            logger.debug('Error: getURL_MAP, ', err)
+            return cb(err)
+        })
+    
 }
 
 export function getUser (id) {

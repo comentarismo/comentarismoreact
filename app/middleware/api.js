@@ -3,6 +3,7 @@ import Promise, { using } from 'bluebird'
 import _ from 'lodash'
 import StackTrace from 'stacktrace-js'
 
+
 export const CALL_API = Symbol('CALL_API')
 export const CHAIN_API = Symbol('CHAIN_API')
 
@@ -37,13 +38,13 @@ export default ({dispatch, getState}) => next => action => {
             StackTrace.fromError(err).then((stackFrames) => {
                 const errStack = stackFrames.map(sf => sf.toString()).
                     join('\n')
-                console.log(
+                console.error(
                     'ERROR: api.js, createRequestPromise catch((err)), ',
                     errStack)
                 reject(err)
             }).catch(error => {
                 console.log(
-                    'ERROR: api.js, createRequestPromise catch((err)), ', err,
+                    'ERROR: api.js, createRequestPromise catch((err)), ', error,
                     error)
                 reject(err)
             })
@@ -63,40 +64,57 @@ function createRequestPromise (apiActionCreator, next, getState, dispatch) {
             superAgent[params.method](params.url).
                 withCredentials().
                 end((err, res) => {
-                    
-                    if (err) {
-                        console.log('ERROR: api.js, createRequestPromise, ',
-                            params.url, err)
-                        if (params.errorType) {
-                            dispatch({
-                                type: params.errorType,
-                                error: err,
+                        
+                        if (err) {
+                            
+                            StackTrace.fromError(err).then((stackFrames) => {
+                                const errStack = stackFrames.map(
+                                    sf => sf.toString()).
+                                    join('\n')
+                                console.error(
+                                    'ERROR: api.js, createRequestPromise, ',
+                                    {err: {stack: errStack}},
+                                    'window.onerror')
+                            }).catch(error => {
+                                console.error(error.message)
                             })
+                            
+                            // if (params.errorType) {
+                            //     dispatch({
+                            //         type: params.errorType,
+                            //         error: err,
+                            //     })
+                            // }
+                            //
+                            if (_.isFunction(params.afterError)) {
+                                params.afterError({getState})
+                            }
+                            
+                             dispatch({
+                                type: params.successType,
+                                response: {},
+                            })
+                            resolve({})
+                        } else {
+                            
+                            //var response = Object.keys(res.body).length == 0 ? res.text : res.body;
+                            
+                            dispatch({
+                                type: params.successType,
+                                response: res.body,
+                            })
+                            
+                            if (_.isFunction(params.afterSuccess)) {
+                                params.afterSuccess({getState})
+                            }
+                            
+                            //console.log("res.body",response);
+                            
+                            resolve(res.body)
                         }
                         
-                        if (_.isFunction(params.afterError)) {
-                            params.afterError({getState})
-                        }
-                        reject(err)
-                    } else {
-                        
-                        //var response = Object.keys(res.body).length == 0 ? res.text : res.body;
-                        
-                        dispatch({
-                            type: params.successType,
-                            response: res.body,
-                        })
-                        
-                        if (_.isFunction(params.afterSuccess)) {
-                            params.afterSuccess({getState})
-                        }
-                        
-                        //console.log("res.body",response);
-                        
-                        resolve(res.body)
-                    }
-                    
-                })
+                    },
+                )
             
         })
     }

@@ -21,6 +21,8 @@ import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
 
 var ImageResized = require('components/ImageResized')
+import GDPR from 'components/GDPR'
+import { GoogleSearchScript } from 'components/GoogleSearchScript'
 
 class Commentator extends Component {
     static fetchData({ store, params }) {
@@ -59,6 +61,27 @@ class Commentator extends Component {
         }catch(e){
             console.log("Error when getting commentsavgperday :| ",e, id);
         }
+        
+        
+        if (!commentator || !commentator.operator) {
+            return (
+                <div>
+                    <div>
+                        <h3>The page you are looking for might have been
+                            removed, had its name changed, or is
+                            temporarily unavailable.</h3>
+                        <div className="image">
+                            <img className="img img-responsive"
+                                 src="/static/img/404notfound.jpeg"/>
+                        </div>
+                        <div className="text-404">
+                            <p>Please Use the Google Search box below and
+                                optimize your search </p>
+                        </div>
+                    </div>
+                    <GoogleSearchScript search={this.props.params}/>
+                </div>)
+        }
 
         
         return (
@@ -79,6 +102,7 @@ class Commentator extends Component {
                 
                  <div className="commentator-container">
 
+                        <GDPR/>
                         <div className="commentator-container__user">
                             <Avatar
                                 icon={<PersonOutline/>}

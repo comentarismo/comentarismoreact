@@ -23,7 +23,7 @@ let {
     getCommentariesByCommentariesIds,
     getAllByIndexSkipLimit,
     getAllDistinctByIndex,
-    
+    getURL_MAP,
     getLatestNewsGroupDay,
     getLatestNewsCommentatorsGroupDay,
     getLatestNewsWithCommentGroupDay,
@@ -37,6 +37,7 @@ var comentarismosite = 'http://www.comentarismo.com'
 
 /** LOGGER **/
 import logger from 'server/logger_middleware'
+
 /** LOGGER **/
 
 module.exports = function (
@@ -262,66 +263,133 @@ module.exports = function (
                     } else {
                         
                         
-                        //retry
-                        var idAux = ''
-                        if (req.params.id.indexOf('-') !== -1) {
-                            idAux = req.params.id.split('-')[1]
-                        }
-                        logger.info(
-                            'commentator not found, will retry with nick, ',
-                            idAux, 'original: ', req.params.id)
-                        
-                        if (!idAux) {
-                            logger.info('Error: ' + err)
-                            console.error('Error: ', urlTag, err.stack)
-                            return res.status(404).send()
-                        }
-                        
-                        getCommentatorByNick((idAux ? idAux : req.params.id),
-                            RETHINKDB_CONNECTION,
-                            function (err, data) {
-                                if (err) {
-                                    logger.info('Error: after getCommentariesByCommentariesIds ->  ' +
-                                        err)
-                                    //console.error(err.stack);
-                                    return res.status(404).send()
-                                }
+                        //go get URL_MAP
+                        getURL_MAP(RETHINKDB_CONNECTION, req.params.id,
+                            function (err, url_map) {
                                 
-                                if (data) {
+                                var idAux = ''
+                                if (err) {
+                                    logger.error("getURL_MAP, ",err)
                                     
-                                    getCommentariesByCommentariesIds(
-                                        commentsTable,
-                                        data.commentariesIds,
+                                } else if (url_map && url_map.length > 0) {
+                                    logger.debug("Got getURL_MAP, ", url_map)
+                                    
+                                    idAux = url_map[0].operator + "-" + url_map[0].slug
+                                    
+                                    getByID(table, idAux, RETHINKDB_CONNECTION, function (err, data) {
+                                        if (err) {
+                                            logger.info('Error: ' + err)
+                                            //console.error(err.stack);
+                                            //return res.status(500).send('Something broke!');
+                                        }
+    
+                                        if (data) {
+        
+                                            getCommentariesByCommentariesIds(
+                                                commentsTable,
+                                                data.commentariesIds,
+                                                RETHINKDB_CONNECTION,
+                                                function (err, commentaries) {
+                                                    if (err) {
+                                                        logger.info('Error: after getCommentariesByCommentariesIds ->  ' +
+                                                            err)
+                                                        //console.error(err.stack);
+                                                        return res.status(404).
+                                                            send()
+                                                    }
+                                                    data.comments = commentaries
+                
+                                                    //-------REDIS CACHE SAVE START ------//
+                                                    logger.info(urlTag +
+                                                        ' will save cached')
+                                                    var js = JSON.stringify(
+                                                        data)
+                                                    //logger.info(js);
+                                                    if (!DISABLE_CACHE) {
+                                                        REDIS_CONNECTION.set(
+                                                            urlTag, js, 'EX',
+                                                            EXPIRE_REDIS)
+                                                    }
+                                                    //-------REDIS CACHE SAVE END ------//
+                                                    return res.send(data)
+                
+                                                })
+                                        }  else {
+                                            logger.error('commentator not found, getByID return null, ', idAux, 'original: ', req.params.id)
+                                            return res.status(404).
+                                                            send()
+                                        }
+                                        
+    
+                                    })
+                                    
+                                    
+                                    
+                                    
+                                } else {
+                                    //retry
+                                    if (req.params.id.indexOf('-') !== -1) {
+                                        idAux = req.params.id.split('-')[1]
+                                    }
+    
+                                    logger.info(
+                                        'commentator not found, will retry with nick, ',
+                                        idAux, 'original: ', req.params.id)
+    
+                                    getCommentatorByNick(
+                                        (idAux ? idAux : req.params.id),
                                         RETHINKDB_CONNECTION,
-                                        function (err, commentaries) {
+                                        function (err, data) {
                                             if (err) {
                                                 logger.info('Error: after getCommentariesByCommentariesIds ->  ' +
                                                     err)
                                                 //console.error(err.stack);
                                                 return res.status(404).send()
                                             }
-                                            
-                                            data.comments = commentaries
-                                            
-                                            //-------REDIS CACHE SAVE START ------//
-                                            logger.info(urlTag +
-                                                ' will save cached')
-                                            if (!DISABLE_CACHE) {
-                                                REDIS_CONNECTION.set(urlTag,
-                                                    JSON.stringify(data), 'EX',
-                                                    EXPIRE_REDIS)
+            
+                                            if (data) {
+                
+                                                getCommentariesByCommentariesIds(
+                                                    commentsTable,
+                                                    data.commentariesIds,
+                                                    RETHINKDB_CONNECTION,
+                                                    function (
+                                                        err, commentaries) {
+                                                        if (err) {
+                                                            logger.info('Error: after getCommentariesByCommentariesIds ->  ' +
+                                                                err)
+                                                            //console.error(err.stack);
+                                                            return res.status(
+                                                                404).
+                                                                send()
+                                                        }
+                        
+                                                        data.comments = commentaries
+                        
+                                                        //-------REDIS CACHE SAVE START ------//
+                                                        logger.info(urlTag +
+                                                            ' will save cached')
+                                                        if (!DISABLE_CACHE) {
+                                                            REDIS_CONNECTION.set(
+                                                                urlTag,
+                                                                JSON.stringify(
+                                                                    data),
+                                                                'EX',
+                                                                EXPIRE_REDIS)
+                                                        }
+                                                        //-------REDIS CACHE SAVE END ------//
+                        
+                                                    })
+                
+                                            } else {
+                
+                                                logger.info('nothing found ? how did we got here ?  getCommentatorByNick --> ' +
+                                                    urlTag)
                                             }
-                                            //-------REDIS CACHE SAVE END ------//
-                                            
+            
+                                            res.send(data)
                                         })
-                                    
-                                } else {
-                                    
-                                    logger.info('nothing found ? how did we got here ?  getCommentatorByNick --> ' +
-                                        urlTag)
                                 }
-                                
-                                res.send(data)
                             })
                     }
                     
@@ -728,8 +796,8 @@ module.exports = function (
     
     app.get('/apihomepage/', limiter, (req, res) => {
         
-        var index = req.query.index || "news"
-        var value = req.query.value || "english"
+        var index = req.query.index || 'news'
+        var value = req.query.value || 'english'
         
         var urlTag = `apihomepage?index=${index}&value=${value}`
         
