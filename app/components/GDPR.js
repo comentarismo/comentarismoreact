@@ -23,7 +23,7 @@ export default class GDPR extends React.Component {
         this.setState({
             open: false,
         })
-        var win = window.open('https://api.comentarismo.com/gdpr.html', '_blank')
+        var win = window.open('https://api.comentarismo.com/more/gdpr.html', '_blank')
         win.focus()
     }
     
