@@ -1,16 +1,11 @@
-let _ = require('lodash')
 
 var xml2js = require("xml2js");
 var superAgent = require("superagent");
-import config from 'config'
-var host = config.BASE_URL;
-import r from 'rethinkdb';
 
 let {getSample} = require("./comentarismo_api");
 
 /** LOGGER **/
-var log = require("./logger");
-var logger = log.getLogger();
+import logger from 'server/logger_middleware'
 /** LOGGER **/
 
 export function getAlexaRank(url, table, index, value, skip, limit, sort,sample, conn, cb) {
@@ -19,7 +14,7 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort,sample,
         //console.log(r);
         if (err) {
             cb(err);
-        } else if (r.statusCode != 200) {
+        } else if (r.statusCode !== 200) {
             cb("statusCode != 200 --> " + r.statusCode);
         } else {
             xml2js.parseString(r.text, {
