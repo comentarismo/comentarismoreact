@@ -1009,7 +1009,7 @@ module.exports = function (
                 }
                 //-------REDIS CACHE END ------//
                 
-                let {getAlexaRank} = require('./alexa_api')
+                let {getAlexaRank} = require('../api/alexa_api')
                 
                 getAlexaRank(comentarismosite, table, index, value, skip, limit,
                     'date', 50, RETHINKDB_CONNECTION,

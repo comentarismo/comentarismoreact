@@ -67,6 +67,11 @@ const limiter = require('server/handlers/limiter_handler')(app, REDIS_CONNECTION
 
 // ******************* START MIDDLEWARES ******************* //
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+});
+
 app.use(compress())
 
 // security

@@ -50,7 +50,6 @@ module.exports = function (app, REDIS_CONNECTION, RETHINKDB_CONNECTION) {
             }).
             catch(function (err) {
                 logger.error('Error: limiterhandler, ', err)
-                cb(err)
             })
         
         res.format({
