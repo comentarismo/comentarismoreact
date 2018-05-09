@@ -22,7 +22,7 @@ export function getAlexaRank(url, table, index, value, skip, limit, sort,sample,
                 explicitArray: false
             }, function (err, result) {
 
-                if (err || !result) {
+                if (err || !result || !result.alexa || !result.alexa.sd) {
                     logger.error(err);
                     cb("Error when doing xml2js.parseString of --> " + r.text);
                 } else {

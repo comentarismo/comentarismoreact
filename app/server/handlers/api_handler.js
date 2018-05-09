@@ -8,6 +8,7 @@ var EXPIRE_REDIS = process.env.EXPIRE_REDIS || '3600'
 var GIT_HASH = require('server/version.js').GIT_HASH
 
 var VERSION = require('server/version.js').VERSION
+const {getAlexaRank} = require('../api/alexa_api')
 
 let {
     getAllByMultipleIndexOrderBySkipLimit,
@@ -1008,8 +1009,6 @@ module.exports = function (
                     }
                 }
                 //-------REDIS CACHE END ------//
-                
-                let {getAlexaRank} = require('../api/alexa_api')
                 
                 getAlexaRank(comentarismosite, table, index, value, skip, limit,
                     'date', 50, RETHINKDB_CONNECTION,
