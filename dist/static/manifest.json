@@ -1,7 +1,7 @@
 {
-  "name": "Comentarismo PWA",
-  "short_name": "Comentarismo PWA",
-  "description": "Comentarismo - Latest news",
+  "name": "Comentarismo",
+  "short_name": "Comentarismo.com - Latest news",
+  "description": "Comentarismo.com - Latest news, world news, sports, business, comment, analysis and reviews from the world's leading liberal comments website.",
   "theme_color": "#00bcd4",
   "background_color": "#00bcd4",
   "display": "standalone",
@@ -9,42 +9,42 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/favicon.ico",
       "sizes": "512x512",
       "type": "image/png"
     }
