@@ -64,7 +64,7 @@ class LoginStore extends EventEmitter {
             //TODO: remove only session and jv_jwt from parameters, it may affect other pages in case we start using params :|
 
             if (window.parent.location.href.match(/session=/)){
-                if (typeof (history.pushState) != "undefined") {
+                if (typeof (history.pushState) !== "undefined") {
                     var obj = { Title: document.title, Url: window.parent.location.pathname };
                     history.pushState(obj, obj.Title, obj.Url);
                 } else {

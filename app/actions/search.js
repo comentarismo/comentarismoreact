@@ -2,16 +2,18 @@ export const LOADED_SEARCH = Symbol('LOADED_SEARCH')
 export const HTTP_ERROR = Symbol('LOADED_SEARCH')
 import { getSearchHost } from 'util/searchutils'
 
-
-import {
-    SearchkitManager,
-} from 'searchkit'
+import { SearchkitManager, } from 'searchkit'
+import config from 'config';
 
 export const loadSearchResults = ({index, query}) => {
     return dispatch => {
         let searchkit = new SearchkitManager(getSearchHost(index), {
             useHistory: false,
+            httpHeaders: {
+                'COMENTARISMO-KEY': config.COMENTARISMO_KEY,
+            },
             searchOnLoad: false,
+            
         })
         return searchkit.searchFromUrlQuery(query).then(searchResults => {
             // console.log('INFO: loadSearchResults, ', searchResults)

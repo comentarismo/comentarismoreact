@@ -14,6 +14,8 @@ import {
 import { getSearchHost, gup } from 'util/searchutils'
 import Promise from 'bluebird'
 const index = 'product'
+import config from 'config';
+
 class SearchComponentProduct extends Component {
     
     static fetchData ({store, query}) {
@@ -50,12 +52,10 @@ class SearchComponentProduct extends Component {
         // console.log('GOT RESULTS ', results, state, this.props.searchResults)
         
         const searchkit = new SearchkitManager(searchOnTypeUrl, {
-            // const searchkit = new SearchkitManager(
-            //     'https://apis.comentarismo.com/elk/_all', {
             searchOnLoad: searchOnLoad,
             useHistory: !isServer,
             httpHeaders: {
-                // "COMENTARISMO-KEY": "HL3Q87OdXRXiun8LSyAy5vmCDJJCfyVrX97aIk_Ll2JcC0IG2yUpRoBOB7O6qRkDUAd6yQbD4gY="
+                "COMENTARISMO-KEY": config.COMENTARISMO_KEY,
             },
         }, {
             results: results,
